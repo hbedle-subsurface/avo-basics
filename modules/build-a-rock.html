@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build a rock, make a seismic trace — Rock Physics &amp; AVO Lab</title>
+<meta name="description" content="Build a simple three-layer rock model, change its porosity and pore fluid, and watch impedance, reflectivity and the synthetic seismic trace respond — the first step toward understanding why a seismic response is evidence, not an answer.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/avo.css">
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <a class="brand" href="../index.html"><span class="dot"></span>Rock Physics &amp; <b>AVO</b> Lab</a>
+    <nav>
+      <a href="../index.html">All modules</a>
+      <a href="#quiz">Test yourself</a>
+      <a href="#notes">Method &amp; references</a>
+    </nav>
+  </header>
+
+  <div class="mod-head">
+    <p class="eyebrow">Module 01 &nbsp;·&nbsp; The foundation</p>
+    <h1>Build a rock, make a seismic trace</h1>
+    <p class="sub">One reservoir, sandwiched in shale. Choose what it's made of, what's filling its pores, and
+      how noisy your data is — then follow the chain from rock to reflection to trace. Nothing here is a
+      trick yet. The trick comes once you notice how many different rocks can make the <em>same</em> trace.</p>
+  </div>
+
+  <!-- ============================ THE IDEA FIRST =========================== -->
+  <div class="teach" style="padding-top:6px">
+    <div class="tryit">
+      <h3>A seismic response is evidence, not an answer</h3>
+      <p style="margin-top:0;font-size:14.5px">It's tempting to learn a shortcut like "bright spot = gas" and
+        treat it as a rule. It's not a rule — it's a pattern that <em>sometimes</em> holds. A bright reflection
+        can come from gas, yes. It can also come from a rock that's simply more porous, or from a change in
+        lithology, or from some combination of all three.</p>
+      <p style="font-size:14.5px;margin-bottom:0">This module lets you build the rock yourself, so you can
+        watch several different causes produce a similar-looking seismic response. Keep asking three
+        questions as you go: <b>What do I know? What could explain it? What can I actually conclude?</b></p>
+    </div>
+    <div class="takeaway">
+      <h3>The chain this module builds</h3>
+      <p style="margin-top:0;font-size:14.5px"><b>1 · Rock model.</b> A reservoir bed between two shales.
+        You set its lithology, porosity, and what fills the pore space.</p>
+      <p style="font-size:14.5px"><b>2 · Rock properties.</b> Porosity and fluid change the rock's stiffness
+        and density — which set its velocity.</p>
+      <p style="font-size:14.5px"><b>3 · Impedance → reflectivity → trace.</b> Velocity and density combine
+        into impedance; the impedance contrast at each boundary sets the reflection; the reflections,
+        convolved with a wavelet, are what you'd actually record — noise and all.</p>
+      <p style="font-size:14.5px;margin-bottom:0">Change one thing at a time and watch how far the change
+        travels down that chain — and, just as tellingly, how much of the final trace it doesn't explain.</p>
+    </div>
+  </div>
+
+  <!-- ============================== CONTROLS ============================== -->
+  <section class="controls">
+    <div class="ctl-col">
+      <h2>Start from</h2>
+      <div class="ctl">
+        <select id="preset">
+          <option value="custom">Custom rock</option>
+          <option value="baseline" selected>20% porosity sand, brine</option>
+          <option value="higherphi">30% porosity sand, brine</option>
+          <option value="gassand">20% porosity sand, gas</option>
+          <option value="oilsand">20% porosity sand, oil</option>
+        </select>
+      </div>
+      <button class="btn ghost small" id="resetBtn" type="button">Reset</button>
+      <button class="btn ghost small" id="copyBtn" type="button">Copy link to this setup</button>
+    </div>
+
+    <div class="ctl-col">
+      <h2>The rock</h2>
+      <div class="ctl">
+        <label>Lithology</label>
+        <div class="seg" role="group" aria-label="Reservoir lithology">
+          <button type="button" id="litSand" aria-pressed="true">Sandstone</button>
+          <button type="button" id="litShale" aria-pressed="false">Shale</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <label for="phi">Porosity — how much pore space <span class="val" id="phiV">20%</span></label>
+        <input type="range" id="phi" min="5" max="35" step="1" value="20">
+      </div>
+    </div>
+
+    <div class="ctl-col">
+      <h2>What's filling the pores?</h2>
+      <div class="ctl">
+        <div class="seg" role="group" aria-label="Pore fluid">
+          <button type="button" id="flBrine" aria-pressed="true">Brine</button>
+          <button type="button" id="flOil" aria-pressed="false">Oil</button>
+          <button type="button" id="flGas" aria-pressed="false">Gas</button>
+        </div>
+      </div>
+      <div class="ctl" id="satCtl" hidden>
+        <label for="sat">Saturation — how much of the pore space <span class="val" id="satV">60%</span></label>
+        <input type="range" id="sat" min="0" max="100" step="5" value="60">
+      </div>
+      <div class="ctl" id="apiCtl" hidden>
+        <label for="api">Oil API gravity — heavier ↔ lighter <span class="val" id="apiV">30°</span></label>
+        <input type="range" id="api" min="10" max="45" step="1" value="30">
+      </div>
+      <div class="fluid-legend" id="fluidLegend"></div>
+    </div>
+
+    <div class="ctl-col">
+      <h2>The seismic</h2>
+      <div class="ctl">
+        <label for="freq">Wavelet peak frequency <span class="val" id="freqV">30 Hz</span></label>
+        <input type="range" id="freq" min="20" max="40" step="1" value="30">
+      </div>
+      <div class="ctl">
+        <label>Noise</label>
+        <div class="seg" role="group" aria-label="Noise level">
+          <button type="button" id="nzClean" aria-pressed="true">Clean</button>
+          <button type="button" id="nzMod" aria-pressed="false">Moderate</button>
+          <button type="button" id="nzNoisy" aria-pressed="false">Noisy</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== PANELS =============================== -->
+  <section class="plot" style="margin-top:18px">
+    <div class="plot-head">
+      <h3>From rock to trace</h3>
+      <span class="hint">All four panels share the same two-way time axis.</span>
+    </div>
+    <div class="sec-row" id="panelRow">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The rock</p>
+        <canvas id="rockCanvas" aria-label="Three-layer rock model: shale, reservoir, shale, shaded by grain and pore fluid"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Rock properties</p>
+        <canvas id="propsCanvas" aria-label="Vp, Vs, density and impedance of the reservoir compared with the shale"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>3</b> Reflectivity</p>
+        <canvas id="rcCanvas" aria-label="Reflection coefficient at the top and base of the reservoir"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>4</b> Synthetic trace</p>
+        <canvas id="synCanvas" aria-label="Synthetic seismic trace, clean and with noise added"></canvas>
+      </div>
+    </div>
+    <canvas id="cbarCanvas" aria-label="Color bar relating reflection coefficient to display color"></canvas>
+    <div class="legend" id="mainLegend"></div>
+  </section>
+
+  <div class="stats" id="statsRow"></div>
+
+  <!-- ============================== TEACHING ============================== -->
+  <div class="teach">
+    <div class="tryit">
+      <h3>Try this — change one thing at a time</h3>
+      <ol>
+        <li><b>Raise the porosity.</b>
+          <button class="setbtn" data-preset="baseline">Set up: 20% porosity sand, brine</button>
+          Now drag the porosity slider up toward 30%.
+          <span class="ans">Watch panel 2: Vp, Vs and density all drop, because a more porous rock has less
+            solid mineral holding it together. Impedance drops with them, the reflection coefficients grow,
+            and the trace gets brighter — without a single drop of fluid changing.</span></li>
+        <li><b>Now keep the porosity fixed and change the fluid instead.</b>
+          <button class="setbtn" data-preset="baseline">Set up: 20% porosity sand, brine</button>
+          Switch the fluid from brine to gas.
+          <span class="ans">A different physical change — fluid, not porosity — and yet you can get a
+            similarly brighter reflection. Two different stories, a similar seismic outcome. That's the
+            beginning of the site's central lesson: <b>a seismic response is evidence, not an answer.</b></span></li>
+        <li><b>Add noise without changing the rock at all.</b> Leave the rock alone and step the noise control
+          from Clean to Noisy.
+          <span class="ans">Panels 1–3 don't move — the earth hasn't changed. Only panel 4 changes, because
+            noise is something that happens to the <em>data</em>, not to the rock. Even a perfectly known
+            geological model produces an imperfect trace.</span></li>
+        <li><b>The trick, live: two different rocks, one amplitude.</b>
+          <button class="setbtn" data-preset="resA">Load reservoir A</button>
+          Note panel 3's reflection coefficient, then
+          <button class="setbtn" data-preset="resB">Load reservoir B</button>
+          and compare.
+          <span class="ans">Reservoir A is a brine-filled sand with somewhat higher porosity. Reservoir B is a
+            lower-porosity sand carrying some gas. Their porosities aren't even wildly different — and their
+            reflection coefficients come out nearly identical anyway. Looking at panel 3 or panel 4 alone, you
+            cannot tell which reservoir has the gas. That's not a flaw in this tool; it's the actual physics,
+            and it's why interpreters lean on more than amplitude alone.</span></li>
+      </ol>
+    </div>
+
+    <div class="takeaway">
+      <h3>Why this happens: fluid substitution</h3>
+      <p style="margin-top:0;font-size:14.5px">When you change the fluid, you're not changing the rock's
+        mineral frame at all — the grains and how they're packed stay exactly the same. What changes is how
+        the pore fluid resists being squeezed. Gas squeezes easily and barely adds any weight; brine resists
+        being squeezed more and is heavier. That's essentially the whole story of <b>fluid substitution</b>:
+        same rock, different pore fluid, different stiffness and density, different velocity.</p>
+      <p style="font-size:14.5px;margin-bottom:0">The equation behind it is called <b>Gassmann's equation</b>,
+        and you don't need it to use this module — the panels already show you the effect. If you want the
+        mechanics, they're in the notes at the bottom of the page. Notice, too, that the fluid never affects
+        the rock's <em>shear</em> stiffness (Vs) at all — only Vp moves much on a fluid swap. That's one reason
+        Vp/Vs is such a useful clue when it's available.</p>
+    </div>
+  </div>
+
+  <!-- ================================ QUIZ ================================ -->
+  <section class="plot" id="quiz" style="margin-top:26px">
+    <div class="plot-head">
+      <h3>Test yourself: can you spot the trap?</h3>
+      <span class="hint quiz-score" id="quizScore"></span>
+    </div>
+    <p class="hint-line" style="margin-bottom:16px">These aren't memorization questions. They're designed to
+      catch the same intuitive leap that catches working interpreters — the jump from "I see a strong
+      reflection" to "therefore I know why."</p>
+    <div class="quiz" id="quizWrap"></div>
+  </section>
+
+  <details class="notes" id="notes">
+    <summary>Method, assumptions, and where to read more</summary>
+    <p>The reservoir sits between two fixed shale layers (Vp 2450 m/s, density 2.38 g/cc — the same shale used
+      in the "Where a seismic trace comes from" module on the seismic-fundamentals site) and is 50 m thick, far
+      enough above tuning at these frequencies that its top and base stay separate reflections; thin-bed
+      interference is the subject of its own module elsewhere on this site's sibling.</p>
+    <p>The reservoir's dry-rock frame is modeled with a simplified critical-porosity relationship: stiffness
+      falls off roughly linearly from the mineral's own modulus at zero porosity to zero at a "critical"
+      porosity where the grain framework can no longer support itself (0.40 for sandstone, 0.55 for shale here)
+      — a teaching simplification of the idea behind Nur et al.'s critical-porosity model. <b>Gassmann's
+      equation</b> then adds the pore fluid back in:</p>
+    <p class="k" style="display:block;padding:8px 10px;margin:6px 0">K<sub>sat</sub> = K<sub>dry</sub> +
+      (1 &minus; K<sub>dry</sub>/K<sub>min</sub>)² / [ φ/K<sub>fl</sub> + (1&minus;φ)/K<sub>min</sub> &minus;
+      K<sub>dry</sub>/K<sub>min</sub>² ]</p>
+    <p>with the shear modulus G<sub>sat</sub> = G<sub>dry</sub> — fluid substitution leaves shear stiffness
+      untouched, which is why Vs barely reacts to the fluid controls. Brine and gas are held at fixed
+      representative reservoir-condition values; oil's density and modulus vary with the API gravity slider
+      using simplified trends rather than the full pressure/temperature-dependent Batzle &amp; Wang
+      correlations. Mixed brine/hydrocarbon saturations use a Reuss (uniform-mixing) average of the fluid
+      modulus. As in the sibling site, the trace is built as a sum of shifted, scaled wavelets rather than a
+      sample-grid convolution, so reflector timing is exact.</p>
+    <p>Left out deliberately, for this first module: offset/angle-dependent reflectivity (that's AVO itself,
+      later on this site), transmission loss, internal multiples, and attenuation. All of them would change
+      amplitudes further without changing the lesson.</p>
+    <ul>
+      <li>Gassmann, F., 1951, Über die Elastizität poröser Medien: Vierteljahrsschrift der
+        Naturforschenden Gesellschaft in Zürich, 96, 1–23.</li>
+      <li>Mavko, G., Mukerji, T., and Dvorkin, J., 2020, <em>The Rock Physics Handbook</em>, 3rd ed.:
+        Cambridge University Press.</li>
+      <li>Nur, A., Mavko, G., Dvorkin, J., and Galmudi, D., 1998, Critical porosity: A key to relating physical
+        properties to porosity in rocks: <em>The Leading Edge</em>, 17, 357–362.</li>
+      <li>Batzle, M., and Wang, Z., 1992, Seismic properties of pore fluids: <em>Geophysics</em>, 57,
+        1396–1408.</li>
+      <li>Simm, R., and Bacon, M., 2014, <em>Seismic Amplitude: An Interpreter's Handbook</em>: Cambridge
+        University Press — chapter 3 in particular, on why amplitude alone rarely settles the question.</li>
+    </ul>
+  </details>
+
+  <section class="nextup">
+    <p class="eyebrow">Next up</p>
+    <h3>02 &middot; Same bright spot, different rock</h3>
+    <p>You've just seen, by hand, that two different reservoirs can produce nearly the same reflection. The
+      next module turns that into the main event: given only the seismic response, how many geologically
+      plausible rocks could have made it — and what would you actually need to tell them apart? Coming soon.</p>
+    <a class="btn ghost" href="../index.html">All modules</a>
+  </section>
+
+  <footer>
+    <div class="foot-grid">
+      <p>An interactive companion to <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a>'s
+        seismic-fundamentals teaching site, School of Geosciences, University of Oklahoma. Free to use or
+        adapt in your own courses with citation.</p>
+    </div>
+  </footer>
+</div>
+
+<script src="../assets/seismic.js"></script>
+<script src="../assets/rockphysics.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ------------------------------- state -------------------------------- */
+
+  const PRESETS = {
+    baseline:  { lith: 'sandstone', phi: 20, fluid: 'brine', sat: 0,  api: 30 },
+    higherphi: { lith: 'sandstone', phi: 30, fluid: 'brine', sat: 0,  api: 30 },
+    gassand:   { lith: 'sandstone', phi: 20, fluid: 'gas',   sat: 90, api: 30 },
+    oilsand:   { lith: 'sandstone', phi: 20, fluid: 'oil',   sat: 60, api: 30 },
+    resA:      { lith: 'sandstone', phi: 24, fluid: 'brine', sat: 0,  api: 30 },
+    resB:      { lith: 'sandstone', phi: 22, fluid: 'gas',   sat: 50, api: 30 },
+  };
+
+  const DEF = {
+    lith: 'sandstone', phi: 20, fluid: 'brine', sat: 60, api: 30,
+    f: 30, noise: 'clean', preset: 'baseline',
+  };
+  let S = SEIS.readState(DEF);
+
+  const $ = (id) => document.getElementById(id);
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const RES_H = 50;          // reservoir thickness, meters (fixed — see notes)
+  const TTOP = 0.060;        // two-way time to the top of the reservoir, s
+  const DT = 0.0002;
+  const NOISE_SNR = { clean: 0, moderate: 6, noisy: 2.3 };
+
+  const CRIMSON = '#841617', CRIMSON_DP = '#5A0E0F', TEAL = '#0B7285', SLATE = '#5C6670';
+  const SHALE_COLOR = '#9C9284';
+  const FLUID_COLORS = { brine: [63, 127, 179], oil: [63, 143, 79], gas: [194, 59, 46] };
+  const GRAIN_COLORS = { sandstone: 'rgba(201,173,127,0.95)', shale: 'rgba(120,108,96,0.95)' };
+
+  /* ------------------------------- model -------------------------------- */
+
+  function poreColorRGB() {
+    const brine = FLUID_COLORS.brine;
+    if (S.fluid === 'brine') return brine;
+    const hc = FLUID_COLORS[S.fluid];
+    const sh = S.sat / 100;
+    return [0, 1, 2].map((i) => Math.round(brine[i] * (1 - sh) + hc[i] * sh));
+  }
+
+  function computeReservoir() {
+    return ROCK.computeRock({
+      lithology: S.lith, phi: S.phi / 100,
+      fluid: S.fluid, sat: S.sat / 100, api: S.api,
+    });
+  }
+
+  function buildModel() {
+    const res = computeReservoir();
+    const sh = ROCK.BACKGROUND_SHALE;
+    const t0 = TTOP;
+    const tBase = t0 + (2 * RES_H) / (res.Vp * 1000);
+    const rcTop = SEIS.rc(sh.Vp, sh.rho, res.Vp, res.rho);
+    const rcBase = SEIS.rc(res.Vp, res.rho, sh.Vp, sh.rho);
+    const tEnd = Math.max(0.22, tBase + 0.09);
+    return {
+      res, sh, t0, tBase, tEnd,
+      iface: [
+        { t: t0, rc: rcTop, label: 'Top of reservoir' },
+        { t: tBase, rc: rcBase, label: 'Base of reservoir' },
+      ],
+    };
+  }
+
+  let CACHE = {};
+
+  function compute() {
+    const M = buildModel();
+    const wav = SEIS.makeWavelet({ type: 'ricker', f: S.f });
+    const nt = Math.round(M.tEnd / DT);
+    const spikes = M.iface.map((f) => ({ t: f.t, r: f.rc }));
+    const traceClean = SEIS.traceFromSpikes(spikes, 0, DT, nt, wav);
+    let traceNoisy = traceClean;
+
+    const snr = NOISE_SNR[S.noise] || 0;
+    if (snr > 0) {
+      const peak = M.iface.reduce((m, f) => Math.max(m, Math.abs(f.rc)), 0.01);
+      const dtn = 0.001, ntn = Math.max(8, Math.round(M.tEnd / dtn));
+      const nz = SEIS.bandLimitedNoise(1, ntn, dtn, wav, 4242, 0);
+      const amp = peak / snr;
+      traceNoisy = new Float32Array(nt);
+      for (let i = 0; i < nt; i++) {
+        const p = (i * DT) / dtn;
+        const i0 = Math.min(ntn - 2, Math.floor(p)), fr = p - i0;
+        traceNoisy[i] = traceClean[i] + amp * (nz[i0] + (nz[i0 + 1] - nz[i0]) * fr);
+      }
+    }
+    CACHE = { M, wav, nt, traceClean, traceNoisy };
+  }
+
+  /* ------------------------------ layout -------------------------------- */
+
+  function layout() {
+    const box = $('rockCanvas').closest('.plot');
+    const W = Math.max(300, box.clientWidth - 28);
+    const stacked = W < 760;
+    if (stacked) {
+      return { stacked, h: 300, w: { rock: W, props: W, rc: W, syn: W } };
+    }
+    const gaps = 10 * 3;
+    const avail = W - gaps;
+    const w = {
+      rock:  Math.round(avail * 0.21),
+      props: Math.round(avail * 0.27),
+      rc:    Math.round(avail * 0.15),
+    };
+    w.syn = avail - w.rock - w.props - w.rc;
+    return { stacked, h: clamp(Math.round(W * 0.34), 300, 420), w };
+  }
+
+  const MT = 8, MB = 40;
+  const yScale = (rect, tEnd) => (t) => rect.y + (t / tEnd) * rect.h;
+  function panelRect(w, h, left) {
+    return { x: left, y: MT, w: w - left - 10, h: h - MT - MB };
+  }
+
+  /* ------------------------------ drawing -------------------------------- */
+
+  function drawReservoirFill(ctx, rect, res) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(rect.x, rect.y, rect.w, rect.h); ctx.clip();
+    const c = poreColorRGB();
+    ctx.fillStyle = 'rgb(' + c.join(',') + ')';
+    ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+
+    const spacing = 13;
+    const rnd = SEIS.mulberry32(777);
+    const grainColor = GRAIN_COLORS[S.lith];
+    const rBase = spacing * 0.5 * Math.sqrt(Math.max(0.08, 1 - res.phi));
+    for (let y = rect.y + spacing * 0.5; y < rect.y + rect.h; y += spacing) {
+      for (let x = rect.x + spacing * 0.5; x < rect.x + rect.w; x += spacing) {
+        const jx = (rnd() - 0.5) * spacing * 0.55, jy = (rnd() - 0.5) * spacing * 0.55;
+        const r = rBase * (0.72 + rnd() * 0.5);
+        ctx.fillStyle = grainColor;
+        ctx.beginPath(); ctx.arc(x + jx, y + jy, r, 0, 6.284); ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+
+  function drawRock(L) {
+    const ctx = SEIS.fitCanvas($('rockCanvas'), L.w.rock, L.h);
+    ctx.clearRect(0, 0, L.w.rock, L.h);
+    const rect = panelRect(L.w.rock, L.h, 52);
+    const { M } = CACHE;
+    const yOf = yScale(rect, M.tEnd);
+
+    const yA0 = yOf(0), yA1 = yOf(M.t0);
+    const yB0 = yOf(M.t0), yB1 = yOf(M.tBase);
+    const yC0 = yOf(M.tBase), yC1 = yOf(M.tEnd);
+
+    ctx.fillStyle = SHALE_COLOR;
+    ctx.fillRect(rect.x, yA0, rect.w, yA1 - yA0);
+    ctx.fillRect(rect.x, yC0, rect.w, yC1 - yC0);
+    drawReservoirFill(ctx, { x: rect.x, y: yB0, w: rect.w, h: yB1 - yB0 }, M.res);
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(22,25,28,.5)'; ctx.lineWidth = 1;
+    [yA1, yB1].forEach((y) => {
+      ctx.beginPath(); ctx.moveTo(rect.x, y); ctx.lineTo(rect.x + rect.w, y); ctx.stroke();
+    });
+    ctx.restore();
+
+    ctx.save();
+    ctx.font = '11px "IBM Plex Sans", sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(255,255,255,.92)';
+    if (yA1 - yA0 > 16) ctx.fillText('Shale', rect.x + 7, (yA0 + yA1) / 2);
+    if (yC1 - yC0 > 16) ctx.fillText('Shale', rect.x + 7, (yC0 + yC1) / 2);
+    if (yB1 - yB0 > 16) {
+      const dark = M.res.phi < 0.16;
+      ctx.fillStyle = dark ? 'rgba(255,255,255,.95)' : 'rgba(20,16,10,.9)';
+      const mid = (yB0 + yB1) / 2;
+      ctx.fillText('Reservoir', rect.x + 7, yB1 - yB0 > 32 ? mid - 8 : mid);
+      if (yB1 - yB0 > 32) {
+        ctx.font = '9.5px "IBM Plex Mono", monospace';
+        ctx.fillText(Math.round(M.res.phi * 100) + '% φ  ·  ' +
+          (S.fluid === 'brine' ? '100% brine' : Math.round(S.sat) + '% ' + S.fluid), rect.x + 7, mid + 8);
+      }
+    }
+    ctx.restore();
+
+    SEIS.frame(ctx, rect);
+    SEIS.axisLeft(ctx, rect, 0, M.tEnd * 1000, 'Two-way time (ms)', (v) => v.toFixed(0));
+  }
+
+  function drawProps(L) {
+    const ctx = SEIS.fitCanvas($('propsCanvas'), L.w.props, L.h);
+    ctx.clearRect(0, 0, L.w.props, L.h);
+    const rect = panelRect(L.w.props, L.h, L.stacked ? 52 : 12);
+    const { M } = CACHE;
+    ctx.fillStyle = '#fff'; ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+
+    const rows = [
+      { k: 'Vp', u: ' km/s', a: M.sh.Vp, b: M.res.Vp },
+      { k: 'Vs', u: ' km/s', a: M.sh.Vs, b: M.res.Vs },
+      { k: 'Density', u: ' g/cc', a: M.sh.rho, b: M.res.rho },
+      { k: 'Impedance', u: '', a: M.sh.Vp * M.sh.rho, b: M.res.AI },
+    ];
+    const rowH = rect.h / rows.length;
+    const labelW = 78, valW = 52;
+    const barMaxW = rect.w - labelW - valW;
+
+    ctx.textBaseline = 'middle';
+    rows.forEach((r, i) => {
+      const y0 = rect.y + i * rowH;
+      const maxV = Math.max(r.a, r.b) * 1.18 || 1;
+      const barH = Math.min(13, rowH * 0.2);
+      const yA = y0 + rowH * 0.34, yB = yA + barH + 5;
+
+      ctx.font = '10.5px "IBM Plex Sans", sans-serif'; ctx.fillStyle = SLATE;
+      ctx.textAlign = 'left';
+      ctx.fillText(r.k, rect.x, y0 + rowH / 2);
+
+      const wA = (r.a / maxV) * barMaxW, wB = (r.b / maxV) * barMaxW;
+      ctx.fillStyle = 'rgba(92,102,112,.55)';
+      ctx.fillRect(rect.x + labelW, yA, Math.max(1, wA), barH);
+      ctx.fillStyle = CRIMSON;
+      ctx.fillRect(rect.x + labelW, yB, Math.max(1, wB), barH);
+
+      ctx.font = '10px "IBM Plex Mono", monospace';
+      ctx.textAlign = 'left'; ctx.fillStyle = SLATE;
+      ctx.fillText(r.a.toFixed(2) + r.u, rect.x + labelW + wA + 5, yA + barH / 2);
+      ctx.fillStyle = CRIMSON_DP;
+      ctx.fillText(r.b.toFixed(2) + r.u, rect.x + labelW + wB + 5, yB + barH / 2);
+
+      if (i < rows.length - 1) {
+        ctx.strokeStyle = 'rgba(92,102,112,.16)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(rect.x, y0 + rowH); ctx.lineTo(rect.x + rect.w, y0 + rowH); ctx.stroke();
+      }
+    });
+
+    ctx.save();
+    ctx.font = '10px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText('Vp/Vs  shale ' + (M.sh.Vp / M.sh.Vs).toFixed(2) +
+      '   ·   reservoir ' + M.res.VpVs.toFixed(2), rect.x, rect.y + rect.h + 5);
+    ctx.restore();
+
+    SEIS.frame(ctx, rect);
+  }
+
+  function drawRC(L) {
+    const ctx = SEIS.fitCanvas($('rcCanvas'), L.w.rc, L.h);
+    ctx.clearRect(0, 0, L.w.rc, L.h);
+    const rect = panelRect(L.w.rc, L.h, L.stacked ? 52 : 12);
+    const { M } = CACHE;
+    const yOf = yScale(rect, M.tEnd);
+    ctx.fillStyle = '#fff'; ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+
+    const peak = Math.max(0.05, M.iface.reduce((m, f) => Math.max(m, Math.abs(f.rc)), 0) * 1.35);
+    const cx = rect.x + rect.w / 2;
+    const xOf = (r) => cx + (r / peak) * (rect.w / 2) * 0.9;
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(92,102,112,.4)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(cx, rect.y); ctx.lineTo(cx, rect.y + rect.h); ctx.stroke();
+    ctx.restore();
+
+    const cmap = SEIS.COLORMAPS.bwr;
+    M.iface.forEach((f) => {
+      const y = yOf(f.t), x = xOf(f.rc);
+      const c = cmap(clamp(f.rc / peak, -1, 1) * 0.92);
+      const col = 'rgb(' + c.join(',') + ')';
+      ctx.save();
+      ctx.strokeStyle = col; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(cx, y); ctx.lineTo(x, y); ctx.stroke();
+      ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(x, y, 3.4, 0, 6.284); ctx.fill();
+      ctx.font = '10px "IBM Plex Mono", monospace';
+      ctx.textAlign = f.rc >= 0 ? 'left' : 'right';
+      ctx.textBaseline = 'bottom';
+      ctx.fillStyle = col === 'rgb(248,248,246)' ? SLATE : col;
+      ctx.fillText((f.rc > 0 ? '+' : '') + f.rc.toFixed(3), x + (f.rc >= 0 ? 6 : -6), y - 4);
+      ctx.restore();
+    });
+
+    SEIS.frame(ctx, rect);
+    if (L.stacked) SEIS.axisLeft(ctx, rect, 0, M.tEnd * 1000, '', (v) => v.toFixed(0));
+    SEIS.axisBottom(ctx, rect, -peak, peak, 'Reflection coefficient', (v) => v.toFixed(2));
+  }
+
+  function drawSynthetic(L) {
+    const ctx = SEIS.fitCanvas($('synCanvas'), L.w.syn, L.h);
+    ctx.clearRect(0, 0, L.w.syn, L.h);
+    const outer = panelRect(L.w.syn, L.h, L.stacked ? 52 : 12);
+    const { M, traceClean, traceNoisy, nt } = CACHE;
+
+    let peak = 1e-6;
+    for (let i = 0; i < nt; i++) peak = Math.max(peak, Math.abs(traceNoisy[i]), Math.abs(traceClean[i]));
+
+    const gap = 14;
+    const halfW = (outer.w - gap) / 2;
+    const rClean = { x: outer.x, y: outer.y, w: halfW, h: outer.h };
+    const rNoisy = { x: outer.x + halfW + gap, y: outer.y, w: halfW, h: outer.h };
+    const yOf = yScale(outer, M.tEnd);
+
+    function drawMini(rect, trace, label) {
+      SEIS.drawVarDensity(ctx, trace, 1, nt, rect, { cmap: SEIS.COLORMAPS.bwr, gain: 1, clip: peak });
+      const cx = rect.x + rect.w * 0.5;
+      const amp = rect.w * 0.30 / peak;
+      const xOf = (v) => cx + v * amp;
+
+      ctx.save();
+      ctx.beginPath(); ctx.rect(rect.x, rect.y, rect.w, rect.h); ctx.clip();
+      ctx.fillStyle = 'rgba(22,25,28,.32)';
+      ctx.beginPath(); ctx.moveTo(cx, rect.y);
+      for (let i = 0; i < nt; i++) ctx.lineTo(xOf(Math.max(0, trace[i])), rect.y + (i / (nt - 1)) * rect.h);
+      ctx.lineTo(cx, rect.y + rect.h); ctx.closePath(); ctx.fill();
+
+      ctx.strokeStyle = 'rgba(92,102,112,.45)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(cx, rect.y); ctx.lineTo(cx, rect.y + rect.h); ctx.stroke();
+
+      ctx.strokeStyle = 'rgba(22,25,28,.9)'; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let i = 0; i < nt; i++) {
+        const x = xOf(trace[i]), y = rect.y + (i / (nt - 1)) * rect.h;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.restore();
+
+      M.iface.forEach((f) => {
+        SEIS.dashedLine(ctx, rect.x, yOf(f.t), rect.x + rect.w, yOf(f.t), 'rgba(11,114,133,.55)', [3, 4], 1);
+      });
+      SEIS.frame(ctx, rect);
+
+      ctx.save();
+      ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      ctx.fillText(label, rect.x + rect.w / 2, rect.y - 12 >= 0 ? rect.y - 12 : rect.y + rect.h + 6);
+      ctx.restore();
+    }
+
+    ctx.save();
+    ctx.font = '10px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillText('clean', rClean.x + rClean.w / 2, rClean.y - 2);
+    ctx.fillText('+ noise', rNoisy.x + rNoisy.w / 2, rNoisy.y - 2);
+    ctx.restore();
+
+    drawMini(rClean, traceClean, '');
+    drawMini(rNoisy, traceNoisy, '');
+    if (L.stacked) SEIS.axisLeft(ctx, rClean, 0, M.tEnd * 1000, '', (v) => v.toFixed(0));
+  }
+
+  function drawBar(L) {
+    const wTot = $('rockCanvas').closest('.plot').clientWidth - 28;
+    const ctx = SEIS.fitCanvas($('cbarCanvas'), wTot, 30);
+    ctx.clearRect(0, 0, wTot, 30);
+    SEIS.drawColorbar(ctx, { x: 52, y: 4, w: Math.min(260, wTot - 70), h: 11 }, SEIS.COLORMAPS.bwr,
+      { left: '\u2212 RC  (impedance down)', right: '(impedance up)  + RC' });
+  }
+
+  function updateLegend() {
+    const cmap = SEIS.COLORMAPS.bwr;
+    const rgb = (v) => { const c = cmap(v); return 'rgb(' + c.join(',') + ')'; };
+    $('mainLegend').innerHTML =
+      '<span><i class="sw" style="background:' + rgb(0.85) + '"></i>positive RC (peak, impedance increases)</span>' +
+      '<span><i class="sw" style="background:' + rgb(-0.85) + '"></i>negative RC (trough, impedance decreases)</span>' +
+      '<span><i style="border-color:' + TEAL + ';border-top-style:dashed"></i>interface time</span>';
+
+    $('fluidLegend').innerHTML = ['brine', 'oil', 'gas'].map((f) => {
+      const c = FLUID_COLORS[f];
+      return '<span><i style="background:rgb(' + c.join(',') + ')"></i>' + f + '</span>';
+    }).join('');
+  }
+
+  function updateStats() {
+    const { M } = CACHE;
+    const dAI = M.res.AI - M.sh.Vp * M.sh.rho;
+    const top = M.iface[0], base = M.iface[1];
+    let verdict;
+    if (Math.abs(top.rc) < 0.02) {
+      verdict = 'Barely any impedance contrast at the top — this reservoir would be hard to even see.';
+    } else {
+      const dir = dAI < 0 ? 'a soft-over-hard, negative (trough) top reflection' : 'a hard-over-soft, positive (peak) top reflection';
+      verdict = 'This rock produces ' + dir + '. That pattern alone does not prove porosity, fluid, or ' +
+        'lithology caused it — several different rocks could produce the same sign and size of reflection.';
+    }
+    const rows = [
+      ['Lithology', S.lith === 'sandstone' ? 'Sandstone' : 'Shale'],
+      ['Porosity', Math.round(M.res.phi * 100) + '%'],
+      ['Pore fluid', S.fluid === 'brine' ? '100% brine' : Math.round(S.sat) + '% ' + S.fluid + ' + brine'],
+      ['Reservoir Vp / Vs', M.res.Vp.toFixed(2) + ' / ' + M.res.Vs.toFixed(2) + ' km/s'],
+      ['Reservoir impedance', M.res.AI.toFixed(2)],
+      ['RC top / base', (top.rc > 0 ? '+' : '') + top.rc.toFixed(3) + '  /  ' + (base.rc > 0 ? '+' : '') + base.rc.toFixed(3)],
+    ];
+    $('statsRow').innerHTML = rows.map(([k, v]) =>
+      '<div class="stat"><span>' + k + '</span><b>' + v + '</b></div>').join('') +
+      '<div class="stat wide"><span>What this reflection could mean</span><b>' + verdict + '</b></div>';
+  }
+
+  /* ------------------------------- render -------------------------------- */
+
+  function render() {
+    const L = layout();
+    const cols = $('panelRow').querySelectorAll('.panel-col');
+    ['rock', 'props', 'rc', 'syn'].forEach((k, i) => {
+      if (cols[i]) cols[i].style.width = L.w[k] + 'px';
+    });
+    drawRock(L); drawProps(L); drawRC(L); drawSynthetic(L);
+    drawBar(L); updateLegend(); updateStats();
+  }
+
+  function refresh() {
+    compute();
+    render();
+    SEIS.writeState(S, DEF);
+  }
+
+  /* ------------------------------ controls -------------------------------- */
+
+  function syncLabels() {
+    $('phiV').textContent = S.phi + '%';
+    $('satV').textContent = S.sat + '%';
+    $('apiV').textContent = S.api + '\u00b0';
+    $('freqV').textContent = S.f + ' Hz';
+
+    $('litSand').setAttribute('aria-pressed', S.lith === 'sandstone');
+    $('litShale').setAttribute('aria-pressed', S.lith === 'shale');
+    $('flBrine').setAttribute('aria-pressed', S.fluid === 'brine');
+    $('flOil').setAttribute('aria-pressed', S.fluid === 'oil');
+    $('flGas').setAttribute('aria-pressed', S.fluid === 'gas');
+    $('nzClean').setAttribute('aria-pressed', S.noise === 'clean');
+    $('nzMod').setAttribute('aria-pressed', S.noise === 'moderate');
+    $('nzNoisy').setAttribute('aria-pressed', S.noise === 'noisy');
+
+    $('satCtl').hidden = S.fluid === 'brine';
+    $('apiCtl').hidden = S.fluid !== 'oil';
+  }
+
+  function pushToInputs() {
+    $('phi').value = S.phi; $('sat').value = S.sat; $('api').value = S.api; $('freq').value = S.f;
+    $('preset').value = S.preset;
+  }
+
+  function markCustom() { S.preset = 'custom'; $('preset').value = 'custom'; }
+
+  function bump() { syncLabels(); refresh(); }
+
+  $('phi').addEventListener('input', () => { S.phi = parseFloat($('phi').value); markCustom(); bump(); });
+  $('sat').addEventListener('input', () => { S.sat = parseFloat($('sat').value); markCustom(); bump(); });
+  $('api').addEventListener('input', () => { S.api = parseFloat($('api').value); markCustom(); bump(); });
+  $('freq').addEventListener('input', () => { S.f = parseFloat($('freq').value); bump(); });
+
+  const toggle = (id, key, val, extra) => $(id).addEventListener('click', () => {
+    S[key] = val; if (extra) extra(); bump();
+  });
+  toggle('litSand', 'lith', 'sandstone', markCustom);
+  toggle('litShale', 'lith', 'shale', markCustom);
+  toggle('flBrine', 'fluid', 'brine', markCustom);
+  toggle('flOil', 'fluid', 'oil', markCustom);
+  toggle('flGas', 'fluid', 'gas', markCustom);
+  toggle('nzClean', 'noise', 'clean');
+  toggle('nzMod', 'noise', 'moderate');
+  toggle('nzNoisy', 'noise', 'noisy');
+
+  function applyPreset(name) {
+    const p = PRESETS[name];
+    if (!p) return;
+    S = Object.assign({}, S, p, { preset: name });
+    pushToInputs(); syncLabels(); refresh();
+  }
+
+  $('preset').addEventListener('change', () => applyPreset($('preset').value));
+  document.querySelectorAll('.setbtn[data-preset]').forEach((b) => {
+    b.addEventListener('click', () => applyPreset(b.dataset.preset));
+  });
+
+  $('resetBtn').addEventListener('click', () => {
+    S = Object.assign({}, DEF);
+    pushToInputs(); syncLabels(); refresh();
+  });
+  $('copyBtn').addEventListener('click', (e) => SEIS.copyLink(e.currentTarget));
+
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(render, 120); });
+
+  /* -------------------------------- quiz ---------------------------------- */
+
+  const QUIZ = [
+    {
+      q: 'You see a strong bright reflection over a reservoir. What could cause it?',
+      opts: ['Gas in the pore space', 'Higher porosity, even with brine', 'A change in lithology', 'More than one of these'],
+      correct: 3,
+      right: 'Right — and that\u2019s the whole point of this module.',
+      wrong: 'That\u2019s the trap.',
+      explain: 'Every one of the first three can produce a strong, bright reflection on its own. You just built two of them yourself. A bright spot narrows down the possibilities — it doesn\u2019t hand you one answer.',
+    },
+    {
+      q: 'A reservoir produces a strong negative reflection at its top. Does that prove the reservoir contains gas?',
+      opts: ['Yes', 'No', 'Only if the amplitude is large enough'],
+      correct: 1,
+      right: 'Right.',
+      wrong: 'That\u2019s the trap.',
+      explain: 'A strong negative reflection just means the reservoir has lower impedance than the shale above it. Gas is one way to get there. So is high porosity with ordinary brine, or a softer lithology. Amplitude size doesn\u2019t resolve the ambiguity — a bigger amplitude is still ambiguous, just louder.',
+    },
+    {
+      q: 'Reservoir A is a higher-porosity brine sand. Reservoir B is a lower-porosity sand carrying some gas. In this module, they produced nearly the same reflection coefficient. Which one contains gas?',
+      opts: ['Reservoir A', 'Reservoir B', 'We can\u2019t tell from the reflection amplitude alone'],
+      correct: 2,
+      right: 'Right — and you saw it happen in panel 3.',
+      wrong: 'That\u2019s the trap.',
+      explain: 'You can only tell them apart because this page told you which was which. In the field, all an interpreter has is the amplitude — and amplitude alone, as you just watched, can\u2019t distinguish a porosity effect from a fluid effect.',
+    },
+  ];
+
+  const quizState = QUIZ.map(() => ({ picked: null, answered: false }));
+
+  function renderQuiz() {
+    const wrap = $('quizWrap');
+    wrap.innerHTML = QUIZ.map((item, qi) => (
+      '<div class="quiz-q" id="quizQ' + qi + '">' +
+        '<p class="qno">Question ' + (qi + 1) + ' of ' + QUIZ.length + '</p>' +
+        '<p class="qtext">' + item.q + '</p>' +
+        '<div class="quiz-opts">' +
+          item.opts.map((o, oi) => (
+            '<label class="quiz-opt" data-oi="' + oi + '">' +
+              '<input type="radio" name="q' + qi + '" value="' + oi + '">' +
+              '<span>' + o + '</span>' +
+            '</label>'
+          )).join('') +
+        '</div>' +
+        '<button class="quiz-check" type="button" data-qi="' + qi + '">Check answer</button>' +
+        '<div class="quiz-fb" id="quizFb' + qi + '" hidden></div>' +
+      '</div>'
+    )).join('');
+
+    QUIZ.forEach((item, qi) => {
+      const qEl = $('quizQ' + qi);
+      qEl.querySelectorAll('.quiz-opt').forEach((label) => {
+        label.addEventListener('click', () => {
+          if (quizState[qi].answered) return;
+          qEl.querySelectorAll('.quiz-opt').forEach((l) => l.classList.remove('picked'));
+          label.classList.add('picked');
+        });
+      });
+      qEl.querySelector('.quiz-check').addEventListener('click', () => {
+        if (quizState[qi].answered) return;
+        const picked = qEl.querySelector('input[name="q' + qi + '"]:checked');
+        if (!picked) return;
+        const pi = parseInt(picked.value, 10);
+        quizState[qi] = { picked: pi, answered: true };
+        qEl.classList.add('answered');
+        qEl.querySelectorAll('.quiz-opt').forEach((label) => {
+          const oi = parseInt(label.dataset.oi, 10);
+          if (oi === item.correct) label.classList.add('correct-opt');
+        });
+        const isRight = pi === item.correct;
+        const fb = $('quizFb' + qi);
+        fb.hidden = false;
+        fb.className = 'quiz-fb ' + (isRight ? 'right' : 'wrong');
+        fb.innerHTML = '<b>' + (isRight ? item.right : item.wrong) + '</b>' + item.explain;
+        updateQuizScore();
+      });
+    });
+    updateQuizScore();
+  }
+
+  function updateQuizScore() {
+    const answered = quizState.filter((s) => s.answered).length;
+    const correct = quizState.filter((s, i) => s.answered && s.picked === QUIZ[i].correct).length;
+    $('quizScore').textContent = answered === 0 ? '' : correct + ' / ' + answered + ' correct so far';
+  }
+
+  /* -------------------------------- boot ----------------------------------- */
+
+  pushToInputs();
+  syncLabels();
+  refresh();
+  renderQuiz();
+  document.fonts && document.fonts.ready.then(render);
+})();
+</script>
+</body>
+</html>

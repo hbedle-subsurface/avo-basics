@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rock Physics &amp; AVO Lab</title>
+<meta name="description" content="Hands-on browser experiments in rock physics, fluid substitution, and AVO. Build a rock, watch its seismic response, and learn why a seismic response is evidence, not an answer.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <a class="brand" href="index.html"><span class="dot"></span>Rock Physics &amp; <b>AVO</b> Lab</a>
+    <nav>
+      <a href="#modules">Modules</a>
+      <a href="modules/build-a-rock.html">Start</a>
+    </nav>
+  </header>
+
+  <!-- =============================== HERO =============================== -->
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Rock physics, fluids, and AVO — from the ground up</p>
+        <h1 class="title">A seismic response is <em>evidence</em>, not an answer</h1>
+        <p class="lede">"Bright spot means gas" is a useful starting point and a dangerous rule. This site
+          lets you <strong>build the rock yourself</strong> — its lithology, its porosity, what's filling its
+          pores — and watch what that rock actually does to a seismic trace.</p>
+        <p class="lede">You'll find, quickly, that more than one rock can make the same trace. That's not a
+          bug in the physics. It's the reason seismic interpretation is a process of building plausible
+          models and ruling things out — not reading an answer off a screen.</p>
+        <p>
+          <a class="btn" href="modules/build-a-rock.html">Build a rock, make a seismic trace</a>
+        </p>
+      </div>
+
+      <div class="hero-panel">
+        <div style="padding:26px 6px;text-align:center">
+          <p class="eyebrow" style="justify-content:center">The core loop</p>
+          <p style="font-family:var(--mono);font-size:13px;color:var(--ink-soft);line-height:2.1;margin:0">
+            Rock model &nbsp;→&nbsp; rock properties &nbsp;→&nbsp; impedance<br>
+            &nbsp;→&nbsp; reflectivity &nbsp;→&nbsp; synthetic trace &nbsp;→&nbsp; noise &nbsp;→&nbsp; <b style="color:var(--crimson)">interpretation</b>
+          </p>
+        </div>
+        <div class="hero-cap">
+          <span>Change one thing. Watch how far it travels down the chain.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== PRIMER ============================== -->
+  <section class="primer">
+    <div class="primer-grid">
+      <div>
+        <h3>What do I know?</h3>
+        <span class="eq">observation</span>
+        <p>Start with what the seismic data actually shows — amplitude, polarity, shape — and nothing you
+          haven't verified.</p>
+      </div>
+      <div>
+        <h3>What could explain it?</h3>
+        <span class="eq">candidate models</span>
+        <p>Porosity, fluid, and lithology can each produce a similar-looking response. List the plausible
+          rocks before you pick one.</p>
+      </div>
+      <div>
+        <h3>What can I conclude?</h3>
+        <span class="eq">uncertainty, stated</span>
+        <p>Some models are ruled out. Some aren't. Saying so honestly is the actual skill this site is
+          teaching.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= MODULES ============================== -->
+  <section class="modules" id="modules">
+    <p class="eyebrow">The modules — in the order they build on each other</p>
+    <div class="card-grid">
+
+      <a class="card" href="modules/build-a-rock.html">
+        <div class="card-body">
+          <div class="card-no">01</div>
+          <h3>Build a rock, make a seismic trace</h3>
+          <p>Set a reservoir's lithology, porosity, and pore fluid. Watch rock properties become impedance,
+            impedance become reflectivity, and reflectivity become a noisy synthetic trace.</p>
+          <div class="q">Can you get the same amplitude two different ways?</div>
+        </div>
+        <span class="flag next">Start here</span>
+      </a>
+
+      <div class="card planned">
+        <div class="thumb"></div>
+        <div class="card-body">
+          <div class="card-no">02</div>
+          <h3>Same bright spot, different rock</h3>
+          <p>Given only a seismic response, how many geologically plausible rocks could have produced it?</p>
+        </div>
+        <span class="flag">Coming soon</span>
+      </div>
+
+      <div class="card planned">
+        <div class="thumb"></div>
+        <div class="card-body">
+          <div class="card-no">03</div>
+          <h3>Add offset</h3>
+          <p>Reflection coefficient isn't one number — it changes with angle. Introducing AVO.</p>
+        </div>
+        <span class="flag">Coming soon</span>
+      </div>
+
+      <div class="card planned">
+        <div class="thumb"></div>
+        <div class="card-body">
+          <div class="card-no">04</div>
+          <h3>Build an AVO response</h3>
+          <p>Intercept, gradient, and the AVO classes — built from your own rock models, not memorized.</p>
+        </div>
+        <span class="flag">Coming soon</span>
+      </div>
+
+      <div class="card planned">
+        <div class="thumb"></div>
+        <div class="card-body">
+          <div class="card-no">05</div>
+          <h3>AVO detective</h3>
+          <p>Interpret unknown reservoirs from their AVO response alone.</p>
+        </div>
+        <span class="flag">Coming soon</span>
+      </div>
+
+      <div class="card planned">
+        <div class="thumb"></div>
+        <div class="card-body">
+          <div class="card-no">06</div>
+          <h3>Can you fool yourself?</h3>
+          <p>Increasingly difficult scenarios built to teach the limits of AVO interpretation.</p>
+        </div>
+        <span class="flag">Coming soon</span>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="disclaimer">
+    <h4>What this site is, and isn't</h4>
+    <p>These modules are <b>teaching models, built to make ideas visible</b>. The rock physics is a real,
+      simplified Gassmann fluid-substitution model — not a shortcut past the physics — but every module leaves
+      things out on purpose (angle-independent reflectivity in Module 01, for instance) so the one idea in
+      focus stays visible. Use them to build intuition, not to evaluate a real prospect.</p>
+  </section>
+
+  <footer>
+    <div class="foot-grid">
+      <p>An interactive companion to <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a>'s
+        seismic-fundamentals teaching site, School of Geosciences, University of Oklahoma. Free to use or
+        adapt in your own courses with citation.</p>
+    </div>
+  </footer>
+</div>
+
+</body>
+</html>

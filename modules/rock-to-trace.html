@@ -17,6 +17,7 @@
     <a class="brand" href="../index.html"><span class="dot"></span>How AVO <b>actually</b> works</a>
     <nav>
       <a href="../index.html">All modules</a>
+      <a href="same-amplitude.html">Module 02</a>
       <a href="#pm">Method &amp; references</a>
     </nav>
   </header>
@@ -24,18 +25,18 @@
   <div class="mod-head">
     <p class="eyebrow">Module 01 &nbsp;·&nbsp; Rock physics to seismic</p>
     <h1>Build a rock, make a seismic trace</h1>
-    <p class="sub">A seismic amplitude is the far end of a chain. Grains and pores set a stiffness, the
-      fluid in the pores changes it, stiffness and density make an impedance, the contrast between two
-      impedances makes a reflection, a wavelet smears that reflection out in time, and noise sits on top of
-      the result. Every link in that chain throws something away. Build the rock at the top of this page
-      and follow what happens to it.</p>
+    <p class="sub">Several things have to happen between a rock and a seismic amplitude. Grains and pores set a
+      stiffness, the fluid in the pores changes it, stiffness and density make an impedance, the contrast
+      between two impedances makes a reflection, a wavelet smears that reflection out in time, and noise
+      sits on top of the result. Every one of those steps throws information away. Build the rock at the
+      top of this page and follow what happens to it.</p>
   </div>
 
   <div class="labhead">
     <div class="labgrid">
       <div>
-        <p class="cap">The whole chain <span>&mdash; rock, impedance, reflectivity, trace</span></p>
-        <canvas id="cChain" aria-label="The rock model, its impedance log, its reflectivity, and the resulting seismic trace"></canvas>
+        <p class="cap">Rock to trace <span>&mdash; the same reservoir at each step</span></p>
+        <canvas id="cStages" aria-label="The rock model, its impedance log, its reflectivity, and the resulting seismic trace"></canvas>
       </div>
       <div>
         <p class="cap">Build the reservoir <span>&mdash; every panel updates as you drag</span></p>
@@ -214,8 +215,10 @@
       <span class="hint">Two numbers into one, then only the contrast survives</span>
     </div>
     <p class="lede">Acoustic impedance is velocity times density. That is the whole definition, and it is
-      also the first place information goes missing, because it is a <b>product</b>. A fast light rock and
-      a slow heavy rock can have exactly the same impedance. Once you are looking at impedance you can no
+      also the first place information goes missing, because it is a <b>product</b>. If someone tells you
+      two numbers multiply to 12, you cannot say what they were: 3 and 4, or 2 and 6, or 1.5 and 8. Every
+      sample of an impedance log has done exactly that to a velocity and a density. A fast light rock and
+      a slow heavy rock land on the same impedance. Once you are looking at impedance you can no
       longer tell them apart, and seismic never sees anything but impedance.</p>
     <p class="lede">The second loss follows immediately. A reflection coefficient is the <b>contrast</b>
       between two impedances, normalized: R = (I₂ − I₁) / (I₂ + I₁). Double both layers and R does not
@@ -329,12 +332,13 @@
     <p class="lede">The panel on the right draws two <b>different rocks</b>: an oil sand at 30% porosity, and a brine sand at 35% porosity with no hydrocarbon in it at
       all. Read the two reflection coefficients. Then read the noise. Then decide whether you could tell
       these apart from a trace.</p>
-    <p class="lede">That is what the chain does. Grain size
+    <p class="lede">That is what every step here does. Grain size
       and sorting and cement and clay all collapse into one dry frame; the fluid enters only through a
-      single bulk modulus; velocity and density collapse into one impedance; two impedances collapse into
+      single bulk modulus; velocity and density are multiplied into one impedance; two impedances become
       one contrast; the wavelet blurs the contrast in time; and noise puts an error bar around what is
-      left. <b>Six numbers went in and one came out.</b> Running that backwards from the one number is
-      the job, and it does not have a unique answer.</p>
+      left. <b>Everything you set on this page — the porosity, the clay, the thickness, the shale, the
+      fluid and how much of it — arrives at the far end as a single number.</b> Working backwards from
+      that one number is the job, and it does not have a unique answer.</p>
 
     <div class="sec-row" id="row5">
       <div class="panel-col">
@@ -369,21 +373,21 @@
   <section class="tabpane" id="pw" role="tabpanel" hidden>
     <div class="plot-head">
       <h3><span class="stepno ref">W</span>Why it matters</h3>
-      <span class="hint">Where this chain is used in real work</span>
+      <span class="hint">Where this calculation is used in real work</span>
     </div>
     <p class="lede">Running rock properties forward to a synthetic trace is not an academic exercise. It is
       the routine that sits underneath most quantitative interpretation.</p>
     <ul class="lede" style="padding-left:20px">
       <li><b>Well ties.</b> A synthetic built from the sonic and density logs is compared with the seismic
-        at the well. Where they disagree, something in the chain is wrong, and knowing the chain is how you
-        work out which link.</li>
+        at the well. Where they disagree, one of the steps is wrong, and knowing the steps is how you work
+        out which one.</li>
       <li><b>Feasibility studies.</b> Before anyone shoots or reprocesses anything, the question is whether
         the fluid you are hoping for would even be visible in this rock at this depth. You answer it by
         building the rock and looking at the predicted contrast, which is what this page does.</li>
       <li><b>Fluid substitution on logs.</b> A well found brine. Would the same sand have shown an anomaly
         if it had held gas? Gassmann answers that, and the answer decides whether a nearby amplitude justifies a well.</li>
       <li><b>Forward modeling for interpretation.</b> Rather than inverting the seismic, propose several
-        geological models, push each one through the chain, and see which ones can produce the observed
+        geological models, push each one through the calculation, and see which ones can produce the observed
         response. More than one model usually survives.</li>
     </ul>
 
@@ -393,14 +397,13 @@
       parameter space also goes bright. The model demonstrated that gas is <em>sufficient</em> to explain
       the amplitude. Sufficiency is not the same as necessity, and it is not evidence for gas until you
       have shown that the plausible alternatives fail.</p>
-    <p class="lede">There is a second problem. Every number in the chain has an uncertainty, and some of
-      them are large. The clay bulk modulus used here is a value on which the published literature
+    <p class="lede">There is a second problem. Every number in the calculation has an uncertainty, and some of them are large. The clay bulk modulus used here is a value on which the published literature
       genuinely disagrees. Effective pressure comes from an assumed overburden. Saturation is barely
       constrained by amplitude at all, as step 2 showed. A synthetic trace is drawn as a single line, which hides all of that. The line should be a band, and the band is often wide enough to contain
       several different geological stories.</p>
 
     <div class="legend prose">
-      <span>Run the chain more than once. Change the thing you are least
+      <span>Run the calculation more than once. Change the thing you are least
         sure about — the shale, the porosity, the saturation, the clay — and see whether your conclusion
         survives. If one run of the model is the whole argument, the argument is weaker than it looks.</span>
     </div>
@@ -503,7 +506,7 @@
     </div>
 
     <p class="lede"><b>How it is computed.</b> Every panel is generated live from the controls in the
-      header; there are no stored images and no curves drawn to look plausible. The chain is: mineral mix
+      header; there are no stored images and no curves drawn to look plausible. The steps are: mineral mix
       by Voigt-Reuss-Hill, dry frame by the Dvorkin-Nur soft-sand model, pore fluid by Batzle-Wang, fluid
       mixing by the Reuss average, saturated bulk modulus by Gassmann, then Vp and Vs from the moduli and
       density, impedance, reflection coefficients, convolution with a Ricker wavelet, and band-limited
@@ -593,14 +596,15 @@
     <p class="eyebrow">Next up</p>
     <h3>02 · Same bright spot, different rock</h3>
     <p>You have already met one pair of rocks that share an amplitude. Module 02 goes looking for all of
-      them at once: hold the seismic response fixed and see the whole family of geological models that
-      could have produced it.</p>
+      them at once: hold the seismic response fixed and count the whole family of geological models that
+      could have produced it. There are 6,795 of them.</p>
+    <a class="btn" href="same-amplitude.html">Go to module 02 →</a>
     <a class="btn ghost" href="../index.html">All modules</a>
   </section>
 
   <div class="pager" id="pager" hidden>
     <a class="btn ghost" href="../index.html">← All modules</a>
-    <a class="btn ghost" href="../index.html">Module 02 (in preparation)</a>
+    <a class="btn ghost" href="same-amplitude.html">Module 02: same bright spot, different rock →</a>
   </div>
 
   <footer>
@@ -692,7 +696,7 @@
   const NOISE_NAME = ['clean', 'moderate', 'noisy'];
 
   /* =====================================================================
-     THE CHAIN
+     ROCK TO TRACE
      ===================================================================== */
 
   let D = {};
@@ -708,7 +712,7 @@
     }, over || {}));
   }
 
-  function chainFor(res, shale) {
+  function stagesFor(res, shale) {
     const rTop = ROCK.rcNormal(shale, res);
     const rBase = ROCK.rcNormal(res, shale);
     const tBase = T_TOP + 2 * (S.th / res.vp);
@@ -718,7 +722,7 @@
   function recompute() {
     const shale = ROCK.mudrock(S.shvp);
     const res = rockAt();
-    D = chainFor(res, shale);
+    D = stagesFor(res, shale);
     D.wav = SEIS.makeWavelet({ type: 'ricker', f: S.fr });
     D.spikes = [{ t: D.tTop, r: D.rTop }, { t: D.tBase, r: D.rBase }];
     D.trace = SEIS.traceFromSpikes(D.spikes, T0, DT, NT, D.wav);
@@ -887,11 +891,11 @@
   }
 
   /* =====================================================================
-     HEADER: the whole chain in one strip
+     HEADER: rock to trace, in one strip
      ===================================================================== */
 
-  function drawChain() {
-    const el = $('cChain');
+  function drawStages() {
+    const el = $('cStages');
     const w = pw(el), h = 208;
     const ctx = SEIS.fitCanvas(el, w, h);
     ctx.clearRect(0, 0, w, h);
@@ -956,7 +960,7 @@
   const IMP_RANGE = [3000, 12500];
 
   /* Vertical position of a two-way time inside a panel. Every panel in the
-     chain uses this, including the rock column, so the reservoir band lines up
+     strip uses this, including the rock column, so the reservoir band lines up
      across all four. It used to have its own thickness formula and therefore
      disagreed with the three panels next to it. */
   function yOf(t, R) {
@@ -1504,7 +1508,7 @@
   function drawAll() {
     syncLabels();
     if (visible('p1') || visible('p2') || visible('p3') || visible('p4') || visible('p5')) {
-      drawChain();
+      drawStages();
     }
     if (visible('p1')) drawStep1();
     if (visible('p2')) drawStep2();

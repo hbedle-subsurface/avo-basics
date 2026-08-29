@@ -3,6 +3,8 @@
 Interactive teaching modules on rock physics, fluid substitution and AVO.
 Heather Bedle, School of Geosciences, University of Oklahoma, with AASPI.
 
+Live at <https://hbedle-subsurface.github.io/avo-basics/>.
+
 Companion to [geometric-attributes](https://hbedle-subsurface.github.io/geometric-attributes/)
 and [seismic_resolution](https://hbedle-subsurface.github.io/seismic_resolution/).
 
@@ -13,6 +15,8 @@ and [seismic_resolution](https://hbedle-subsurface.github.io/seismic_resolution/
     assets/seismic.js            shared wavelets, traces, noise, plotting, URL state (copied, unchanged)
     assets/rockphysics.js        NEW: minerals, dry frames, Batzle-Wang fluids, Gassmann, Zoeppritz
     modules/rock-to-trace.html   Module 01 — build a rock, make a trace
+    modules/same-amplitude.html  Module 02 — same bright spot, different rock
+    modules/add-offset.html      Module 03 — add offset
     tools/                       verification; not deployed
 
 `assets/style.css` and `assets/seismic.js` are **copies**, not links to the other
@@ -23,12 +27,14 @@ it across and re-run the checks.
 ## Deploying
 
 Static files. Push to GitHub and enable Pages on the branch root. Nothing to
-build, no dependencies at runtime. `tools/`, `package.json` and `node_modules/`
-are development only and can be left out of the published branch.
+build, no dependencies at runtime. `tools/` and `package.json` are
+development only, but weigh a few KB and are worth keeping in the repo so the
+checks can be re-run later. `node_modules/` is gitignored.
 
 ## Verifying
 
-    ./tools/verify-all.sh
+    npm install        # once, pulls jsdom for the headless harness
+    npm test           # or: ./tools/verify-all.sh
 
 which runs, in order:
 
@@ -38,10 +44,21 @@ which runs, in order:
 | `harness.js` | the page boots, every `$(id)` resolves, every readout is populated, and 297 states per control produce no NaN |
 | `harness.js geometry` | nothing is drawn outside its canvas, at 7 viewport widths × 5 panes |
 | `harness.js tuning` | the tuning thickness the page *measures* matches √6·Vp/(4πf) |
-| `verify-prose.js` | every number quoted in the exercises, key points and Method tab still matches what the page computes |
+| `verify-prose.js` | every number module 01 quotes still matches what the page computes |
+| `verify-prose-m2.js` | the same for module 02, comparing values rather than strings |
+| `verify-prose-m3.js` | the same for module 03 |
 
-`verify-prose.js` is the one to re-run after any physics change. It is what stops
-the prose and the code drifting apart.
+The `verify-prose` scripts are the ones to re-run after any physics change.
+They extract the numbers from the prose and from the running page and compare
+them, so the text cannot quietly drift away from the code. Both are wired into
+`npm test`.
+
+Module 02 sweeps 457,560 forward models on every update. That is only fast
+enough because the dry frame, the pore fluid, the shale and the tuning factor
+are each tabulated once rather than recomputed per cell, and because the
+step 5 panel is memoized on the parameters that can actually change its answer.
+If you add a parameter to the search, check `tools/harness.js m2` still returns
+promptly before assuming it scales.
 
 ## Model choices worth knowing
 
@@ -51,7 +68,13 @@ the prose and the code drifting apart.
   upper bound and runs ~1500 m/s fast at 20% porosity.
 - **Shale:** empirical — Castagna mudrock for Vs, Gardner for density. A contact
   model does not apply to shale.
-- **Conditions:** 2000 m, 23 MPa effective, 64 °C, fixed. Overburden two-way
-  time pinned at 1.500 s so the time axis does not slide.
+- **Conditions:** 23 MPa effective, 64 °C, fixed in every module. In module 03
+  the depth slider changes the ray geometry only, deliberately not the effective
+  pressure, so the angle lesson is not confounded by the rock also stiffening.
+- **Ray geometry (module 03):** exact for a V(z) = 1600 + 0.6z overburden.
+  Rays are circular arcs, so the incidence angle is found by solving for the
+  ray parameter that lands on the requested offset, not by the straight-ray
+  shortcut — which under-reads the angle by 11.6° at 3 km offset on a 2 km
+  target.
 
 Each module's Method tab carries the full list of simplifications.

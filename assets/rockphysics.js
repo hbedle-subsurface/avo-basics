@@ -461,6 +461,51 @@ const ROCK = (function () {
   }
 
   /* ---------------------------------------------------------------------
+     TUNING
+
+     For a layer whose top and base reflections are equal and opposite, the
+     peak amplitude of the composite is R times a factor that depends ONLY on
+     the product of the wavelet's peak frequency and the two-way time across
+     the layer. Not on frequency and thickness separately: a 15 m layer at
+     40 Hz and a 20 m layer at 30 Hz tune identically.
+
+     That is worth having as a table, because it turns a convolution inside
+     every cell of a parameter sweep into one array lookup.
+
+     tuningTable(wfn, f) samples the factor against x = f * dt on 0..4.
+     For a Ricker the maximum is 1.4463 at x = sqrt(6)/2pi = 0.3898, which is
+     where the wavelet's own peak-to-trough separation matches the layer.
+     --------------------------------------------------------------------- */
+
+  const TUNE_N = 400, TUNE_MAX = 4;
+
+  function tuningTable(wfn, f) {
+    const tab = new Float64Array(TUNE_N + 1);
+    const span = 2.0 / f;
+    const step = span / 900;
+    for (let i = 0; i <= TUNE_N; i++) {
+      const dt = (i * TUNE_MAX / TUNE_N) / f;
+      let m = 0;
+      for (let t = -span; t < span + dt; t += step) {
+        const v = wfn(t) - wfn(t - dt);
+        if (Math.abs(v) > Math.abs(m)) m = v;
+      }
+      tab[i] = Math.abs(m);
+    }
+    tab[0] = 0;
+    return tab;
+  }
+
+  // Linear interpolation into a table from tuningTable(), x = f * dt.
+  function tuningAt(tab, x) {
+    if (!(x > 0)) return 0;
+    if (x >= TUNE_MAX) return 1;
+    const u = (x / TUNE_MAX) * TUNE_N;
+    const i = Math.floor(u), g = u - i;
+    return tab[i] + (tab[i + 1] - tab[i]) * g;
+  }
+
+  /* ---------------------------------------------------------------------
      SMALL UTILITIES
      --------------------------------------------------------------------- */
 
@@ -475,6 +520,7 @@ const ROCK = (function () {
     poisson, vp, vs, elastic, mudrock,
     fluidProps, poreFluid, rockModel,
     rcNormal, zoeppritz, akiRichards, shueyTerms, shuey,
+    tuningTable, tuningAt, TUNE_MAX,
     clamp,
   };
 })();

@@ -143,8 +143,8 @@
       <div class="stat wide"><span>Where the mass actually is</span><b id="s1f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>Density is the easy one, and it is worth getting it out of the way early: the bulk density of
-        the rock is just the volume-weighted average of the grains and the fluid. Nothing subtle happens.
+      <span>Density is the simple case. The bulk density of the rock is the volume-weighted
+        average of the grains and the fluid, and nothing subtle happens to it.
         Swap brine for gas and the density drops by an amount you can work out on paper. Stiffness is not
         like that at all, which is the subject of the next step.</span>
     </div>
@@ -161,13 +161,11 @@
       other. That is the left panel, and the fluid has no say in it at all.</p>
     <p class="lede">Then the pore fluid is put back. It resists being squeezed, so it stiffens the rock
       against compression — and only against compression. It does nothing whatever against shear, because a
-      fluid cannot support a shear stress. That single asymmetry is the origin of almost everything useful
-      in AVO. <b>This calculation is called Gassmann's equation</b>, and you have now seen what it does
-      before seeing what it looks like.</p>
-    <p class="lede">The right panel is where the surprise is. Put gas into a brine-filled rock and drag the
-      saturation up from zero. The curve does not slope. It <b>falls off a cliff in the first few percent
+      fluid cannot support a shear stress. That asymmetry is what makes fluid detection from seismic possible at all. <b>This calculation is called Gassmann's equation</b>, and you have now seen what it does
+      before meeting it as an equation.</p>
+    <p class="lede">Now put gas into a brine-filled rock and drag the saturation up from zero. The curve does not slope. It <b>falls off a cliff in the first few percent
       and then flattens out</b>, which means a rock with a trace of gas in it looks very nearly like a rock
-      full of gas. Interpreters call the trap that follows from this fizz water.</p>
+      full of gas. Interpreters call the trap that follows from this fizz gas.</p>
 
     <div class="sec-row" id="row2">
       <div class="panel-col">
@@ -205,7 +203,7 @@
         leaves it alone — but the rock got lighter, and Vs is the square root of stiffness over density, so
         losing mass with the same shear stiffness speeds the shear wave up. Vp meanwhile falls, because it
         lost far more stiffness than mass. Vp down and Vs up at the same time is a much stronger fluid
-        signature than either one alone, and it is the reason Vp/Vs and AVO exist.</span>
+        signature than either one alone, Vp/Vs and AVO both rest on it.</span>
     </div>
   </section>
 
@@ -223,8 +221,7 @@
       between two impedances, normalized: R = (I₂ − I₁) / (I₂ + I₁). Double both layers and R does not
       move. So the reflection tells you about the step, and nothing at all about the level. A big
       reflection means the two rocks are different, not that either one is unusual.</p>
-    <p class="lede">This is why the <b>shale velocity</b> slider matters so much and why it is on this
-      page at all. Leave the reservoir completely alone and change only the shale, and the reflection
+    <p class="lede">This is why there is a <b>shale velocity</b> slider on this page. Leave the reservoir completely alone and change only the shale, and the reflection
       changes anyway — it can even change sign. The anomaly you are looking at belongs to the pair of
       rocks, not to the reservoir.</p>
 
@@ -251,8 +248,7 @@
     </div>
     <div class="legend prose">
       <span>The top and base coefficients here are equal and opposite, because the rock above and the rock
-        below the reservoir are the same shale. Real reservoirs rarely have that courtesy, and when the
-        underlying unit differs the base reflection carries its own separate information. Keeping them
+        below the reservoir are the same shale. Real reservoirs rarely do, and when the underlying unit differs the base reflection carries its own separate information. Keeping them
         symmetric for now makes the wavelet interference in the next step much easier to read.</span>
     </div>
   </section>
@@ -309,7 +305,8 @@
       <div class="stat wide"><span>Is the reservoir resolved</span><b id="s4f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>The measured amplitude and the reflection coefficient are printed side by side on purpose. Away
+      <span>The measured amplitude and the reflection coefficient are printed side by side so you can compare them.
+        Away
         from tuning they agree to two decimal places; at tuning the measured amplitude runs about 45% above
         the reflection coefficient, so a thin dull reservoir can look identical to a thick bright one. This is
         a resolution question rather than a fluid question, and it is treated properly in the companion
@@ -326,14 +323,13 @@
       <span class="hint">The measurement has an error bar, and things hide inside it</span>
     </div>
     <p class="lede">Everything so far has been exact. Now add the last link. The panel on the left is the
-      same trace repeated with different noise realizations at the level set in the header — same rock,
-      same wavelet, different luck. Turn the noise up and watch how much of the amplitude you would report
+      same trace repeated with different noise realizations at the level set in the header — same rock, same wavelet,
+      a different noise realization each time. Turn the noise up and watch how much of the amplitude you would report
       is actually the noise.</p>
-    <p class="lede">The panel on the right is the point of the whole module. It draws two <b>different
-      rocks</b>: an oil sand at 30% porosity, and a brine sand at 35% porosity with no hydrocarbon in it at
+    <p class="lede">The panel on the right draws two <b>different rocks</b>: an oil sand at 30% porosity, and a brine sand at 35% porosity with no hydrocarbon in it at
       all. Read the two reflection coefficients. Then read the noise. Then decide whether you could tell
       these apart from a trace.</p>
-    <p class="lede">This is not a trick and it is not an edge case. It is what the chain does. Grain size
+    <p class="lede">That is what the chain does. Grain size
       and sorting and cement and clay all collapse into one dry frame; the fluid enters only through a
       single bulk modulus; velocity and density collapse into one impedance; two impedances collapse into
       one contrast; the wavelet blurs the contrast in time; and noise puts an error bar around what is
@@ -365,7 +361,7 @@
       <span>Those two rocks do differ in <b>Vp/Vs</b>, by a wide margin, and that is the thread module 03
         picks up. A single normal-incidence amplitude cannot see Vp/Vs, because at normal incidence no
         shear is involved. Tilt the ray and the shear properties start to contribute, and one measurement
-        becomes two. It does not make the problem go away. It makes it smaller.</span>
+        becomes two. It does not remove the ambiguity, but it does reduce it.</span>
     </div>
   </section>
 
@@ -383,30 +379,28 @@
         work out which link.</li>
       <li><b>Feasibility studies.</b> Before anyone shoots or reprocesses anything, the question is whether
         the fluid you are hoping for would even be visible in this rock at this depth. You answer it by
-        building the rock and looking at the predicted contrast, which is exactly what this page does.</li>
+        building the rock and looking at the predicted contrast, which is what this page does.</li>
       <li><b>Fluid substitution on logs.</b> A well found brine. Would the same sand have shown an anomaly
-        if it had held gas? Gassmann answers that, and the answer decides whether a nearby amplitude is
-        worth drilling.</li>
+        if it had held gas? Gassmann answers that, and the answer decides whether a nearby amplitude justifies a well.</li>
       <li><b>Forward modeling for interpretation.</b> Rather than inverting the seismic, propose several
         geological models, push each one through the chain, and see which ones can produce the observed
-        response. The plural matters.</li>
+        response. More than one model usually survives.</li>
     </ul>
 
-    <p class="lede">The way it misleads is more interesting than the way it works. A forward model is
-      persuasive in a way it has not earned. You built a gas sand, the synthetic went bright, and the real
+    <p class="lede">It misleads in two ways. The first is that a forward model can convince you of more
+      than it has shown. You built a gas sand, the synthetic went bright, and the real
       data is bright, so the reservoir contains gas — except that you never checked what else in your
       parameter space also goes bright. The model demonstrated that gas is <em>sufficient</em> to explain
       the amplitude. Sufficiency is not the same as necessity, and it is not evidence for gas until you
       have shown that the plausible alternatives fail.</p>
-    <p class="lede">The second failure is quieter. Every number in the chain has an uncertainty, and some
-      of them are large. The clay bulk modulus used here is a value on which the published literature
+    <p class="lede">There is a second problem. Every number in the chain has an uncertainty, and some of
+      them are large. The clay bulk modulus used here is a value on which the published literature
       genuinely disagrees. Effective pressure comes from an assumed overburden. Saturation is barely
-      constrained by amplitude at all, as step 2 showed. A synthetic trace is drawn as a single crisp line
-      and this hides all of it. The line should be a band, and the band is often wide enough to contain
+      constrained by amplitude at all, as step 2 showed. A synthetic trace is drawn as a single line, which hides all of that. The line should be a band, and the band is often wide enough to contain
       several different geological stories.</p>
 
     <div class="legend prose">
-      <span>The habit worth building is to run the chain more than once. Change the thing you are least
+      <span>Run the chain more than once. Change the thing you are least
         sure about — the shale, the porosity, the saturation, the clay — and see whether your conclusion
         survives. If one run of the model is the whole argument, the argument is weaker than it looks.</span>
     </div>
@@ -436,15 +430,15 @@
             relative to the shale. "Gas gives a bright spot" is false as stated; it is the combination of
             gas and a rock soft enough for the gas to matter, against a shale it can get below.</span></details></li>
 
-        <li><b>Watch the fizz-water trap happen.</b> Porosity 30%, fluid gas. Move saturation from 0% up in
+        <li><b>Watch the fizz-gas trap happen.</b> Porosity 30%, fluid gas. Move saturation from 0% up in
           small steps and read Vp and R after each move. How much gas do you need before you have most of
           the anomaly?
           <details class="reveal"><summary>Hint</summary><span class="ans">R goes −0.011 at 0% gas, −0.063
             at 2%, −0.091 at 5%, −0.110 at 10%, −0.125 at 20%, and −0.162 at 100%. Two percent gas has
             already produced 35% of the entire amplitude change; ten percent has produced 66%; twenty
-            percent has produced 76%. The whole span from 20% to 100% saturation is worth less than the
-            first two percent. This is why amplitude alone cannot distinguish a commercial gas column from
-            a residual gas or fizz-water zone, and why that distinction has been drilled wrong many
+            percent has produced 76%. The whole span from 20% to 100% saturation moves the amplitude less
+            than the first two percent does. This is why amplitude alone cannot distinguish a commercial gas column from
+            a residual gas or fizz-gas zone, and why that distinction has been drilled wrong many
             times.</span></details></li>
 
         <li><b>Change nothing about the reservoir and change the answer anyway.</b> Set a gas sand at 30%
@@ -524,7 +518,7 @@
     <p class="lede">The obvious alternative is Nur's critical-porosity model, K<sub>dry</sub> = K<sub>min</sub>(1 −
       φ/φ<sub>c</sub>), which is far simpler and is what many courses use. It is an upper bound, and at 20%
       porosity it gives a brine sand of 4679 m/s against the soft-sand model's 3202 m/s — a reflection
-      coefficient of +0.287 instead of +0.105. That is not a detail. The choice of dry-frame model changes
+      coefficient of +0.287 instead of +0.105. That is a larger effect than the fluid has. The choice of dry-frame model changes
       the answer by more than the fluid does, and any course that presents one model without saying so is
       hiding the largest uncertainty in the calculation.</p>
 
@@ -559,7 +553,7 @@
         past. Its amplitude is fixed in reflection-coefficient units rather than scaled to the signal, so
         that a weak reflector genuinely can be lost in it.</li>
       <li><b>The two shales are identical</b>, above and below, which makes the base reflection exactly
-        the negative of the top. Real sections rarely oblige.</li>
+        the negative of the top. Real sections seldom are.</li>
     </ul>
 
     <p class="lede"><b>Verification.</b> The physics is checked against closed forms rather than against
@@ -690,7 +684,10 @@
   const T_TOP = 1.500;         // s, two-way, held fixed on purpose
 
   // Trace window. Fixed, because an axis that rescales hides the change.
-  const T0 = 1.36, DT = 0.001, NT = 320;
+  // Wide enough for the longest wavelet tail (1.4/f = 70 ms at 20 Hz) either
+  // side of the deepest base reflection, and no wider, so the reservoir is not
+  // a hairline in a mostly empty panel.
+  const T0 = 1.42, DT = 0.001, NT = 240;
   const NOISE_RMS = [0, 0.015, 0.040];    // in reflection-coefficient units
   const NOISE_NAME = ['clean', 'moderate', 'noisy'];
 
@@ -859,7 +856,7 @@
   }
 
   function markHorizon(ctx, R, t, color, label, side) {
-    const y = R.y + ((t - T0) / ((NT - 1) * DT)) * R.h;
+    const y = yOf(t, R);
     if (y < R.y - 2 || y > R.y + R.h + 2) return;
     SEIS.dashedLine(ctx, R.x, y, R.x + R.w, y, color, [4, 3], 1.2);
     if (label) SEIS.tag(ctx, side === 'right' ? R.x + R.w - 2 : R.x + 3, y - 9,
@@ -929,7 +926,7 @@
 
     // 1. rock column
     let R = { x: x, y: top, w: wRock, h: hh };
-    drawRockColumn(ctx, R, 3);
+    drawRockColumn(ctx, R);
     cap(R.x + R.w / 2, 'rock');
     arrow(x + wRock); x += wRock + gap;
 
@@ -958,13 +955,21 @@
   const TRACE_SCALE = 0.32;      // fixed amplitude scale, never data-derived
   const IMP_RANGE = [3000, 12500];
 
+  /* Vertical position of a two-way time inside a panel. Every panel in the
+     chain uses this, including the rock column, so the reservoir band lines up
+     across all four. It used to have its own thickness formula and therefore
+     disagreed with the three panels next to it. */
+  function yOf(t, R) {
+    return R.y + ((t - T0) / ((NT - 1) * DT)) * R.h;
+  }
+
   /* Grains drawn at a radius that puts the right area fraction into solid,
      with the pore space colored by fluid. Speckle for partial saturation,
      because the mixing law assumed downstream is the uniform one. */
-  function drawRockColumn(ctx, R, resRows) {
+  function drawRockColumn(ctx, R) {
     const rnd = SEIS.mulberry32(20260828);
-    const hRes = Math.max(26, Math.min(R.h * 0.42, R.h * (S.th / 60) * 0.62 + 26));
-    const yRes = R.y + (R.h - hRes) / 2;
+    const yRes = yOf(D.tTop, R);
+    const hRes = Math.max(1.5, yOf(D.tBase, R) - yRes);
 
     ctx.save();
     // shale above and below
@@ -993,7 +998,7 @@
     }
     // grain pack
     const phi = S.phi / 100;
-    const pitch = Math.max(7, R.w / 9);
+    const pitch = Math.max(3.5, Math.min(R.w / 9, hRes / 2.6));
     const rMax = pitch / 2;
     const rad = rMax * Math.sqrt((1 - phi) / 0.95);
     ctx.fillStyle = grainColor();
@@ -1018,8 +1023,7 @@
   function drawImpedanceStrip(ctx, R) {
     ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
     const X = (I) => R.x + ((I - IMP_RANGE[0]) / (IMP_RANGE[1] - IMP_RANGE[0])) * R.w;
-    const yT = R.y + ((D.tTop - T0) / ((NT - 1) * DT)) * R.h;
-    const yB = R.y + ((D.tBase - T0) / ((NT - 1) * DT)) * R.h;
+    const yT = yOf(D.tTop, R), yB = yOf(D.tBase, R);
     ctx.save();
     ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
     ctx.strokeStyle = CRIM; ctx.lineWidth = 2;
@@ -1040,7 +1044,7 @@
     const x0 = R.x + R.w / 2;
     SEIS.dashedLine(ctx, x0, R.y, x0, R.y + R.h, 'rgba(92,102,112,0.45)', [3, 3], 1);
     const drawSpike = (t, r, color) => {
-      const y = R.y + ((t - T0) / ((NT - 1) * DT)) * R.h;
+      const y = yOf(t, R);
       if (y < R.y || y > R.y + R.h) return;
       ctx.save();
       ctx.strokeStyle = color; ctx.lineWidth = 2.4; ctx.lineCap = 'butt';
@@ -1063,7 +1067,7 @@
     let ctx = SEIS.fitCanvas($('c1rock'), w, 300);
     ctx.clearRect(0, 0, w, 300);
     const R = { x: 8, y: 16, w: w - 90, h: 268 };
-    const geom = drawRockColumn(ctx, R, 6);
+    const geom = drawRockColumn(ctx, R);
     SEIS.tag(ctx, R.x + R.w + 6, R.y + 16, 'shale', SLATE, 'left');
     SEIS.tag(ctx, R.x + R.w + 6, geom.yRes + geom.hRes / 2, 'reservoir', CRIM, 'left');
     SEIS.tag(ctx, R.x + R.w + 6, R.y + R.h - 16, 'shale', SLATE, 'left');

@@ -35,7 +35,7 @@
   <div class="labhead">
     <div class="labgrid">
       <div>
-        <p class="cap">Your gather, and the curve behind it <span>&mdash; amplitude against angle</span></p>
+        <p class="cap">Your gather, and the same thing as a curve <span>&mdash; one point per trace</span></p>
         <canvas id="cGather" aria-label="An angle gather for the current model beside the reflection coefficient plotted against incidence angle"></canvas>
       </div>
       <div>
@@ -168,11 +168,21 @@
     <p class="lede">Tilt the ray and that stops being true. An obliquely incident P wave sets the interface
       moving partly sideways, which shears it, and part of the energy converts into a shear wave. From that
       moment the shear velocities of <b>both</b> rocks appear in the answer.</p>
-    <p class="lede">The panel below is the cleanest demonstration of it in this whole site. It takes one
-      rock and changes <b>only its shear velocity</b>, by fifteen percent either way, leaving Vp and
-      density exactly alone. Look at the left edge of the plot: the three curves start from the identical
-      point, because at zero offset Vs has no effect whatsoever. Then follow them right. By thirty degrees
-      they are far apart.</p>
+    <p class="lede"><b>How to read the curve.</b> Every one of these plots is a gather, redrawn. A
+      gather is a set of traces recorded at increasing distance from the source, and each trace has its own
+      reflection strength. Line those strengths up left to right and you get the curve. So the left edge
+      of any curve on this page is the trace recorded almost straight above the reservoir, the right edge
+      is the one recorded from furthest away, and the height of the line is simply how strong the
+      reflection is on that trace. The header at the top of the page shows both pictures side by side, and
+      so does every step from here on.</p>
+    <p class="lede">The panels below are the cleanest demonstration of what offset adds in this whole
+      site. They take one rock and change <b>only its shear velocity</b>, by fifteen percent either way,
+      leaving Vp and density exactly alone. Look at the left edge of the curves: all three start from the
+      identical point, because at zero offset Vs has no effect whatsoever. Then follow them right. By
+      thirty degrees they are far apart.</p>
+    <p class="lede">The gathers beside them say the same thing in the form you would meet it on a
+      workstation. The near traces of all three rocks are indistinguishable. The far traces are obviously
+      different. That difference is the only place the shear information lives.</p>
     <p class="lede">That is the whole reason AVO exists. Vs is the property that responds differently to a
       gas fill than Vp does, and normal incidence cannot see it at all.</p>
 
@@ -183,9 +193,9 @@
         <canvas id="c2vs" aria-label="Reflection coefficient against angle for three shear velocities, with compressional velocity and density held constant"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> The same, read at two angles
-          <span class="note">identical at zero, spread at thirty</span></p>
-        <canvas id="c2bar" aria-label="Reflection coefficients at zero and thirty degrees for the three shear velocities"></canvas>
+        <p class="sublabel"><b>2</b> The same three rocks, as gathers
+          <span class="note">identical on the left, different on the right</span></p>
+        <canvas id="c2bar" aria-label="Gathers for the three shear velocities, identical at near offset and separating at far offset"></canvas>
       </div>
     </div>
 
@@ -198,8 +208,8 @@
       <div class="stat wide"><span>What the far offsets are telling you</span><b id="s2f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>Density is worth a word too. It appears at every angle, including zero, so it is tangled up
-        with Vp in the near-offset amplitude and cannot be separated from it there either. What offset
+      <span>Density deserves a word too. It appears at every angle, including zero, so it stays tangled
+        up with Vp in the near-offset amplitude and cannot be separated from it there either. What offset
         adds is specifically the shear information, and only that.</span>
     </div>
   </section>
@@ -309,14 +319,18 @@
     </div>
     <p class="lede">Modules 01 and 02 each ended with two rocks that produced identical zero-offset
       amplitudes. Now they can be tested properly, because there is a second measurement to test them
-      with. Both pairs are drawn below over the full angle range, with a shaded band showing your noise
-      level so you can see whether the separation is one you could actually measure.</p>
-    <p class="lede"><b>The left pair is module 01's</b>: an oil sand at 30% porosity against a plain brine
-      sand at 35%. Their zero-offset amplitudes differ by 0.0001. Their Vp/Vs values differ by 0.21, which
+      with.</p>
+    <p class="lede">The first panel asks the only question that matters: <b>how far apart do the two rocks
+      get, and is that further apart than the noise?</b> It plots the gap between each pair against angle.
+      Above the shaded band the difference is measurable; inside it, it is not. One line climbs out. The
+      other does not. The two panels beside it are the four rocks themselves, drawn as gathers, so you can
+      look at what the two answers mean.</p>
+    <p class="lede"><b>The middle panel is module 01's pair</b>: an oil sand at 30% porosity against a
+      plain brine sand at 35%. Their zero-offset amplitudes differ by 0.0001. Their Vp/Vs values differ by 0.21, which
       is a lot, so the curves pull apart steadily and by thirty degrees the gap is 0.0256 — comfortably
       outside a clean or moderate noise level. <b>Offset breaks this tie.</b></p>
-    <p class="lede"><b>The right pair is module 02's</b>: a 30% porosity sand full of gas against a 34%
-      porosity sand with only a tenth as much gas in it. Here Vp/Vs differs by 0.07 rather than 0.21, and
+    <p class="lede"><b>The right panel is module 02's pair</b>: a 30% porosity sand full of gas against
+      a 34% porosity sand with only a tenth as much gas in it. Here Vp/Vs differs by 0.07 rather than 0.21, and
       the curves stay close. At thirty degrees the gap is 0.0123, which is smaller than the moderate noise
       level. <b>Offset does not break this tie</b>, and no amount of processing will, because the
       information is not in the data.</p>
@@ -327,14 +341,19 @@
 
     <div class="sec-row" id="row5">
       <div class="panel-col">
-        <p class="sublabel"><b>1</b> Oil against brine
-          <span class="note">module 01's pair — resolved</span></p>
-        <canvas id="c5a" aria-label="Reflection coefficient against angle for an oil sand and a brine sand with identical zero-offset amplitudes"></canvas>
+        <p class="sublabel"><b>1</b> How far apart the two rocks get
+          <span class="note">above the line you can measure it</span></p>
+        <canvas id="c5a" aria-label="The amplitude difference between each pair of rocks plotted against incidence angle, with the noise level marked"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> Gas against fizz gas
-          <span class="note">module 02's pair — not resolved</span></p>
-        <canvas id="c5b" aria-label="Reflection coefficient against angle for a fully gas-saturated sand and a low-saturation sand with identical zero-offset amplitudes"></canvas>
+        <p class="sublabel"><b>2</b> Oil against brine
+          <span class="note">module 01's pair — the far traces differ</span></p>
+        <canvas id="c5b" aria-label="Gathers for the oil sand and the brine sand, which have identical near traces"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>3</b> Gas against fizz gas
+          <span class="note">module 02's pair — they stay alike</span></p>
+        <canvas id="c5c" aria-label="Gathers for the fully gas-saturated sand and the low-saturation sand, which stay alike at every offset"></canvas>
       </div>
     </div>
 
@@ -347,9 +366,11 @@
       <div class="stat wide"><span>Which of these you could tell apart</span><b id="s5f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>The separation grows with angle in both cases, so a wider angle range helps both. That is the
-        real argument for long offsets in AVO work, and it is worth reading against step 1: on a deep
-        target the offsets that would give you those angles may not exist in the survey at all.</span>
+      <span>Both gaps grow with angle, so a wider angle range helps both, and that is the real argument
+        for long offsets in AVO work. Read it against step 1 though: on a deep target the offsets that
+        would give you those angles may not exist in the survey at all. The grey region on the first panel
+        is the angles beyond what you are recording, and moving the depth slider will push it left across
+        the part of the curve you needed.</span>
     </div>
   </section>
 
@@ -669,17 +690,20 @@
     D.r0 = D.rc(0);
   }
 
-  function traceAt(angle, seed) {
-    const rt = D.rc(angle), rb = D.rcBase(angle);
+    function traceFor(rock, angle, seed) {
+    const rt = ROCK.zoeppritz(D.shale, rock, angle);
+    const rb = ROCK.zoeppritz(rock, D.shale, angle);
     if (!isFinite(rt) || !isFinite(rb)) return null;
+    const dt = 2 * THICK / rock.vp;
     const tr = SEIS.traceFromSpikes(
-      [{ t: 0, r: rt }, { t: D.dtRes, r: rb }], TR0, DT, NT, WAV);
+      [{ t: 0, r: rt }, { t: dt, r: rb }], TR0, DT, NT, WAV);
     if (!NOISE[S.nz]) return tr;
     const n = SEIS.bandLimitedNoise(1, NT, DT, WAV, seed, 0);
     const out = new Float32Array(NT);
     for (let i = 0; i < NT; i++) out[i] = tr[i] + n[i] * NOISE[S.nz];
     return out;
   }
+  const traceAt = (angle, seed) => traceFor(D.res, angle, seed);
 
   /* The two pairs from the earlier modules, recomputed live so they follow
      the shale slider rather than being frozen numbers in the prose. */
@@ -831,17 +855,58 @@
     ctx.stroke(); ctx.restore();
   }
 
-  function drawGather(ctx, R) {
+    /* A gather is what an interpreter actually looks at, so every abstract curve
+     in this module has one of these beside it. Each column is one trace, from
+     straight above the reservoir on the left to the widest angle on the right. */
+  function drawGather(ctx, R, opts) {
+    const o = opts || {};
+    const rock = o.rock || D.res;
+    const n = o.n || NTRACE;
+    const seed = o.seed || 4001;
     ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    const cw = R.w / NTRACE;
-    for (let i = 0; i < NTRACE; i++) {
-      const tr = traceAt(D.angles[i], 4001 + i * 13);
+    const cw = R.w / n;
+    for (let i = 0; i < n; i++) {
+      const ang = (i / (n - 1)) * D.angMax;
+      const tr = traceFor(rock, ang, seed + i * 13);
       if (!tr) continue;
-            wiggleCol(ctx, { x: R.x + i * cw, y: R.y, w: cw, h: R.h }, tr, R);
+      wiggleCol(ctx, { x: R.x + i * cw, y: R.y, w: cw, h: R.h }, tr, R);
     }
+    const dt = 2 * THICK / rock.vp;
     SEIS.dashedLine(ctx, R.x, yOf(0, R), R.x + R.w, yOf(0, R), CRIM, [4, 3], 1.2);
-    SEIS.dashedLine(ctx, R.x, yOf(D.dtRes, R), R.x + R.w, yOf(D.dtRes, R), TEAL, [4, 3], 1.2);
+    SEIS.dashedLine(ctx, R.x, yOf(dt, R), R.x + R.w, yOf(dt, R), TEAL, [4, 3], 1.2);
     SEIS.frame(ctx, R);
+  }
+
+  /* A labelled mini-gather: caption on top, traces below. Used wherever the
+     lesson is "these two look the same" or "these two do not". */
+  function gatherCard(ctx, R, rock, lines, color) {
+    ctx.save();
+    ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h);
+    ctx.fillStyle = color || CRIM; ctx.fillRect(R.x, R.y, R.w, 3);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    let yy = R.y + 9;
+    lines.forEach((ln, k) => {
+      ctx.fillStyle = k === 0 ? INK : SLATE;
+      ctx.font = (k === 0 ? '600 12px' : '11.5px') + ' "IBM Plex Sans", sans-serif';
+      ctx.fillText(ln, R.x + R.w / 2, yy);
+      yy += k === 0 ? 17 : 15;
+    });
+    ctx.restore();
+    const g = { x: R.x + 4, y: yy + 6, w: R.w - 8, h: R.y + R.h - yy - 24 };
+    if (g.h > 30) {
+      drawGather(ctx, g, { rock, n: 8, seed: 5000 + Math.round(rock.vp) });
+      ctx.save();
+      ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
+      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      ctx.fillText('near', g.x, g.y + g.h + 4);
+      ctx.textAlign = 'right';
+      ctx.fillText('far', g.x + g.w, g.y + g.h + 4);
+      ctx.restore();
+    }
+    ctx.save();
+    ctx.strokeStyle = 'rgba(22,25,28,.28)'; ctx.lineWidth = 1;
+    ctx.strokeRect(R.x + 0.5, R.y + 0.5, R.w - 1, R.h - 1);
+    ctx.restore();
   }
 
   const relAxis = (ctx, R) => SEIS.axisLeft(ctx, R, TR0 * 1000, (TR0 + (NT - 1) * DT) * 1000,
@@ -863,7 +928,7 @@
     ctx.save();
     ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
     ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-    ctx.fillText('the gather', R.x + R.w / 2, 4);
+        ctx.fillText('what you would see', R.x + R.w / 2, 4);
     ctx.restore();
 
     const cx = 34 + gw + 34;
@@ -1023,36 +1088,21 @@
     legendRow(ctx, R, [[TEAL, 'Vs \u2212 15%', false], [CRIM, 'your rock', false],
                        [ORANGE, 'Vs + 15%', false]]);
 
-    // the same, read at two angles
-    ctx = SEIS.fitCanvas($('c2bar'), w, 320);
-    ctx.clearRect(0, 0, w, 320);
-    R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 320 - M.t - M.b - 22 };
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    zeroLine(ctx, R, yr);
-    const groups = [0, 30];
-    const gw = R.w / groups.length;
-    ctx.save();
-    groups.forEach((ang, gi) => {
-      vars.forEach((v, i) => {
-        const val = ROCK.zoeppritz(D.shale, v, ang);
-        if (!isFinite(val)) return;
-        const bw = gw * 0.2;
-        const x = R.x + gi * gw + gw * 0.15 + i * bw;
-        const y0 = R.y + R.h - ((0 - yr[0]) / (yr[1] - yr[0])) * R.h;
-        const y1 = R.y + R.h - ((val - yr[0]) / (yr[1] - yr[0])) * R.h;
-        ctx.fillStyle = cols[i];
-        ctx.fillRect(x, Math.min(y0, y1), bw * 0.86, Math.abs(y1 - y0));
-      });
-      ctx.fillStyle = SLATE;
-      ctx.font = '11px "IBM Plex Sans", sans-serif';
-      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-      ctx.fillText(ang + '°', R.x + gi * gw + gw * 0.5, R.y + R.h + 6);
+    // the same three rocks, as gathers — what you would actually be looking at
+    ctx = SEIS.fitCanvas($('c2bar'), w, 330);
+    ctx.clearRect(0, 0, w, 330);
+    R = { x: 4, y: M.t, w: w - 8, h: 330 - M.t - 20 };
+    const names = ['Vs \u2212 15%', 'your rock', 'Vs + 15%'];
+    const cw3 = R.w / 3;
+    vars.forEach((v, i) => {
+      const r0 = ROCK.zoeppritz(D.shale, v, 0);
+      const rf = ROCK.zoeppritz(D.shale, v, D.angMax);
+      gatherCard(ctx, { x: R.x + i * cw3 + 2, y: R.y, w: cw3 - 4, h: R.h }, v,
+        [names[i],
+         'near ' + (isFinite(r0) ? r0.toFixed(3) : '\u2014'),
+         'far  ' + (isFinite(rf) ? rf.toFixed(3) : '\u2014')],
+        cols[i]);
     });
-    ctx.restore();
-    SEIS.frame(ctx, R);
-    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'reflection coefficient', (v) => v.toFixed(2), { ticks: 4 });
-    legendRow(ctx, R, [[TEAL, 'Vs \u2212 15%', false], [CRIM, 'your rock', false],
-                       [ORANGE, 'Vs + 15%', false]]);
 
     const spreadAt = (ang) => {
       const v = vars.map((q) => ROCK.zoeppritz(D.shale, q, ang)).filter(isFinite);
@@ -1202,49 +1252,57 @@
      ===================================================================== */
 
   function drawStep5() {
-    const w = rowWidth('row5', 2);
+    const w = rowWidth('row5', 3);
     const P = pairs();
     const ts = []; for (let t = 0; t <= ANGMAX; t += 0.5) ts.push(t);
+    const sep = (a2, b2, t) =>
+      Math.abs(ROCK.zoeppritz(D.shale, a2, t) - ROCK.zoeppritz(D.shale, b2, t));
 
-    const panel = (id, a, b, la, lb) => {
-      const ctx = SEIS.fitCanvas($(id), w, 330);
-      ctx.clearRect(0, 0, w, 330);
-      const R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 330 - M.t - M.b - 22 };
-      ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-      const yr = [-0.34, 0.06];
-      const va = ts.map((t) => ROCK.zoeppritz(D.shale, a, t));
-      const vb = ts.map((t) => ROCK.zoeppritz(D.shale, b, t));
-      zeroLine(ctx, R, yr);
-      shadeBand(ctx, R, 0, D.angMax, [0, ANGMAX], 'rgba(11,114,133,0.10)');
-      // the noise band, drawn around one curve so the comparison is honest
-      if (NOISE[S.nz] > 0) {
-        ctx.save();
-        ctx.fillStyle = 'rgba(132,22,23,0.12)';
-        ctx.beginPath();
-        ts.forEach((t, i) => {
-          const x = R.x + (t / ANGMAX) * R.w;
-          const y = R.y + R.h - ((va[i] + NOISE[S.nz] - yr[0]) / (yr[1] - yr[0])) * R.h;
-          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        });
-        for (let i = ts.length - 1; i >= 0; i--) {
-          const x = R.x + (ts[i] / ANGMAX) * R.w;
-          const y = R.y + R.h - ((va[i] - NOISE[S.nz] - yr[0]) / (yr[1] - yr[0])) * R.h;
-          ctx.lineTo(x, y);
-        }
-        ctx.closePath(); ctx.fill(); ctx.restore();
-      }
-      curve(ctx, R, ts, va, [0, ANGMAX], yr, CRIM, 2.6);
-      curve(ctx, R, ts, vb, [0, ANGMAX], yr, TEAL, 2.6, [5, 4]);
-      SEIS.frame(ctx, R);
-      SEIS.axisBottom(ctx, R, 0, ANGMAX, 'incidence angle (deg)', (v) => v.toFixed(0), { ticks: 5 });
-      SEIS.axisLeft(ctx, R, yr[0], yr[1], 'reflection coefficient', (v) => v.toFixed(2), { ticks: 5 });
-      legendRow(ctx, R, [[CRIM, la, false], [TEAL, lb, true],
-        ...(NOISE[S.nz] > 0 ? [[SLATE, 'shaded = ' + NOISE_NAME[S.nz] + ' noise', false]] : [])]);
+    /* Both pairs on ONE axis, against the noise. The question this step asks is
+       "can I measure the difference", and that is a single readable picture:
+       does the line climb out of the shaded band or not. */
+    let ctx = SEIS.fitCanvas($('c5a'), w, 340);
+    ctx.clearRect(0, 0, w, 340);
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 340 - M.t - M.b - 38 };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const yr = [0, 0.06];
+    if (NOISE[S.nz] > 0) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(132,22,23,0.13)';
+      const yTop = R.y + R.h - ((Math.min(NOISE[S.nz], yr[1]) - yr[0]) / (yr[1] - yr[0])) * R.h;
+      ctx.fillRect(R.x, yTop, R.w, R.y + R.h - yTop);
+      ctx.restore();
+      SEIS.dashedLine(ctx, R.x, R.y + R.h - ((NOISE[S.nz]) / yr[1]) * R.h,
+        R.x + R.w, R.y + R.h - ((NOISE[S.nz]) / yr[1]) * R.h, CRIM, [4, 3], 1.4);
+    }
+    shadeBand(ctx, R, D.angMax, ANGMAX, [0, ANGMAX], 'rgba(22,25,28,0.07)');
+    curve(ctx, R, ts, ts.map((t) => sep(P.oil, P.brn, t)), [0, ANGMAX], yr, CRIM, 2.8);
+    curve(ctx, R, ts, ts.map((t) => sep(P.gas, P.fizz, t)), [0, ANGMAX], yr, TEAL, 2.8, [5, 4]);
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, 0, ANGMAX, 'incidence angle (deg)', (v) => v.toFixed(0), { ticks: 5 });
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'gap between the two rocks',
+      (v) => v.toFixed(3), { ticks: 4, grid: true });
+    legendRow(ctx, R, [[CRIM, 'oil vs brine', false], [TEAL, 'gas vs fizz gas', true],
+      ...(NOISE[S.nz] > 0 ? [[SLATE, 'below the line you cannot measure it', false]] : [])]);
+
+    // the four rocks themselves, as gathers, two panels
+    const cardPanel = (id, a2, b2, la, lb) => {
+      const c = SEIS.fitCanvas($(id), w, 340);
+      c.clearRect(0, 0, w, 340);
+      const RR = { x: 2, y: M.t, w: w - 4, h: 340 - M.t - 20 };
+      const half = RR.w / 2;
+      const mk = (rock, label, color) => [
+        label,
+        'near ' + ROCK.zoeppritz(D.shale, rock, 0).toFixed(3),
+        'far  ' + (isFinite(ROCK.zoeppritz(D.shale, rock, D.angMax))
+          ? ROCK.zoeppritz(D.shale, rock, D.angMax).toFixed(3) : '\u2014'),
+      ];
+      gatherCard(c, { x: RR.x + 2, y: RR.y, w: half - 4, h: RR.h }, a2, mk(a2, la), CRIM);
+      gatherCard(c, { x: RR.x + half + 2, y: RR.y, w: half - 4, h: RR.h }, b2, mk(b2, lb), TEAL);
     };
-    panel('c5a', P.oil, P.brn, 'oil, 30% porosity', 'brine, 35% porosity');
-    panel('c5b', P.gas, P.fizz, 'gas, 30% porosity, full', 'gas, 34% porosity, 10% Sg');
+    cardPanel('c5b', P.oil, P.brn, 'oil, 30%', 'brine, 35%');
+    cardPanel('c5c', P.gas, P.fizz, 'gas, 30%', 'fizz, 34%');
 
-    const sep = (a, b, t) => Math.abs(ROCK.zoeppritz(D.shale, a, t) - ROCK.zoeppritz(D.shale, b, t));
     const o0 = sep(P.oil, P.brn, 0), o30 = sep(P.oil, P.brn, 30);
     const g0 = sep(P.gas, P.fizz, 0), g30 = sep(P.gas, P.fizz, 30);
     const nz = NOISE[S.nz];
@@ -1252,10 +1310,10 @@
     set('s5b', o30.toFixed(4));
     set('s5c', g0.toFixed(4));
     set('s5d', g30.toFixed(4));
-    set('s5e', nz === 0 ? 'clean — no noise' : '\u00b1' + nz.toFixed(3) + ' (' + NOISE_NAME[S.nz] + ')');
+    set('s5e', nz === 0 ? 'clean \u2014 no noise' : '\u00b1' + nz.toFixed(3) + ' (' + NOISE_NAME[S.nz] + ')');
     set('s5f', nz === 0
-      ? 'with no noise, both — but at 30° the oil pair separates ' +
-        (o30 / g30).toFixed(1) + '× as far as the gas pair'
+      ? 'with no noise, both \u2014 but at 30\u00b0 the oil pair separates ' +
+        (o30 / g30).toFixed(1) + '\u00d7 as far as the gas pair'
       : (o30 > nz ? 'the oil and brine sands, yes' : 'the oil and brine sands, no') + '; ' +
         (g30 > nz ? 'the gas and fizz sands, yes' : 'the gas and fizz sands, no'));
   }

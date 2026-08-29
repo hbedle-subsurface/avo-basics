@@ -1,5 +1,5 @@
 /* ===========================================================================
-   rockphysics.js — mineral mixing, dry frames, fluids, Gassmann, reflectivity 
+   rockphysics.js — mineral mixing, dry frames, fluids, Gassmann, reflectivity
    "How AVO Actually Works"
    Heather Bedle / AASPI / University of Oklahoma
    Vanilla JS, no dependencies, no build step.
@@ -461,6 +461,82 @@ const ROCK = (function () {
   }
 
   /* ---------------------------------------------------------------------
+     OFFSET TO INCIDENCE ANGLE
+
+     AVO is a function of ANGLE, but a gather is recorded against OFFSET, and
+     the conversion is where a lot of quiet error enters. Two things go wrong
+     with the usual shortcut:
+
+       - The straight-ray estimate, tan(theta) = (x/2)/z, ignores refraction.
+         Velocity rises with depth, so by Snell's law the ray is steadily bent
+         away from vertical and arrives at the target FLATTER in the shallow
+         section than a straight line suggests, which means the angle at the
+         reflector is LARGER than the straight-ray value. Several degrees at
+         short offset, and well over ten degrees at long offset.
+
+       - The same offset is a completely different angle at a different depth.
+         A 3 km offset is a wide angle on a shallow target and a narrow one on
+         a deep target.
+
+     For a linearly increasing velocity, V(z) = V0 + k z, rays are circular
+     arcs and the geometry has a closed form, so this is solved exactly rather
+     than approximated:
+
+        X(p) = (cos(theta0) - cos(thetaZ)) / (p k)
+        T(p) = (1/k) ln[ (Vz/V0) (1 + cos(theta0)) / (1 + cos(thetaZ)) ]
+
+     with sin(theta) = p V at each depth. Given an offset, p is found by
+     bisection. Returns null when no ray reaches the reflector at that offset,
+     which is a real limit rather than an error.
+     --------------------------------------------------------------------- */
+
+  function rayLinearGradient(p, z, V0, k) {
+    const Vz = V0 + k * z;
+    if (p * Vz >= 1 || p * V0 >= 1) return null;      // ray turns before the target
+    const c0 = Math.sqrt(1 - p * p * V0 * V0);
+    const cz = Math.sqrt(1 - p * p * Vz * Vz);
+    if (k < 1e-9) {
+      const th = Math.asin(p * V0);
+      return { x: 2 * z * Math.tan(th), t: 2 * z / (V0 * Math.cos(th)), theta: th };
+    }
+    return {
+      x: 2 * (c0 - cz) / (p * k),
+      t: 2 * (1 / k) * Math.log((Vz / V0) * ((1 + c0) / (1 + cz))),
+      theta: Math.asin(p * Vz),
+    };
+  }
+
+  /* Incidence angle at a horizontal reflector at depth z, for a given
+     source-receiver offset, in a V(z) = V0 + k z overburden. Radians. */
+  function angleFromOffset(offset, z, V0, k) {
+    if (offset <= 0) return 0;
+    const Vz = V0 + k * z;
+    let lo = 0, hi = (1 / Vz) * (1 - 1e-9);
+    // the arc length grows monotonically with p, so bisection is safe
+    for (let i = 0; i < 60; i++) {
+      const mid = 0.5 * (lo + hi);
+      const r = rayLinearGradient(mid, z, V0, k);
+      if (!r || r.x > offset) hi = mid; else lo = mid;
+    }
+    const r = rayLinearGradient(lo, z, V0, k);
+    return r ? r.theta : NaN;
+  }
+
+  // The shortcut this replaces, kept so a module can show the difference.
+  function angleStraightRay(offset, z) {
+    return Math.atan((offset / 2) / z);
+  }
+
+  // Vertical two-way time and RMS velocity through the same overburden.
+  function overburden(z, V0, k) {
+    const Vz = V0 + k * z;
+    const t = k < 1e-9 ? z / V0 : Math.log(Vz / V0) / k;     // one-way
+    // Vrms^2 = (1/t) * integral V^2 dt = (1/t) * integral V dz
+    const intVdz = k < 1e-9 ? V0 * z : (Vz * Vz - V0 * V0) / (2 * k);
+    return { t0: 2 * t, vrms: Math.sqrt(intVdz / t), vavg: z / t, vint: Vz };
+  }
+
+  /* ---------------------------------------------------------------------
      TUNING
 
      For a layer whose top and base reflections are equal and opposite, the
@@ -521,6 +597,7 @@ const ROCK = (function () {
     fluidProps, poreFluid, rockModel,
     rcNormal, zoeppritz, akiRichards, shueyTerms, shuey,
     tuningTable, tuningAt, TUNE_MAX,
+    rayLinearGradient, angleFromOffset, angleStraightRay, overburden,
     clamp,
   };
 })();

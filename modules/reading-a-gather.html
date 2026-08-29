@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading a gather you did not make | How AVO Actually Works</title>
+<meta name="description" content="What noise and a limited angle range do to an AVO fit: why the gradient is so much less stable than the intercept, why the two errors are tied together, and whether the rocks the earlier modules separated can still be told apart.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <a class="brand" href="../index.html"><span class="dot"></span>How AVO <b>actually</b> works</a>
+    <nav>
+      <a href="../index.html">All modules</a>
+      <a href="what-survives.html">Module 06</a>
+      <a href="#pm">Method &amp; references</a>
+    </nav>
+  </header>
+
+  <div class="mod-head">
+    <p class="eyebrow">Module 05 &nbsp;·&nbsp; Amplitude versus offset</p>
+    <h1>Reading a gather you did not make</h1>
+    <p class="sub">Every fit in module 04 was made to exact amplitudes over whatever angle range you asked
+      for. Real gathers do not oblige. The amplitudes carry noise, the angle range is whatever the
+      acquisition and the mute left you, and the two numbers you extract are estimates with error bars
+      rather than measurements. This module puts sizes on those error bars, and then asks whether the
+      rocks the earlier modules separated can still be told apart.</p>
+  </div>
+
+  <div class="labhead">
+    <div class="labgrid">
+      <div>
+        <p class="cap">Your gather, and the line fitted to it <span>&mdash; press the button to re-record it</span></p>
+        <canvas id="cHead" aria-label="A noisy gather beside the amplitudes picked from it plotted against sine squared theta, with the fitted line and the true curve"></canvas>
+      </div>
+      <div>
+        <p class="cap">The rock, and the survey that recorded it <span>&mdash; both set the error bars</span></p>
+        <div class="controls" id="mainControls">
+          <div class="ctl-col">
+            <h2>The rock</h2>
+            <div class="ctl">
+              <label for="phi">Porosity <span class="val" id="phiV">30%</span></label>
+              <input type="range" data-key="phi" id="phi" min="5" max="35" step="1" value="30">
+            </div>
+            <div class="ctl">
+              <label for="shvp">Shale velocity <span class="val" id="shvpV">2700 m/s</span></label>
+              <input type="range" data-key="shvp" id="shvp" min="2300" max="3100" step="50" value="2700">
+            </div>
+            <div class="ctl">
+              <label>Fluid <span class="val" id="flV">gas</span></label>
+              <div class="seg" id="segFluid">
+                <button type="button" data-fl="brine" aria-pressed="false">Brine</button>
+                <button type="button" data-fl="oil" aria-pressed="false">Oil</button>
+                <button type="button" data-fl="gas" aria-pressed="true">Gas</button>
+              </div>
+            </div>
+            <div class="ctl">
+              <label for="sat">Hydrocarbon saturation <span class="val" id="satV">100%</span></label>
+              <input type="range" data-key="sat" id="sat" min="0" max="100" step="5" value="100">
+            </div>
+
+            <h2>The gather you were given</h2>
+            <div class="ctl">
+              <label for="amax">Widest angle after the mute <span class="val" id="amaxV">30°</span></label>
+              <input type="range" data-key="amax" id="amax" min="12" max="45" step="1" value="30">
+            </div>
+            <div class="ctl">
+              <label for="ntr">Traces in the gather <span class="val" id="ntrV">16</span></label>
+              <input type="range" data-key="ntr" id="ntr" min="5" max="48" step="1" value="16">
+            </div>
+            <div class="ctl">
+              <label>Noise <span class="val" id="nzV">moderate</span></label>
+              <div class="seg" id="segNoise">
+                <button type="button" data-nz="0" aria-pressed="false">Clean</button>
+                <button type="button" data-nz="1" aria-pressed="true">Moderate</button>
+                <button type="button" data-nz="2" aria-pressed="false">Noisy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="tabhint">Work through the five steps in order, <b>then try the exercises</b>.
+    Method and references are there when you want them.</p>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
+    <button role="tab" data-tab="p1" aria-selected="false">1 · One fit</button>
+    <button role="tab" data-tab="p2" aria-selected="false">2 · Which moves</button>
+    <button role="tab" data-tab="p3" aria-selected="false">3 · Angle range</button>
+    <button role="tab" data-tab="p4" aria-selected="false">4 · Tied together</button>
+    <button role="tab" data-tab="p5" aria-selected="false">5 · Separable?</button>
+    <button role="tab" data-tab="pw" aria-selected="false">Why it matters</button>
+    <span class="gap"></span>
+    <button role="tab" data-tab="pe" aria-selected="false">Exercises</button>
+    <button role="tab" data-tab="pk" aria-selected="false">Key points</button>
+    <button role="tab" data-tab="pm" aria-selected="false">Method</button>
+  </nav>
+
+  <!-- =============================== STEP 1 =============================== -->
+  <section class="tabpane" id="p1" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">1</span>The same rock, recorded twice</h3>
+      <span class="hint">Two answers from one piece of geology</span>
+    </div>
+    <p class="lede">The gather in the header has noise on it. Picking the amplitude of the top reflection
+      on each trace gives the scattered points in the panel below, and the line fitted through them gives
+      an intercept and a gradient. That is the whole measurement, and it is what every AVO product in a
+      survey is built from.</p>
+    <p class="lede">Press <b>record it again</b>. The rock has not changed by so much as a percent of
+      porosity. The survey has not changed. Only the particular noise on this particular gather has
+      changed, and the answer moves. The grey lines are the previous attempts, kept so you can watch them
+      accumulate into a fan.</p>
+    <p class="lede">Notice which end of the fan is tight and which end is loose. Near zero the lines pass
+      through nearly the same point. Out at the far offsets they spread widely. <b>The fit is anchored at
+      the near end and waves about at the far end</b>, and everything else in this module follows from
+      that one picture.</p>
+
+    <div class="sec-row" id="row1">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The picks, and the line through them
+          <span class="note">grey lines are earlier recordings</span></p>
+        <canvas id="c1fit" aria-label="Picked amplitudes plotted against sine squared theta with the fitted line, the true curve, and previous fits shown faintly"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> What each attempt gave you
+          <span class="note">truth is the top row</span></p>
+        <canvas id="c1tab" aria-label="A table of the intercept and gradient recovered by each recording, against the true values"></canvas>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <button type="button" class="btn small" id="btnAgain">Record it again</button>
+      <button type="button" class="btn ghost small" id="btnClear">Clear the fan</button>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>True intercept</span><b id="s1a">—</b></div>
+      <div class="stat"><span>True gradient</span><b id="s1b">—</b></div>
+      <div class="stat key"><span>This recording gave</span><b id="s1c">—</b></div>
+      <div class="stat"><span>Error in the intercept</span><b id="s1d">—</b></div>
+      <div class="stat"><span>Error in the gradient</span><b id="s1e">—</b></div>
+      <div class="stat wide"><span>Recordings so far</span><b id="s1f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The truth is drawn as a curve rather than a line, because it is one. Even with no noise at all
+        the fitted line could not pass through every point, so part of the error you see is the
+        approximation from module 03 rather than the noise. With any realistic noise level that part is
+        the smaller of the two.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 2 =============================== -->
+  <section class="tabpane" id="p2" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">2</span>The gradient takes almost all the damage</h3>
+      <span class="hint">Same noise on every trace, very different consequences</span>
+    </div>
+    <p class="lede">Rather than pressing the button a hundred times, the page does it for you. The two
+      histograms below are a thousand recordings of the same rock, showing where the recovered intercept
+      landed and where the recovered gradient landed. Both are centred on the truth. What differs is the
+      width.</p>
+    <p class="lede">The numbers underneath give the ratio, and it is large. At a 0–30° fit the gradient's scatter is
+      about eight times the intercept's. Narrow the angle range and the ratio grows;
+      widen it and the ratio shrinks. <b>It does not depend on the noise level at all</b> — doubling the
+      noise doubles both scatters and leaves the ratio exactly where it was. The ratio is a property of the
+      geometry of the fit, not of the data quality.</p>
+    <p class="lede">The reason is in step 1's picture. The intercept is read where all the lines converge;
+      the gradient is read from how much they fan apart. A fit that is well anchored at one end is
+      necessarily loose about its slope.</p>
+
+    <div class="sec-row" id="row2">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> A thousand recordings
+          <span class="note">both centred on the truth</span></p>
+        <canvas id="c2hist" aria-label="Histograms of the recovered intercept and gradient over a thousand simulated recordings"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> The same, as error bars
+          <span class="note">drawn to the same scale</span></p>
+        <canvas id="c2bars" aria-label="The uncertainty in the intercept and in the gradient drawn as error bars on a common scale"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Uncertainty in the intercept</span><b id="s2a">—</b></div>
+      <div class="stat key"><span>Uncertainty in the gradient</span><b id="s2b">—</b></div>
+      <div class="stat key"><span>Ratio</span><b id="s2c">—</b></div>
+      <div class="stat"><span>Gradient error as a share of the gradient</span><b id="s2d">—</b></div>
+      <div class="stat"><span>Intercept error as a share of the intercept</span><b id="s2e">—</b></div>
+      <div class="stat wide"><span>If you doubled the noise</span><b id="s2f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>These are computed from the standard formula for a straight-line fit rather than by simulating,
+        so they are exact. The histograms are simulated, and the fact that the two agree is checked in the
+        test suite: a thousand recordings reproduce the formula's widths to within a percent or two.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 3 =============================== -->
+  <section class="tabpane" id="p3" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">3</span>The angle range is the lever arm</h3>
+      <span class="hint">Where the mute goes decides what the gradient is worth</span>
+    </div>
+    <p class="lede">The gradient's uncertainty depends on how far apart your angles are spread, and on
+      nothing else about them. That makes the mute — a processing decision, often made for reasons that
+      have nothing to do with AVO — one of the largest controls on the quality of an AVO product.</p>
+    <p class="lede">Drag the <b>widest angle</b> slider and watch the curve on the left. Cutting from 40°
+      back to 20° roughly triples the uncertainty in the gradient. Cutting to 15° multiplies it by more
+      than six. The rock is identical throughout; so is the noise on each trace.</p>
+    <p class="lede">The panel on the right shows the other lever, which is the number of traces. It helps,
+      but only as the square root: to halve the error you need four times as many traces. Adding fold is
+      expensive and adding angle range is often free — it is a mute parameter — which is worth knowing
+      before commissioning a reprocessing.</p>
+
+    <div class="sec-row" id="row3">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Gradient uncertainty against angle range
+          <span class="note">your mute is marked</span></p>
+        <canvas id="c3ang" aria-label="Uncertainty in the fitted gradient plotted against the widest angle included in the fit"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> And against the number of traces
+          <span class="note">square-root returns</span></p>
+        <canvas id="c3n" aria-label="Uncertainty in the fitted gradient plotted against the number of traces in the gather"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Your angle range</span><b id="s3a">—</b></div>
+      <div class="stat key"><span>Gradient uncertainty now</span><b id="s3b">—</b></div>
+      <div class="stat"><span>If the mute cut you to 20°</span><b id="s3c">—</b></div>
+      <div class="stat"><span>If you reached 40°</span><b id="s3d">—</b></div>
+      <div class="stat"><span>Traces needed to match a 40° fit</span><b id="s3e">—</b></div>
+      <div class="stat wide"><span>What the angle range is worth</span><b id="s3f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>There is a limit to how far this argument goes. Module 03 showed the two-term approximation
+        losing accuracy past about thirty degrees and the far offsets being where NMO stretch, anisotropy
+        and residual moveout do their worst. Wider is better for the arithmetic of the fit and worse for
+        the assumptions behind it, and the best angle range is a compromise rather than a maximum.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 4 =============================== -->
+  <section class="tabpane" id="p4" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">4</span>The two errors are tied together</h3>
+      <span class="hint">You cannot be wrong about one without being wrong about the other</span>
+    </div>
+    <p class="lede">Intercept and gradient are usually treated as two independent measurements. They are
+      not. They come from one fit to one set of points, so if the noise happens to pull the fitted line up
+      at the near end, the line has to tilt down more steeply to still pass through the far points. The two
+      errors compensate for each other.</p>
+    <p class="lede">The cloud on the left is a thousand recordings plotted on module 04's crossplot. It is
+      not a circle. It is a <b>tilted ellipse</b>, leaning the same way as the background trend, and the correlation between the two
+      errors is −0.742.</p>
+    <p class="lede">This has a consequence worth knowing. A quantity measured <em>along</em> the long axis
+      of that ellipse is badly determined, and one measured <em>across</em> it is much better determined
+      than either the intercept or the gradient alone. Distance from the background trend is close to the
+      second kind, which is part of why it is a more stable discriminator than the gradient by itself —
+      though the readouts below show the gain is modest rather than dramatic.</p>
+
+    <div class="sec-row" id="row4">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> A thousand recordings on the crossplot
+          <span class="note">an ellipse, not a blob</span></p>
+        <canvas id="c4ell" aria-label="A cloud of recovered intercept and gradient pairs on the crossplot, forming a tilted ellipse"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Which quantity survives best
+          <span class="note">scatter relative to the thing measured</span></p>
+        <canvas id="c4cmp" aria-label="Comparison of the relative uncertainty in the intercept, the gradient and the distance from the background trend"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat key"><span>Correlation between the two errors</span><b id="s4a">—</b></div>
+      <div class="stat"><span>Uncertainty along the ellipse</span><b id="s4b">—</b></div>
+      <div class="stat"><span>Uncertainty across it</span><b id="s4c">—</b></div>
+      <div class="stat"><span>Distance off trend, and its uncertainty</span><b id="s4d">—</b></div>
+      <div class="stat"><span>Gradient, and its uncertainty</span><b id="s4e">—</b></div>
+      <div class="stat wide"><span>Is distance off the trend the more robust measure</span><b id="s4f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>A correlation of −0.742 also means that quoting the two numbers with separate error bars, as is
+        usual, overstates how much you know. The pair is constrained to a band, not to a rectangle, and any
+        interpretation that treats them as independent is using information that is not there.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 5 =============================== -->
+  <section class="tabpane" id="p5" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">5</span>Can you still tell the rocks apart?</h3>
+      <span class="hint">Module 03's answer, retested against the error bars</span>
+    </div>
+    <p class="lede">Module 03 ended by drawing two pairs of rocks and reporting how far apart their curves
+      got: the oil-against-brine pair separated by 0.0256 at thirty degrees and the gas-against-fizz pair
+      by only 0.0123. Those were exact separations between exact curves. Now they can be compared against
+      the error bars you actually get.</p>
+    <p class="lede">The useful measure is the separation divided by its own uncertainty — how many standard
+      deviations apart the two answers are. Below about two, the two clouds overlap enough that a single
+      measurement cannot choose between them.</p>
+    <p class="lede">The result deserves to be stated plainly, because it walks back a claim. <b>At moderate noise the oil and brine sands separate by 1.54 standard deviations in gradient</b>,
+      which is suggestive and not conclusive. At high noise it drops to about half a standard deviation,
+      which is nothing. The fizz pair does not reach one standard deviation even at moderate noise.
+      Module 03 said offset breaks the first tie and not the second. With real error bars the honest
+      version is that offset <em>weakens</em> the first tie and leaves the second where it was.</p>
+
+    <div class="sec-row" id="row5">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Oil against brine, with error bars
+          <span class="note">two clouds, and how much they overlap</span></p>
+        <canvas id="c5a" aria-label="The recovered intercept and gradient clouds for an oil sand and a brine sand, showing their overlap"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Gas against fizz gas
+          <span class="note">the clouds sit on top of each other</span></p>
+        <canvas id="c5b" aria-label="The recovered intercept and gradient clouds for a full gas sand and a low saturation sand, showing near total overlap"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Oil vs brine, gradient difference</span><b id="s5a">—</b></div>
+      <div class="stat key"><span>…in standard deviations</span><b id="s5b">—</b></div>
+      <div class="stat"><span>Gas vs fizz, gradient difference</span><b id="s5c">—</b></div>
+      <div class="stat key"><span>…in standard deviations</span><b id="s5d">—</b></div>
+      <div class="stat"><span>Angle range needed for the oil pair to reach 2σ</span><b id="s5e">—</b></div>
+      <div class="stat wide"><span>What you could honestly report</span><b id="s5f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>One consolation: a survey has many traces at many locations, and an anomaly that is consistent
+        over an area is far better evidence than any single gather. That is a real and large effect, and it
+        is why AVO works at all despite everything on this page. It is also why a single-location AVO
+        result, quoted without its spatial context, deserves very little weight.</span>
+    </div>
+  </section>
+
+  <!-- ============================ WHY IT MATTERS =========================== -->
+  <section class="tabpane" id="pw" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">W</span>Why it matters</h3>
+      <span class="hint">Working with an estimate rather than a measurement</span>
+    </div>
+    <p class="lede">The practical content of this module is that an AVO gradient is an estimate with a
+      large and computable error bar, and that almost nothing in a normal workflow displays that error
+      bar.</p>
+    <ul class="lede" style="padding-left:20px">
+      <li><b>Compute the error bar; it is free.</b> The uncertainty follows from the angle range, the
+        number of traces and an estimate of the noise. All three are known. There is no excuse for a
+        gradient volume without an uncertainty volume beside it.</li>
+      <li><b>Argue about the mute.</b> Step 3 shows the mute deciding the quality of the answer. If AVO
+        matters on a project, the mute is an AVO parameter and should be chosen with the AVO in mind
+        rather than inherited from the stacking flow.</li>
+      <li><b>Do not treat intercept and gradient as independent.</b> Their errors are correlated at −0.742. Anything that combines them — a fluid factor, a projection, a crossplot cut-off — needs the
+        covariance, not two separate error bars.</li>
+      <li><b>Weight consistency over magnitude.</b> A moderate anomaly that holds together across a
+        mapped area is stronger evidence than a large one at a single location, because the errors this
+        module describes are largely independent from trace to trace and the geology is not.</li>
+    </ul>
+
+    <p class="lede">The failure this module is built against is the confident gradient map. It is a
+      continuous, colourful, plausible-looking volume, and at any single location a substantial part of
+      what it shows is noise. Interpreters know this in the abstract and then pick features off it anyway,
+      because the display gives no clue which features are supported.</p>
+    <p class="lede">The second failure is quieter and it is this site's own. Module 03 reported that
+      adding offset separates the oil sand from the brine sand, and that was true of the exact curves.
+      Step 5 shows that at a realistic noise level the separation is 1.54 standard deviations. Anything computed from noise-free models will overstate what a method can do, and this
+      set of modules is not exempt from that.</p>
+
+    <div class="legend prose">
+      <span>The question to carry away is short: how many standard deviations apart are the answers I am
+        trying to choose between? It needs an estimate of the noise, the angle range and the fold, and it
+        can be answered before any data is loaded.</span>
+    </div>
+  </section>
+
+  <!-- ============================== EXERCISES ============================= -->
+  <section class="tabpane" id="pe" role="tabpanel" hidden>
+    <div class="tryit" style="max-width:none">
+      <h3>Exercises</h3>
+      <ol>
+        <li><b>Watch the fan open.</b> With the defaults, press <b>record it again</b> ten times and watch
+          where the lines agree and where they disagree.
+          <details class="reveal"><summary>Hint</summary><span class="ans">The lines all pass close to the
+            same point at the left-hand edge and spread out towards the right. That is the whole of this
+            module in one picture. The fit is pinned where the data is dense in sin²θ — near zero — and
+            has almost nothing holding its slope at the far end. Every result that follows, the eight-and-
+            a-half-times ratio, the lever-arm effect of the mute, the tilted error ellipse, is a
+            restatement of that fan.</span></details></li>
+
+        <li><b>Prove the ratio is geometry, not data quality.</b> Read the intercept and gradient
+          uncertainties in step 2 at moderate noise, then switch to noisy and read them again.
+          <details class="reveal"><summary>Hint</summary><span class="ans">At moderate noise the uncertainties are 0.0056 and 0.0466, a
+            ratio of 8.3. At noisy they are 0.0149 and 0.1244 — both about 2.7 times larger, and the ratio
+            is 8.3 again. Doubling the noise doubles both and changes
+            nothing about their relationship. The ratio depends only on how the angles are distributed, so
+            it can be worked out from the acquisition geometry alone, before anyone looks at the
+            data.</span></details></li>
+
+        <li><b>Cost out the mute.</b> In step 3, read the gradient uncertainty at 40°, then at 30°, then at
+          20°, then at 15°.
+          <details class="reveal"><summary>Hint</summary><span class="ans">With moderate noise and 16 traces the gradient uncertainty runs
+            0.0280 at 40°, 0.0466 at 30°, 0.1002 at 20° and 0.1753 at 15° — a factor of 6.3 across that
+            span. Meanwhile the intercept barely moves. A mute decision
+            taken to tidy up a stack can quietly cost most of the information in the gradient, and nothing
+            downstream will announce it.</span></details></li>
+
+        <li><b>Find out what more traces are worth.</b> In step 3, raise the trace count from 16 to 48 and
+          read the gradient uncertainty at each.
+          <details class="reveal"><summary>Hint</summary><span class="ans">Sixteen traces give 0.0466 and forty-eight give 0.0281, a factor
+            of 1.66 for three times the data. Theory says √3 = 1.73; the small shortfall is because adding
+            traces also changes how the angles are distributed, not just how many there are. Compare that
+            with exercise 3, where going from a 20° mute to a 40° mute improved the gradient by a factor of
+            3.6 at no cost in acquisition at all. Angle range is by far the cheaper lever.</span></details></li>
+
+        <li><b>Retest module 03's conclusion.</b> In step 5, read how many standard deviations separate
+          each pair at moderate noise, then at noisy.
+          <details class="reveal"><summary>Hint</summary><span class="ans">At moderate noise the oil and brine sands are 1.54 standard
+            deviations apart in gradient and the gas and fizz sands 0.81. At high noise they fall to 0.58
+            and 0.31. Widening the mute to 35° would bring the oil pair to two sigma; nothing brings the
+            fizz pair there. Two standard deviations is a weak threshold and neither
+            pair reaches it. Module 03's exact curves said the first tie was broken and the second was not;
+            with error bars, the first is weakened and the second is untouched. The conclusion is not
+            wrong, but it was stated more strongly than noise-free modelling can support.</span></details></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================== KEY POINTS ============================ -->
+  <section class="tabpane" id="pk" role="tabpanel" hidden>
+    <div class="takeaway" style="max-width:none">
+      <h3>Key points</h3>
+      <ul>
+        <li><b>A fit is anchored at the near offsets and loose at the far ones.</b> Repeated recordings of
+          the same rock give lines that converge at zero and fan apart with angle. Everything else in this
+          module follows from that.</li>
+        <li><b>The gradient carries almost all the uncertainty.</b> At a 0–30° fit its scatter is 8.3 times the intercept's, and that ratio is set by the angle range alone — doubling the noise doubles both
+          and leaves the ratio unchanged.</li>
+        <li><b>The mute is an AVO parameter.</b> Gradient uncertainty runs 0.0280 at a 40° fit and 0.1753 at 15°, a factor of 6.3, with the rock and the per-trace noise identical throughout.</li>
+        <li><b>Fold pays square-root returns and angle range pays linear ones.</b> Tripling the traces improves the gradient by 1.66; going from a
+          20° to a 40° mute improves it by 3.6 and costs nothing to acquire.</li>
+        <li><b>The two errors are correlated at −0.742.</b> The cloud of recovered values is a tilted
+          ellipse, so quoting separate error bars on intercept and gradient claims more than the data
+          supports.</li>
+        <li><b>With real error bars, module 03's separations are weaker than they looked.</b> The oil and brine sands are 1.54 standard deviations apart at
+          moderate noise and 0.58 at high noise; the gas
+          and fizz sands never reach one. Noise-free modelling overstates what any method can do.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================ METHOD ============================== -->
+  <section class="tabpane" id="pm" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">M</span>Method, simplifications and references</h3>
+      <span class="hint">What is computed, and where it departs from production software</span>
+    </div>
+
+    <p class="lede"><b>The rock physics and the reflection coefficients are modules 01 and 03's</b>,
+      unchanged. What this module adds is noise and a fit.</p>
+
+    <p class="lede"><b>The uncertainties are exact, not simulated.</b> For a least-squares straight line
+      through points with independent noise of standard deviation σ, the uncertainty in the slope is
+      σ/√S<sub>xx</sub> and in the intercept σ√(1/n + x̄²/S<sub>xx</sub>), where S<sub>xx</sub> is the
+      spread of the sin²θ values about their own mean. Those formulas are what the readouts use. The
+      scatter clouds and histograms are simulated, and the test suite checks that thirty thousand
+      simulated fits reproduce the formulas' widths to within about half a percent, and their correlation
+      to within 0.02.</p>
+
+    <p class="lede"><b>The noise model is deliberately simple.</b> Independent, identically distributed
+      Gaussian noise is added to each trace's picked amplitude, at 0.015 or 0.040 in reflection-coefficient
+      units. Real gather noise is none of those things: it is correlated between neighbouring traces,
+      usually worse at far offsets than near, and often not Gaussian at all. Correlated noise is the
+      important omission, because noise that varies smoothly with offset looks exactly like a gradient and
+      this model cannot produce that failure.</p>
+
+    <p class="lede"><b>Where this departs from production practice.</b></p>
+    <ul class="lede" style="padding-left:20px">
+      <li><b>Amplitudes are picked perfectly.</b> The pick is taken at the true time on every trace. Real
+        picking has to contend with residual moveout, and a small timing error at far offset turns
+        directly into an amplitude error that is systematic rather than random.</li>
+      <li><b>No NMO stretch.</b> Far-offset wavelets are stretched to lower frequency by the moveout
+        correction, which changes the amplitude of a tuned event with offset for reasons that have nothing
+        to do with the rocks. On a thin bed this can dominate everything shown here.</li>
+      <li><b>Noise is the same at every angle.</b> In practice fold falls off at far offset, so the far
+        traces — the ones the gradient depends on most — are usually the noisiest.</li>
+      <li><b>The fit is unweighted and the angles are exact.</b> Production fits are often weighted, and
+        are usually done against straight-ray angles, which module 03 showed to be biased.</li>
+      <li><b>Nothing here is spatial.</b> The single largest defence against everything in this module is
+        that anomalies repeat over an area while noise does not, and a single-trace analysis cannot show
+        that.</li>
+    </ul>
+
+    <details class="reveal" style="margin-top:8px">
+      <summary>References</summary>
+      <ul style="padding-left:18px;margin-top:8px">
+        <li>Cambois, G., 2000, Can P-wave AVO be quantitative?: <em>The Leading Edge</em>, 19, 1246–1251.
+          — the standard reference for how large AVO uncertainties really are.</li>
+        <li>Cambois, G., 2001, AVO processing: myths and reality: <em>The Leading Edge</em>, 20, 1292–1295.</li>
+        <li>Downton, J. E., and Lines, L. R., 2001, Constrained three parameter AVO inversion and
+          uncertainty analysis: <em>SEG Technical Program Expanded Abstracts</em>, 251–254.</li>
+        <li>Swan, H. W., 2001, Velocities from amplitude variations with offset: <em>Geophysics</em>, 66,
+          1735–1743.</li>
+        <li>Simm, R., and Bacon, M., 2014, <em>Seismic Amplitude: An Interpreter's Handbook</em>:
+          Cambridge University Press.</li>
+        <li>Press, W. H., Teukolsky, S. A., Vetterling, W. T., and Flannery, B. P., 2007,
+          <em>Numerical Recipes</em>, 3rd ed.: Cambridge University Press. — chapter 15, the fitting
+          formulas used here.</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="nextup" id="nextup" hidden>
+    <p class="eyebrow">Next up</p>
+    <h3>06 · What survives</h3>
+    <p>Five modules of losses, ambiguities and error bars. The last one puts a number on what is left: how
+      much the second measurement actually bought, what it did not touch, and what can honestly be
+      concluded from an amplitude anomaly.</p>
+    <a class="btn" href="what-survives.html">Go to module 06 →</a>
+    <a class="btn ghost" href="../index.html">All modules</a>
+  </section>
+
+  <div class="pager" id="pager" hidden>
+    <a class="btn ghost" href="intercept-gradient.html">← Module 04: intercept and gradient</a>
+    <a class="btn ghost" href="what-survives.html">Module 06: what survives →</a>
+  </div>
+
+  <footer>
+    <div class="foot-grid">
+      <p>Built for teaching by Heather Bedle, School of Geosciences, University of Oklahoma, with the
+        <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a> consortium.</p>
+      <p class="lic">Free to use for teaching, demonstration, and non-commercial study, provided the source
+        is credited. Please do not republish or redistribute it, modified or otherwise, without permission.
+        If you use it in a course or a talk, a credit line and a link back are all that is asked.</p>
+      <p class="lic">To cite: H. Bedle, <i>How AVO Actually Works</i>, University of
+        Oklahoma. <span class="k">SSRN: [article link to follow]</span></p>
+    </div>
+  </footer>
+</div>
+
+<script src="../assets/seismic.js"></script>
+<script src="../assets/rockphysics.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const missing = [];
+  if (typeof SEIS === 'undefined') missing.push('assets/seismic.js');
+  if (typeof ROCK === 'undefined') missing.push('assets/rockphysics.js');
+  if (!missing.length && typeof ROCK.fitUncertainty !== 'function') {
+    missing.push('assets/rockphysics.js (present, but too old: no fitUncertainty)');
+  }
+  if (missing.length) {
+    const el = document.createElement('div');
+    el.setAttribute('style', 'background:#841617;color:#fff;padding:14px 18px;margin:16px 0;' +
+      'font:13px/1.6 ui-monospace,Menlo,monospace');
+    el.textContent = 'This module could not load ' + missing.join(' and ') +
+      '. It expects them one directory up, at ../assets/, and file names are ' +
+      'case-sensitive on GitHub Pages.';
+    const w = document.querySelector('.wrap');
+    (w || document.body).insertBefore(el, w ? w.firstChild : null);
+    return;
+  }
+
+  const $ = (id) => document.getElementById(id);
+  const visible = (id) => { const el = $(id); return el && !el.hidden; };
+  const CRIM = '#841617', TEAL = '#0B7285', SLATE = '#5C6670', INK = '#16191C';
+  const OLIVE = '#6B7A2E', ORANGE = '#B5451B';
+  const DEG = Math.PI / 180;
+
+  const DEF = { phi: 30, shvp: 2700, fl: 'gas', sat: 100, amax: 30, ntr: 16, nz: 1, tab: 'p1' };
+  const S = SEIS.readState(DEF);
+  (function sanitize() {
+    const num = (k, lo, hi, step) => {
+      let v = Number(S[k]);
+      if (!isFinite(v)) v = DEF[k];
+      v = Math.min(hi, Math.max(lo, v));
+      S[k] = step ? Math.round(v / step) * step : v;
+    };
+    num('phi', 5, 35, 1); num('shvp', 2300, 3100, 50); num('sat', 0, 100, 5);
+    num('amax', 12, 45, 1); num('ntr', 5, 48, 1); num('nz', 0, 2, 1);
+    if (['brine', 'oil', 'gas'].indexOf(S.fl) < 0) S.fl = DEF.fl;
+  })();
+  const saveState = () => SEIS.writeState(S, DEF);
+
+  const PRES = 23, TEMP = 64, FREQ = 30, THICK = 45;
+  const NOISE = [0.004, 0.015, 0.040];
+  const NOISE_NAME = ['clean', 'moderate', 'noisy'];
+  const TR0 = -0.090, DT = 0.001, NT = 231;
+  const WAV = SEIS.makeWavelet({ type: 'ricker', f: FREQ });
+  const TREND = { inter: -0.141, slope: -1.171 };   // module 04's wet trend
+  const NSIM = 1000;
+
+  /* =====================================================================
+     ROCKS AND FITS
+     ===================================================================== */
+
+  const rockOf = (phi, fluid, sat) => ROCK.rockModel({
+    vClay: 0, phi: phi / 100, fluid, sHc: fluid === 'brine' ? 0 : sat / 100,
+    api: 32, gor: 0, P: PRES, T: TEMP });
+
+  const sinsq = (t) => Math.pow(Math.sin(t * DEG), 2);
+
+  function anglesFor(nTrace, angMax) {
+    const a = [];
+    for (let i = 0; i < nTrace; i++) a.push((i / (nTrace - 1)) * angMax);
+    return a;
+  }
+
+  /* The exact amplitudes this gather would carry, before any noise. */
+  function trueAmps(rock, shale, angs) {
+    return angs.map((t) => ROCK.zoeppritz(shale, rock, t));
+  }
+
+  // deterministic gaussian, so every number on the page is reproducible
+  function rng(seed) {
+    let a = seed >>> 0;
+    return () => { a = (a * 1664525 + 1013904223) >>> 0; return a / 4294967296; };
+  }
+  function gauss(r) {
+    let u = 0, v = 0;
+    while (u === 0) u = r();
+    while (v === 0) v = r();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+
+  /* One simulated recording: add noise to the exact amplitudes and refit. The
+     exact amplitudes are computed once, so a thousand recordings cost a
+     thousand fits rather than a thousand passes through Zoeppritz. */
+  function recordOnce(xs, amps, sigma, r) {
+    const ys = amps.map((y) => y + gauss(r) * sigma);
+    return { ...ROCK.fitLine(xs, ys), ys };
+  }
+
+  function cloud(rock, shale, angs, sigma, n, seed) {
+    const xs = angs.map(sinsq);
+    const amps = trueAmps(rock, shale, angs);
+    const r = rng(seed);
+    const out = [];
+    for (let k = 0; k < n; k++) {
+      const f = recordOnce(xs, amps, sigma, r);
+      if (isFinite(f.R0)) out.push({ R0: f.R0, G: f.G });
+    }
+    return out;
+  }
+
+  const offTrend = (R0, G) => G - (TREND.inter + TREND.slope * R0);
+
+  let D = {};
+  let FAN = [];          // the accumulated recordings in step 1
+  let fanSeed = 1;
+
+  function recompute() {
+    D.shale = ROCK.mudrock(S.shvp);
+    D.res = rockOf(S.phi, S.fl, S.sat);
+    D.angs = anglesFor(S.ntr, S.amax);
+    D.xs = D.angs.map(sinsq);
+    D.amps = trueAmps(D.res, D.shale, D.angs);
+    D.sigma = NOISE[S.nz];
+    D.truth = ROCK.fitLine(D.xs, D.amps);
+    D.unc = ROCK.fitUncertainty(D.xs, D.sigma);
+    D.cloud = cloud(D.res, D.shale, D.angs, D.sigma, NSIM, 20260901);
+    // uncertainty in distance-from-trend follows from the same covariance
+    const a = -TREND.slope;
+    D.sOff = Math.sqrt(D.unc.sG * D.unc.sG + a * a * D.unc.sR0 * D.unc.sR0
+                       + 2 * a * D.unc.cov);
+    D.off = offTrend(D.truth.R0, D.truth.G);
+  }
+
+  function ensureFan() {
+    if (!FAN.length) addRecording();
+  }
+  function addRecording() {
+    const r = rng(90000 + fanSeed * 7919);
+    fanSeed++;
+    const f = recordOnce(D.xs, D.amps, D.sigma, r);
+    FAN.push({ R0: f.R0, G: f.G, ys: f.ys });
+    if (FAN.length > 12) FAN.shift();
+  }
+
+  /* =====================================================================
+     DRAWING
+     ===================================================================== */
+
+  const M = { l: 60, r: 16, t: 14, b: 36 };
+  const AMP = 0.42;
+
+  function pw(el) {
+    const par = el && el.parentElement;
+    if (!par) return 900;
+    const cs = (typeof window.getComputedStyle === 'function')
+      ? window.getComputedStyle(par) : { paddingLeft: '0', paddingRight: '0' };
+    const inner = par.clientWidth
+      - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    return Math.max(200, Math.floor(inner || 900));
+  }
+  function rowWidth(rowId, n) {
+    const row = $(rowId);
+    const total = row ? pw(row.firstElementChild || row) : 800;
+    const narrow = (window.innerWidth || 1200) <= 700;
+    const w = narrow ? Math.max(240, total)
+                     : Math.max(150, Math.floor((total - 10 * (n - 1)) / n));
+    if (row) {
+      row.querySelectorAll(':scope > .panel-col').forEach((el) => {
+        el.style.width = w + 'px'; el.style.maxWidth = w + 'px';
+      });
+    }
+    return w;
+  }
+  const yOf = (t, R) => R.y + ((t - TR0) / ((NT - 1) * DT)) * R.h;
+
+  function wrapText(ctx, text, x, y, maxW, lh) {
+    const words = String(text).split(' ');
+    let line = '', yy = y;
+    for (const wd of words) {
+      const test = line ? line + ' ' + wd : wd;
+      if (ctx.measureText(test).width > maxW && line) {
+        ctx.fillText(line, x, yy); line = wd; yy += lh;
+      } else line = test;
+    }
+    if (line) ctx.fillText(line, x, yy);
+    return yy + lh;
+  }
+
+  const LEG_FONT = '11px "IBM Plex Sans", sans-serif';
+  function legendLines(ctx, items, maxW) {
+    ctx.save(); ctx.font = LEG_FONT;
+    let lines = 1, x = 0;
+    for (const [, t] of items) {
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > 0 && x + iw > maxW) { lines++; x = 0; }
+      x += iw;
+    }
+    ctx.restore();
+    return lines;
+  }
+  function legendRow(ctx, R, items) {
+    ctx.save();
+    ctx.font = LEG_FONT; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    let x = R.x, y = R.y + R.h + 46;
+    for (const [c, t, kind] of items) {
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > R.x && x + iw > R.x + R.w) { x = R.x; y += 16; }
+      if (kind === 'dot') {
+        ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x + 9, y, 4, 0, 7); ctx.fill();
+      } else {
+        ctx.strokeStyle = c; ctx.lineWidth = 2;
+        ctx.setLineDash(kind === 'dash' ? [5, 4] : []);
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 18, y); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      ctx.fillStyle = SLATE; ctx.fillText(t, x + 23, y);
+      x += iw;
+    }
+    ctx.restore();
+  }
+  function fitLegend(id, w, baseH, items) {
+    let ctx = SEIS.fitCanvas($(id), w, baseH);
+    const H = baseH + (legendLines(ctx, items, w - M.l - M.r) - 1) * 16;
+    ctx = SEIS.fitCanvas($(id), w, H);
+    ctx.clearRect(0, 0, w, H);
+    return { ctx, H, plotH: H - M.t - M.b - 40 - (H - baseH) };
+  }
+
+  function curve(ctx, R, xs, ys, xr, yr, color, width, dash) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    if (dash) ctx.setLineDash(dash);
+    ctx.strokeStyle = color; ctx.lineWidth = width || 2;
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < xs.length; i++) {
+      if (!isFinite(ys[i]) || !isFinite(xs[i])) { started = false; continue; }
+      const x = R.x + ((xs[i] - xr[0]) / (xr[1] - xr[0])) * R.w;
+      const y = R.y + R.h - ((ys[i] - yr[0]) / (yr[1] - yr[0])) * R.h;
+      started ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      started = true;
+    }
+    ctx.stroke(); ctx.restore();
+  }
+
+  // ---- the gather, for the header ----
+  function traceAt(rock, shale, angle, seed) {
+    const rt = ROCK.zoeppritz(shale, rock, angle);
+    const rb = ROCK.zoeppritz(rock, shale, angle);
+    if (!isFinite(rt) || !isFinite(rb)) return null;
+    const dt = 2 * THICK / rock.vp;
+    const tr = SEIS.traceFromSpikes([{ t: 0, r: rt }, { t: dt, r: rb }], TR0, DT, NT, WAV);
+    const n = SEIS.bandLimitedNoise(1, NT, DT, WAV, seed, 0);
+    const out = new Float32Array(NT);
+    for (let i = 0; i < NT; i++) out[i] = tr[i] + n[i] * D.sigma;
+    return out;
+  }
+  function drawGather(ctx, R, seedBase) {
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const n = Math.min(S.ntr, 24);
+    const cw = R.w / n;
+    for (let i = 0; i < n; i++) {
+      const ang = (i / (n - 1)) * S.amax;
+      const tr = traceAt(D.res, D.shale, ang, seedBase + i * 13);
+      if (!tr) continue;
+      const col = { x: R.x + i * cw, y: R.y, w: cw, h: R.h };
+      const x0 = col.x + col.w / 2;
+      const X = (a) => x0 + (a / AMP) * (col.w / 2) * 0.95;
+      ctx.save();
+      ctx.beginPath();
+      const lo = Math.max(R.x, col.x - col.w * 0.6), hi = Math.min(R.x + R.w, col.x + col.w * 1.6);
+      ctx.rect(lo, R.y, hi - lo, R.h); ctx.clip();
+      ctx.fillStyle = 'rgba(22,25,28,0.75)';
+      ctx.beginPath(); ctx.moveTo(x0, R.y);
+      for (let k = 0; k < NT; k++) ctx.lineTo(Math.max(x0, X(tr[k])), yOf(TR0 + k * DT, R));
+      ctx.lineTo(x0, R.y + R.h); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = INK; ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let k = 0; k < NT; k++) {
+        const x = X(tr[k]), y = yOf(TR0 + k * DT, R);
+        k === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke(); ctx.restore();
+    }
+    SEIS.dashedLine(ctx, R.x, yOf(0, R), R.x + R.w, yOf(0, R), CRIM, [4, 3], 1.2);
+    SEIS.frame(ctx, R);
+  }
+
+  /* The picks against sin^2(theta), with the true curve, the fitted line and
+     whatever fan has accumulated. This is the module's central picture. */
+  function drawFitPanel(ctx, R, opts) {
+    const o = opts || {};
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const xr = [0, Math.max(0.02, sinsq(S.amax) * 1.06)];
+    const yr = [-AMP, AMP];
+    const px = (x) => R.x + ((x - xr[0]) / (xr[1] - xr[0])) * R.w;
+    const py = (y) => R.y + R.h - ((y - yr[0]) / (yr[1] - yr[0])) * R.h;
+    SEIS.dashedLine(ctx, R.x, py(0), R.x + R.w, py(0), 'rgba(92,102,112,0.45)', [4, 3], 1);
+
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    // earlier recordings
+    FAN.forEach((f, i) => {
+      const alpha = 0.14 + 0.30 * (i / Math.max(1, FAN.length - 1));
+      ctx.strokeStyle = 'rgba(92,102,112,' + alpha.toFixed(2) + ')';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(px(xr[0]), py(f.R0 + f.G * xr[0]));
+      ctx.lineTo(px(xr[1]), py(f.R0 + f.G * xr[1]));
+      ctx.stroke();
+    });
+    // the exact curve
+    ctx.strokeStyle = CRIM; ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    let started = false;
+    for (let t = 0; t <= S.amax; t += 0.5) {
+      const v = ROCK.zoeppritz(D.shale, D.res, t);
+      if (!isFinite(v)) break;
+      const x = px(sinsq(t)), y = py(v);
+      started ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      started = true;
+    }
+    ctx.stroke();
+    // the most recent recording: its picks and its line
+    const last = FAN[FAN.length - 1];
+    if (last) {
+      ctx.strokeStyle = TEAL; ctx.lineWidth = 2.4; ctx.setLineDash([6, 4]);
+      ctx.beginPath();
+      ctx.moveTo(px(xr[0]), py(last.R0 + last.G * xr[0]));
+      ctx.lineTo(px(xr[1]), py(last.R0 + last.G * xr[1]));
+      ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = TEAL;
+      last.ys.forEach((y, i) => {
+        ctx.beginPath(); ctx.arc(px(D.xs[i]), py(y), 3, 0, 7); ctx.fill();
+      });
+    }
+    ctx.restore();
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, xr[0], xr[1], o.compact ? 'sin\u00b2\u03b8' : 'sin\u00b2\u03b8  (near offsets on the left)',
+      (v) => v.toFixed(2), { ticks: o.compact ? 3 : 5 });
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], o.compact ? 'R' : 'picked amplitude',
+      (v) => v.toFixed(2), { ticks: 4, flip: true });
+  }
+
+  /* =====================================================================
+     HEADER
+     ===================================================================== */
+
+  function drawHeader() {
+    const el = $('cHead');
+    const w = pw(el), h = 208;
+    const ctx = SEIS.fitCanvas(el, w, h);
+    ctx.clearRect(0, 0, w, h);
+    const LEFT = 46, gap = 48;
+    const half = Math.floor((w - LEFT - 14 - gap) / 2);
+    const R = { x: LEFT, y: 20, w: half, h: h - 20 - 30 };
+    drawGather(ctx, R, 3300 + fanSeed * 31);
+    SEIS.axisBottom(ctx, R, 0, S.amax, 'angle (deg)', (v) => v.toFixed(0), { ticks: 3 });
+    const R2 = { x: LEFT + half + gap, y: 20, w: w - (LEFT + half + gap) - 14, h: h - 20 - 30 };
+    drawFitPanel(ctx, R2, { compact: true });
+    ctx.save();
+    ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    const cap = (t, short, RR) =>
+      ctx.fillText(ctx.measureText(t).width < RR.w ? t : short, RR.x + RR.w / 2, 4);
+    cap('the gather you were handed', 'the gather', R);
+    cap('the amplitudes picked off it', 'the picks', R2);
+    ctx.restore();
+  }
+
+  /* =====================================================================
+     STEP 1
+     ===================================================================== */
+
+  function drawStep1() {
+    const w = rowWidth('row1', 2);
+    const items = [[CRIM, 'the truth', 'line'], [TEAL, 'this recording', 'dash'],
+                   [SLATE, 'earlier recordings', 'line']];
+    const f = fitLegend('c1fit', w, 330, items);
+    const R = { x: M.l, y: M.t, w: w - M.l - M.r, h: f.plotH };
+    drawFitPanel(f.ctx, R, {});
+    legendRow(f.ctx, R, items);
+
+    const ctx = SEIS.fitCanvas($('c1tab'), w, 330);
+    ctx.clearRect(0, 0, w, 330);
+    const T = { x: 4, y: M.t, w: w - 8, h: 330 - M.t - 24 };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(T.x, T.y, T.w, T.h); ctx.restore();
+    const rows = [{ label: 'the truth', R0: D.truth.R0, G: D.truth.G, truth: true }]
+      .concat(FAN.slice().reverse().map((q, i) => ({
+        label: i === 0 ? 'this recording' : 'recording ' + (FAN.length - i),
+        R0: q.R0, G: q.G })));
+    const rh = Math.min(26, (T.h - 26) / Math.max(1, rows.length));
+    ctx.save();
+    ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = CRIM;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText('RECORDING', T.x + 10, T.y + 8);
+    ctx.textAlign = 'right';
+    ctx.fillText('INTERCEPT', T.x + T.w * 0.62, T.y + 8);
+    ctx.fillText('GRADIENT', T.x + T.w - 12, T.y + 8);
+    ctx.restore();
+    SEIS.dashedLine(ctx, T.x + 8, T.y + 24, T.x + T.w - 8, T.y + 24, 'rgba(22,25,28,.28)', [3, 3], 1);
+    rows.slice(0, Math.floor((T.h - 26) / Math.max(14, rh))).forEach((row, i) => {
+      const y = T.y + 26 + i * rh + rh / 2;
+      ctx.save();
+      ctx.font = (row.truth ? '600 11.5px' : '11.5px') + ' "IBM Plex Sans", sans-serif';
+      ctx.fillStyle = row.truth ? INK : SLATE;
+      ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText(row.label, T.x + 10, y);
+      ctx.font = (row.truth ? '600 11.5px' : '11.5px') + ' "IBM Plex Mono", monospace';
+      ctx.fillStyle = row.truth ? INK : CRIM;
+      ctx.textAlign = 'right';
+      ctx.fillText(row.R0.toFixed(4), T.x + T.w * 0.62, y);
+      ctx.fillText(row.G.toFixed(4), T.x + T.w - 12, y);
+      ctx.restore();
+    });
+    SEIS.frame(ctx, T);
+
+    const last = FAN[FAN.length - 1];
+    set('s1a', D.truth.R0.toFixed(4));
+    set('s1b', D.truth.G.toFixed(4));
+    set('s1c', last ? 'R\u2080 ' + last.R0.toFixed(4) + ',  G ' + last.G.toFixed(4) : '\u2014');
+    set('s1d', last ? (last.R0 - D.truth.R0 >= 0 ? '+' : '') +
+                      (last.R0 - D.truth.R0).toFixed(4) : '\u2014');
+    set('s1e', last ? (last.G - D.truth.G >= 0 ? '+' : '') +
+                      (last.G - D.truth.G).toFixed(4) : '\u2014');
+    set('s1f', FAN.length + (FAN.length === 1 ? ' recording' : ' recordings') +
+      (FAN.length >= 12 ? ' (oldest are dropped)' : ''));
+  }
+
+  /* =====================================================================
+     STEP 2
+     ===================================================================== */
+
+  function histogram(ctx, R, vals, centre, halfWidth, color, label) {
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const nb = 31;
+    const bins = new Array(nb).fill(0);
+    vals.forEach((v) => {
+      const f = (v - (centre - halfWidth)) / (2 * halfWidth);
+      const i = Math.floor(f * nb);
+      if (i >= 0 && i < nb) bins[i]++;
+    });
+    const mx = Math.max(1, Math.max.apply(null, bins));
+    const bw = R.w / nb;
+    ctx.save();
+    ctx.fillStyle = color;
+    bins.forEach((c, i) => {
+      const hgt = (c / mx) * R.h;
+      ctx.fillRect(R.x + i * bw, R.y + R.h - hgt, Math.max(1, bw - 1), hgt);
+    });
+    ctx.restore();
+    SEIS.dashedLine(ctx, R.x + R.w / 2, R.y, R.x + R.w / 2, R.y + R.h, INK, [4, 3], 1.6);
+    SEIS.frame(ctx, R);
+    ctx.save();
+    ctx.font = '11px "IBM Plex Sans", sans-serif'; ctx.fillStyle = SLATE;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+    ctx.fillText(label, R.x, R.y - 4);
+    ctx.restore();
+  }
+
+  function drawStep2() {
+    const w = rowWidth('row2', 2);
+    const ctx = SEIS.fitCanvas($('c2hist'), w, 340);
+    ctx.clearRect(0, 0, w, 340);
+    const hh = (340 - M.t - M.b - 40) / 2;
+    const RA = { x: M.l, y: M.t + 12, w: w - M.l - M.r, h: hh - 10 };
+    const RB = { x: M.l, y: M.t + 12 + hh + 30, w: w - M.l - M.r, h: hh - 10 };
+    // the SAME half-width on both, so the difference is visible rather than normalized away
+    const span = 3.2 * D.unc.sG;
+    histogram(ctx, RA, D.cloud.map((q) => q.R0), D.truth.R0, span, TEAL,
+      'intercept, over ' + NSIM + ' recordings');
+    histogram(ctx, RB, D.cloud.map((q) => q.G), D.truth.G, span, CRIM,
+      'gradient, same scale');
+    SEIS.axisBottom(ctx, RB, -span, span, 'error, in reflection-coefficient units',
+      (v) => v.toFixed(2), { ticks: 5 });
+
+    const ctx2 = SEIS.fitCanvas($('c2bars'), w, 340);
+    ctx2.clearRect(0, 0, w, 340);
+    const R2 = { x: M.l, y: M.t + 20, w: w - M.l - M.r, h: 340 - M.t - M.b - 60 };
+    ctx2.save(); ctx2.fillStyle = '#fff'; ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
+    const lim = 3.2 * D.unc.sG;
+    const mid = R2.x + R2.w / 2;
+    const items = [['intercept', D.unc.sR0, TEAL], ['gradient', D.unc.sG, CRIM]];
+    ctx2.save();
+    items.forEach(([label, sd, col], i) => {
+      const y = R2.y + R2.h * (0.32 + i * 0.36);
+      const halfPx = (sd / lim) * (R2.w / 2);
+      ctx2.strokeStyle = col; ctx2.lineWidth = 3; ctx2.lineCap = 'round';
+      ctx2.beginPath(); ctx2.moveTo(mid - halfPx, y); ctx2.lineTo(mid + halfPx, y); ctx2.stroke();
+      ctx2.lineWidth = 2;
+      [-1, 1].forEach((s) => {
+        ctx2.beginPath();
+        ctx2.moveTo(mid + s * halfPx, y - 7); ctx2.lineTo(mid + s * halfPx, y + 7); ctx2.stroke();
+      });
+      ctx2.font = '600 12px "IBM Plex Sans", sans-serif';
+      ctx2.fillStyle = INK; ctx2.textAlign = 'center'; ctx2.textBaseline = 'bottom';
+      ctx2.fillText(label + '   \u00b1' + sd.toFixed(4), mid, y - 12);
+    });
+    ctx2.restore();
+    SEIS.dashedLine(ctx2, mid, R2.y, mid, R2.y + R2.h, 'rgba(92,102,112,0.5)', [4, 3], 1);
+    SEIS.frame(ctx2, R2);
+    SEIS.axisBottom(ctx2, R2, -lim, lim, 'one standard deviation, both on this scale',
+      (v) => v.toFixed(2), { ticks: 5 });
+
+    const ratio = D.unc.sG / D.unc.sR0;
+    set('s2a', '\u00b1' + D.unc.sR0.toFixed(4));
+    set('s2b', '\u00b1' + D.unc.sG.toFixed(4));
+    set('s2c', ratio.toFixed(1) + '\u00d7 worse');
+    set('s2d', Math.abs(D.truth.G) > 1e-6
+      ? (100 * D.unc.sG / Math.abs(D.truth.G)).toFixed(0) + '%' : '\u2014');
+    set('s2e', Math.abs(D.truth.R0) > 1e-6
+      ? (100 * D.unc.sR0 / Math.abs(D.truth.R0)).toFixed(0) + '%' : '\u2014');
+    set('s2f', 'both would double, and the ratio would still be ' + ratio.toFixed(1));
+  }
+
+  /* =====================================================================
+     STEP 3
+     ===================================================================== */
+
+  const sGfor = (angMax, nTrace) =>
+    ROCK.fitUncertainty(anglesFor(nTrace, angMax).map(sinsq), D.sigma).sG;
+
+  function drawStep3() {
+    const w = rowWidth('row3', 2);
+    const yr = [0, Math.max(0.05, sGfor(12, S.ntr) * 1.1)];
+
+    let items = [[CRIM, 'gradient', 'line'], [TEAL, 'intercept', 'line']];
+    let f = fitLegend('c3ang', w, 330, items);
+    let ctx = f.ctx;
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: f.plotH };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const xs = [], gs = [], rs = [];
+    for (let a = 12; a <= 45; a += 0.5) {
+      xs.push(a);
+      const u = ROCK.fitUncertainty(anglesFor(S.ntr, a).map(sinsq), D.sigma);
+      gs.push(u.sG); rs.push(u.sR0);
+    }
+    curve(ctx, R, xs, gs, [12, 45], yr, CRIM, 2.6);
+    curve(ctx, R, xs, rs, [12, 45], yr, TEAL, 2.2);
+    const mx = R.x + ((S.amax - 12) / 33) * R.w;
+    SEIS.dashedLine(ctx, mx, R.y, mx, R.y + R.h, INK, [4, 3], 1.6);
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, 12, 45, 'widest angle in the fit (deg)', (v) => v.toFixed(0), { ticks: 5 });
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'uncertainty', (v) => v.toFixed(2),
+      { ticks: 4, grid: true, flip: true });
+    legendRow(ctx, R, items);
+
+    items = [[CRIM, 'gradient', 'line'], [SLATE, 'square-root law', 'dash']];
+    f = fitLegend('c3n', w, 330, items);
+    ctx = f.ctx;
+    R = { x: M.l, y: M.t, w: w - M.l - M.r, h: f.plotH };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const ns = [], gn = [], sq = [];
+    const ref = sGfor(S.amax, 8);
+    for (let n = 5; n <= 48; n++) {
+      ns.push(n); gn.push(sGfor(S.amax, n)); sq.push(ref * Math.sqrt(8 / n));
+    }
+    const yr2 = [0, Math.max(0.05, gn[0] * 1.1)];
+    curve(ctx, R, ns, gn, [5, 48], yr2, CRIM, 2.6);
+    curve(ctx, R, ns, sq, [5, 48], yr2, SLATE, 1.8, [5, 4]);
+    const nx = R.x + ((S.ntr - 5) / 43) * R.w;
+    SEIS.dashedLine(ctx, nx, R.y, nx, R.y + R.h, INK, [4, 3], 1.6);
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, 5, 48, 'traces in the gather', (v) => v.toFixed(0), { ticks: 5 });
+    SEIS.axisLeft(ctx, R, yr2[0], yr2[1], 'gradient uncertainty', (v) => v.toFixed(2),
+      { ticks: 4, grid: true, flip: true });
+    legendRow(ctx, R, items);
+
+    const g20 = sGfor(20, S.ntr), g40 = sGfor(40, S.ntr);
+    set('s3a', '0\u2013' + S.amax + '\u00b0, ' + S.ntr + ' traces');
+    set('s3b', '\u00b1' + D.unc.sG.toFixed(4));
+    set('s3c', '\u00b1' + g20.toFixed(4) + '   (' + (g20 / D.unc.sG).toFixed(1) + '\u00d7 worse)');
+    set('s3d', '\u00b1' + g40.toFixed(4) + '   (' + (D.unc.sG / g40).toFixed(1) + '\u00d7 better)');
+    // how many traces at the current mute would match a 40 degree fit
+    let need = NaN;
+    for (let n = S.ntr; n <= 4000; n++) {
+      if (sGfor(S.amax, n) <= g40) { need = n; break; }
+    }
+    set('s3e', S.amax >= 40 ? 'you already reach 40\u00b0'
+      : isFinite(need) ? need + ' traces at ' + S.amax + '\u00b0'
+      : 'more than 4000 \u2014 no realistic fold gets there');
+    set('s3f', (g20 / g40).toFixed(1) + '\u00d7 between a 20\u00b0 and a 40\u00b0 mute, ' +
+      'for no change in acquisition');
+  }
+
+  /* =====================================================================
+     STEP 4
+     ===================================================================== */
+
+  function drawStep4() {
+    const w = rowWidth('row4', 2);
+    const items = [[SLATE, 'a thousand recordings', 'dot'], [CRIM, 'the truth', 'line'],
+                   [INK, 'the wet trend', 'dash']];
+    const f = fitLegend('c4ell', w, 350, items);
+    const ctx = f.ctx;
+    const R = { x: M.l, y: M.t, w: w - M.l - M.r, h: f.plotH };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const sx = Math.max(D.unc.sR0 * 4, 0.02), sy = Math.max(D.unc.sG * 4, 0.05);
+    const xr = [D.truth.R0 - sx, D.truth.R0 + sx];
+    const yr = [D.truth.G - sy, D.truth.G + sy];
+    const px = (v) => R.x + ((v - xr[0]) / (xr[1] - xr[0])) * R.w;
+    const py = (v) => R.y + R.h - ((v - yr[0]) / (yr[1] - yr[0])) * R.h;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    ctx.fillStyle = 'rgba(92,102,112,0.30)';
+    D.cloud.forEach((q) => { ctx.beginPath(); ctx.arc(px(q.R0), py(q.G), 1.7, 0, 7); ctx.fill(); });
+    // the wet trend, for orientation
+    ctx.strokeStyle = INK; ctx.lineWidth = 1.8; ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    ctx.moveTo(px(xr[0]), py(TREND.inter + TREND.slope * xr[0]));
+    ctx.lineTo(px(xr[1]), py(TREND.inter + TREND.slope * xr[1]));
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.restore();
+    // the truth
+    ctx.save();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 3.4;
+    ctx.beginPath(); ctx.arc(px(D.truth.R0), py(D.truth.G), 6, 0, 7); ctx.stroke();
+    ctx.strokeStyle = CRIM; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(px(D.truth.R0), py(D.truth.G), 6, 0, 7); ctx.stroke();
+    ctx.restore();
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, xr[0], xr[1], 'recovered intercept', (v) => v.toFixed(2), { ticks: 4 });
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'recovered gradient', (v) => v.toFixed(2),
+      { ticks: 4, flip: true });
+    legendRow(ctx, R, items);
+
+    // relative uncertainty of the three candidate measures
+    const ctx2 = SEIS.fitCanvas($('c4cmp'), w, 350);
+    ctx2.clearRect(0, 0, w, 350);
+    const R2 = { x: M.l, y: M.t + 10, w: w - M.l - M.r, h: 350 - M.t - M.b - 44 };
+    ctx2.save(); ctx2.fillStyle = '#fff'; ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
+    const rows = [
+      ['intercept', D.unc.sR0, Math.abs(D.truth.R0), TEAL],
+      ['gradient', D.unc.sG, Math.abs(D.truth.G), CRIM],
+      ['distance off trend', D.sOff, Math.abs(D.off), OLIVE],
+    ];
+    const worst = Math.max.apply(null, rows.map(([, sd, val]) =>
+      (val > 1e-9 ? sd / val : 3)));
+    const lim = Math.min(3, Math.max(0.3, worst * 1.25));
+    const bh = R2.h / rows.length;
+    ctx2.save();
+    rows.forEach(([label, sd, val, col], i) => {
+      const rel = val > 1e-9 ? sd / val : NaN;
+      const y = R2.y + i * bh + bh * 0.5;
+      if (isFinite(rel)) {
+        const len = Math.min(1, rel / lim) * (R2.w - 150);
+        ctx2.fillStyle = col;
+        ctx2.fillRect(R2.x + 140, y - 9, len, 18);
+        ctx2.font = '600 11.5px "IBM Plex Mono", monospace';
+        ctx2.fillStyle = INK; ctx2.textAlign = 'left'; ctx2.textBaseline = 'middle';
+        ctx2.fillText((100 * rel).toFixed(0) + '%', R2.x + 146 + len, y);
+      }
+      ctx2.font = '11.5px "IBM Plex Sans", sans-serif';
+      ctx2.fillStyle = SLATE; ctx2.textAlign = 'left'; ctx2.textBaseline = 'middle';
+      ctx2.fillText(label, R2.x + 8, y);
+    });
+    ctx2.restore();
+    SEIS.frame(ctx2, R2);
+    ctx2.save();
+    ctx2.font = '10.5px "IBM Plex Sans", sans-serif';
+    ctx2.fillStyle = SLATE; ctx2.textAlign = 'left'; ctx2.textBaseline = 'top';
+    wrapText(ctx2, 'Uncertainty as a percentage of the quantity itself. Shorter is better.',
+      R2.x, R2.y + R2.h + 8, R2.w, 14);
+    ctx2.restore();
+
+    // principal axes of the error ellipse
+    const a = D.unc.sR0 * D.unc.sR0, b = D.unc.cov, c = D.unc.sG * D.unc.sG;
+    const tr = a + c, det = a * c - b * b;
+    const l1 = tr / 2 + Math.sqrt(Math.max(0, tr * tr / 4 - det));
+    const l2 = tr / 2 - Math.sqrt(Math.max(0, tr * tr / 4 - det));
+    set('s4a', D.unc.rho.toFixed(3));
+    set('s4b', '\u00b1' + Math.sqrt(Math.max(0, l1)).toFixed(4));
+    set('s4c', '\u00b1' + Math.sqrt(Math.max(0, l2)).toFixed(4));
+    set('s4d', D.off.toFixed(4) + '  \u00b1' + D.sOff.toFixed(4));
+    set('s4e', D.truth.G.toFixed(4) + '  \u00b1' + D.unc.sG.toFixed(4));
+    const relOff = Math.abs(D.off) > 1e-9 ? D.sOff / Math.abs(D.off) : NaN;
+    const relG = Math.abs(D.truth.G) > 1e-9 ? D.unc.sG / Math.abs(D.truth.G) : NaN;
+    set('s4f', isFinite(relOff) && isFinite(relG)
+      ? (relOff < relG
+          ? 'yes, but only by ' + ((relG / relOff - 1) * 100).toFixed(0) +
+            '% \u2014 a real gain, not a large one'
+          : 'not for this rock \u2014 the gradient is the better-determined of the two')
+      : '\u2014');
+  }
+
+  /* =====================================================================
+     STEP 5
+     ===================================================================== */
+
+  const PAIRS = () => ({
+    oil: rockOf(30, 'oil', 100), brn: rockOf(35, 'brine', 0),
+    gas: rockOf(30, 'gas', 100), fizz: rockOf(34, 'gas', 10),
+  });
+
+  function pairPanel(id, w, a, b, la, lb) {
+    const items = [[CRIM, la, 'dot'], [TEAL, lb, 'dot']];
+    const f = fitLegend(id, w, 350, items);
+    const ctx = f.ctx;
+    const R = { x: M.l, y: M.t, w: w - M.l - M.r, h: f.plotH };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const ca = cloud(a, D.shale, D.angs, D.sigma, 600, 424242);
+    const cb = cloud(b, D.shale, D.angs, D.sigma, 600, 777777);
+    const all = ca.concat(cb);
+    const xs = all.map((q) => q.R0), ys = all.map((q) => q.G);
+    const pad = 0.12;
+    const xr = [Math.min.apply(null, xs), Math.max.apply(null, xs)];
+    const yr = [Math.min.apply(null, ys), Math.max.apply(null, ys)];
+    const dx = (xr[1] - xr[0]) * pad, dy = (yr[1] - yr[0]) * pad;
+    xr[0] -= dx; xr[1] += dx; yr[0] -= dy; yr[1] += dy;
+    const px = (v) => R.x + ((v - xr[0]) / (xr[1] - xr[0])) * R.w;
+    const py = (v) => R.y + R.h - ((v - yr[0]) / (yr[1] - yr[0])) * R.h;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    ctx.fillStyle = 'rgba(132,22,23,0.32)';
+    ca.forEach((q) => { ctx.beginPath(); ctx.arc(px(q.R0), py(q.G), 1.8, 0, 7); ctx.fill(); });
+    ctx.fillStyle = 'rgba(11,114,133,0.32)';
+    cb.forEach((q) => { ctx.beginPath(); ctx.arc(px(q.R0), py(q.G), 1.8, 0, 7); ctx.fill(); });
+    ctx.restore();
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, xr[0], xr[1], 'recovered intercept', (v) => v.toFixed(2), { ticks: 4 });
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'recovered gradient', (v) => v.toFixed(2),
+      { ticks: 4, flip: true });
+    legendRow(ctx, R, items);
+    return { ca, cb };
+  }
+
+  function sepSigma(a, b) {
+    const fa = ROCK.fitLine(D.xs, trueAmps(a, D.shale, D.angs));
+    const fb = ROCK.fitLine(D.xs, trueAmps(b, D.shale, D.angs));
+    const sd = D.unc.sG * Math.SQRT2;         // both estimates carry the same error
+    return { d: Math.abs(fa.G - fb.G), n: Math.abs(fa.G - fb.G) / sd };
+  }
+
+  function drawStep5() {
+    const w = rowWidth('row5', 2);
+    const P = PAIRS();
+    pairPanel('c5a', w, P.oil, P.brn, 'oil, 30%', 'brine, 35%');
+    pairPanel('c5b', w, P.gas, P.fizz, 'gas, 30%', 'fizz, 34%');
+
+    const so = sepSigma(P.oil, P.brn), sg = sepSigma(P.gas, P.fizz);
+    set('s5a', so.d.toFixed(4));
+    set('s5b', so.n.toFixed(2) + '\u03c3');
+    set('s5c', sg.d.toFixed(4));
+    set('s5d', sg.n.toFixed(2) + '\u03c3');
+    // what angle range would the oil pair need to reach two sigma
+    let need = NaN;
+    for (let a = S.amax; a <= 60; a += 0.5) {
+      const angs = anglesFor(S.ntr, a);
+      const xs = angs.map(sinsq);
+      const fa = ROCK.fitLine(xs, trueAmps(P.oil, D.shale, angs));
+      const fb = ROCK.fitLine(xs, trueAmps(P.brn, D.shale, angs));
+      const u = ROCK.fitUncertainty(xs, D.sigma);
+      if (Math.abs(fa.G - fb.G) / (u.sG * Math.SQRT2) >= 2) { need = a; break; }
+    }
+    set('s5e', so.n >= 2 ? 'already there at ' + S.amax + '\u00b0'
+      : isFinite(need) ? need.toFixed(0) + '\u00b0' : 'not reachable below 60\u00b0');
+    set('s5f', so.n >= 2
+      ? 'the oil and brine sands are separable here; the gas and fizz sands are not'
+      : so.n >= 1
+        ? 'neither pair is separable at two sigma \u2014 the oil pair is suggestive at ' +
+          so.n.toFixed(1) + '\u03c3 and nothing more'
+        : 'neither pair is separable; at this noise level the gradient cannot choose between them');
+  }
+
+  /* =====================================================================
+     LABELS, TABS, EVENTS
+     ===================================================================== */
+
+  function set(id, v) { const el = $(id); if (el) el.textContent = v; }
+
+  function syncLabels() {
+    set('phiV', S.phi + '%');
+    set('shvpV', S.shvp + ' m/s');
+    set('flV', S.fl);
+    set('satV', S.fl === 'brine' ? '\u2014' : S.sat + '%');
+    set('amaxV', S.amax + '\u00b0');
+    set('ntrV', String(S.ntr));
+    set('nzV', NOISE_NAME[S.nz]);
+    const sat = $('sat');
+    if (sat) { sat.disabled = S.fl === 'brine'; sat.value = S.sat; }
+    document.querySelectorAll('#segFluid button').forEach((b) => {
+      b.setAttribute('aria-pressed', b.dataset.fl === S.fl);
+    });
+    document.querySelectorAll('#segNoise button').forEach((b) => {
+      b.setAttribute('aria-pressed', String(+b.dataset.nz) === String(S.nz));
+    });
+    ['phi', 'shvp', 'sat', 'amax', 'ntr'].forEach((k) => {
+      const el = $(k); if (el && String(el.value) !== String(S[k])) el.value = S[k];
+    });
+  }
+
+  function drawAll() {
+    syncLabels();
+    ensureFan();
+    if (visible('p1') || visible('p2') || visible('p3') || visible('p4') || visible('p5')) {
+      drawHeader();
+    }
+    if (visible('p1')) drawStep1();
+    if (visible('p2')) drawStep2();
+    if (visible('p3')) drawStep3();
+    if (visible('p4')) drawStep4();
+    if (visible('p5')) drawStep5();
+  }
+
+  const PANES = ['p1', 'p2', 'p3', 'p4', 'p5', 'pw', 'pe', 'pk', 'pm'];
+  const STEPNAMES = {
+    p1: 'One fit', p2: 'Which moves', p3: 'Angle range', p4: 'Tied together',
+    p5: 'Separable?', pw: 'Why it matters', pe: 'Exercises', pk: 'Key points', pm: 'Method',
+  };
+
+  function buildStepNav() {
+    PANES.forEach((id, i) => {
+      const pane = $(id);
+      if (!pane || pane.querySelector('.stepnav')) return;
+      const prev = PANES[i - 1], next = PANES[i + 1];
+      const nav = document.createElement('div');
+      nav.className = 'stepnav';
+      const mk = (target, text, ghost) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn' + (ghost ? ' ghost' : '') + ' small';
+        b.textContent = text;
+        b.addEventListener('click', () => {
+          showTab(target);
+          const t = document.querySelector('.tabhint');
+          if (t && t.scrollIntoView) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        return b;
+      };
+      nav.appendChild(prev ? mk(prev, '\u2190 ' + STEPNAMES[prev], true)
+                           : document.createElement('span'));
+      const where = document.createElement('span');
+      where.className = 'where';
+      where.textContent = i < 5 ? 'step ' + (i + 1) + ' of 5' : STEPNAMES[id];
+      nav.appendChild(where);
+      nav.appendChild(next ? mk(next, STEPNAMES[next] + ' \u2192')
+                           : document.createElement('span'));
+      pane.appendChild(nav);
+    });
+  }
+
+  function showTab(id) {
+    PANES.forEach((q) => { const el = $(q); if (el) el.hidden = q !== id; });
+    document.querySelectorAll('#tabs button').forEach((b) => {
+      b.setAttribute('aria-selected', b.dataset.tab === id);
+    });
+    const lab = document.querySelector('.labhead');
+    if (lab) lab.hidden = (id === 'pw' || id === 'pe' || id === 'pk' || id === 'pm');
+    const last = (id === 'pk' || id === 'pm');
+    if ($('nextup')) $('nextup').hidden = !last;
+    if ($('pager')) $('pager').hidden = !last;
+    S.tab = id;
+    drawAll();
+    saveState();
+  }
+  document.querySelectorAll('#tabs button').forEach((b) => {
+    b.addEventListener('click', () => showTab(b.dataset.tab));
+  });
+
+  document.addEventListener('input', (ev) => {
+    const key = ev.target && ev.target.dataset && ev.target.dataset.key;
+    if (!key) return;
+    S[key] = parseFloat(ev.target.value);
+    FAN = [];
+    recompute(); drawAll(); saveState();
+  });
+  document.querySelectorAll('#segFluid button').forEach((b) => {
+    b.addEventListener('click', () => {
+      S.fl = b.dataset.fl; FAN = []; recompute(); drawAll(); saveState();
+    });
+  });
+  document.querySelectorAll('#segNoise button').forEach((b) => {
+    b.addEventListener('click', () => {
+      S.nz = +b.dataset.nz; FAN = []; recompute(); drawAll(); saveState();
+    });
+  });
+  if ($('btnAgain')) $('btnAgain').addEventListener('click', () => { addRecording(); drawAll(); });
+  if ($('btnClear')) $('btnClear').addEventListener('click', () => { FAN = []; drawAll(); });
+
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 140); });
+
+  recompute();
+  buildStepNav();
+  showTab(PANES.indexOf(S.tab) >= 0 ? S.tab : 'p1');
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+
+  window.__MOD = { S, get D() { return D; }, recompute, drawAll, showTab,
+                   addRecording, sGfor, anglesFor, sinsq, rockOf, PAIRS, sepSigma,
+                   get FAN() { return FAN; } };
+})();
+</script>
+</body>
+</html>

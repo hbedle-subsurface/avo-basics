@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What survives | How AVO Actually Works</title>
+<meta name="description" content="The closing module: where the information went, how many rocks one number leaves you, how many the second number removes, four traps where the intuitive reading is wrong, and what can honestly be said from an amplitude anomaly.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <a class="brand" href="../index.html"><span class="dot"></span>How AVO <b>actually</b> works</a>
+    <nav>
+      <a href="../index.html">All modules</a>
+      <a href="reading-a-gather.html">Module 05</a>
+      <a href="#pm">Method &amp; references</a>
+    </nav>
+  </header>
+
+  <div class="mod-head">
+    <p class="eyebrow">Module 06 &nbsp;·&nbsp; What you can conclude</p>
+    <h1>What survives</h1>
+    <p class="sub">Five modules of losses, ambiguities and error bars. This one adds them up. It counts how
+      many rocks are consistent with one measurement, how many the second measurement removes, which
+      question neither of them can answer, and it ends with a form of words you could actually defend in a
+      meeting.</p>
+  </div>
+
+  <div class="labhead">
+    <div class="labgrid">
+      <div>
+        <p class="cap">The rocks still standing <span>&mdash; before and after the gradient</span></p>
+        <canvas id="cHead" aria-label="The set of rocks consistent with the intercept alone beside the set consistent with both the intercept and the gradient"></canvas>
+      </div>
+      <div>
+        <p class="cap">The measurement you were given <span>&mdash; and how well you measured it</span></p>
+        <div class="controls" id="mainControls">
+          <div class="ctl-col">
+            <h2>What was recorded</h2>
+            <div class="ctl">
+              <label for="amax">Widest angle after the mute <span class="val" id="amaxV">30°</span></label>
+              <input type="range" data-key="amax" id="amax" min="15" max="45" step="1" value="30">
+            </div>
+            <div class="ctl">
+              <label for="ntr">Traces in the gather <span class="val" id="ntrV">16</span></label>
+              <input type="range" data-key="ntr" id="ntr" min="6" max="48" step="1" value="16">
+            </div>
+            <div class="ctl">
+              <label>Noise <span class="val" id="nzV">moderate</span></label>
+              <div class="seg" id="segNoise">
+                <button type="button" data-nz="0" aria-pressed="false">Clean</button>
+                <button type="button" data-nz="1" aria-pressed="true">Moderate</button>
+                <button type="button" data-nz="2" aria-pressed="false">Noisy</button>
+              </div>
+            </div>
+
+            <h2>What is under the anomaly</h2>
+            <div class="ctl">
+              <label>The truth <span class="val" id="scenV">gas, 30% porosity</span></label>
+              <div class="seg" id="segScen">
+                <button type="button" data-sc="0" aria-pressed="true">Gas 30%</button>
+                <button type="button" data-sc="1" aria-pressed="false">Fizz 34%</button>
+                <button type="button" data-sc="2" aria-pressed="false">Wet 35%</button>
+              </div>
+            </div>
+            <p class="note" style="margin:2px 0 0;font-size:11.5px;line-height:1.45">
+              Only you can see this. The analysis below is given the amplitudes and nothing else.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="tabhint">Work through the five steps in order, <b>then try the exercises</b>.
+    Method and references are there when you want them.</p>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
+    <button role="tab" data-tab="p1" aria-selected="false">1 · The losses</button>
+    <button role="tab" data-tab="p2" aria-selected="false">2 · One number</button>
+    <button role="tab" data-tab="p3" aria-selected="false">3 · Two numbers</button>
+    <button role="tab" data-tab="p4" aria-selected="false">4 · Four traps</button>
+    <button role="tab" data-tab="p5" aria-selected="false">5 · What to say</button>
+    <button role="tab" data-tab="pw" aria-selected="false">Why it matters</button>
+    <span class="gap"></span>
+    <button role="tab" data-tab="pe" aria-selected="false">Exercises</button>
+    <button role="tab" data-tab="pk" aria-selected="false">Key points</button>
+    <button role="tab" data-tab="pm" aria-selected="false">Method</button>
+  </nav>
+
+  <!-- =============================== STEP 1 =============================== -->
+  <section class="tabpane" id="p1" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">1</span>Where the information went</h3>
+      <span class="hint">Every step, and what each one cost</span>
+    </div>
+    <p class="lede">A rock has many independent properties. A seismic amplitude has one number, or two if
+      you have offset. The difference has to go somewhere, and the earlier modules found out where. The
+      card on the left collects it, with the size of each loss measured rather than described.</p>
+    <p class="lede">Read down it and notice that the losses are of different kinds. Some are
+      <b>collapses</b>: several numbers becoming one, as when velocity and density become an impedance.
+      Some are <b>saturations</b>: a property that stops responding once it has changed a little, as gas
+      saturation does. Some are <b>blurs</b>: the wavelet in time, the noise in amplitude. And one is a
+      <b>confusion</b>: half the reflection belongs to a rock you were not asking about.</p>
+    <p class="lede">Only the blurs get better with better data. The collapses and the saturation are
+      properties of the physics and no amount of acquisition or processing touches them.</p>
+
+    <div class="sec-row" id="row1">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Every loss, and where it was measured
+          <span class="note">numbers from the earlier modules</span></p>
+        <canvas id="c1card" aria-label="A summary card listing each step at which information is lost, with the size of the loss and the module that measured it"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Which of them better data can fix
+          <span class="note">and which are permanent</span></p>
+        <canvas id="c1kind" aria-label="The same losses grouped by whether better acquisition or processing can reduce them"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Losses that better data can reduce</span><b id="s1a">—</b></div>
+      <div class="stat key"><span>Losses that it cannot</span><b id="s1b">—</b></div>
+      <div class="stat"><span>Properties going in</span><b id="s1c">—</b></div>
+      <div class="stat"><span>Numbers coming out</span><b id="s1d">—</b></div>
+      <div class="stat"><span>Measured with</span><b id="s1e">—</b></div>
+      <div class="stat wide"><span>The one question none of them answers</span><b id="s1f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>None of this is an argument against using amplitudes. It is an argument for knowing which of
+        your questions the data can answer before you ask it. The next three steps put that on a
+        countable footing.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 2 =============================== -->
+  <section class="tabpane" id="p2" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">2</span>What one number leaves you</h3>
+      <span class="hint">Module 02's count, now with a real error bar on it</span>
+    </div>
+    <p class="lede">Module 02 counted the rocks consistent with a measured amplitude, using a tolerance
+      picked to represent the noise. Now that tolerance can be computed properly: module 05 gives the
+      uncertainty in a fitted intercept from the angle range, the fold and the noise, and the set of
+      admissible rocks is everything within two of those standard deviations.</p>
+    <p class="lede">The panel shows the survivors as a population — what porosities, what fluids, what
+      saturations. The count is large, and the important thing about it is not the number itself but which
+      of its dimensions are wide and which are narrow.</p>
+    <p class="lede">Change the noise and the whole set breathes. Change the mute and it breathes again.
+      Neither of them changes the geology by so much as a percent of porosity.</p>
+
+    <div class="sec-row" id="row2">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The rocks that fit the intercept
+          <span class="note">porosity, and what is in the pores</span></p>
+        <canvas id="c2pop" aria-label="Distribution of porosity and fluid among the rocks consistent with the measured intercept"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> How wide each unknown still is
+          <span class="note">longer is worse</span></p>
+        <canvas id="c2wide" aria-label="The range still admitted for each unknown, as a fraction of the range searched"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Models searched</span><b id="s2a">—</b></div>
+      <div class="stat key"><span>Consistent with the intercept</span><b id="s2b">—</b></div>
+      <div class="stat"><span>Tolerance on the intercept</span><b id="s2c">—</b></div>
+      <div class="stat"><span>Porosity still admitted</span><b id="s2d">—</b></div>
+      <div class="stat"><span>Saturation still admitted</span><b id="s2e">—</b></div>
+      <div class="stat wide"><span>Fraction that contain any hydrocarbon</span><b id="s2f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The fraction containing hydrocarbon is a count of grid cells under equal weighting, not a
+        probability. It says a bright amplitude is much easier to build with hydrocarbons than without, on
+        this grid, which is why bright spots get drilled. It does not say the odds.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 3 =============================== -->
+  <section class="tabpane" id="p3" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">3</span>What the second number buys</h3>
+      <span class="hint">The whole case for AVO, as a number</span>
+    </div>
+    <p class="lede">Now require the gradient to match as well, within its own two standard deviations. The
+      surviving set shrinks. <b>How much it shrinks is the entire practical case for doing AVO</b>, and it
+      is worth having as a figure rather than a conviction.</p>
+    <p class="lede">At moderate noise the gradient removes 55% of what the intercept left. That is a real and
+      useful return. At high noise it removes 25%, because the gradient's error bar
+      has grown so wide that it barely constrains anything — which is module 05's result arriving in a form
+      you can put in a budget.</p>
+    <p class="lede">Then look at <em>which</em> dimensions shrank. Vp/Vs narrows sharply, which is exactly
+      what module 03 predicted: offset measures shear. Porosity narrows a little. And saturation does not
+      move at all. <b>The second measurement buys you lithology and fluid type; it does not buy you how
+      much.</b></p>
+
+    <div class="sec-row" id="row3">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Before and after the gradient
+          <span class="note">each unknown, both times</span></p>
+        <canvas id="c3shrink" aria-label="The range admitted for each unknown before and after requiring the gradient to match"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> What that removed
+          <span class="note">the survivors, on the crossplot</span></p>
+        <canvas id="c3plot" aria-label="The surviving models plotted on the intercept-gradient crossplot, before and after the gradient constraint"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Consistent with the intercept</span><b id="s3a">—</b></div>
+      <div class="stat key"><span>…and with the gradient</span><b id="s3b">—</b></div>
+      <div class="stat key"><span>The second measurement removed</span><b id="s3c">—</b></div>
+      <div class="stat"><span>Vp/Vs range, before and after</span><b id="s3d">—</b></div>
+      <div class="stat"><span>Saturation range, before and after</span><b id="s3e">—</b></div>
+      <div class="stat wide"><span>What adding offset actually bought here</span><b id="s3f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>Switch the noise to noisy and watch the second column collapse towards the first. AVO is not a
+        method that either works or does not; it is a method whose value is proportional to how well you
+        can measure a gradient, and module 05 showed exactly what that depends on.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 4 =============================== -->
+  <section class="tabpane" id="p4" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">4</span>Four ways to be confidently wrong</h3>
+      <span class="hint">Each one is a rule of thumb that is usually true</span>
+    </div>
+    <p class="lede">Every trap below comes from a rule that works most of the time. That is what makes
+      them dangerous: a rule that failed often would have been discarded. Press each button to load the
+      situation and see what the analysis says about it.</p>
+
+    <div style="margin:0 0 14px;display:flex;gap:8px;flex-wrap:wrap">
+      <button type="button" class="btn small" data-trap="0">Bright means gas</button>
+      <button type="button" class="btn small" data-trap="1">Dim means wet</button>
+      <button type="button" class="btn small" data-trap="2">A lot of gas</button>
+      <button type="button" class="btn small" data-trap="3">Class III means gas</button>
+    </div>
+
+    <div class="sec-row" id="row4">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The trap
+          <span class="note">what the rule says, and what is true</span></p>
+        <canvas id="c4trap" aria-label="A description of the selected trap, the rule that fails and the rock that breaks it"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> The two rocks, as gathers
+          <span class="note">what you would have seen</span></p>
+        <canvas id="c4gath" aria-label="Gathers for the rock the rule expects and the rock that actually produces the response"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>The rule</span><b id="s4a">—</b></div>
+      <div class="stat key"><span>Where it fails</span><b id="s4b">—</b></div>
+      <div class="stat"><span>What the rule expects</span><b id="s4c">—</b></div>
+      <div class="stat"><span>What is actually there</span><b id="s4d">—</b></div>
+      <div class="stat"><span>Difference you could measure</span><b id="s4e">—</b></div>
+      <div class="stat wide"><span>Where this was established</span><b id="s4f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The common thread is that each rule is a statement about a <em>reservoir</em>, while an
+        amplitude is a statement about a <em>contrast</em> — between two rocks, at a thickness, through a
+        wavelet, with noise on top. Every trap is that mismatch showing through.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 5 =============================== -->
+  <section class="tabpane" id="p5" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">5</span>What you can honestly say</h3>
+      <span class="hint">Generated from the surviving set, not from a template</span>
+    </div>
+    <p class="lede">The statement below is assembled from the analysis you have just run. Each clause is
+      backed by a count or a range from the surviving models: nothing in it is asserted that the numbers do
+      not support, and nothing that they do support is left out.</p>
+    <p class="lede">Change the noise, the mute or the fold and watch the wording change with them. That
+      responsiveness is the point. <b>What you can defend depends on how well you measured, and it should
+      be re-derived rather than remembered.</b></p>
+    <p class="lede">Notice the shape of it. There is usually something firm to say about impedance and
+      about the presence of a hydrocarbon. There is usually nothing to say about saturation. And there is
+      almost always a caveat about the seal, because half of every amplitude belongs to a rock nobody
+      characterised.</p>
+
+    <div class="sec-row" id="row5">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The statement
+          <span class="note">every clause traceable to a count</span></p>
+        <canvas id="c5say" aria-label="A generated statement of what can be concluded, with each clause backed by a count from the surviving models"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> What would narrow it most
+          <span class="note">the value of the next measurement</span></p>
+        <canvas id="c5next" aria-label="How much the surviving set would shrink under each of several possible additional constraints"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat key"><span>Can you say there is a hydrocarbon</span><b id="s5a">—</b></div>
+      <div class="stat key"><span>Can you say how much</span><b id="s5b">—</b></div>
+      <div class="stat"><span>Can you say the porosity</span><b id="s5c">—</b></div>
+      <div class="stat"><span>Can you say the thickness</span><b id="s5d">—</b></div>
+      <div class="stat"><span>Most valuable next measurement</span><b id="s5e">—</b></div>
+      <div class="stat wide"><span>The honest one-line version</span><b id="s5f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>One thing this page cannot do for you: an anomaly that holds together across a mapped area is
+        far better evidence than any single location, because the noise is independent from trace to trace
+        and the geology is not. Everything here is the worst case of a single gather, and real
+        interpretation is better than that. It is not better in the dimensions the physics closed
+        off.</span>
+    </div>
+  </section>
+
+  <!-- ============================ WHY IT MATTERS =========================== -->
+  <section class="tabpane" id="pw" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">W</span>Why it matters</h3>
+      <span class="hint">Using a method whose limits you know</span>
+    </div>
+    <p class="lede">The point of all six modules is not that AVO is unreliable. It is that AVO answers
+      some questions well, some badly and some not at all, and that which is which can be worked out in
+      advance rather than discovered after a well.</p>
+    <ul class="lede" style="padding-left:20px">
+      <li><b>Ask the question the data can answer.</b> "Is there a hydrocarbon here" is often answerable.
+        "How much" usually is not. Framing a prospect around the second one guarantees a disappointing
+        result no matter how good the processing is.</li>
+      <li><b>Compute the value of the gradient before paying for it.</b> Step 3 puts a number on what the
+        second measurement removes. At high noise it removes a fifth of the solutions, which may not
+        justify the work.</li>
+      <li><b>Spend on what narrows the set.</b> Step 5 ranks the candidates. Very often the cheapest
+        useful measurement is a constraint on the seal rather than anything about the reservoir.</li>
+      <li><b>Report a set, not a value.</b> Every number in a quantitative interpretation is a
+        representative of a set of possibilities. Quoting the representative without the set is the single
+        most common way these methods mislead.</li>
+    </ul>
+
+    <p class="lede">The habit that survives all of this is simple and slightly uncomfortable: having found
+      a model that explains your data, go and look for the others. The first fit feels like an answer, and
+      it is only a member of a set whose size you have not yet checked. Everything in these six modules is
+      an elaboration of that.</p>
+    <p class="lede">It is worth saying plainly that this site is a model, and inherits the weakness it
+      keeps pointing at. The rock physics is one choice among several, the noise is simpler than real
+      noise, nothing here is spatial, and a real interpreter has structural conformance, well control and
+      a hundred other things this page does not. The numbers are honest about the parameter space they
+      searched. That space is not the earth.</p>
+
+    <div class="legend prose">
+      <span>If one sentence is worth carrying away from the whole set: an amplitude constrains a contrast,
+        not a reservoir, and the size of the set it leaves you is computable before you drill.</span>
+    </div>
+  </section>
+
+  <!-- ============================== EXERCISES ============================= -->
+  <section class="tabpane" id="pe" role="tabpanel" hidden>
+    <div class="tryit" style="max-width:none">
+      <h3>Exercises</h3>
+      <ol>
+        <li><b>Price the gradient.</b> In step 3, read how many models survive the intercept alone and how
+          many survive both numbers, at moderate noise and then at noisy.
+          <details class="reveal"><summary>Hint</summary><span class="ans">At moderate noise 441 models match the intercept and 198 match
+            both, so the gradient removes 55% of them. At high noise 1,156 match the intercept and 870
+            match both — the gradient removes only 25%. Same rocks,
+            same acquisition geometry, same physics. What changed is how well the gradient could be
+            measured, and module 05 explains precisely why. If a project cannot afford the processing to
+            get the noise down, the AVO may be worth much less than the proposal assumed.</span></details></li>
+
+        <li><b>Find the dimension that never narrows.</b> Still in step 3, compare the Vp/Vs range and the
+          saturation range before and after the gradient is applied.
+          <details class="reveal"><summary>Hint</summary><span class="ans">At moderate noise Vp/Vs goes from 1.46–2.08 to 1.46–1.60, a
+            real narrowing, and it is why the hydrocarbon-bearing fraction goes from 98% to 100%: offset
+            measures shear, and the wet rocks are the ones with high Vp/Vs. Saturation goes from 0–100% to
+            10–100%, and the only thing that changed is that the wet rocks were removed. Among the models
+            that do contain a hydrocarbon, every saturation from 10% to 100% still fits exactly as well. That is the fizz problem from modules
+            02 and 03 arriving at its final form: no measurement on this page, at any noise level, can tell
+            a commercial column from a residual one.</span></details></li>
+
+        <li><b>Watch the mute change what you can conclude.</b> In step 5, set the widest angle to 15°,
+          read the statement, then take it to 45° and read it again.
+          <details class="reveal"><summary>Hint</summary><span class="ans">At a 15° mute the gradient removes 4% of the models the
+            intercept left — its error bar is so wide that it constrains almost nothing, and the statement
+            drops back to what an intercept alone can support. At 30° it removes 55%. At 45° it removes
+            75%. Nothing about the earth changed between the two readings. This is the most
+            direct demonstration in the whole site that a processing parameter decides what you are allowed
+            to conclude.</span></details></li>
+
+        <li><b>Take each trap in turn.</b> In step 4, work through all four and note which module first
+          established each one.
+          <details class="reveal"><summary>Hint</summary><span class="ans">Bright means gas fails because
+            a gas sand at 20% porosity gives an intercept of −0.004 and is invisible — module 01, exercise
+            2. Dim means wet fails for the same reason from the other side. A lot of gas fails because 10%
+            saturation produces two thirds of the full amplitude effect — module 01, exercise 3, and
+            module 02's contour. Class III means gas fails because the same gas sand is Class I, II or III
+            depending only on the shale above it — module 04, exercise 5. Four rules, four
+            counterexamples, all built from the same physics rather than from anecdotes.</span></details></li>
+
+        <li><b>Write the statement yourself, then compare.</b> Set the noise to moderate and the mute to
+          30°, decide what you would tell a colleague, then open step 5.
+          <details class="reveal"><summary>Hint</summary><span class="ans">The defensible version is
+            close to: the impedance is constrained to a band; the response is very hard to produce without
+            a hydrocarbon on this parameter grid; the fluid is more likely gas than oil on the gradient;
+            the saturation is entirely unconstrained between about 5% and 100%; and the porosity depends on
+            an assumption about the shale that has not been tested. Most people's first draft is firmer
+            than that on saturation and vaguer than that on the shale, which is exactly the pair of errors
+            this site was built to correct.</span></details></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================== KEY POINTS ============================ -->
+  <section class="tabpane" id="pk" role="tabpanel" hidden>
+    <div class="takeaway" style="max-width:none">
+      <h3>Key points</h3>
+      <ul>
+        <li><b>The losses are of different kinds and only some are fixable.</b> Collapses like velocity and
+          density into impedance, and the saturation of the gas effect, are physics. The blurs — the
+          wavelet, the noise — are the only ones better data improves.</li>
+        <li><b>One number leaves a large set.</b> With a properly computed tolerance, 441 rocks out of the
+          13,020 searched match the measured intercept at moderate noise, spanning porosities from 19% to
+          35% and every saturation from zero to full.</li>
+        <li><b>The second number removes about half of them, and only when you can measure it.</b> The gradient cuts 441 to 198 at moderate noise and 1,156 to
+          870 when noisy — 55% against 25%. Widen the mute instead and it cuts 75%; narrow it to 15° and it
+          cuts 4%.
+          The value of AVO is proportional to how well the gradient is determined.</li>
+        <li><b>What offset buys is Vp/Vs, and therefore fluid type.</b> The admitted Vp/Vs range narrows from 1.46–2.08 to 1.46–1.60,
+          and the hydrocarbon-bearing fraction goes from 98% to 100%.</li>
+        <li><b>Saturation is untouched by all of it.</b> Among the models that contain a hydrocarbon, before and after
+          the gradient and at every noise level, the admitted saturation runs from 10% to 100%. Nothing in normal-incidence or
+          offset-dependent amplitude separates a commercial column from a residual one.</li>
+        <li><b>Every rule of thumb has a computable counterexample.</b> Bright is not gas, dim is not wet,
+          a strong anomaly is not a lot of gas, and Class III is not a rock type — the same sand moves
+          through three classes on the shale slider alone.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================ METHOD ============================== -->
+  <section class="tabpane" id="pm" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">M</span>Method, simplifications and references</h3>
+      <span class="hint">What is computed, and where it departs from production software</span>
+    </div>
+
+    <p class="lede"><b>Everything here is built from the earlier modules.</b> The rock physics is module
+      01's, the reflection coefficients are exact Zoeppritz as in module 03, the intercept and gradient are
+      fitted as in module 04, and their uncertainties come from module 05's closed form. Each Method tab
+      lists its own assumptions and all of them apply here.</p>
+
+    <p class="lede"><b>The tolerances are computed, not chosen.</b> A model is kept if its intercept is
+      within two standard deviations of the measured one, and — in step 3 — its gradient likewise. Those
+      standard deviations follow from the angle range, the number of traces and the noise level on the
+      sliders, so moving any of those genuinely changes what is admissible rather than just relabelling
+      it.</p>
+
+    <p class="lede"><b>The search grid</b> is porosity 5–35% in 1% steps, clay 0–30% in 10% steps, fluid
+      brine, oil or gas, hydrocarbon saturation 10–100% in 10% steps, and shale velocity 2300–3100 m/s in
+      200 m/s steps, with a hydrocarbon at zero saturation counted once as brine rather than three times.
+      The fit for each model uses eight angles rather than sixteen, which changes the recovered gradient by
+      about 0.001 and makes the sweep fast enough to run while a slider moves.</p>
+
+    <p class="lede"><b>Counts are not probabilities.</b> This is the same caution as module 02's and it
+      matters more here, because the closing statement is generated from the counts. The survivor count is
+      the number of cells in a hand-chosen grid, weighted equally, that reproduce the measurement. Turning
+      it into a probability needs a prior that reflects the basin, the depositional setting and the trap,
+      and different priors give materially different answers from identical seismic. Read every count as
+      "this many distinct explanations exist", which is a statement about the measurement, and never as
+      "this is how likely each is", which is a statement about geology that seismic alone cannot make.</p>
+
+    <p class="lede"><b>Where this departs from production practice.</b></p>
+    <ul class="lede" style="padding-left:20px">
+      <li><b>Nothing is spatial.</b> This is the largest omission on the page. Real interpretation gains
+        enormously from an anomaly conforming to structure and repeating over an area, and none of that is
+        available to a single-gather analysis.</li>
+      <li><b>No well control, no seismic inversion, no other attributes</b>, all of which narrow the set
+        further and are the reason quantitative interpretation is worth doing at all.</li>
+      <li><b>The truth is known to the page and hidden from the analysis.</b> That is a luxury: on real
+        data nobody can check the answer, which makes the discipline of counting alternatives more
+        important rather than less.</li>
+      <li><b>Thickness is fixed at 45 m</b> and tuning is therefore not part of the search here, though
+        module 02 showed it widening the admissible set considerably.</li>
+      <li><b>The generated statement is a teaching device.</b> It is assembled from the counts by a fixed
+        set of rules. It is not a report, and a real one would carry the geological reasoning that this
+        page has no access to.</li>
+    </ul>
+
+    <details class="reveal" style="margin-top:8px">
+      <summary>References</summary>
+      <ul style="padding-left:18px;margin-top:8px">
+        <li>Tarantola, A., 2005, <em>Inverse Problem Theory and Methods for Model Parameter
+          Estimation</em>: SIAM.</li>
+        <li>Cambois, G., 2000, Can P-wave AVO be quantitative?: <em>The Leading Edge</em>, 19, 1246–1251.</li>
+        <li>Avseth, P., Mukerji, T., and Mavko, G., 2005, <em>Quantitative Seismic Interpretation</em>:
+          Cambridge University Press.</li>
+        <li>Bosch, M., Mukerji, T., and González, E. F., 2010, Seismic inversion for reservoir properties
+          combining statistical rock physics and geostatistics: a review: <em>Geophysics</em>, 75,
+          75A165–75A176.</li>
+        <li>Simm, R., and Bacon, M., 2014, <em>Seismic Amplitude: An Interpreter's Handbook</em>:
+          Cambridge University Press.</li>
+        <li>Rutherford, S. R., and Williams, R. H., 1989, Amplitude-versus-offset variations in gas sands:
+          <em>Geophysics</em>, 54, 680–688.</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="nextup" id="nextup" hidden>
+    <p class="eyebrow">That is the set</p>
+    <h3>Six modules, one idea</h3>
+    <p>An amplitude constrains a contrast, not a reservoir, and the size of the set it leaves you is
+      computable before you drill. If you want to go back to where it started, module 01 builds a rock and
+      follows it to a trace.</p>
+    <a class="btn" href="rock-to-trace.html">Back to module 01</a>
+    <a class="btn ghost" href="../index.html">All modules</a>
+  </section>
+
+  <div class="pager" id="pager" hidden>
+    <a class="btn ghost" href="reading-a-gather.html">← Module 05: reading a gather you did not make</a>
+    <a class="btn ghost" href="../index.html">All modules</a>
+  </div>
+
+  <footer>
+    <div class="foot-grid">
+      <p>Built for teaching by Heather Bedle, School of Geosciences, University of Oklahoma, with the
+        <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a> consortium.</p>
+      <p class="lic">Free to use for teaching, demonstration, and non-commercial study, provided the source
+        is credited. Please do not republish or redistribute it, modified or otherwise, without permission.
+        If you use it in a course or a talk, a credit line and a link back are all that is asked.</p>
+      <p class="lic">To cite: H. Bedle, <i>How AVO Actually Works</i>, University of
+        Oklahoma. <span class="k">SSRN: [article link to follow]</span></p>
+    </div>
+  </footer>
+</div>
+
+<script src="../assets/seismic.js"></script>
+<script src="../assets/rockphysics.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const missing = [];
+  if (typeof SEIS === 'undefined') missing.push('assets/seismic.js');
+  if (typeof ROCK === 'undefined') missing.push('assets/rockphysics.js');
+  if (!missing.length && typeof ROCK.fitUncertainty !== 'function') {
+    missing.push('assets/rockphysics.js (present, but too old: no fitUncertainty)');
+  }
+  if (missing.length) {
+    const el = document.createElement('div');
+    el.setAttribute('style', 'background:#841617;color:#fff;padding:14px 18px;margin:16px 0;' +
+      'font:13px/1.6 ui-monospace,Menlo,monospace');
+    el.textContent = 'This module could not load ' + missing.join(' and ') +
+      '. It expects them one directory up, at ../assets/, and file names are ' +
+      'case-sensitive on GitHub Pages.';
+    const w = document.querySelector('.wrap');
+    (w || document.body).insertBefore(el, w ? w.firstChild : null);
+    return;
+  }
+
+  const $ = (id) => document.getElementById(id);
+  const visible = (id) => { const el = $(id); return el && !el.hidden; };
+  const CRIM = '#841617', TEAL = '#0B7285', SLATE = '#5C6670', INK = '#16191C';
+  const OLIVE = '#6B7A2E', ORANGE = '#B5451B';
+  const DEG = Math.PI / 180;
+
+  const DEF = { amax: 30, ntr: 16, nz: 1, sc: 0, trap: 0, tab: 'p1' };
+  const S = SEIS.readState(DEF);
+  (function sanitize() {
+    const num = (k, lo, hi, step) => {
+      let v = Number(S[k]);
+      if (!isFinite(v)) v = DEF[k];
+      v = Math.min(hi, Math.max(lo, v));
+      S[k] = step ? Math.round(v / step) * step : v;
+    };
+    num('amax', 15, 45, 1); num('ntr', 6, 48, 1); num('nz', 0, 2, 1);
+    num('sc', 0, 2, 1); num('trap', 0, 3, 1);
+  })();
+  const saveState = () => SEIS.writeState(S, DEF);
+
+  const PRES = 23, TEMP = 64, FREQ = 30, THICK = 45;
+  const NOISE = [0.004, 0.015, 0.040];
+  const NOISE_NAME = ['clean', 'moderate', 'noisy'];
+  const TR0 = -0.090, DT = 0.001, NT = 231;
+  const WAV = SEIS.makeWavelet({ type: 'ricker', f: FREQ });
+  const NANG = 8;                 // angles per model in the sweep
+
+  /* =====================================================================
+     THE SEARCH GRID
+     ===================================================================== */
+
+  const CLAYS = [0, 10, 20, 30];
+  const PHIS = []; for (let p = 5; p <= 35; p++) PHIS.push(p);
+  const SATS = []; for (let s = 10; s <= 100; s += 10) SATS.push(s);
+  const SHVPS = []; for (let v = 2300; v <= 3100; v += 200) SHVPS.push(v);
+  const FLUIDS = ['brine', 'oil', 'gas'];
+
+  const DRY = CLAYS.map((c) => {
+    const min = ROCK.mineralMix(c / 100);
+    return { min, frames: PHIS.map((p) => ROCK.softSand(min, p / 100, { P: PRES })) };
+  });
+  const FLP = ROCK.fluidProps({ P: PRES, T: TEMP, api: 32, gor: 0 });
+  const FLUIDT = {};
+  for (const f of FLUIDS) {
+    FLUIDT[f] = SATS.map((s) => {
+      if (f === 'brine') return { K: FLP.brine.K, rho: FLP.brine.rho };
+      const hc = f === 'gas' ? FLP.gas : FLP.oil;
+      return ROCK.mixReuss([{ K: hc.K, rho: hc.rho, s: s / 100 },
+                            { K: FLP.brine.K, rho: FLP.brine.rho, s: 1 - s / 100 }]);
+    });
+  }
+  const SHALET = SHVPS.map((v) => ROCK.mudrock(v));
+
+  function cellRock(ci, pi, fluid, si) {
+    const d = DRY[ci], fr = d.frames[pi], phi = PHIS[pi] / 100;
+    const fl = FLUIDT[fluid][si];
+    const K = ROCK.gassmann(fr.K, d.min.K, fl.K, phi);
+    const rho = (1 - phi) * d.min.rho + phi * fl.rho;
+    const vp = Math.sqrt((K + (4 / 3) * fr.G) * 1e9 / (rho * 1000));
+    const vs = Math.sqrt(fr.G * 1e9 / (rho * 1000));
+    return { vp, vs, rho, vpvs: vp / vs, ip: vp * rho };
+  }
+
+  const sinsq = (t) => Math.pow(Math.sin(t * DEG), 2);
+  const anglesFor = (n, angMax) => {
+    const a = [];
+    for (let i = 0; i < n; i++) a.push((i / (n - 1)) * angMax);
+    return a;
+  };
+  function fitOf(rock, shale, angs, xs) {
+    const ys = angs.map((t) => ROCK.zoeppritz(shale, rock, t));
+    return ROCK.fitLine(xs, ys);
+  }
+
+  /* =====================================================================
+     THE OBSERVATION AND THE SWEEP
+     ===================================================================== */
+
+  const SCEN = [
+    { label: 'gas, 30% porosity', phi: 30, fl: 'gas', sat: 100, shv: 2700 },
+    { label: 'fizz, 34% porosity', phi: 34, fl: 'gas', sat: 10, shv: 2700 },
+    { label: 'wet, 35% porosity', phi: 35, fl: 'brine', sat: 0, shv: 3100 },
+  ];
+
+  const rockOf = (phi, fl, sat) => ROCK.rockModel({
+    vClay: 0, phi: phi / 100, fluid: fl, sHc: fl === 'brine' ? 0 : sat / 100,
+    api: 32, gor: 0, P: PRES, T: TEMP });
+
+  let D = {};
+  let sweepMemo = { key: null };
+
+  function sweep() {
+    const key = [S.amax, S.ntr, S.nz, S.sc].join('|');
+    if (sweepMemo.key === key) return sweepMemo.val;
+    const angs = anglesFor(NANG, S.amax);
+    const xs = angs.map(sinsq);
+    const tolR = 2 * D.unc.sR0, tolG = 2 * D.unc.sG;
+    const byR = [], byRG = [];
+    let tried = 0;
+    for (let ci = 0; ci < CLAYS.length; ci++) {
+      for (let pi = 0; pi < PHIS.length; pi++) {
+        for (const f of FLUIDS) {
+          const nS = f === 'brine' ? 1 : SATS.length;
+          for (let si = 0; si < nS; si++) {
+            const rock = cellRock(ci, pi, f, si);
+            for (let shi = 0; shi < SHALET.length; shi++) {
+              tried++;
+              const fit = fitOf(rock, SHALET[shi], angs, xs);
+              if (!isFinite(fit.R0)) continue;
+              if (Math.abs(fit.R0 - D.obs.R0) > tolR) continue;
+              const rec = { phi: PHIS[pi], fl: f, sat: f === 'brine' ? 0 : SATS[si],
+                            clay: CLAYS[ci], shv: SHVPS[shi], vpvs: rock.vpvs,
+                            ip: rock.ip, R0: fit.R0, G: fit.G };
+              byR.push(rec);
+              if (Math.abs(fit.G - D.obs.G) <= tolG) byRG.push(rec);
+            }
+          }
+        }
+      }
+    }
+    const val = { tried, byR, byRG, tolR, tolG };
+    sweepMemo = { key, val };
+    return val;
+  }
+
+  const rangeOf = (list, k) => {
+    if (!list.length) return [NaN, NaN];
+    const v = list.map((q) => q[k]);
+    return [Math.min.apply(null, v), Math.max.apply(null, v)];
+  };
+  const fracHC = (list) => list.length
+    ? list.filter((q) => q.sat > 0).length / list.length : NaN;
+
+  function recompute() {
+    const sc = SCEN[S.sc];
+    D.shale = ROCK.mudrock(sc.shv);
+    D.res = rockOf(sc.phi, sc.fl, sc.sat);
+    D.angs = anglesFor(S.ntr, S.amax);
+    D.xs = D.angs.map(sinsq);
+    D.sigma = NOISE[S.nz];
+    D.unc = ROCK.fitUncertainty(D.xs, D.sigma);
+    D.obs = fitOf(D.res, D.shale, D.angs, D.xs);
+    D.sw = sweep();
+  }
+
+  /* =====================================================================
+     DRAWING
+     ===================================================================== */
+
+  const M = { l: 58, r: 16, t: 14, b: 36 };
+  const AMP = 0.42;
+
+  function pw(el) {
+    const par = el && el.parentElement;
+    if (!par) return 900;
+    const cs = (typeof window.getComputedStyle === 'function')
+      ? window.getComputedStyle(par) : { paddingLeft: '0', paddingRight: '0' };
+    const inner = par.clientWidth
+      - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    return Math.max(200, Math.floor(inner || 900));
+  }
+  function rowWidth(rowId, n) {
+    const row = $(rowId);
+    const total = row ? pw(row.firstElementChild || row) : 800;
+    const narrow = (window.innerWidth || 1200) <= 700;
+    const w = narrow ? Math.max(240, total)
+                     : Math.max(150, Math.floor((total - 10 * (n - 1)) / n));
+    if (row) {
+      row.querySelectorAll(':scope > .panel-col').forEach((el) => {
+        el.style.width = w + 'px'; el.style.maxWidth = w + 'px';
+      });
+    }
+    return w;
+  }
+  const yOf = (t, R) => R.y + ((t - TR0) / ((NT - 1) * DT)) * R.h;
+
+  function wrapText(ctx, text, x, y, maxW, lh) {
+    const words = String(text).split(' ');
+    let line = '', yy = y;
+    for (const wd of words) {
+      const test = line ? line + ' ' + wd : wd;
+      if (ctx.measureText(test).width > maxW && line) {
+        ctx.fillText(line, x, yy); line = wd; yy += lh;
+      } else line = test;
+    }
+    if (line) ctx.fillText(line, x, yy);
+    return yy + lh;
+  }
+
+  const LEG_FONT = '11px "IBM Plex Sans", sans-serif';
+  function legendLines(ctx, items, maxW) {
+    ctx.save(); ctx.font = LEG_FONT;
+    let lines = 1, x = 0;
+    for (const [, t] of items) {
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > 0 && x + iw > maxW) { lines++; x = 0; }
+      x += iw;
+    }
+    ctx.restore();
+    return lines;
+  }
+  function legendRow(ctx, R, items) {
+    ctx.save();
+    ctx.font = LEG_FONT; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    let x = R.x, y = R.y + R.h + 46;
+    for (const [c, t, kind] of items) {
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > R.x && x + iw > R.x + R.w) { x = R.x; y += 16; }
+      if (kind === 'dot') {
+        ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x + 9, y, 4, 0, 7); ctx.fill();
+      } else {
+        ctx.strokeStyle = c; ctx.lineWidth = 2;
+        ctx.setLineDash(kind === 'dash' ? [5, 4] : []);
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 18, y); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      ctx.fillStyle = SLATE; ctx.fillText(t, x + 23, y);
+      x += iw;
+    }
+    ctx.restore();
+  }
+  function fitLegend(id, w, baseH, items) {
+    let ctx = SEIS.fitCanvas($(id), w, baseH);
+    const H = baseH + (legendLines(ctx, items, w - M.l - M.r) - 1) * 16;
+    ctx = SEIS.fitCanvas($(id), w, H);
+    ctx.clearRect(0, 0, w, H);
+    return { ctx, H, plotH: H - M.t - M.b - 40 - (H - baseH) };
+  }
+
+  // ---- gathers, reused from module 05 ----
+  function traceAt(rock, shale, angle, seed) {
+    const rt = ROCK.zoeppritz(shale, rock, angle);
+    const rb = ROCK.zoeppritz(rock, shale, angle);
+    if (!isFinite(rt) || !isFinite(rb)) return null;
+    const dt = 2 * THICK / rock.vp;
+    const tr = SEIS.traceFromSpikes([{ t: 0, r: rt }, { t: dt, r: rb }], TR0, DT, NT, WAV);
+    const n = SEIS.bandLimitedNoise(1, NT, DT, WAV, seed, 0);
+    const out = new Float32Array(NT);
+    for (let i = 0; i < NT; i++) out[i] = tr[i] + n[i] * D.sigma;
+    return out;
+  }
+  function drawGather(ctx, R, rock, shale, n, seed) {
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const cw = R.w / n;
+    for (let i = 0; i < n; i++) {
+      const ang = (i / (n - 1)) * S.amax;
+      const tr = traceAt(rock, shale, ang, (seed || 6000) + i * 13);
+      if (!tr) continue;
+      const col = { x: R.x + i * cw, y: R.y, w: cw, h: R.h };
+      const x0 = col.x + col.w / 2;
+      const X = (a) => x0 + (a / AMP) * (col.w / 2) * 0.95;
+      ctx.save();
+      ctx.beginPath();
+      const lo = Math.max(R.x, col.x - col.w * 0.6), hi = Math.min(R.x + R.w, col.x + col.w * 1.6);
+      ctx.rect(lo, R.y, hi - lo, R.h); ctx.clip();
+      ctx.fillStyle = 'rgba(22,25,28,0.75)';
+      ctx.beginPath(); ctx.moveTo(x0, R.y);
+      for (let k = 0; k < NT; k++) ctx.lineTo(Math.max(x0, X(tr[k])), yOf(TR0 + k * DT, R));
+      ctx.lineTo(x0, R.y + R.h); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = INK; ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let k = 0; k < NT; k++) {
+        const x = X(tr[k]), y = yOf(TR0 + k * DT, R);
+        k === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke(); ctx.restore();
+    }
+    SEIS.dashedLine(ctx, R.x, yOf(0, R), R.x + R.w, yOf(0, R), CRIM, [4, 3], 1.2);
+    SEIS.frame(ctx, R);
+  }
+  function gatherCard(ctx, R, rock, shale, lines, color) {
+    ctx.save();
+    ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h);
+    ctx.fillStyle = color || CRIM; ctx.fillRect(R.x, R.y, R.w, 3);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    let yy = R.y + 9;
+    lines.forEach((ln, k) => {
+      ctx.fillStyle = k === 0 ? INK : SLATE;
+      ctx.font = (k === 0 ? '600 12px' : '11.5px') + ' "IBM Plex Sans", sans-serif';
+      ctx.fillText(ln, R.x + R.w / 2, yy);
+      yy += k === 0 ? 17 : 15;
+    });
+    ctx.restore();
+    const g = { x: R.x + 4, y: yy + 6, w: R.w - 8, h: R.y + R.h - yy - 24 };
+    if (g.h > 30) {
+      drawGather(ctx, g, rock, shale, 8, 5200 + Math.round(rock.vp));
+      ctx.save();
+      ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
+      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      ctx.fillText('near', g.x, g.y + g.h + 4);
+      ctx.textAlign = 'right'; ctx.fillText('far', g.x + g.w, g.y + g.h + 4);
+      ctx.restore();
+    }
+    ctx.save();
+    ctx.strokeStyle = 'rgba(22,25,28,.28)'; ctx.lineWidth = 1;
+    ctx.strokeRect(R.x + 0.5, R.y + 0.5, R.w - 1, R.h - 1);
+    ctx.restore();
+  }
+
+  /* A card of rows: label on the left, value on the right, wrapped note under.
+     Used for the loss summary, the trap description and the closing statement. */
+  function textCard(ctx, R, title, rows, opts) {
+    const o = opts || {};
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    let y = R.y + 10;
+    if (title) {
+      ctx.save();
+      ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = CRIM;
+      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      ctx.fillText(title, R.x + 10, y);
+      ctx.restore();
+      y += 20;
+      SEIS.dashedLine(ctx, R.x + 8, y - 4, R.x + R.w - 8, y - 4, 'rgba(22,25,28,.28)', [3, 3], 1);
+    }
+    ctx.save();
+    for (const row of rows) {
+      if (y > R.y + R.h - 14) break;
+      if (row.rule) {
+        SEIS.dashedLine(ctx, R.x + 8, y + 2, R.x + R.w - 8, y + 2, 'rgba(22,25,28,.14)', [2, 3], 1);
+        y += 8;
+        continue;
+      }
+      if (row.head) {
+        ctx.font = '600 12px "IBM Plex Sans", sans-serif';
+        ctx.fillStyle = row.color || INK; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+        y = wrapText(ctx, row.head, R.x + 10, y, R.w - 20, 16);
+        continue;
+      }
+      ctx.font = '11.5px "IBM Plex Sans", sans-serif';
+      ctx.fillStyle = SLATE; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      const valW = row.value ? ctx.measureText(row.value).width + 14 : 0;
+      const endY = wrapText(ctx, row.label, R.x + 10, y, R.w - 20 - valW, 15);
+      if (row.value) {
+        ctx.font = '600 11.5px "IBM Plex Mono", monospace';
+        ctx.fillStyle = row.color || INK; ctx.textAlign = 'right';
+        ctx.fillText(row.value, R.x + R.w - 10, y);
+        ctx.textAlign = 'left';
+      }
+      y = endY + (row.gap || 2);
+    }
+    ctx.restore();
+    SEIS.frame(ctx, R);
+    return y;
+  }
+
+  /* horizontal bars comparing a set of named quantities on a 0..1 scale */
+  function barRows(ctx, R, rows, caption) {
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const labelW = Math.min(150, R.w * 0.42);
+    const bh = R.h / Math.max(1, rows.length);
+    ctx.save();
+    rows.forEach((row, i) => {
+      const y = R.y + i * bh + bh * 0.5;
+      ctx.font = '11.5px "IBM Plex Sans", sans-serif';
+      ctx.fillStyle = SLATE; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText(row.label, R.x + 8, y);
+      const x0 = R.x + labelW, avail = R.w - labelW - 56;
+      if (row.before !== undefined) {
+        ctx.fillStyle = 'rgba(92,102,112,0.35)';
+        ctx.fillRect(x0, y - 9, Math.max(1, avail * Math.min(1, row.before)), 8);
+      }
+      ctx.fillStyle = row.color || CRIM;
+      ctx.fillRect(x0, y + (row.before !== undefined ? 1 : -5),
+                   Math.max(1, avail * Math.min(1, row.value)), 8);
+      ctx.font = '11px "IBM Plex Mono", monospace';
+      ctx.fillStyle = INK; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      ctx.fillText(row.text || '', R.x + R.w - 6, y);
+    });
+    ctx.restore();
+    SEIS.frame(ctx, R);
+    if (caption) {
+      ctx.save();
+      ctx.font = '10.5px "IBM Plex Sans", sans-serif';
+      ctx.fillStyle = SLATE; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      wrapText(ctx, caption, R.x, R.y + R.h + 8, R.w, 14);
+      ctx.restore();
+    }
+  }
+
+  /* =====================================================================
+     HEADER
+     ===================================================================== */
+
+  function drawHeader() {
+    const el = $('cHead');
+    const w = pw(el), h = 208;
+    const ctx = SEIS.fitCanvas(el, w, h);
+    ctx.clearRect(0, 0, w, h);
+    const R = { x: 8, y: 22, w: w - 16, h: h - 22 - 30 };
+    const nR = D.sw.byR.length, nRG = D.sw.byRG.length;
+    const mx = Math.max(1, nR);
+    const rows = [
+      { label: 'consistent with the intercept', value: nR / mx, color: SLATE,
+        text: nR.toLocaleString() },
+      { label: 'and with the gradient too', value: nRG / mx, color: CRIM,
+        text: nRG.toLocaleString() },
+    ];
+    barRows(ctx, R, rows, null);
+    ctx.save();
+    ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText('OUT OF ' + D.sw.tried.toLocaleString() + ' ROCKS SEARCHED', R.x, 4);
+    ctx.textAlign = 'right';
+    ctx.fillText(NOISE_NAME[S.nz].toUpperCase() + ' NOISE, 0\u2013' + S.amax + '\u00b0',
+                 R.x + R.w, 4);
+    ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+    ctx.font = '10.5px "IBM Plex Sans", sans-serif';
+    ctx.fillText(nR ? 'the gradient removed ' +
+      (100 * (1 - nRG / nR)).toFixed(0) + '% of what the intercept left'
+      : 'nothing matches \u2014 widen the tolerance', R.x, R.y + R.h + 8);
+    ctx.restore();
+  }
+
+  /* =====================================================================
+     STEP 1 — the losses
+     ===================================================================== */
+
+  const LOSSES = [
+    { what: 'Grain size, sorting, cement and clay', to: 'one dry frame',
+      kind: 'collapse', where: 'module 01' },
+    { what: 'The pore fluid', to: 'one bulk modulus', kind: 'collapse', where: 'module 01' },
+    { what: 'Gas saturation above a few percent', to: 'almost nothing',
+      kind: 'saturation', where: 'module 01' },
+    { what: 'Velocity and density', to: 'one impedance', kind: 'collapse', where: 'module 01' },
+    { what: 'Two impedances', to: 'one contrast', kind: 'confusion', where: 'module 02' },
+    { what: 'Layer thickness below tuning', to: 'mixed into the amplitude',
+      kind: 'blur', where: 'module 02' },
+    { what: 'The wavelet in time', to: 'a blurred event', kind: 'blur', where: 'module 01' },
+    { what: 'Noise on every trace', to: 'an error bar', kind: 'blur', where: 'module 05' },
+  ];
+  const KIND_COLOR = { collapse: CRIM, saturation: ORANGE, confusion: OLIVE, blur: TEAL };
+
+  function drawStep1() {
+    const w = rowWidth('row1', 2);
+    let ctx = SEIS.fitCanvas($('c1card'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    const R = { x: 4, y: M.t, w: w - 8, h: 360 - M.t - 20 };
+    textCard(ctx, R, 'WHAT IS LOST, AND WHERE IT WAS MEASURED',
+      LOSSES.map((L) => ({ label: L.what + ' \u2192 ' + L.to, value: L.kind,
+                           color: KIND_COLOR[L.kind], gap: 4 })));
+
+    ctx = SEIS.fitCanvas($('c1kind'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    const R2 = { x: 4, y: M.t, w: w - 8, h: 360 - M.t - 44 };
+    const fixable = LOSSES.filter((L) => L.kind === 'blur');
+    const permanent = LOSSES.filter((L) => L.kind !== 'blur');
+    textCard(ctx, R2, null, [
+      { head: 'Better data reduces these', color: TEAL },
+      ...fixable.map((L) => ({ label: '\u2022 ' + L.what, gap: 2 })),
+      { rule: true },
+      { head: 'Nothing reduces these', color: CRIM },
+      ...permanent.map((L) => ({ label: '\u2022 ' + L.what, gap: 2 })),
+    ]);
+    ctx.save();
+    ctx.font = '10.5px "IBM Plex Sans", sans-serif';
+    ctx.fillStyle = SLATE; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    wrapText(ctx, 'The second group is the physics of the measurement, not a shortcoming of ' +
+      'the acquisition or the processing.', R2.x, R2.y + R2.h + 8, R2.w, 14);
+    ctx.restore();
+
+    set('s1a', fixable.length + ' of ' + LOSSES.length);
+    set('s1b', permanent.length + ' of ' + LOSSES.length);
+    set('s1c', 'porosity, clay, fluid, saturation, thickness, and the shale');
+    set('s1d', S.amax >= 15 ? 'two \u2014 an intercept and a gradient' : 'one');
+    set('s1e', NOISE_NAME[S.nz] + ' noise, 0\u2013' + S.amax + '\u00b0, ' + S.ntr + ' traces');
+    set('s1f', 'how much hydrocarbon \u2014 the saturation');
+  }
+
+  /* =====================================================================
+     STEP 2 — one number
+     ===================================================================== */
+
+  function popPanel(id, w, list, label) {
+    const items = [[SLATE, 'brine', 'dot'], [OLIVE, 'oil', 'dot'], [ORANGE, 'gas', 'dot']];
+    const f = fitLegend(id, w, 360, items);
+    const ctx = f.ctx;
+    const R = { x: M.l, y: M.t, w: w - M.l - M.r, h: f.plotH };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const bins = {};
+    FLUIDS.forEach((fl) => { bins[fl] = new Array(PHIS.length).fill(0); });
+    list.forEach((q) => { bins[q.fl][q.phi - 5]++; });
+    let mx = 1;
+    for (let i = 0; i < PHIS.length; i++) {
+      mx = Math.max(mx, bins.brine[i] + bins.oil[i] + bins.gas[i]);
+    }
+    const bw = R.w / PHIS.length;
+    ctx.save();
+    for (let i = 0; i < PHIS.length; i++) {
+      let acc = 0;
+      [['brine', 'rgba(92,102,112,0.55)'], ['oil', 'rgba(107,122,46,0.75)'],
+       ['gas', 'rgba(181,69,27,0.75)']].forEach(([fl, col]) => {
+        const hgt = (bins[fl][i] / mx) * R.h;
+        if (hgt <= 0) return;
+        ctx.fillStyle = col;
+        ctx.fillRect(R.x + i * bw, R.y + R.h - acc - hgt, Math.max(1, bw - 1), hgt);
+        acc += hgt;
+      });
+    }
+    ctx.restore();
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, 5, 35, 'porosity (%)', (v) => v.toFixed(0), { ticks: 4 });
+    SEIS.axisLeft(ctx, R, 0, mx, label, (v) => v.toFixed(0), { ticks: 3, flip: true });
+    legendRow(ctx, R, items);
+  }
+
+  const SPAN = { phi: [5, 35], sat: [0, 100], shv: [2300, 3100], vpvs: [1.4, 2.2] };
+  function widthFrac(list, k) {
+    const r = rangeOf(list, k);
+    if (!isFinite(r[0])) return 0;
+    return (r[1] - r[0]) / (SPAN[k][1] - SPAN[k][0]);
+  }
+
+  function drawStep2() {
+    const w = rowWidth('row2', 2);
+    popPanel('c2pop', w, D.sw.byR, 'models');
+
+    const ctx = SEIS.fitCanvas($('c2wide'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    const R = { x: 4, y: M.t + 8, w: w - 8, h: 360 - M.t - 60 };
+    const rows = [
+      { label: 'porosity', value: widthFrac(D.sw.byR, 'phi'), color: CRIM,
+        text: fmtRange(D.sw.byR, 'phi', '%') },
+      { label: 'hydrocarbon saturation', value: widthFrac(D.sw.byR, 'sat'), color: ORANGE,
+        text: fmtRange(D.sw.byR, 'sat', '%') },
+      { label: 'shale velocity', value: widthFrac(D.sw.byR, 'shv'), color: OLIVE,
+        text: fmtRange(D.sw.byR, 'shv', '') },
+      { label: 'Vp/Vs', value: widthFrac(D.sw.byR, 'vpvs'), color: TEAL,
+        text: fmtRange(D.sw.byR, 'vpvs', '', 2) },
+    ];
+    barRows(ctx, R, rows,
+      'Each bar is the range still admitted, as a fraction of the range searched. ' +
+      'A full-width bar means the measurement said nothing about that property.');
+
+    set('s2a', D.sw.tried.toLocaleString());
+    set('s2b', D.sw.byR.length.toLocaleString());
+    set('s2c', '\u00b1' + D.sw.tolR.toFixed(4) + ' (two standard deviations)');
+    set('s2d', fmtRange(D.sw.byR, 'phi', '%'));
+    set('s2e', fmtRange(D.sw.byR, 'sat', '%'));
+    const fh = fracHC(D.sw.byR);
+    set('s2f', isFinite(fh) ? (100 * fh).toFixed(0) + '% of the surviving models' : '\u2014');
+  }
+
+  function fmtRange(list, k, unit, dp) {
+    const r = rangeOf(list, k);
+    if (!isFinite(r[0])) return '\u2014';
+    const f = (v) => (dp === undefined ? Math.round(v) : v.toFixed(dp));
+    return f(r[0]) + '\u2013' + f(r[1]) + unit;
+  }
+
+  /* =====================================================================
+     STEP 3 — two numbers
+     ===================================================================== */
+
+  function drawStep3() {
+    const w = rowWidth('row3', 2);
+    const ctx = SEIS.fitCanvas($('c3shrink'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    const R = { x: 4, y: M.t + 8, w: w - 8, h: 360 - M.t - 72 };
+    const rows = ['phi', 'sat', 'shv', 'vpvs'].map((k, i) => ({
+      label: ['porosity', 'saturation', 'shale velocity', 'Vp/Vs'][i],
+      before: widthFrac(D.sw.byR, k),
+      value: widthFrac(D.sw.byRG, k),
+      color: [CRIM, ORANGE, OLIVE, TEAL][i],
+      text: fmtRange(D.sw.byRG, k, '', k === 'vpvs' ? 2 : undefined),
+    }));
+    barRows(ctx, R, rows,
+      'Grey is what the intercept alone allowed; coloured is what survives the gradient too. ' +
+      'A coloured bar as long as its grey one means the second measurement bought nothing there.');
+
+    // the survivors on the crossplot
+    const items = [[SLATE, 'intercept only', 'dot'], [CRIM, 'and the gradient', 'dot'],
+                   [INK, 'the measurement', 'line']];
+    const f = fitLegend('c3plot', w, 360, items);
+    const c2 = f.ctx;
+    const R2 = { x: M.l, y: M.t, w: w - M.l - M.r, h: f.plotH };
+    c2.save(); c2.fillStyle = '#fff'; c2.fillRect(R2.x, R2.y, R2.w, R2.h); c2.restore();
+    const xr = [-0.42, 0.42], yr = [-0.85, 0.30];
+    const px = (v) => R2.x + ((v - xr[0]) / (xr[1] - xr[0])) * R2.w;
+    const py = (v) => R2.y + R2.h - ((v - yr[0]) / (yr[1] - yr[0])) * R2.h;
+    c2.save();
+    c2.beginPath(); c2.rect(R2.x, R2.y, R2.w, R2.h); c2.clip();
+    c2.fillStyle = 'rgba(92,102,112,0.30)';
+    D.sw.byR.forEach((q) => { c2.beginPath(); c2.arc(px(q.R0), py(q.G), 2, 0, 7); c2.fill(); });
+    c2.fillStyle = 'rgba(132,22,23,0.55)';
+    D.sw.byRG.forEach((q) => { c2.beginPath(); c2.arc(px(q.R0), py(q.G), 2, 0, 7); c2.fill(); });
+    c2.restore();
+    c2.save();
+    c2.strokeStyle = '#fff'; c2.lineWidth = 3.4;
+    c2.beginPath(); c2.arc(px(D.obs.R0), py(D.obs.G), 6, 0, 7); c2.stroke();
+    c2.strokeStyle = INK; c2.lineWidth = 2;
+    c2.beginPath(); c2.arc(px(D.obs.R0), py(D.obs.G), 6, 0, 7); c2.stroke();
+    c2.restore();
+    SEIS.frame(c2, R2);
+    SEIS.axisBottom(c2, R2, xr[0], xr[1], 'intercept', (v) => v.toFixed(1), { ticks: 5 });
+    SEIS.axisLeft(c2, R2, yr[0], yr[1], 'gradient', (v) => v.toFixed(1), { ticks: 5, flip: true });
+    legendRow(c2, R2, items);
+
+    const nR = D.sw.byR.length, nRG = D.sw.byRG.length;
+    set('s3a', nR.toLocaleString());
+    set('s3b', nRG.toLocaleString());
+    set('s3c', nR ? (100 * (1 - nRG / nR)).toFixed(0) + '% of them' : '\u2014');
+    set('s3d', fmtRange(D.sw.byR, 'vpvs', '', 2) + '  \u2192  ' + fmtRange(D.sw.byRG, 'vpvs', '', 2));
+    set('s3e', fmtRange(D.sw.byR, 'sat', '%') + '  \u2192  ' + fmtRange(D.sw.byRG, 'sat', '%'));
+    const satSame = fmtRange(D.sw.byR, 'sat', '%') === fmtRange(D.sw.byRG, 'sat', '%');
+    const hcBefore = fracHC(D.sw.byR), hcAfter = fracHC(D.sw.byRG);
+    set('s3f', !nRG ? 'nothing survives both'
+      : 'Vp/Vs, and with it the fluid type \u2014 hydrocarbon-bearing models go from ' +
+        (100 * hcBefore).toFixed(0) + '% to ' + (100 * hcAfter).toFixed(0) + '%' +
+        (satSame ? '. Saturation is unchanged.' : ''));
+  }
+
+  /* =====================================================================
+     STEP 4 — the traps
+     ===================================================================== */
+
+  const TRAPS = [
+    { rule: 'A bright amplitude means gas',
+      fails: 'a gas sand can be invisible',
+      expect: { phi: 30, fl: 'gas', sat: 100, shv: 2700, name: 'gas, 30% porosity' },
+      actual: { phi: 20, fl: 'gas', sat: 100, shv: 2700, name: 'gas, 20% porosity' },
+      note: 'Both are clean sands, fully saturated with gas, under the same shale. One is an ' +
+            'unmistakable bright spot and the other is very nearly invisible. What changed is the ' +
+            'porosity, which decides how far the gas can move the rock relative to the shale.',
+      where: 'module 01, exercise 2' },
+    { rule: 'A dim reflection means wet',
+      fails: 'a wet sand can be bright',
+      expect: { phi: 30, fl: 'brine', sat: 0, shv: 2700, name: 'brine, 30%, ordinary shale' },
+      actual: { phi: 35, fl: 'brine', sat: 0, shv: 3100, name: 'brine, 35%, fast shale' },
+      note: 'Neither of these has a drop of hydrocarbon in it. The second is a strong negative ' +
+            'reflection purely because the shale above it is fast. Half of every amplitude belongs ' +
+            'to a rock nobody is trying to characterise.',
+      where: 'module 02, exercise 3' },
+    { rule: 'A strong anomaly means a lot of gas',
+      fails: 'a trace of gas does most of the work',
+      expect: { phi: 30, fl: 'gas', sat: 100, shv: 2700, name: 'gas, 30%, fully saturated' },
+      actual: { phi: 34, fl: 'gas', sat: 10, shv: 2700, name: 'gas, 34%, 10% saturated' },
+      note: 'The second rock is a wet sand with a residual trace of gas in it, and it produces the ' +
+            'same response. Drilling it would find water. No amplitude measurement on this site, at ' +
+            'any offset or any noise level, separates these two.',
+      where: 'module 01, exercise 3' },
+    { rule: 'A Class III response means gas',
+      fails: 'the class belongs to the contrast, not the rock',
+      expect: { phi: 20, fl: 'gas', sat: 100, shv: 3100, name: 'gas, 20%, fast shale' },
+      actual: { phi: 20, fl: 'gas', sat: 100, shv: 2300, name: 'gas, 20%, slow shale' },
+      note: 'The reservoir is identical in both: same porosity, same fluid, same saturation. Only ' +
+            'the shale above it differs, and the response moves from Class III to Class I. A class ' +
+            'is a description of a boundary.',
+      where: 'module 04, exercise 5' },
+  ];
+
+  function drawStep4() {
+    const w = rowWidth('row4', 2);
+    const T = TRAPS[S.trap];
+    const mk = (spec) => ({
+      rock: rockOf(spec.phi, spec.fl, spec.sat),
+      shale: ROCK.mudrock(spec.shv),
+      name: spec.name,
+    });
+    const A = mk(T.expect), B = mk(T.actual);
+    const angs = anglesFor(S.ntr, S.amax), xs = angs.map(sinsq);
+    const fa = fitOf(A.rock, A.shale, angs, xs), fb = fitOf(B.rock, B.shale, angs, xs);
+
+    let ctx = SEIS.fitCanvas($('c4trap'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    const R = { x: 4, y: M.t, w: w - 8, h: 360 - M.t - 20 };
+    textCard(ctx, R, 'THE RULE, AND WHERE IT BREAKS', [
+      { head: '\u201c' + T.rule + '\u201d', color: CRIM },
+      { label: 'Usually true. It fails because ' + T.fails + '.', gap: 8 },
+      { rule: true },
+      { label: 'what the rule expects', value: fa.R0.toFixed(4), color: TEAL, gap: 2 },
+      { label: A.name, gap: 8 },
+      { label: 'what is actually there', value: fb.R0.toFixed(4), color: CRIM, gap: 2 },
+      { label: B.name, gap: 8 },
+      { rule: true },
+      { label: T.note, gap: 6 },
+      { rule: true },
+      { label: 'established in ' + T.where, gap: 2 },
+    ]);
+
+    ctx = SEIS.fitCanvas($('c4gath'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    const R2 = { x: 2, y: M.t, w: w - 4, h: 360 - M.t - 20 };
+    const half = R2.w / 2;
+    gatherCard(ctx, { x: R2.x + 2, y: R2.y, w: half - 4, h: R2.h }, A.rock, A.shale,
+      [A.name, 'R\u2080 ' + fa.R0.toFixed(3), 'G ' + fa.G.toFixed(3)], TEAL);
+    gatherCard(ctx, { x: R2.x + half + 2, y: R2.y, w: half - 4, h: R2.h }, B.rock, B.shale,
+      [B.name, 'R\u2080 ' + fb.R0.toFixed(3), 'G ' + fb.G.toFixed(3)], CRIM);
+
+    document.querySelectorAll('[data-trap]').forEach((b) => {
+      b.classList.toggle('ghost', +b.dataset.trap !== S.trap);
+    });
+    const dR = Math.abs(fa.R0 - fb.R0);
+    set('s4a', '\u201c' + T.rule + '\u201d');
+    set('s4b', T.fails);
+    set('s4c', A.name + ',  R\u2080 ' + fa.R0.toFixed(4));
+    set('s4d', B.name + ',  R\u2080 ' + fb.R0.toFixed(4));
+    set('s4e', dR.toFixed(4) + ' in intercept  (' +
+      (dR / Math.max(1e-9, D.unc.sR0)).toFixed(1) + ' standard deviations)');
+    set('s4f', T.where);
+  }
+
+  /* =====================================================================
+     STEP 5 — what to say
+     ===================================================================== */
+
+  function statement() {
+    const L = D.sw.byRG.length ? D.sw.byRG : D.sw.byR;
+    const usedG = D.sw.byRG.length > 0;
+    if (!L.length) {
+      return { lines: [{ head: 'Nothing on the grid matches.', color: CRIM },
+                       { label: 'Either the tolerance is too tight or the observation lies ' +
+                                'outside the parameter space this page can build.' }],
+               hc: NaN, sat: [NaN, NaN] };
+    }
+    const hc = fracHC(L);
+    const sat = rangeOf(L, 'sat');
+    const phi = rangeOf(L, 'phi');
+    const ip = rangeOf(L, 'ip');
+    const shv = rangeOf(L, 'shv');
+    const gasFrac = L.filter((q) => q.fl === 'gas' && q.sat > 0).length / L.length;
+    const lines = [
+      { head: 'What the data supports', color: INK },
+      { label: 'The reservoir impedance lies between ' + Math.round(ip[0]).toLocaleString() +
+               ' and ' + Math.round(ip[1]).toLocaleString() + '.', gap: 6 },
+      { label: hc > 0.9
+          ? 'A hydrocarbon is very hard to avoid: ' + (100 * hc).toFixed(0) +
+            '% of the ' + L.length.toLocaleString() + ' models that fit contain one.'
+          : hc > 0.6
+            ? 'A hydrocarbon is likely but not required: ' + (100 * hc).toFixed(0) +
+              '% of the models that fit contain one.'
+            : 'A hydrocarbon is not required at all: only ' + (100 * hc).toFixed(0) +
+              '% of the models that fit contain one.', gap: 6 },
+      { label: usedG && gasFrac > 0.6
+          ? 'The gradient favours gas over oil in ' + (100 * gasFrac).toFixed(0) +
+            '% of the surviving models.'
+          : 'The fluid type is not resolved between oil and gas.', gap: 8 },
+      { rule: true },
+      { head: 'What it does not support', color: CRIM },
+      { label: 'Saturation is unconstrained: anything from ' + Math.round(sat[0]) +
+               '% to ' + Math.round(sat[1]) + '% fits equally well. A commercial column and a ' +
+               'residual trace cannot be separated.', gap: 6 },
+      { label: 'Porosity is only bounded to ' + Math.round(phi[0]) + '\u2013' +
+               Math.round(phi[1]) + '%, and that bound assumes the shale lies between ' +
+               Math.round(shv[0]) + ' and ' + Math.round(shv[1]) + ' m/s.', gap: 6 },
+      { label: 'Thickness is not constrained at all by this analysis.', gap: 6 },
+    ];
+    return { lines, hc, sat, phi, ip, gasFrac, n: L.length, usedG };
+  }
+
+  /* What each further constraint would remove, measured by re-filtering the
+     surviving set rather than asserted. */
+  function nextMeasurements(L) {
+    if (!L.length) return [];
+    const base = L.length;
+    const truth = SCEN[S.sc];
+    const opts = [
+      { label: 'knowing the shale velocity',
+        keep: (q) => Math.abs(q.shv - truth.shv) <= 100 },
+      { label: 'knowing the porosity to \u00b13%',
+        keep: (q) => Math.abs(q.phi - truth.phi) <= 3 },
+      { label: 'knowing the clay content',
+        keep: (q) => q.clay === 0 },
+      { label: 'knowing the saturation to \u00b120%',
+        keep: (q) => Math.abs(q.sat - (truth.fl === 'brine' ? 0 : truth.sat)) <= 20 },
+    ];
+    return opts.map((o) => {
+      const n = L.filter(o.keep).length;
+      return { label: o.label, removed: 1 - n / base, left: n };
+    }).sort((a, b) => b.removed - a.removed);
+  }
+
+  function drawStep5() {
+    const w = rowWidth('row5', 2);
+    const st = statement();
+    let ctx = SEIS.fitCanvas($('c5say'), w, 380);
+    ctx.clearRect(0, 0, w, 380);
+    const R = { x: 4, y: M.t, w: w - 8, h: 380 - M.t - 20 };
+    textCard(ctx, R, 'WHAT YOU COULD DEFEND', st.lines);
+
+    const L = D.sw.byRG.length ? D.sw.byRG : D.sw.byR;
+    const nxt = nextMeasurements(L);
+    ctx = SEIS.fitCanvas($('c5next'), w, 380);
+    ctx.clearRect(0, 0, w, 380);
+    const R2 = { x: 4, y: M.t + 8, w: w - 8, h: 380 - M.t - 72 };
+    barRows(ctx, R2, nxt.map((q, i) => ({
+      label: q.label, value: q.removed, color: [CRIM, ORANGE, OLIVE, TEAL][i % 4],
+      text: (100 * q.removed).toFixed(0) + '%',
+    })), 'How much of the surviving set each further piece of information would remove. ' +
+         'The longest bar is where the next dollar is best spent.');
+
+    set('s5a', isFinite(st.hc)
+      ? (st.hc > 0.9 ? 'yes \u2014 ' + (100 * st.hc).toFixed(0) + '% of the models that fit'
+        : st.hc > 0.6 ? 'probably \u2014 ' + (100 * st.hc).toFixed(0) + '%'
+        : 'no \u2014 only ' + (100 * st.hc).toFixed(0) + '%') : '\u2014');
+    set('s5b', isFinite(st.sat[0])
+      ? 'no \u2014 anything from ' + Math.round(st.sat[0]) + '% to ' + Math.round(st.sat[1]) + '%'
+      : '\u2014');
+    set('s5c', st.phi ? 'to within ' + Math.round(st.phi[0]) + '\u2013' + Math.round(st.phi[1]) +
+      '%, if the shale is as assumed' : '\u2014');
+    set('s5d', 'no \u2014 thickness is not in this search at all');
+    set('s5e', nxt.length ? nxt[0].label + ' (removes ' + (100 * nxt[0].removed).toFixed(0) + '%)'
+      : '\u2014');
+    set('s5f', isFinite(st.hc)
+      ? 'a hydrocarbon is ' + (st.hc > 0.9 ? 'very likely' : st.hc > 0.6 ? 'likely' : 'not required') +
+        ', how much of it is unknown, and the porosity rests on an untested assumption about the shale'
+      : '\u2014');
+  }
+
+  /* =====================================================================
+     LABELS, TABS, EVENTS
+     ===================================================================== */
+
+  function set(id, v) { const el = $(id); if (el) el.textContent = v; }
+
+  function syncLabels() {
+    set('amaxV', S.amax + '\u00b0');
+    set('ntrV', String(S.ntr));
+    set('nzV', NOISE_NAME[S.nz]);
+    set('scenV', SCEN[S.sc].label);
+    document.querySelectorAll('#segNoise button').forEach((b) => {
+      b.setAttribute('aria-pressed', String(+b.dataset.nz) === String(S.nz));
+    });
+    document.querySelectorAll('#segScen button').forEach((b) => {
+      b.setAttribute('aria-pressed', String(+b.dataset.sc) === String(S.sc));
+    });
+    ['amax', 'ntr'].forEach((k) => {
+      const el = $(k); if (el && String(el.value) !== String(S[k])) el.value = S[k];
+    });
+  }
+
+  function drawAll() {
+    syncLabels();
+    if (visible('p1') || visible('p2') || visible('p3') || visible('p4') || visible('p5')) {
+      drawHeader();
+    }
+    if (visible('p1')) drawStep1();
+    if (visible('p2')) drawStep2();
+    if (visible('p3')) drawStep3();
+    if (visible('p4')) drawStep4();
+    if (visible('p5')) drawStep5();
+  }
+
+  const PANES = ['p1', 'p2', 'p3', 'p4', 'p5', 'pw', 'pe', 'pk', 'pm'];
+  const STEPNAMES = {
+    p1: 'The losses', p2: 'One number', p3: 'Two numbers', p4: 'Four traps',
+    p5: 'What to say', pw: 'Why it matters', pe: 'Exercises', pk: 'Key points', pm: 'Method',
+  };
+
+  function buildStepNav() {
+    PANES.forEach((id, i) => {
+      const pane = $(id);
+      if (!pane || pane.querySelector('.stepnav')) return;
+      const prev = PANES[i - 1], next = PANES[i + 1];
+      const nav = document.createElement('div');
+      nav.className = 'stepnav';
+      const mk = (target, text, ghost) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn' + (ghost ? ' ghost' : '') + ' small';
+        b.textContent = text;
+        b.addEventListener('click', () => {
+          showTab(target);
+          const t = document.querySelector('.tabhint');
+          if (t && t.scrollIntoView) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        return b;
+      };
+      nav.appendChild(prev ? mk(prev, '\u2190 ' + STEPNAMES[prev], true)
+                           : document.createElement('span'));
+      const where = document.createElement('span');
+      where.className = 'where';
+      where.textContent = i < 5 ? 'step ' + (i + 1) + ' of 5' : STEPNAMES[id];
+      nav.appendChild(where);
+      nav.appendChild(next ? mk(next, STEPNAMES[next] + ' \u2192')
+                           : document.createElement('span'));
+      pane.appendChild(nav);
+    });
+  }
+
+  function showTab(id) {
+    PANES.forEach((q) => { const el = $(q); if (el) el.hidden = q !== id; });
+    document.querySelectorAll('#tabs button').forEach((b) => {
+      b.setAttribute('aria-selected', b.dataset.tab === id);
+    });
+    const lab = document.querySelector('.labhead');
+    if (lab) lab.hidden = (id === 'pw' || id === 'pe' || id === 'pk' || id === 'pm');
+    const last = (id === 'pk' || id === 'pm');
+    if ($('nextup')) $('nextup').hidden = !last;
+    if ($('pager')) $('pager').hidden = !last;
+    S.tab = id;
+    drawAll();
+    saveState();
+  }
+  document.querySelectorAll('#tabs button').forEach((b) => {
+    b.addEventListener('click', () => showTab(b.dataset.tab));
+  });
+
+  document.addEventListener('input', (ev) => {
+    const key = ev.target && ev.target.dataset && ev.target.dataset.key;
+    if (!key) return;
+    S[key] = parseFloat(ev.target.value);
+    recompute(); drawAll(); saveState();
+  });
+  document.querySelectorAll('#segNoise button').forEach((b) => {
+    b.addEventListener('click', () => { S.nz = +b.dataset.nz; recompute(); drawAll(); saveState(); });
+  });
+  document.querySelectorAll('#segScen button').forEach((b) => {
+    b.addEventListener('click', () => { S.sc = +b.dataset.sc; recompute(); drawAll(); saveState(); });
+  });
+  document.querySelectorAll('[data-trap]').forEach((b) => {
+    b.addEventListener('click', () => { S.trap = +b.dataset.trap; drawAll(); saveState(); });
+  });
+
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 140); });
+
+  recompute();
+  buildStepNav();
+  showTab(PANES.indexOf(S.tab) >= 0 ? S.tab : 'p1');
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+
+  window.__MOD = { S, get D() { return D; }, recompute, drawAll, showTab,
+                   sweep, statement, nextMeasurements, TRAPS, SCEN, rangeOf, fracHC };
+})();
+</script>
+</body>
+</html>

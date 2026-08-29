@@ -28,13 +28,13 @@
     <div class="hero-copy">
       <p class="eyebrow">AASPI &nbsp;·&nbsp; University of Oklahoma</p>
       <h1 class="title">A seismic amplitude is <em>evidence</em>, not an answer.</h1>
-      <p class="lede">Every amplitude is the far end of a chain. Grains and pores set a stiffness. The
-        fluid changes it. Stiffness and density collapse into one impedance. Two impedances collapse into
-        one contrast. A wavelet blurs the contrast in time, and noise puts an error bar around what is
-        left. <strong>Every link throws something away</strong>, which is why running the chain backwards
-        from a bright spot does not have one answer.</p>
-      <p class="lede">These modules build the chain in front of you, one link at a time, and then go
-        looking for the rocks that share an amplitude. Adding offset is what wins some of that information
+      <p class="lede">Several things have to happen between a rock and a seismic amplitude. Grains and pores
+        set a stiffness. The fluid changes it. Stiffness and density are multiplied together into one
+        impedance. Two impedances are reduced to one contrast. A wavelet blurs the contrast in time, and
+        noise puts an error bar around what is left. <strong>Every one of those steps throws information
+        away</strong>, so working back from a bright spot to the rock does not have one answer.</p>
+      <p class="lede">These modules build that calculation in front of you, one step at a time, and then
+        go looking for the rocks that share an amplitude. Adding offset is what wins some of that information
         back — not all of it. Nothing to install, and nothing leaves your machine.</p>
       <div class="hero-cta">
         <a class="btn" href="modules/rock-to-trace.html">Start with the rock →</a>
@@ -50,7 +50,7 @@
   <section class="primer">
    <div class="primer-grid">
     <div>
-      <h3>The chain runs one way</h3>
+      <h3>It only works in one direction</h3>
       <p>A rock model predicts an amplitude exactly. An amplitude does not predict a rock at all, because
         several rocks arrive at the same number and nothing downstream can separate them.</p>
     </div>
@@ -70,8 +70,8 @@
   <section id="modules" class="modules">
     <div class="sec-head">
       <h2>The modules</h2>
-      <p>In the order they build on each other. Each one adds a link to the chain, or takes one apart.
-        Module 01 is finished; the rest are in preparation.</p>
+      <p>In the order they build on each other. Each one adds a step, or takes one apart.
+        Modules 01 and 02 are finished; the rest are in preparation.</p>
     </div>
 
     <div class="card-grid">
@@ -81,21 +81,21 @@
         <div class="card-body">
           <div class="card-no">01</div>
           <h3>Build a rock, make a trace</h3>
-          <p>Porosity, clay and pore fluid to a dry frame, Gassmann to a saturated rock, impedance, reflectivity, a wavelet, and noise. The whole chain on one page.</p>
+          <p>Porosity, clay and pore fluid to a dry frame, Gassmann to a saturated rock, impedance, reflectivity, a wavelet, and noise. Every step from the rock to the trace, on one page.</p>
           <div class="q">How does a change in the rock reach the seismic trace?</div>
         </div>
         <span class="flag next">Start here</span>
       </a>
 
-      <a class="card planned" href="#">
+      <a class="card" href="modules/same-amplitude.html">
         <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><path d="M14 20.5 L15.9 23.3 L17.8 25.9 L19.7 28.5 L21.6 31.1 L23.6 33.6 L25.5 36 L27.4 38.4 L29.3 40.8 L31.2 43 L33.1 45.3 L35 47.5 L36.9 49.7 L38.8 51.8 L40.8 53.9 L42.7 55.9 L44.6 57.9 L46.5 59.9 L48.4 61.8 L50.3 63.7 L52.2 65.6 L54.1 67.4 L56 69.2 L58 71 L59.9 72.7 L61.8 74.4 L63.7 76.1 L65.6 77.7 L67.5 79.3 L69.4 80.9 L71.3 82.5 L73.2 84 L75.2 85.5 L77.1 87 L79 88.5 L80.9 89.9 L82.8 91.3 L84.7 92.7" fill="none" stroke="#841617" stroke-width="2.4"/><circle cx="59.9" cy="72.7" r="4" fill="#841617"/><circle cx="65.6" cy="77.7" r="4" fill="#841617"/><line x1="14" y1="94" x2="186" y2="94" stroke="#C7C9C0" stroke-width="1.4"/><line x1="14" y1="12" x2="14" y2="94" stroke="#C7C9C0" stroke-width="1.4"/><text x="100" y="103" font-family="monospace" font-size="8" fill="#16191C" text-anchor="middle">one impedance, many rocks</text></svg></div>
         <div class="card-body">
           <div class="card-no">02</div>
           <h3>Same bright spot, different rock</h3>
-          <p>Hold the seismic response fixed and go looking for every geological model that could have produced it. There are more of them than anyone expects.</p>
+          <p>Fix the amplitude and search for every rock that could have produced it. Porosity against saturation, the shale nobody measured, tuning, and a full count of what survives.</p>
           <div class="q">How many rocks fit the amplitude I measured?</div>
         </div>
-        <span class="flag">In preparation</span>
+        <span class="flag next">Ready</span>
       </a>
 
       <a class="card planned" href="#">
@@ -103,7 +103,7 @@
         <div class="card-body">
           <div class="card-no">03</div>
           <h3>Add offset</h3>
-          <p>The ray stops arriving straight down. Shear properties start to contribute, the reflection coefficient becomes a curve, and one measurement becomes many.</p>
+          <p>The ray stops arriving straight down. Shear properties start to contribute, the reflection coefficient becomes a curve, and one measurement becomes two.</p>
           <div class="q">Why does the amplitude change with offset at all?</div>
         </div>
         <span class="flag">Planned</span>

@@ -1,5 +1,5 @@
 /* ===========================================================================
-   rockphysics.js — mineral mixing, dry frames, fluids, Gassmann, reflectivity
+   rockphysics.js — mineral mixing, dry frames, fluids, Gassmann, reflectivity 
    "How AVO Actually Works"
    Heather Bedle / AASPI / University of Oklahoma
    Vanilla JS, no dependencies, no build step.

@@ -161,13 +161,23 @@
       <h3><span class="stepno">2</span>Porosity against gas saturation</h3>
       <span class="hint">The trade-off that fizz gas hides inside</span>
     </div>
-    <p class="lede">Take the first two unknowns together. The map below computes the amplitude for every
-      combination of porosity and gas saturation, holding everything else at your current settings. The
-      black line is where the amplitude equals the measurement: <b>every point on that line fits the data
-      exactly as well as every other point</b>.</p>
-    <p class="lede">Follow the line and read the pairs off it. A rock at 30% porosity full of gas, and a
-      rock at 34% porosity with a tenth as much gas in it, sit on the same contour. One is a discovery.
-      The other is a wet sand with a trace of residual gas, and drilling it would be a dry hole.</p>
+    <p class="lede">Take the first two unknowns together. The picture on the left is worth a moment
+      before you read anything into it, because the same kind of picture is used in the next two steps as
+      well.</p>
+    <p class="lede"><b>How to read it.</b> It is not a map of the ground. Every single point in it is a
+      <em>different rock</em>: its position across tells you how much gas that rock holds, its position up
+      the side tells you its porosity, and its colour tells you what seismic amplitude it would produce —
+      blue for a peak, red for a trough, white for nothing at all. Somewhere in that field are the rocks
+      that produce <em>your</em> amplitude, and the <b>black line runs through all of them</b>. The small
+      circle is the rock currently on your sliders.</p>
+    <p class="lede">So the black line is the answer to "what could this be", drawn all at once. <b>Every
+      point on it fits the measurement exactly as well as every other point.</b> The panel beside it takes
+      three rocks off that line and writes them out in full, with the trace each one produces, so you can
+      see that they really are indistinguishable.</p>
+    <p class="lede">Read the three cards. A rock at 30% porosity full of gas, and a rock at 34%
+      porosity with a tenth as much gas in it, sit on the same line and give the same trace. One is a
+      discovery. The other is a wet sand with a trace of residual gas, and drilling it would be a dry
+      hole.</p>
     <p class="lede">The line is nearly flat over most of its length, which is the fizz-gas result from
       module 01 seen from the other side. Because the first few percent of gas does most of the work,
       almost the entire saturation axis maps into a narrow band of amplitude, and the contour has to run
@@ -175,14 +185,14 @@
 
     <div class="sec-row" id="row2">
       <div class="panel-col">
-        <p class="sublabel"><b>1</b> Amplitude over porosity and saturation
-          <span class="note">the contour is the solution set</span></p>
-        <canvas id="c2map" aria-label="Amplitude computed over porosity and gas saturation, with the matching contour drawn"></canvas>
+        <p class="sublabel"><b>1</b> Every rock, coloured by its amplitude
+          <span class="note">the black line is the ones that match</span></p>
+        <canvas id="c2map" aria-label="Every combination of porosity and gas saturation, coloured by the amplitude it would produce, with a line through the ones that match the measurement"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> Vp/Vs along that contour
-          <span class="note">what a second measurement would see</span></p>
-        <canvas id="c2vv" aria-label="Vp to Vs ratio along the matching contour"></canvas>
+        <p class="sublabel"><b>2</b> Three of those rocks, written out
+          <span class="note">every one gives the same trace</span></p>
+        <canvas id="c2vv" aria-label="Three rocks from the matching contour, with their parameters and the trace each produces"></canvas>
       </div>
     </div>
 
@@ -194,10 +204,11 @@
       <div class="stat wide"><span>Two rocks from opposite ends of the contour</span><b id="s2e">—</b></div>
     </div>
     <div class="legend prose">
-      <span>The right-hand panel is the one to remember. If Vp/Vs varied strongly along the contour, a
-        second measurement sensitive to it — which is what AVO provides — would break the tie. It does not
-        vary much. The saturation ambiguity survives adding offset, and that is a genuine limit rather
-        than a gap in the processing.</span>
+      <span>Look at the last line on each card. Vp/Vs barely moves along the whole line — 1.47 at one end
+        and 1.54 at the other. That matters because Vp/Vs is what a second measurement at wider offsets
+        would be sensitive to, so if it hardly changes, offset will hardly help. Module 03 confirms it:
+        this pair stays stubbornly together even at thirty degrees. The saturation ambiguity is a genuine
+        limit rather than a gap in the processing.</span>
     </div>
   </section>
 
@@ -211,24 +222,26 @@
       belongs to the unit above. In module 01 you saw that changing the shale alone moved the reflection by
       a factor of nearly four. Here it works in reverse: because the shale is not known exactly, a whole
       range of reservoirs becomes admissible.</p>
-    <p class="lede">The map is amplitude over shale velocity and reservoir porosity. Read along the
-      contour. A slow shale demands a soft reservoir to produce the same contrast, and a fast shale is
-      satisfied by a much stiffer one. <b>The porosity you would report depends on a property of a rock you
-      are not even interested in.</b></p>
+    <p class="lede">Same picture as before, with the shale velocity along the bottom this time instead
+      of saturation. Every point is still one rock, the colour is still the amplitude it would produce,
+      and the black line still runs through the ones that match your measurement. Follow that line: a slow
+      shale demands a soft, porous reservoir to produce the contrast, and a fast shale is satisfied by a
+      much tighter one. <b>The porosity you would report depends on a property of a rock you are not even
+      interested in.</b> The two cards beside it are the rocks at each end of that line.</p>
     <p class="lede">This is the argument for using an interval that brackets the seal in any inversion,
       and the reason a nearby well that penetrated only the overburden is still worth a great deal. It
       constrains the half of the reflection that has nothing to do with the reservoir.</p>
 
     <div class="sec-row" id="row3">
       <div class="panel-col">
-        <p class="sublabel"><b>1</b> Amplitude over shale velocity and porosity
-          <span class="note">your model is marked</span></p>
-        <canvas id="c3map" aria-label="Amplitude computed over shale velocity and reservoir porosity, with the matching contour"></canvas>
+        <p class="sublabel"><b>1</b> Every rock, and every shale
+          <span class="note">the black line is the ones that match</span></p>
+        <canvas id="c3map" aria-label="Every combination of shale velocity and reservoir porosity, coloured by the amplitude it would produce, with a line through the ones that match"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> What the shale costs you
-          <span class="note">porosity range admitted, against how well the shale is known</span></p>
-        <canvas id="c3cost" aria-label="Range of admissible porosity as a function of uncertainty in the shale velocity"></canvas>
+        <p class="sublabel"><b>2</b> The same amplitude, two shales
+          <span class="note">a different reservoir under each</span></p>
+        <canvas id="c3cost" aria-label="The two reservoirs, under a slow shale and a fast shale, that produce the same measured amplitude"></canvas>
       </div>
     </div>
 
@@ -241,9 +254,10 @@
       <div class="stat wide"><span>Reservoir impedance implied by the measurement</span><b id="s3f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>The right-hand panel makes the trade explicit: how much porosity range you have to accept, for
-        each level of uncertainty in the shale. It is close to linear, which means shale uncertainty
-        converts into reservoir uncertainty at a fixed exchange rate. Halving one halves the other.</span>
+      <span>The two cards carry the same amplitude and the same trace, and they disagree about the
+        reservoir by several porosity units. The readouts below put a number on the trade: how much
+        porosity range you have to accept when the shale is pinned, and how much when it is not. Narrowing
+        what you know about the seal narrows what you can say about the reservoir, one for one.</span>
     </div>
   </section>
 
@@ -253,6 +267,9 @@
       <h3><span class="stepno">4</span>Thin and bright, or thick and dull</h3>
       <span class="hint">Tuning adds a third way to reach the same number</span>
     </div>
+    <p class="lede">The picture on the left works exactly as it did in the last two steps: every point
+      is a rock, now at a different thickness as well as a different porosity, coloured by the amplitude it
+      would give, with the black line through the ones that match.</p>
     <p class="lede">Module 01 showed that below about a quarter wavelength the top and base reflections
       interfere and the measured amplitude runs above the reflection coefficient — by up to 45% for this
       wavelet. Running that backwards, a thin reservoir needs a <em>weaker</em> reflection coefficient to
@@ -271,14 +288,14 @@
 
     <div class="sec-row" id="row4">
       <div class="panel-col">
-        <p class="sublabel"><b>1</b> Amplitude over thickness and porosity
-          <span class="note">tuning bends the contour</span></p>
-        <canvas id="c4map" aria-label="Amplitude computed over reservoir thickness and porosity, with the matching contour"></canvas>
+        <p class="sublabel"><b>1</b> Every rock, at every thickness
+          <span class="note">the black line is the ones that match</span></p>
+        <canvas id="c4map" aria-label="Every combination of reservoir thickness and porosity, coloured by the amplitude it would produce, with a line through the ones that match"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> Two of the matches, as traces
-          <span class="note">thin and tight against thick and porous</span></p>
-        <canvas id="c4tr" aria-label="Traces from a thin tight reservoir and a thick porous one, showing the same peak amplitude"></canvas>
+        <p class="sublabel"><b>2</b> The thinnest and thickest that fit
+          <span class="note">same amplitude, very different volumes</span></p>
+        <canvas id="c4tr" aria-label="The thinnest and thickest reservoirs that match, with their parameters and traces"></canvas>
       </div>
     </div>
 
@@ -426,10 +443,10 @@
           <details class="reveal"><summary>Hint</summary><span class="ans">On this panel everything but the shale and the porosity is held
             at your settings. With the shale pinned at 2700 m/s the amplitude admits a single porosity,
             30%. Let it range over ±400 m/s and the admissible band opens to 26–35%: nine porosity units
-            of uncertainty, bought entirely by a rock nobody is trying to characterise. The right-hand
-            panel shows the exchange rate is close to linear, so halving the shale uncertainty halves the
-            porosity uncertainty. Read this against exercise 4 of module 01, where the shale slider alone
-            changed the reflection by a factor of 3.9: the same fact, seen from the inverse direction.</span></details></li>
+            of uncertainty, bought entirely by a rock nobody is trying to characterise. The two cards show
+            the rocks at either end, and their traces are the same picture. Read this against exercise 4
+            of module 01, where the shale slider alone changed the reflection by a factor of 3.9: the same
+            fact, seen from the inverse direction.</span></details></li>
 
         <li><b>Make the volumetrics wrong.</b> In step 4, find the thinnest and thickest reservoirs that
           match, and work out the ratio of their pore volumes.
@@ -878,9 +895,14 @@
   const timeAxis = (ctx, R) => SEIS.axisLeft(ctx, R, T0, T0 + (NT - 1) * DT,
     'two-way time (s)', (v) => v.toFixed(2), { ticks: 5, grid: true });
 
-  /* A parameter-space image plus the contour where the amplitude matches.
-     get(i,j) returns the amplitude; the contour is drawn by marching over
-     cells and testing sign changes of (amp - observed). */
+  /* A picture of every rock at once. Each pixel is one combination of the two
+     parameters on the axes, coloured by the amplitude it would produce, with a
+     line drawn through the ones that match the measurement.
+
+     IMPORTANT: row 0 of the image is the TOP, and it is filled with the HIGHEST
+     value on the vertical axis, so every axis drawn against it needs flip:true.
+     Getting that wrong labels the picture upside down, which is exactly what it
+     did until somebody looked at it carefully. */
   function ampMap(ctx, R, nx, ny, get, opts) {
     const o = opts || {};
     const off = document.createElement('canvas');
@@ -902,39 +924,93 @@
     ctx.drawImage(off, R.x, R.y, R.w, R.h);
     ctx.restore();
 
-    // contour: amp == observed
-    ctx.save();
-    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
-    ctx.strokeStyle = INK; ctx.lineWidth = 2.4;
+    contour(ctx, R, nx, ny, get, OBS.amp);
+    SEIS.frame(ctx, R);
+    if (o.label !== false) {
+      SEIS.tag(ctx, R.x + R.w - 5, R.y + 13, o.label || 'rocks that match', INK, 'right');
+    }
+  }
+
+  /* Marching squares. The contour used to be drawn as loose dots, which read as
+     scatter rather than as a line, and a line is the entire point: it says the
+     solutions form a continuum, not a handful of coincidences. */
+  function contour(ctx, R, nx, ny, get, level) {
     const X = (i) => R.x + ((i + 0.5) / nx) * R.w;
     const Y = (j) => R.y + R.h - ((j + 0.5) / ny) * R.h;
-    for (let j = 0; j < ny; j++) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    ctx.strokeStyle = INK; ctx.lineWidth = 2.6;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    for (let j = 0; j < ny - 1; j++) {
       for (let i = 0; i < nx - 1; i++) {
-        const a = get(i, j) - OBS.amp, b = get(i + 1, j) - OBS.amp;
-        if (a === 0 || (a < 0) !== (b < 0)) {
-          const f = a / (a - b);
-          ctx.beginPath();
-          ctx.arc(X(i + f), Y(j), 1.3, 0, 7); ctx.fill();
+        const v = [get(i, j) - level, get(i + 1, j) - level,
+                   get(i + 1, j + 1) - level, get(i, j + 1) - level];
+        if (v.some((q) => !isFinite(q))) continue;
+        // crossing point on each edge of the cell, where there is one
+        const pts = [];
+        const edge = (a, b, xa, ya, xb, yb) => {
+          if ((v[a] < 0) === (v[b] < 0)) return;
+          const f = v[a] / (v[a] - v[b]);
+          pts.push([xa + (xb - xa) * f, ya + (yb - ya) * f]);
+        };
+        const x0 = X(i), x1 = X(i + 1), y0 = Y(j), y1 = Y(j + 1);
+        edge(0, 1, x0, y0, x1, y0);
+        edge(1, 2, x1, y0, x1, y1);
+        edge(2, 3, x1, y1, x0, y1);
+        edge(3, 0, x0, y1, x0, y0);
+        for (let k = 0; k + 1 < pts.length; k += 2) {
+          ctx.moveTo(pts[k][0], pts[k][1]);
+          ctx.lineTo(pts[k + 1][0], pts[k + 1][1]);
         }
       }
     }
-    ctx.fillStyle = INK;
-    for (let j = 0; j < ny; j++) {
-      for (let i = 0; i < nx - 1; i++) {
-        const a = get(i, j) - OBS.amp, b = get(i + 1, j) - OBS.amp;
-        if ((a < 0) !== (b < 0)) {
-          const f = a / (a - b);
-          ctx.beginPath(); ctx.arc(X(i + f), Y(j), 1.6, 0, 7); ctx.fill();
-        }
-      }
-    }
+    ctx.stroke();
     ctx.restore();
-    SEIS.frame(ctx, R);
-    if (o.bar !== false) {
-      SEIS.drawColorbar(ctx, { x: R.x, y: R.y + R.h + 30, w: Math.min(190, R.w), h: 9 },
-        cmap, { left: '\u2212' + AMP_SCALE.toFixed(2), right: '+' + AMP_SCALE.toFixed(2),
-                title: 'measured amplitude' });
-    }
+  }
+
+  /* The colour scale, placed below the x-axis label rather than on top of it,
+     with its caption beside the bar instead of above it. */
+  function ampBar(ctx, R) {
+    const bw = Math.min(170, R.w * 0.5);
+    const y = R.y + R.h + 46;
+    SEIS.drawColorbar(ctx, { x: R.x, y, w: bw, h: 9 }, SEIS.COLORMAPS.bwr,
+      { left: '\u2212' + AMP_SCALE.toFixed(2), right: '+' + AMP_SCALE.toFixed(2) });
+    ctx.save();
+    ctx.font = '10.5px "IBM Plex Sans", sans-serif';
+    ctx.fillStyle = SLATE; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText('the amplitude each rock would give', R.x + bw + 12, y + 5);
+    ctx.restore();
+  }
+
+  /* A few of the matching rocks, written out in full so they can be read rather
+     than inferred from a picture. Each card carries its parameters and the
+     trace it produces, and the traces are meant to look identical. */
+  function matchCards(ctx, R, items) {
+    const n = Math.max(1, items.length);
+    const cw = R.w / n;
+    ctx.save();
+    items.forEach((it, i) => {
+      const x = R.x + i * cw;
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(x + 2, R.y, cw - 4, R.h);
+      ctx.strokeStyle = 'rgba(22,25,28,.28)'; ctx.lineWidth = 1;
+      ctx.strokeRect(x + 2.5, R.y + 0.5, cw - 5, R.h - 1);
+      ctx.fillStyle = it.color || CRIM;
+      ctx.fillRect(x + 2, R.y, cw - 4, 3);
+      ctx.font = '11.5px "IBM Plex Sans", sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      let yy = R.y + 10;
+      it.lines.forEach((ln, k) => {
+        ctx.fillStyle = k === 0 ? INK : SLATE;
+        ctx.font = (k === 0 ? '600 12px' : '11.5px') + ' "IBM Plex Sans", sans-serif';
+        ctx.fillText(ln, x + cw / 2, yy);
+        yy += k === 0 ? 17 : 15;
+      });
+      const tr = { x: x + 6, y: yy + 6, w: cw - 12, h: R.y + R.h - yy - 12 };
+      if (tr.h > 30) wiggle(ctx, tr, it.trace, { fillColor: 'rgba(22,25,28,0.72)' });
+    });
+    ctx.restore();
   }
 
   function marker(ctx, R, fx, fy, color) {
@@ -1099,17 +1175,19 @@
     }
     const get = (i, j) => grid[i][j];
 
-    let ctx = SEIS.fitCanvas($('c2map'), w, 330);
-    ctx.clearRect(0, 0, w, 330);
-    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 330 - M.t - M.b - 34 };
+    let ctx = SEIS.fitCanvas($('c2map'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 360 - M.t - M.b - 62 };
     ampMap(ctx, R, NX, NY, get);
     marker(ctx, R, (S.fl === 'brine' ? 0 : S.sat) / 100, (S.phi - 5) / 30, INK);
     SEIS.axisBottom(ctx, R, 0, 100, (fluid === 'gas' ? 'gas' : 'oil') + ' saturation (%)',
       (v) => v.toFixed(0), { ticks: 5 });
-    SEIS.axisLeft(ctx, R, 5, 35, 'porosity (%)', (v) => v.toFixed(0), { ticks: 4 });
+    SEIS.axisLeft(ctx, R, 5, 35, 'porosity (%)', (v) => v.toFixed(0), { ticks: 4, flip: true });
+    ampBar(ctx, R);
 
-    // Vp/Vs along the contour
-    const cs = [], cv = [], cp = [];
+    /* Walk the contour and collect the rocks on it, so a few can be written
+       out in full beside the picture. */
+    const onLine = [];
     for (let si = 0; si < NX; si++) {
       let bp = -1, bd = 1e9;
       for (let pi = 0; pi < NY; pi++) {
@@ -1117,32 +1195,55 @@
         if (d < bd) { bd = d; bp = pi; }
       }
       if (bd <= 0.002 && bp >= 0) {
-        cs.push(SATS[si] * 100);
-        cv.push(cell(ci, bp, fluid, si, shi).vpvs);
-        cp.push(PHIS[bp] * 100);
+        onLine.push({ sat: SATS[si], phi: PHIS[bp],
+                      vpvs: cell(ci, bp, fluid, si, shi).vpvs, amp: grid[si][bp],
+                      r: cell(ci, bp, fluid, si, shi).r, vp: cell(ci, bp, fluid, si, shi).vp });
       }
     }
-    ctx = SEIS.fitCanvas($('c2vv'), w, 330);
-    ctx.clearRect(0, 0, w, 330);
-    R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 330 - M.t - M.b - 34 };
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    curve(ctx, R, cs, cv, [0, 100], [1.35, 2.15], CRIM, 2.4);
-    curve(ctx, R, cs, cp.map((p) => 1.35 + (p - 5) / 30 * 0.8), [0, 100], [1.35, 2.15], TEAL, 2, [5, 4]);
-    SEIS.frame(ctx, R);
-    SEIS.axisBottom(ctx, R, 0, 100, 'saturation along the contour (%)', (v) => v.toFixed(0), { ticks: 5 });
-    SEIS.axisLeft(ctx, R, 1.35, 2.15, 'Vp/Vs', (v) => v.toFixed(2), { ticks: 4, grid: true });
-    SEIS.tag(ctx, R.x + R.w - 4, R.y + 12, 'Vp/Vs on the contour', CRIM, 'right');
-    SEIS.tag(ctx, R.x + R.w - 4, R.y + 30, 'porosity, rescaled', TEAL, 'right');
 
-    set('s2a', cs.length ? cs.length + ' of ' + NX + ' saturation steps' : 'none');
-    set('s2b', cp.length ? cp[0].toFixed(0) + '–' + cp[cp.length - 1].toFixed(0) + '%' : '—');
-    set('s2c', cs.length ? cs[0].toFixed(0) + '–' + cs[cs.length - 1].toFixed(0) + '%' : '—');
-    set('s2d', cv.length ? Math.min.apply(null, cv).toFixed(2) + '–' +
-                           Math.max.apply(null, cv).toFixed(2) : '—');
-    set('s2e', cs.length > 1
-      ? cp[cp.length - 1].toFixed(0) + '% porosity at ' + cs[cs.length - 1].toFixed(0) +
-        '% saturation, and ' + cp[0].toFixed(0) + '% porosity at ' + cs[0].toFixed(0) + '%'
-      : 'the contour does not cross this panel — change the shale or thickness');
+    ctx = SEIS.fitCanvas($('c2vv'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    R = { x: 4, y: M.t, w: w - 8, h: 360 - M.t - 22 };
+    const pick = onLine.length >= 3
+      ? [onLine[0], onLine[Math.floor((onLine.length - 1) / 2)], onLine[onLine.length - 1]]
+      : onLine;
+    if (pick.length) {
+      matchCards(ctx, R, pick.map((q, i) => ({
+        color: [TEAL, SLATE, CRIM][i % 3],
+        lines: [
+          (q.sat * 100).toFixed(0) + '% ' + fluid,
+          (q.phi * 100).toFixed(0) + '% porosity',
+          'amplitude ' + q.amp.toFixed(4),
+          'Vp/Vs ' + q.vpvs.toFixed(2),
+        ],
+        trace: traceFor(q.r, q.vp, S.th),
+      })));
+    } else {
+      ctx.save();
+      ctx.font = '12px "IBM Plex Sans", sans-serif'; ctx.fillStyle = SLATE;
+      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      wrapText(ctx, 'No rock on this panel matches the measurement. Change the shale ' +
+        'velocity or the thickness until the contour appears in the map beside this one.',
+        R.x + 8, R.y + 8, R.w - 16, 17);
+      ctx.restore();
+    }
+
+    set('s2a', onLine.length ? onLine.length + ' of ' + NX + ' saturation steps' : 'none');
+    set('s2b', onLine.length
+      ? (onLine[onLine.length - 1].phi * 100).toFixed(0) + '\u2013' +
+        (onLine[0].phi * 100).toFixed(0) + '%' : '\u2014');
+    set('s2c', onLine.length
+      ? (onLine[0].sat * 100).toFixed(0) + '\u2013' +
+        (onLine[onLine.length - 1].sat * 100).toFixed(0) + '%' : '\u2014');
+    const vv = onLine.map((q) => q.vpvs);
+    set('s2d', vv.length ? Math.min.apply(null, vv).toFixed(2) + '\u2013' +
+                           Math.max.apply(null, vv).toFixed(2) : '\u2014');
+    set('s2e', onLine.length > 1
+      ? (onLine[onLine.length - 1].phi * 100).toFixed(0) + '% porosity at ' +
+        (onLine[onLine.length - 1].sat * 100).toFixed(0) + '% saturation, and ' +
+        (onLine[0].phi * 100).toFixed(0) + '% porosity at ' +
+        (onLine[0].sat * 100).toFixed(0) + '%'
+      : 'the contour does not cross this panel \u2014 change the shale or thickness');
   }
 
   /* =====================================================================
@@ -1160,15 +1261,53 @@
       for (let pi = 0; pi < NY; pi++) grid[shi].push(ampOf(cell(ci, pi, S.fl, si, shi), S.th));
     }
 
-    let ctx = SEIS.fitCanvas($('c3map'), w, 330);
-    ctx.clearRect(0, 0, w, 330);
-    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 330 - M.t - M.b - 34 };
+    let ctx = SEIS.fitCanvas($('c3map'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 360 - M.t - M.b - 62 };
     ampMap(ctx, R, NX, NY, (i, j) => grid[i][j]);
     marker(ctx, R, (S.shvp - 2300) / 800, (S.phi - 5) / 30, INK);
     SEIS.axisBottom(ctx, R, 2300, 3100, 'shale velocity (m/s)', (v) => v.toFixed(0), { ticks: 4 });
-    SEIS.axisLeft(ctx, R, 5, 35, 'porosity (%)', (v) => v.toFixed(0), { ticks: 4 });
+    SEIS.axisLeft(ctx, R, 5, 35, 'porosity (%)', (v) => v.toFixed(0), { ticks: 4, flip: true });
+    ampBar(ctx, R);
 
-    // porosity band admitted, against how wide the shale uncertainty is
+    // the matching rock under the slowest and the fastest shale on the panel
+    const found = [];
+    for (let shi = 0; shi < NX; shi++) {
+      let bp = -1, bd = 1e9;
+      for (let pi = 0; pi < NY; pi++) {
+        const d = Math.abs(grid[shi][pi] - OBS.amp);
+        if (d < bd) { bd = d; bp = pi; }
+      }
+      if (bd <= TOL[S.nz] && bp >= 0) found.push({ shi, pi: bp });
+    }
+    ctx = SEIS.fitCanvas($('c3cost'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    R = { x: 4, y: M.t, w: w - 8, h: 360 - M.t - 22 };
+    if (found.length >= 2) {
+      const two = [found[0], found[found.length - 1]];
+      matchCards(ctx, R, two.map((q, i) => {
+        const m = cell(ci, q.pi, S.fl, si, q.shi);
+        return {
+          color: i === 0 ? TEAL : CRIM,
+          lines: [
+            'shale ' + SHVPS[q.shi] + ' m/s',
+            (PHIS[q.pi] * 100).toFixed(0) + '% porosity',
+            'amplitude ' + ampOf(m, S.th).toFixed(4),
+            'reservoir impedance ' + Math.round(m.ip).toLocaleString(),
+          ],
+          trace: traceFor(m.r, m.vp, S.th),
+        };
+      }));
+    } else {
+      ctx.save();
+      ctx.font = '12px "IBM Plex Sans", sans-serif'; ctx.fillStyle = SLATE;
+      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      wrapText(ctx, 'Only one shale velocity on this panel can produce the measurement ' +
+        'with the fluid and saturation you have set.', R.x + 8, R.y + 8, R.w - 16, 17);
+      ctx.restore();
+    }
+
+    // how much porosity range each level of shale uncertainty admits
     const band = (halfWidth) => {
       let lo = 1e9, hi = -1e9;
       for (let shi = 0; shi < NX; shi++) {
@@ -1181,43 +1320,15 @@
       }
       return hi < lo ? [NaN, NaN] : [lo, hi];
     };
-    const hw = [0, 100, 200, 300, 400], los = [], his = [], spread = [];
-    hw.forEach((h) => { const b = band(h); los.push(b[0]); his.push(b[1]); spread.push(b[1] - b[0]); });
-
-    ctx = SEIS.fitCanvas($('c3cost'), w, 330);
-    ctx.clearRect(0, 0, w, 330);
-    R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 330 - M.t - M.b - 34 };
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    ctx.save();
-    ctx.fillStyle = 'rgba(132,22,23,0.16)';
-    ctx.beginPath();
-    let ok = false;
-    for (let i = 0; i < hw.length; i++) {
-      if (!isFinite(his[i])) continue;
-      const x = R.x + (hw[i] / 400) * R.w;
-      const y = R.y + R.h - ((his[i] - 5) / 30) * R.h;
-      ok ? ctx.lineTo(x, y) : ctx.moveTo(x, y); ok = true;
-    }
-    for (let i = hw.length - 1; i >= 0; i--) {
-      if (!isFinite(los[i])) continue;
-      ctx.lineTo(R.x + (hw[i] / 400) * R.w, R.y + R.h - ((los[i] - 5) / 30) * R.h);
-    }
-    ctx.closePath(); ctx.fill(); ctx.restore();
-    curve(ctx, R, hw, his, [0, 400], [5, 35], CRIM, 2.2);
-    curve(ctx, R, hw, los, [0, 400], [5, 35], CRIM, 2.2);
-    SEIS.frame(ctx, R);
-    SEIS.axisBottom(ctx, R, 0, 400, 'uncertainty in shale velocity (± m/s)',
-      (v) => v.toFixed(0), { ticks: 5 });
-    SEIS.axisLeft(ctx, R, 5, 35, 'admissible porosity (%)', (v) => v.toFixed(0), { ticks: 4, grid: true });
-
+    const b0 = band(0), b4 = band(400);
     const sh = SHALET[idxSh(S.shvp)];
     set('s3a', S.shvp + ' m/s');
     set('s3b', Math.round(sh.ip).toLocaleString());
-    set('s3c', isFinite(los[0]) ? los[0].toFixed(0) + '–' + his[0].toFixed(0) + '%' : 'nothing fits');
-    set('s3d', isFinite(los[4]) ? los[4].toFixed(0) + '–' + his[4].toFixed(0) + '%' : 'nothing fits');
-    set('s3e', isFinite(spread[0]) && isFinite(spread[4])
-      ? (spread[4] - spread[0]).toFixed(0) + ' extra porosity units of uncertainty'
-      : '—');
+    set('s3c', isFinite(b0[0]) ? b0[0].toFixed(0) + '\u2013' + b0[1].toFixed(0) + '%' : 'nothing fits');
+    set('s3d', isFinite(b4[0]) ? b4[0].toFixed(0) + '\u2013' + b4[1].toFixed(0) + '%' : 'nothing fits');
+    set('s3e', isFinite(b0[0]) && isFinite(b4[0])
+      ? ((b4[1] - b4[0]) - (b0[1] - b0[0])).toFixed(0) + ' extra porosity units of uncertainty'
+      : '\u2014');
     set('s3f', Math.round(sh.ip * (1 + OBS.amp) / (1 - OBS.amp)).toLocaleString() +
       '  (from the measured amplitude and this shale)');
   }
@@ -1238,13 +1349,14 @@
       for (let pi = 0; pi < NY; pi++) grid[i].push(ampOf(cell(ci, pi, S.fl, si, shi), thAt(i)));
     }
 
-    let ctx = SEIS.fitCanvas($('c4map'), w, 330);
-    ctx.clearRect(0, 0, w, 330);
-    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 330 - M.t - M.b - 34 };
+    let ctx = SEIS.fitCanvas($('c4map'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 360 - M.t - M.b - 62 };
     ampMap(ctx, R, NX, NY, (i, j) => grid[i][j]);
     marker(ctx, R, (S.th - 10) / 45, (S.phi - 5) / 30, INK);
     SEIS.axisBottom(ctx, R, 10, 55, 'reservoir thickness (m)', (v) => v.toFixed(0), { ticks: 5 });
-    SEIS.axisLeft(ctx, R, 5, 35, 'porosity (%)', (v) => v.toFixed(0), { ticks: 4 });
+    SEIS.axisLeft(ctx, R, 5, 35, 'porosity (%)', (v) => v.toFixed(0), { ticks: 4, flip: true });
+    ampBar(ctx, R);
 
     // thinnest and thickest matches, and their traces
     let thin = null, thick = null;
@@ -1256,26 +1368,24 @@
         thick = rec;
       }
     }
-    ctx = SEIS.fitCanvas($('c4tr'), w, 330);
-    ctx.clearRect(0, 0, w, 330);
-    R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 330 - M.t - M.b - 34 };
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    ctx = SEIS.fitCanvas($('c4tr'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    R = { x: 4, y: M.t, w: w - 8, h: 360 - M.t - 22 };
     if (thin && thick) {
-      const half = R.w / 2;
-      const mk = (rec) => {
+      matchCards(ctx, R, [thin, thick].map((rec, i) => {
         const m = cell(ci, rec.pi, S.fl, si, shi);
-        return traceFor(m.r, m.vp, rec.th);
-      };
-      wiggle(ctx, { x: R.x, y: R.y, w: half, h: R.h }, mk(thin));
-      wiggle(ctx, { x: R.x + half, y: R.y, w: half, h: R.h }, mk(thick));
-      SEIS.dashedLine(ctx, R.x + half, R.y, R.x + half, R.y + R.h, 'rgba(22,25,28,.3)', [4, 4], 1);
-      SEIS.tag(ctx, R.x + 4, R.y + 12,
-        thin.th.toFixed(0) + ' m, ' + (thin.phi * 100).toFixed(0) + '% \u03c6', CRIM, 'left');
-      SEIS.tag(ctx, R.x + half + 4, R.y + 12,
-        thick.th.toFixed(0) + ' m, ' + (thick.phi * 100).toFixed(0) + '% \u03c6', TEAL, 'left');
+        return {
+          color: i === 0 ? TEAL : CRIM,
+          lines: [
+            rec.th.toFixed(0) + ' m thick',
+            (rec.phi * 100).toFixed(0) + '% porosity',
+            'amplitude ' + ampOf(m, rec.th).toFixed(4),
+            'pore volume ' + (rec.th * rec.phi).toFixed(1) + ' m',
+          ],
+          trace: traceFor(m.r, m.vp, rec.th),
+        };
+      }));
     }
-    SEIS.frame(ctx, R);
-    timeAxis(ctx, R);
 
     const tuneMax = D.m.vp * Math.sqrt(6) / (4 * Math.PI * FREQ);
     set('s4a', tuneMax.toFixed(1) + ' m');

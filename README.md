@@ -17,6 +17,9 @@ and [seismic_resolution](https://hbedle-subsurface.github.io/seismic_resolution/
     modules/rock-to-trace.html   Module 01 — build a rock, make a trace
     modules/same-amplitude.html  Module 02 — same bright spot, different rock
     modules/add-offset.html      Module 03 — add offset
+    modules/intercept-gradient.html  Module 04 — intercept, gradient and the classes
+    modules/reading-a-gather.html    Module 05 — reading a gather you did not make
+    modules/what-survives.html       Module 06 — what survives
     tools/                       verification; not deployed
 
 `assets/style.css` and `assets/seismic.js` are **copies**, not links to the other
@@ -43,10 +46,15 @@ which runs, in order:
 | `verify-physics.js` | 37 closed-form tests: Batzle-Wang against published water velocity, Gassmann round trips to 1e-15, Zoeppritz at 0° equal to (I₂−I₁)/(I₂+I₁), zero contrast returning exactly zero |
 | `harness.js` | the page boots, every `$(id)` resolves, every readout is populated, and 297 states per control produce no NaN |
 | `harness.js geometry` | nothing is drawn outside its canvas, at 7 viewport widths × 5 panes |
+| `harness.js` (axis check) | every vertical axis runs the same way as the data drawn against it. `SEIS.axisLeft` without `flip` puts the MINIMUM at the top, which is right for time and depth and wrong for everything else, because `curve()` and the other value plots put the minimum at the bottom. It found eleven upside-down axes the first time it ran, across three modules. |
+| `harness.js labels` | no two pieces of text land on top of each other. The geometry check cannot see this: an axis label and a legend can overlap perfectly while both sit inside the canvas, which is exactly what happened when `SEIS.axisBottom` put its label 22 px below the plot and `legendRow` put its first line at 26. It found 38 collisions the first time it ran. |
 | `harness.js tuning` | the tuning thickness the page *measures* matches √6·Vp/(4πf) |
 | `verify-prose.js` | every number module 01 quotes still matches what the page computes |
 | `verify-prose-m2.js` | the same for module 02, comparing values rather than strings |
 | `verify-prose-m3.js` | the same for module 03 |
+| `verify-prose-m4.js` | the same for module 04 |
+| `verify-prose-m5.js` | the same for module 05 |
+| `verify-prose-m6.js` | the same for module 06 |
 
 The `verify-prose` scripts are the ones to re-run after any physics change.
 They extract the numbers from the prose and from the running page and compare
@@ -79,6 +87,15 @@ Two things follow from that if you edit these pages:
   inside the canvas, not whether the axis agrees with the image.
 - `gatherCard` and `matchCards` are the concrete-panel helpers. Reuse them
   rather than inventing a new layout, so the pattern stays learnable.
+- Any panel that carries a legend should be sized with `fitLegend`, which
+  measures how many lines the legend needs before the plot box is chosen. A
+  legend that wraps to a second line will otherwise draw it off the canvas.
+- `legendRow` draws at +46 below the plot, which clears the axis label at +22.
+  Do not move it back up.
+- Any `SEIS.axisLeft` for a value (not time or depth) needs `flip: true`. The
+  structural check enforces this by reading the label, so a new axis called
+  something with "time" or "depth" in it is treated as downward-increasing and
+  everything else is not.
 
 ## Model choices worth knowing
 
@@ -91,6 +108,17 @@ Two things follow from that if you edit these pages:
 - **Conditions:** 23 MPa effective, 64 °C, fixed in every module. In module 03
   the depth slider changes the ray geometry only, deliberately not the effective
   pressure, so the angle lesson is not confounded by the rock also stiffening.
+- **Fit uncertainty (modules 05 and 06):** closed form, not simulated. For a
+  least-squares line, sigma(G) = sigma/sqrt(Sxx) and sigma(R0) =
+  sigma*sqrt(1/n + xbar^2/Sxx). The test suite checks these against 30,000
+  simulated fits (they agree to 0.5%) — the simulation is there to validate the
+  formula, not the other way round.
+- **Intercept and gradient (module 04):** fitted by least squares to the exact
+  Zoeppritz coefficients against sin²θ over the chosen angle range, which is what
+  a processor does. This is NOT Shuey's analytic G — that is the tangent at zero
+  offset, and on the default rock the two differ by more than a fifth. The
+  background trend and the class boundaries are both fitted or drawn live; the
+  boundaries are a convention (±0.03 in intercept) and the module says so.
 - **Ray geometry (module 03):** exact for a V(z) = 1600 + 0.6z overburden.
   Rays are circular arcs, so the incidence angle is found by solving for the
   ray parameter that lands on the requested offset, not by the straight-ray

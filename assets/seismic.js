@@ -250,6 +250,27 @@ const SEIS = (function () {
    * anywhere a wavelet is expected. The rotated wavelet has longer tails than
    * the one it came from, so halfLength grows to match.
    */
+  /* Hilbert transform of a single trace, via the analytic signal: zero the
+     negative frequencies, double the positive ones, and the imaginary part of
+     the result is the quadrature. Needed because AASPI's similarity attributes
+     are all computed from the analytic trace rather than the amplitude. */
+  function hilbert(x) {
+    const n0 = x.length;
+    let n = 1;
+    while (n < 2 * n0) n *= 2;
+    const re = new Float64Array(n), im = new Float64Array(n);
+    for (let i = 0; i < n0; i++) re[i] = x[i];
+    fft(re, im, false);
+    for (let k = 1; k < n; k++) {
+      if (k === n / 2) continue;
+      if (k < n / 2) { re[k] *= 2; im[k] *= 2; } else { re[k] = 0; im[k] = 0; }
+    }
+    fft(re, im, true);
+    const out = new Float32Array(n0);
+    for (let i = 0; i < n0; i++) out[i] = im[i];
+    return out;
+  }
+
   function phaseRotate(wav, degrees) {
     const deg = ((degrees % 360) + 540) % 360 - 180;      // into -180..180
     if (Math.abs(deg) < 1e-9) return wav;
@@ -706,16 +727,25 @@ const SEIS = (function () {
         p.set(k, typeof state[k] === 'boolean' ? (state[k] ? 1 : 0) : state[k]);
       }
       const q = p.toString();
-      history.replaceState(null, '', q ? '?' + q : location.pathname);
+      // Opening a module straight off disk gives a file:// URL, and browsers
+      // refuse to replaceState on those. That is not a failure worth shouting
+      // about, so the link-sharing feature simply goes quiet.
+      try {
+        history.replaceState(null, '', q ? '?' + q : location.pathname);
+      } catch (e) { /* file:// — no shareable URL to write */ }
     }, 250);
   }
 
   function copyLink(btn) {
-    navigator.clipboard.writeText(location.href).then(() => {
+    const done = (msg) => {
       const old = btn.textContent;
-      btn.textContent = 'Link copied';
+      btn.textContent = msg;
       setTimeout(() => (btn.textContent = old), 1600);
-    });
+    };
+    if (!navigator.clipboard) return done('Copy from the address bar');
+    navigator.clipboard.writeText(location.href)
+      .then(() => done('Link copied'))
+      .catch(() => done('Copy from the address bar'));
   }
 
   function savePNG(canvas, name) {
@@ -738,6 +768,14 @@ const SEIS = (function () {
     window.addEventListener('error', function (ev) {
       if (document.getElementById('seis-error-banner')) return;
       const msg = (ev && ev.message) || 'Unknown error';
+      // Naming the file and line is the difference between a two-minute fix and
+      // an afternoon. A SyntaxError reported against a .js file means that file
+      // came back as something other than JavaScript; reported against the page
+      // itself, it is in the module's own inline script.
+      const where = (ev && ev.filename)
+        ? String(ev.filename).replace(/^.*\//, '') +
+          (ev.lineno ? ':' + ev.lineno + (ev.colno ? ':' + ev.colno : '') : '')
+        : 'source unknown';
       const likelyStale = /is not a function|is not defined|undefined/.test(msg);
       const el = document.createElement('div');
       el.id = 'seis-error-banner';
@@ -746,9 +784,12 @@ const SEIS = (function () {
         'background:#841617', 'color:#fff', 'padding:12px 18px',
         'font:13px/1.5 ui-monospace,Menlo,monospace', 'box-shadow:0 2px 10px rgba(0,0,0,.3)',
       ].join(';'));
-      el.textContent = 'This page stopped drawing: ' + msg +
+      el.textContent = 'This page stopped drawing: ' + msg + '  [in ' + where + ']' +
         (likelyStale
           ? '  —  this usually means assets/seismic.js is older than the module using it. Upload the current assets/seismic.js and reload.'
+          : '') +
+        (/Unexpected token/.test(msg)
+          ? '  —  a script was handed something other than JavaScript. The file named above is the one to check.'
           : '');
       const dismiss = document.createElement('span');
       dismiss.textContent = '  [dismiss]';
@@ -764,7 +805,7 @@ const SEIS = (function () {
   return {
     ricker, ormsby, makeWavelet, spectrum,
     traceValue, sampleTrace, traceFromSpikes, rc,
-    mulberry32, gaussRand, bandLimitedNoise, fft, fkSpectrum, phaseRotate,
+    mulberry32, gaussRand, bandLimitedNoise, fft, fkSpectrum, phaseRotate, hilbert,
     COLORMAPS, SEQMAPS, fitCanvas, drawVarDensity, drawWiggle,
     niceTicks, frame, axisBottom, axisLeft, dashedLine, tag, drawColorbar,
     UNITS, readState, writeState, copyLink, savePNG,

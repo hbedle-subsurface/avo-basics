@@ -60,6 +60,26 @@ step 5 panel is memoized on the parameters that can actually change its answer.
 If you add a parameter to the search, check `tools/harness.js m2` still returns
 promptly before assuming it scales.
 
+## A convention the modules follow
+
+Every step pairs an abstract picture with a concrete one, always the same way
+round: the **left** panel shows all the possibilities at once (a parameter-space
+map in module 02, an amplitude-against-angle curve in module 03), and the
+**right** panel shows a few actual rocks written out — their parameters, their
+numbers, and the trace or gather each one produces. Beginners get very little
+from a contour on its own; they get the point immediately from two cards whose
+traces are visibly the same.
+
+Two things follow from that if you edit these pages:
+
+- When an image is drawn with `ampMap`, row 0 is the TOP and holds the HIGHEST
+  value on the vertical axis, so the matching `SEIS.axisLeft` call needs
+  `flip: true`. Getting this wrong labels the picture upside down and nothing in
+  the test suite will notice — the geometry checker only knows whether ink lands
+  inside the canvas, not whether the axis agrees with the image.
+- `gatherCard` and `matchCards` are the concrete-panel helpers. Reuse them
+  rather than inventing a new layout, so the pattern stays learnable.
+
 ## Model choices worth knowing
 
 - **Dry frame:** Dvorkin–Nur soft sand (Hertz–Mindlin at φc = 0.40, n = 9,

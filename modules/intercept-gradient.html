@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intercept, gradient and the classes | How AVO Actually Works</title>
+<meta name="description" content="Summarizing an AVO curve as two numbers, the crossplot those numbers live in, the background trend that makes an anomaly an anomaly, and why AVO Classes I to IV are regions somebody drew rather than kinds of rock.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <a class="brand" href="../index.html"><span class="dot"></span>How AVO <b>actually</b> works</a>
+    <nav>
+      <a href="../index.html">All modules</a>
+      <a href="add-offset.html">Module 03</a>
+      <a href="#pm">Method &amp; references</a>
+    </nav>
+  </header>
+
+  <div class="mod-head">
+    <p class="eyebrow">Module 04 &nbsp;·&nbsp; Amplitude versus offset</p>
+    <h1>Intercept, gradient and the classes</h1>
+    <p class="sub">Module 03 turned one amplitude into a curve. Nobody carries a curve around for every
+      sample in a survey, so the curve gets summarized by two numbers: where it starts, and how steeply it
+      falls. Those two numbers are what AVO analysis actually works with, and the crossplot they live in is
+      where the well-known Classes I to IV come from. This module builds that crossplot, and then shows
+      that the classes are lines somebody drew on it.</p>
+  </div>
+
+  <div class="labhead">
+    <div class="labgrid">
+      <div>
+        <p class="cap">Your curve, and the two numbers that stand in for it <span>&mdash; plus where they land</span></p>
+        <canvas id="cHead" aria-label="The reflection coefficient against sine squared of the angle with the fitted straight line, beside the intercept-gradient crossplot with the current rock marked"></canvas>
+      </div>
+      <div>
+        <p class="cap">Build the rock and choose your angles <span>&mdash; both move the point</span></p>
+        <div class="controls" id="mainControls">
+          <div class="ctl-col">
+            <h2>The rock</h2>
+            <div class="ctl">
+              <label for="phi">Porosity <span class="val" id="phiV">20%</span></label>
+              <input type="range" data-key="phi" id="phi" min="5" max="35" step="1" value="20">
+            </div>
+            <div class="ctl">
+              <label for="vcl">Clay content <span class="val" id="vclV">0%</span></label>
+              <input type="range" data-key="vcl" id="vcl" min="0" max="30" step="5" value="0">
+            </div>
+            <div class="ctl">
+              <label for="shvp">Shale velocity <span class="val" id="shvpV">2700 m/s</span></label>
+              <input type="range" data-key="shvp" id="shvp" min="2300" max="3100" step="50" value="2700">
+            </div>
+
+            <h2>What is in the pores</h2>
+            <div class="ctl">
+              <label>Fluid <span class="val" id="flV">gas</span></label>
+              <div class="seg" id="segFluid">
+                <button type="button" data-fl="brine" aria-pressed="false">Brine</button>
+                <button type="button" data-fl="oil" aria-pressed="false">Oil</button>
+                <button type="button" data-fl="gas" aria-pressed="true">Gas</button>
+              </div>
+            </div>
+            <div class="ctl">
+              <label for="sat">Hydrocarbon saturation <span class="val" id="satV">100%</span></label>
+              <input type="range" data-key="sat" id="sat" min="0" max="100" step="5" value="100">
+            </div>
+
+            <h2>How you measure it</h2>
+            <div class="ctl">
+              <label for="amax">Angles used for the fit <span class="val" id="amaxV">0–30°</span></label>
+              <input type="range" data-key="amax" id="amax" min="15" max="45" step="1" value="30">
+            </div>
+            <div class="ctl">
+              <label>Noise <span class="val" id="nzV">clean</span></label>
+              <div class="seg" id="segNoise">
+                <button type="button" data-nz="0" aria-pressed="true">Clean</button>
+                <button type="button" data-nz="1" aria-pressed="false">Moderate</button>
+                <button type="button" data-nz="2" aria-pressed="false">Noisy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="tabhint">Work through the five steps in order, <b>then try the exercises</b>.
+    Method and references are there when you want them.</p>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
+    <button role="tab" data-tab="p1" aria-selected="false">1 · Two numbers</button>
+    <button role="tab" data-tab="p2" aria-selected="false">2 · The crossplot</button>
+    <button role="tab" data-tab="p3" aria-selected="false">3 · The trend</button>
+    <button role="tab" data-tab="p4" aria-selected="false">4 · The classes</button>
+    <button role="tab" data-tab="p5" aria-selected="false">5 · Same rock</button>
+    <button role="tab" data-tab="pw" aria-selected="false">Why it matters</button>
+    <span class="gap"></span>
+    <button role="tab" data-tab="pe" aria-selected="false">Exercises</button>
+    <button role="tab" data-tab="pk" aria-selected="false">Key points</button>
+    <button role="tab" data-tab="pm" aria-selected="false">Method</button>
+  </nav>
+
+  <!-- =============================== STEP 1 =============================== -->
+  <section class="tabpane" id="p1" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">1</span>A curve becomes two numbers</h3>
+      <span class="hint">And the second one depends on how you measured it</span>
+    </div>
+    <p class="lede">Module 03's curve bends. That is inconvenient, because storing a bent curve for every
+      sample in a survey is not practical, and because a bend is hard to interpret. So AVO analysis does
+      something simple: it plots the amplitude not against angle but against <b>sin²θ</b>, on which the
+      curve straightens out almost completely, and then fits a straight line to it.</p>
+    <p class="lede">A straight line has two numbers in it. Where it crosses the left-hand edge is the
+      <b>intercept</b>, written R₀ — the amplitude the reflection would have at zero offset, which is
+      exactly the number modules 01 and 02 were about. How steeply it tilts is the <b>gradient</b>, G.
+      Together they are the whole of what most AVO work uses.</p>
+    <p class="lede">Now for the part that is usually left out. <b>The gradient is not a property of the
+      rock.</b> It is a property of the rock <em>and of the angle range you fitted over</em>, because the
+      real curve is not quite straight. Drag the <b>angles used for the fit</b> slider and watch G move
+      while the rock does not. Two people can analyse the same gather, do nothing wrong, and report
+      different gradients because one of them muted at 30° and the other at 40°.</p>
+
+    <div class="sec-row" id="row1">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Amplitude against sin²θ
+          <span class="note">the curve, and the line fitted to it</span></p>
+        <canvas id="c1fit" aria-label="Reflection coefficient plotted against sine squared of the incidence angle, with the fitted straight line"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> What those two numbers mean on the gather
+          <span class="note">intercept is the near trace, gradient is the change</span></p>
+        <canvas id="c1gath" aria-label="The gather for the current rock, with the near and far amplitudes marked"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat key"><span>Intercept R₀</span><b id="s1a">—</b></div>
+      <div class="stat key"><span>Gradient G</span><b id="s1b">—</b></div>
+      <div class="stat"><span>Angles you fitted over</span><b id="s1c">—</b></div>
+      <div class="stat"><span>G if you had fitted to 20°</span><b id="s1d">—</b></div>
+      <div class="stat"><span>G if you had fitted to 45°</span><b id="s1e">—</b></div>
+      <div class="stat wide"><span>How much the angle range alone moves the gradient</span><b id="s1f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The intercept barely moves when you change the fit range, because every fit is anchored near
+        zero offset where the curve is genuinely straight. The gradient moves a great deal. That
+        asymmetry is worth remembering whenever two gradient volumes disagree: the first thing to check is
+        not the rocks, it is what angles went into each one.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 2 =============================== -->
+  <section class="tabpane" id="p2" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">2</span>Every rock becomes a dot</h3>
+      <span class="hint">The crossplot, and how to read one</span>
+    </div>
+    <p class="lede">Once a rock is two numbers, you can put it on a graph. <b>How to read the picture on
+      the left:</b> it is not a map and it is not a cross-section. Each dot is one rock. Its position left
+      to right is that rock's intercept — what its near trace looks like. Its position up and down is the
+      gradient — how much the reflection changes as you move out to the far traces. The circle is the rock
+      currently on your sliders.</p>
+    <p class="lede">The grey dots are brine-filled rocks, at every porosity, clay content and shale
+      velocity this page can build. The coloured ones hold oil or gas. The value of the picture is that it
+      shows a whole population at once, which is what you have when you crossplot a real survey: one dot
+      per sample, hundreds of thousands of them.</p>
+    <p class="lede">Two rocks can share an intercept and differ in gradient. The panel on the right shows
+      exactly that pair — <b>your rock, and the wet rock whose near trace matches it most closely</b>. Look
+      at the near traces: the same. Look at the far traces: not the same. Everything the gradient
+      contributes is in that difference.</p>
+
+    <div class="sec-row" id="row2">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Intercept against gradient
+          <span class="note">one dot per rock; yours is circled</span></p>
+        <canvas id="c2plot" aria-label="Crossplot of gradient against intercept, with wet rocks in grey and hydrocarbon-bearing rocks coloured"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Your rock, and the wet rock with the same intercept
+          <span class="note">same near trace, different far trace</span></p>
+        <canvas id="c2cards" aria-label="Gathers for the current rock and for the brine-filled rock with the closest matching intercept"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Your rock</span><b id="s2a">—</b></div>
+      <div class="stat"><span>Nearest wet rock</span><b id="s2b">—</b></div>
+      <div class="stat"><span>Difference in intercept</span><b id="s2c">—</b></div>
+      <div class="stat key"><span>Difference in gradient</span><b id="s2d">—</b></div>
+      <div class="stat"><span>Difference on the near trace</span><b id="s2e">—</b></div>
+      <div class="stat wide"><span>Difference on the far trace</span><b id="s2f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>This is the argument for crossplotting rather than looking at a gradient map on its own. A
+        gradient value means nothing by itself; it means something relative to the intercept it came with,
+        and only a crossplot shows you both at once.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 3 =============================== -->
+  <section class="tabpane" id="p3" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">3</span>The background trend</h3>
+      <span class="hint">An anomaly is a departure from something, and this is the something</span>
+    </div>
+    <p class="lede">The grey dots are not scattered at random. Wet rocks fall along a line, because their
+      Vp, Vs and density are related to each other in a fairly consistent way, whatever their porosity or
+      clay content. That line is the <b>background trend</b>, and it is drawn on the crossplot below.</p>
+    <p class="lede">Once the trend is there, the useful question stops being "where is this dot" and
+      becomes <b>"how far off the trend is it"</b>. A rock sitting on the trend is behaving like the wet
+      rocks around it, whatever its intercept happens to be. A rock a long way off the trend is doing
+      something the wet rocks do not do — and a pore fluid is the usual reason.</p>
+    <p class="lede">This is why an absolute gradient threshold is a poor detector and distance from the
+      trend is a good one. It also explains a common frustration: a trend fitted in one interval does not
+      transfer to another, because the rocks are different, so an anomaly cut-off carried across a survey
+      quietly stops meaning the same thing.</p>
+
+    <div class="sec-row" id="row3">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The wet trend, and who departs from it
+          <span class="note">distance off the line is what matters</span></p>
+        <canvas id="c3plot" aria-label="The crossplot with the background trend line fitted through the wet rocks and the current rock's departure from it marked"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> How far off the trend each fluid sits
+          <span class="note">the same rock, three fills</span></p>
+        <canvas id="c3bars" aria-label="Distance from the background trend for the same rock filled with brine, oil and gas"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>The trend</span><b id="s3a">—</b></div>
+      <div class="stat"><span>How tightly the wet rocks follow it</span><b id="s3b">—</b></div>
+      <div class="stat key"><span>Your rock's distance off the trend</span><b id="s3c">—</b></div>
+      <div class="stat"><span>Same rock, filled with brine</span><b id="s3d">—</b></div>
+      <div class="stat"><span>Same rock, filled with gas</span><b id="s3e">—</b></div>
+      <div class="stat wide"><span>Is your rock outside the spread of the wet rocks</span><b id="s3f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The wet rocks scatter about their own trend, so being off the line is only meaningful compared
+        with how much the wet rocks themselves wander. That spread is quoted above, and it is the honest
+        yardstick: a departure smaller than the wet scatter is not evidence of anything.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 4 =============================== -->
+  <section class="tabpane" id="p4" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">4</span>The classes are regions on this plot</h3>
+      <span class="hint">Drawn by people, not by the rocks</span>
+    </div>
+    <p class="lede">Class I, Class II, Class III and Class IV are the most quoted vocabulary in AVO, and
+      the crossplot is where they come from. Rutherford and Williams sorted gas sands by where their
+      intercept sat: strongly positive, near zero, or strongly negative. Castagna later added a fourth for
+      soft sands whose reflection gets <em>weaker</em> with offset rather than stronger.</p>
+    <p class="lede">The regions are shaded on the plot below. Notice what they are: <b>rectangles on a
+      graph</b>. Nothing physical happens as a dot crosses from one into the next. The boundary near zero
+      intercept is drawn at ±0.03 here and different books put it in different places, because there is no
+      natural place to put it.</p>
+    <p class="lede">The panel on the right makes the point another way. Both cards are <b>gas sands</b> at
+      full saturation under the same shale. One is Class I and one is Class III. If the classes described
+      kinds of rock, that could not happen.</p>
+
+    <div class="sec-row" id="row4">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Where the class boundaries fall
+          <span class="note">shaded regions, not properties</span></p>
+        <canvas id="c4plot" aria-label="The crossplot with the four AVO class regions shaded and labelled"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Two gas sands in two different classes
+          <span class="note">same fluid, same shale, different porosity</span></p>
+        <canvas id="c4cards" aria-label="Gathers for a low-porosity gas sand and a high-porosity gas sand, which fall in different AVO classes"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat key"><span>Your rock's class</span><b id="s4a">—</b></div>
+      <div class="stat"><span>What its gather does with offset</span><b id="s4b">—</b></div>
+      <div class="stat"><span>Gas sand at 10% porosity</span><b id="s4c">—</b></div>
+      <div class="stat"><span>Gas sand at 30% porosity</span><b id="s4d">—</b></div>
+      <div class="stat"><span>Where the II/III boundary sits</span><b id="s4e">—</b></div>
+      <div class="stat wide"><span>Distance from your rock to the nearest class boundary</span><b id="s4f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The classes remain useful as shorthand. "A Class II response" tells a colleague quickly that
+        the near traces are weak and the far traces are not, which is genuinely worth saying, and Class II
+        in particular carries a real warning: a reflection that is nearly invisible on the near offsets is
+        easy to miss altogether on a full stack. The trouble starts when the shorthand is treated as a
+        measurement.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 5 =============================== -->
+  <section class="tabpane" id="p5" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">5</span>One rock, three classes</h3>
+      <span class="hint">Change the shale and nothing else</span>
+    </div>
+    <p class="lede">Set a gas sand at 20% porosity, then move the <b>shale velocity</b> slider from one end
+      to the other. The reservoir does not change. Its porosity, its clay content, its fluid and its
+      saturation all stay exactly where they are. Watch the dot travel across the crossplot, and watch the
+      class label under it change.</p>
+    <p class="lede">Under a slow shale the sand is harder than its surroundings, so the near trace is a
+      peak and the response is <b>Class I</b>. Under the default shale the two impedances nearly match, the
+      near trace almost vanishes and it is <b>Class II</b>. Under a fast shale the sand is the softer rock,
+      the near trace is a clear trough, and it is <b>Class III</b> — the textbook bright spot.</p>
+    <p class="lede">The three gathers on the right are the same gas sand every time. So a class is not a
+      description of a reservoir. <b>It is a description of a contrast</b>, and half of that contrast
+      belongs to a rock nobody is trying to characterise — which is exactly what module 02 found from the other
+      direction, when the shale you had not measured widened the admissible porosity by nine units.</p>
+    <p class="lede">The practical consequence is that "we are looking for a Class III response" is not a
+      prospecting criterion on its own. What class your target produces depends on the seal above it, and
+      that can change across a field faster than the reservoir does.</p>
+
+    <div class="sec-row" id="row5">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The same sand under every shale
+          <span class="note">the track crosses two boundaries</span></p>
+        <canvas id="c5plot" aria-label="The crossplot with a track showing where a single gas sand plots as the overlying shale velocity is varied"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Three shales, one reservoir
+          <span class="note">identical rock in all three</span></p>
+        <canvas id="c5cards" aria-label="Gathers for the same gas sand beneath a slow, a medium and a fast shale"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Under a 2300 m/s shale</span><b id="s5a">—</b></div>
+      <div class="stat"><span>Under a 2700 m/s shale</span><b id="s5b">—</b></div>
+      <div class="stat"><span>Under a 3100 m/s shale</span><b id="s5c">—</b></div>
+      <div class="stat key"><span>Classes this one sand can produce</span><b id="s5d">—</b></div>
+      <div class="stat"><span>Change in the reservoir</span><b id="s5e">—</b></div>
+      <div class="stat wide"><span>Distance off the wet trend across that range</span><b id="s5f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>Watch the last readout while you move the shale. The class changes and the intercept changes
+        enormously, but the distance off the wet trend stays comparatively steady — because the fluid
+        effect is what pushes a rock off the trend, and the fluid did not change. That is the argument for
+        working in distance-from-trend rather than in classes, in one line.</span>
+    </div>
+  </section>
+
+  <!-- ============================ WHY IT MATTERS =========================== -->
+  <section class="tabpane" id="pw" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">W</span>Why it matters</h3>
+      <span class="hint">Where intercept and gradient earn their keep, and where they mislead</span>
+    </div>
+    <p class="lede">Reducing a curve to two numbers is what makes AVO practical at survey scale. Two
+      volumes instead of a hundred angle stacks, one dot per sample on a crossplot, and anomalies that can
+      be found by a computer rather than by eye. All of that is real value.</p>
+    <ul class="lede" style="padding-left:20px">
+      <li><b>Crossplot the interval, not the sample.</b> A dot means something only against the population
+        it came from. Extract a window that contains enough wet rock to define a trend, or there is
+        nothing to be anomalous with respect to.</li>
+      <li><b>Record the angle range with the gradient.</b> Step 1 shows the gradient moving by a fifth
+        when the fit range changes and the rock does not. A gradient volume without its angle range
+        attached cannot be compared with anything.</li>
+      <li><b>Prefer distance from the trend to absolute thresholds.</b> A cut-off on gradient alone will
+        follow lithology and depth around a survey. Distance from a locally fitted trend will not, or at
+        least not as much.</li>
+      <li><b>Treat the class as vocabulary.</b> It is a useful way to tell a colleague what the gather
+        looks like. It is not a measurement, and it is not a property of the reservoir.</li>
+    </ul>
+
+    <p class="lede">The failure this module is built against is the one in step 5. A prospect gets
+      described as "a Class III opportunity", the phrase gets repeated, and it hardens into a property of
+      the reservoir. Then the seal changes across the field, the response moves to Class II, and the same
+      sand stops looking like the thing everyone agreed to look for. Nothing about the reservoir changed.
+      The class was never about the reservoir.</p>
+    <p class="lede">There is a quieter failure in step 1. The intercept and the gradient are usually
+      treated as two independent measurements, and they are not — they come from one fit to one set of
+      points, so an error in one is compensated by an error in the other. That correlation is why
+      gradients are so much less stable than intercepts, and it is the subject of the next module.</p>
+
+    <div class="legend prose">
+      <span>Two questions worth asking of any crossplot before believing it: what angle range produced
+        these gradients, and where is the wet trend? If nobody can answer the first, the gradients are not
+        comparable. If nobody has drawn the second, the anomalies have not been defined.</span>
+    </div>
+  </section>
+
+  <!-- ============================== EXERCISES ============================= -->
+  <section class="tabpane" id="pe" role="tabpanel" hidden>
+    <div class="tryit" style="max-width:none">
+      <h3>Exercises</h3>
+      <ol>
+        <li><b>Change the gradient without touching the rock.</b> With the default gas sand at 20%
+          porosity, read the gradient. Then move the fit range from 15° to 45°, reading it at each end, and
+          compare with how much the intercept moved.
+          <details class="reveal"><summary>Hint</summary><span class="ans">Fitted over 0–20° the gradient is −0.4107; over 0–45° it is
+            −0.4310. That is a shift of 0.0203 — about five percent of the gradient — with the rock
+            untouched. The intercept moves by only 0.0014 over the same change, so the fit range moved the
+            gradient fifteen times as much as it moved the intercept. Every fit is anchored near zero
+            offset, which is what protects the intercept; nothing plays that role for the gradient.</span></details></li>
+
+        <li><b>Find the wet rock hiding behind your anomaly.</b> Set a gas sand at 30% porosity and look at
+          the two cards in step 2 — your rock and the wet rock with the closest intercept. Compare their
+          near traces, then their far traces.
+          <details class="reveal"><summary>Hint</summary><span class="ans">The closest wet rock is a brine sand at 33% porosity under a
+            fast 3100 m/s shale. Its intercept matches the gas sand's to 0.0002, so the near traces are
+            the same picture — they differ by 0.0001. The gradients differ by 0.3745, and by the far
+            traces the amplitudes have pulled apart by 0.0935, which is around 780 times the near-trace
+            difference. If you only ever looked at a near stack, or at a full stack dominated by the near
+            offsets, you could not separate these two rocks at all. All of the discriminating power is in
+            how the traces differ across the gather, and that is what the gradient measures.</span></details></li>
+
+        <li><b>Fill the same rock three ways and watch it leave the trend.</b> In step 3, set 30% porosity
+          and read the distance off the wet trend with brine, then oil, then gas.
+          <details class="reveal"><summary>Hint</summary><span class="ans">Brine sits −0.0461 from the trend, oil −0.1544, and gas
+            −0.3173. The rock frame is identical in all three; only the pore fluid changed. Note that
+            brine is not exactly on the trend either — the wet rocks scatter about their own line by about
+            0.039, so a departure that size means nothing at all. Oil is about four times the wet scatter
+            and gas about eight times, which is the honest way to say how detectable each one is: gas
+            comfortably, oil probably, and anything smaller not at all.</span></details></li>
+
+        <li><b>Put two gas sands in two different classes.</b> In step 4, compare a gas sand at 10%
+          porosity with one at 30%, both fully saturated, both under a 2700 m/s shale.
+          <details class="reveal"><summary>Hint</summary><span class="ans">The 10% sand has an intercept of
+            +0.1814 and lands in Class I; the 30% sand has −0.1610 and lands in Class III. Same fluid, same
+            saturation, same shale, opposite ends of the classification. What separated them was porosity,
+            which is a property of the reservoir but not of its fluid. The classes sort responses, and a
+            response is made by two rocks and a fluid together.</span></details></li>
+
+        <li><b>Move one sand through three classes with the shale slider.</b> Set gas, 20% porosity, and
+          take the shale velocity from 2300 to 3100 m/s, reading the class at 2300, 2700 and 3100.
+          <details class="reveal"><summary>Hint</summary><span class="ans">At 2300 m/s the intercept is +0.096 and the response is
+            Class I. At 2700 m/s it is −0.004 and it is Class II. At 3100 m/s it is −0.090 and it is
+            Class III. The reservoir was not touched once. Meanwhile the distance off the wet trend only
+            moves between −0.210 and −0.298 across that whole span, because the fluid never changed and
+            the fluid is what pushes a rock off the trend. So the class travelled through
+            three categories while the thing you actually wanted to know stayed put. That is the clearest
+            statement in this site of why the classes are a description of a contrast rather than of a
+            reservoir.</span></details></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================== KEY POINTS ============================ -->
+  <section class="tabpane" id="pk" role="tabpanel" hidden>
+    <div class="takeaway" style="max-width:none">
+      <h3>Key points</h3>
+      <ul>
+        <li><b>Plotting against sin²θ straightens the curve, and a straight line is two numbers.</b> The
+          intercept is the zero-offset amplitude that modules 01 and 02 were about; the gradient is how
+          fast it changes with offset. Almost all AVO analysis runs on that pair.</li>
+        <li><b>The gradient depends on the angle range you fitted over.</b> On the default rock it moves by about
+          five percent between a 20° and a 45° fit — fifteen times as much as the intercept moves. A gradient reported without its angle range cannot be compared with another one.</li>
+        <li><b>A crossplot is a population, not a picture of the ground.</b> Each dot is one rock: intercept
+          across, gradient up the side. Its value is that it shows both numbers at once, and a gradient
+          means nothing without the intercept it came with.</li>
+        <li><b>Wet rocks fall on a trend, and that trend is what makes an anomaly anomalous.</b> The wet
+          rocks here follow G = −0.141 − 1.171·R₀ with a scatter of about 0.039. A departure smaller than
+          that scatter is not evidence of anything.</li>
+        <li><b>Fluid is what pushes a rock off the trend.</b> The same 30% porosity frame sits −0.0461 off the
+          trend with brine, −0.1544 with oil and −0.3173 with gas.</li>
+        <li><b>The classes are rectangles somebody drew.</b> A gas sand at 20% porosity is Class I under a
+          2300 m/s shale, Class II at 2700 and Class III at 3100, with the reservoir untouched throughout,
+          while its distance off the wet trend barely moves.
+          A class describes a contrast, and half of that contrast belongs to the seal.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================ METHOD ============================== -->
+  <section class="tabpane" id="pm" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">M</span>Method, simplifications and references</h3>
+      <span class="hint">What is computed, and where it departs from production software</span>
+    </div>
+
+    <p class="lede"><b>The rock physics is module 01's, unchanged</b>, and the reflection coefficients are
+      exact Zoeppritz as in module 03. Module 01's Method tab lists the assumptions in the rock model and
+      they all apply here.</p>
+
+    <p class="lede"><b>The intercept and gradient are fitted, not derived.</b> They come from an ordinary
+      least-squares straight line through the exact reflection coefficients plotted against sin²θ, sampled
+      every degree from zero to the angle on the fit-range slider. That is what an AVO processor does with
+      real amplitudes. It is <em>not</em> the same as reading Shuey's analytic R₀ and G off the rock
+      properties: for the default rock the fitted gradient is −0.4169 against Shuey's −0.5270, a difference of more
+      than a fifth. Shuey's expression is the tangent to the curve at zero offset,
+      while a fit is a compromise across the whole range, and the two only agree in the limit of a very
+      narrow range of angles. Both are called "the gradient".</p>
+
+    <p class="lede"><b>The background trend is fitted live</b>, by least squares through every
+      brine-filled rock this page can build: porosity from 5 to 35%, clay from 0 to 30%, and shale velocity
+      from 2300 to 3100 m/s. It comes out as G = −0.141 − 1.171·R₀ with an R² of 0.94 and a scatter of 0.039 about the line. Real background trends are fitted from well logs or from the seismic itself
+      over an interval, and are usually less tidy than this one because real wet rocks vary in ways this
+      model does not include.</p>
+
+    <p class="lede"><b>The class boundaries are a convention and are drawn here at ±0.03 in intercept</b>,
+      with the III/IV split on the sign of the gradient. Rutherford and Williams defined the first three
+      classes descriptively, by where gas sands of different consolidation happened to sit, rather than by
+      numeric cut-offs; Castagna and Swan added Class IV later. Different texts and different companies
+      draw the lines in different places, and no value is standard. Any dot near a boundary here should be
+      read as "near a boundary", not as a member of one side.</p>
+
+    <p class="lede"><b>Where this departs from production practice.</b></p>
+    <ul class="lede" style="padding-left:20px">
+      <li><b>The fit is to noise-free amplitudes.</b> The noise control shades the gathers but the
+        intercept and gradient are fitted to the exact values, so this page shows the effect of the angle
+        range in isolation. What noise does to the fit — and it does a great deal, mostly to the gradient —
+        is module 05.</li>
+      <li><b>Every angle is weighted equally.</b> Real gathers have fewer usable traces at wide angles,
+        variable fold, and a mute that removes the widest ones, all of which weight the fit unevenly.</li>
+      <li><b>One interface, one wavelet, thickness fixed at 45 m</b>, so tuning does not vary across the
+        exercises and the amplitudes are the interface response rather than an event amplitude.</li>
+      <li><b>Angles are exact for the module 03 velocity model</b>, and the fit is done against true
+        incidence angle. Fitting against a straight-ray angle instead, which is common, biases the
+        gradient in the direction module 03 quantified.</li>
+      <li><b>No anisotropy.</b> In a shale-dominated overburden this is a significant omission: anisotropy
+        contributes a term that looks exactly like a gradient and can be comparable in size to the fluid
+        effect being sought.</li>
+      <li><b>The crossplot shows a modelled population, not a survey.</b> A real crossplot has one dot per
+        sample, hundreds of thousands of them, with a density that carries information this page's
+        evenly-spaced grid of models does not reproduce.</li>
+    </ul>
+
+    <details class="reveal" style="margin-top:8px">
+      <summary>References</summary>
+      <ul style="padding-left:18px;margin-top:8px">
+        <li>Shuey, R. T., 1985, A simplification of the Zoeppritz equations: <em>Geophysics</em>, 50,
+          609–614.</li>
+        <li>Rutherford, S. R., and Williams, R. H., 1989, Amplitude-versus-offset variations in gas sands:
+          <em>Geophysics</em>, 54, 680–688. — Classes I to III.</li>
+        <li>Castagna, J. P., and Swan, H. W., 1997, Principles of AVO crossplotting: <em>The Leading
+          Edge</em>, 16, 337–342. — Class IV and the background trend.</li>
+        <li>Castagna, J. P., Swan, H. W., and Foster, D. J., 1998, Framework for AVO gradient and intercept
+          interpretation: <em>Geophysics</em>, 63, 948–956.</li>
+        <li>Foster, D. J., Keys, R. G., and Lane, F. D., 2010, Interpretation of AVO anomalies:
+          <em>Geophysics</em>, 75, 75A3–75A13.</li>
+        <li>Aki, K., and Richards, P. G., 2002, <em>Quantitative Seismology</em>, 2nd ed.: University
+          Science Books.</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="nextup" id="nextup" hidden>
+    <p class="eyebrow">Next up</p>
+    <h3>05 · Reading a gather you did not make</h3>
+    <p>Everything here was fitted to exact amplitudes over whatever angle range you chose. Real gathers
+      have noise, a limited angle range and a mute, and the gradient is far less stable than the intercept
+      under all three.</p>
+    <a class="btn ghost" href="../index.html">All modules</a>
+  </section>
+
+  <div class="pager" id="pager" hidden>
+    <a class="btn ghost" href="add-offset.html">← Module 03: add offset</a>
+    <a class="btn ghost" href="../index.html">All modules</a>
+  </div>
+
+  <footer>
+    <div class="foot-grid">
+      <p>Built for teaching by Heather Bedle, School of Geosciences, University of Oklahoma, with the
+        <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a> consortium.</p>
+      <p class="lic">Free to use for teaching, demonstration, and non-commercial study, provided the source
+        is credited. Please do not republish or redistribute it, modified or otherwise, without permission.
+        If you use it in a course or a talk, a credit line and a link back are all that is asked.</p>
+      <p class="lic">To cite: H. Bedle, <i>How AVO Actually Works</i>, University of
+        Oklahoma. <span class="k">SSRN: [article link to follow]</span></p>
+    </div>
+  </footer>
+</div>
+
+<script src="../assets/seismic.js"></script>
+<script src="../assets/rockphysics.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const missing = [];
+  if (typeof SEIS === 'undefined') missing.push('assets/seismic.js');
+  if (typeof ROCK === 'undefined') missing.push('assets/rockphysics.js');
+  if (!missing.length && typeof ROCK.zoeppritz !== 'function') {
+    missing.push('assets/rockphysics.js (present, but too old: no zoeppritz)');
+  }
+  if (missing.length) {
+    const el = document.createElement('div');
+    el.setAttribute('style', 'background:#841617;color:#fff;padding:14px 18px;margin:16px 0;' +
+      'font:13px/1.6 ui-monospace,Menlo,monospace');
+    el.textContent = 'This module could not load ' + missing.join(' and ') +
+      '. It expects them one directory up, at ../assets/, and file names are ' +
+      'case-sensitive on GitHub Pages.';
+    const w = document.querySelector('.wrap');
+    (w || document.body).insertBefore(el, w ? w.firstChild : null);
+    return;
+  }
+
+  const $ = (id) => document.getElementById(id);
+  const visible = (id) => { const el = $(id); return el && !el.hidden; };
+  const CRIM = '#841617', TEAL = '#0B7285', SLATE = '#5C6670', INK = '#16191C';
+  const OLIVE = '#6B7A2E', ORANGE = '#B5451B';
+  const DEG = Math.PI / 180;
+
+  const DEF = { phi: 20, vcl: 0, shvp: 2700, fl: 'gas', sat: 100, amax: 30, nz: 0, tab: 'p1' };
+  const S = SEIS.readState(DEF);
+  (function sanitize() {
+    const num = (k, lo, hi, step) => {
+      let v = Number(S[k]);
+      if (!isFinite(v)) v = DEF[k];
+      v = Math.min(hi, Math.max(lo, v));
+      S[k] = step ? Math.round(v / step) * step : v;
+    };
+    num('phi', 5, 35, 1); num('vcl', 0, 30, 5); num('shvp', 2300, 3100, 50);
+    num('sat', 0, 100, 5); num('amax', 15, 45, 1); num('nz', 0, 2, 1);
+    if (['brine', 'oil', 'gas'].indexOf(S.fl) < 0) S.fl = DEF.fl;
+  })();
+  const saveState = () => SEIS.writeState(S, DEF);
+
+  const PRES = 23, TEMP = 64, FREQ = 30, THICK = 45, ANG_DISPLAY = 45;
+  const NOISE = [0, 0.015, 0.040];
+  const NOISE_NAME = ['clean', 'moderate', 'noisy'];
+  const TR0 = -0.090, DT = 0.001, NT = 231;
+  const WAV = SEIS.makeWavelet({ type: 'ricker', f: FREQ });
+  const CLASS_EDGE = 0.03;                 // the II boundary — a convention, not physics
+
+  /* =====================================================================
+     ROCKS, FITS AND CLASSES
+     ===================================================================== */
+
+  const rockOf = (phi, fluid, sat, clay) => ROCK.rockModel({
+    vClay: (clay === undefined ? S.vcl : clay) / 100, phi: phi / 100, fluid,
+    sHc: fluid === 'brine' ? 0 : sat / 100, api: 32, gor: 0, P: PRES, T: TEMP });
+
+  /* Least squares through the exact coefficients against sin^2(theta). This is
+     what a processor does to real amplitudes, and it is NOT Shuey's analytic G —
+     Shuey's is the tangent at zero offset, this is a compromise across the whole
+     range, and the two differ by more than a fifth on the default rock. */
+  function fit(shale, rock, angMax) {
+    let n = 0, sx = 0, sy = 0, sxx = 0, sxy = 0;
+    for (let t = 0; t <= angMax; t += 1) {
+      const y = ROCK.zoeppritz(shale, rock, t);
+      if (!isFinite(y)) continue;
+      const x = Math.pow(Math.sin(t * DEG), 2);
+      n++; sx += x; sy += y; sxx += x * x; sxy += x * y;
+    }
+    if (n < 3) return { R0: NaN, G: NaN };
+    const den = n * sxx - sx * sx;
+    const G = den === 0 ? NaN : (n * sxy - sx * sy) / den;
+    return { R0: (sy - G * sx) / n, G };
+  }
+
+  function classOf(R0, G) {
+    if (!isFinite(R0) || !isFinite(G)) return '—';
+    if (R0 > CLASS_EDGE) return 'I';
+    if (R0 > -CLASS_EDGE) return 'II';
+    return G < 0 ? 'III' : 'IV';
+  }
+
+  /* The wet population and the trend through it. Neither depends on any control
+     except the fit range, so both are cached on that. */
+  let wetCache = { key: null };
+  function wetPopulation() {
+    if (wetCache.key === S.amax) return wetCache.val;
+    const pts = [];
+    for (let phi = 5; phi <= 35; phi += 2) {
+      for (const clay of [0, 10, 20, 30]) {
+        for (let shv = 2300; shv <= 3100; shv += 200) {
+          const f = fit(ROCK.mudrock(shv), rockOf(phi, 'brine', 0, clay), S.amax);
+          if (isFinite(f.G)) pts.push(f);
+        }
+      }
+    }
+    let n = 0, sx = 0, sy = 0, sxx = 0, sxy = 0;
+    pts.forEach((q) => { n++; sx += q.R0; sy += q.G; sxx += q.R0 * q.R0; sxy += q.R0 * q.G; });
+    const slope = (n * sxy - sx * sy) / (n * sxx - sx * sx);
+    const inter = (sy - slope * sx) / n;
+    let rss = 0, tss = 0; const ybar = sy / n;
+    pts.forEach((q) => {
+      rss += Math.pow(q.G - (inter + slope * q.R0), 2);
+      tss += Math.pow(q.G - ybar, 2);
+    });
+    const val = { pts, slope, inter, r2: 1 - rss / tss, rms: Math.sqrt(rss / n) };
+    wetCache = { key: S.amax, val };
+    return val;
+  }
+  const offTrend = (f, wet) => f.G - (wet.inter + wet.slope * f.R0);
+
+  /* A modest cloud of hydrocarbon rocks, for the crossplot. */
+  let hcCache = { key: null };
+  function hcPopulation() {
+    const key = S.amax + '|' + S.vcl;
+    if (hcCache.key === key) return hcCache.val;
+    const pts = [];
+    for (let phi = 5; phi <= 35; phi += 3) {
+      for (const fl of ['oil', 'gas']) {
+        for (const sat of [30, 100]) {
+          for (let shv = 2300; shv <= 3100; shv += 400) {
+            const f = fit(ROCK.mudrock(shv), rockOf(phi, fl, sat), S.amax);
+            if (isFinite(f.G)) pts.push({ ...f, fl });
+          }
+        }
+      }
+    }
+    hcCache = { key, val: pts };
+    return pts;
+  }
+
+  let D = {};
+  function recompute() {
+    D.shale = ROCK.mudrock(S.shvp);
+    D.res = rockOf(S.phi, S.fl, S.sat);
+    D.fit = fit(D.shale, D.res, S.amax);
+    D.wet = wetPopulation();
+    D.hc = hcPopulation();
+    D.off = offTrend(D.fit, D.wet);
+    D.cls = classOf(D.fit.R0, D.fit.G);
+  }
+
+  function traceFor(rock, shale, angle, seed) {
+    const rt = ROCK.zoeppritz(shale, rock, angle);
+    const rb = ROCK.zoeppritz(rock, shale, angle);
+    if (!isFinite(rt) || !isFinite(rb)) return null;
+    const dt = 2 * THICK / rock.vp;
+    const tr = SEIS.traceFromSpikes([{ t: 0, r: rt }, { t: dt, r: rb }], TR0, DT, NT, WAV);
+    if (!NOISE[S.nz]) return tr;
+    const n = SEIS.bandLimitedNoise(1, NT, DT, WAV, seed, 0);
+    const out = new Float32Array(NT);
+    for (let i = 0; i < NT; i++) out[i] = tr[i] + n[i] * NOISE[S.nz];
+    return out;
+  }
+
+  /* =====================================================================
+     DRAWING
+     ===================================================================== */
+
+  const M = { l: 58, r: 16, t: 14, b: 36 };
+  const AMP = 0.40;
+  const R0R = [-0.42, 0.42], GR = [-0.85, 0.30];
+
+  function pw(el) {
+    const par = el && el.parentElement;
+    if (!par) return 900;
+    const cs = (typeof window.getComputedStyle === 'function')
+      ? window.getComputedStyle(par) : { paddingLeft: '0', paddingRight: '0' };
+    const inner = par.clientWidth
+      - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    return Math.max(200, Math.floor(inner || 900));
+  }
+  function rowWidth(rowId, n) {
+    const row = $(rowId);
+    const total = row ? pw(row.firstElementChild || row) : 800;
+    const narrow = (window.innerWidth || 1200) <= 700;
+    const w = narrow ? Math.max(240, total)
+                     : Math.max(150, Math.floor((total - 10 * (n - 1)) / n));
+    if (row) {
+      row.querySelectorAll(':scope > .panel-col').forEach((el) => {
+        el.style.width = w + 'px'; el.style.maxWidth = w + 'px';
+      });
+    }
+    return w;
+  }
+  const yOf = (t, R) => R.y + ((t - TR0) / ((NT - 1) * DT)) * R.h;
+
+  function wrapText(ctx, text, x, y, maxW, lh) {
+    const words = String(text).split(' ');
+    let line = '', yy = y;
+    for (const wd of words) {
+      const test = line ? line + ' ' + wd : wd;
+      if (ctx.measureText(test).width > maxW && line) {
+        ctx.fillText(line, x, yy); line = wd; yy += lh;
+      } else line = test;
+    }
+    if (line) ctx.fillText(line, x, yy);
+    return yy + lh;
+  }
+
+  const LEG_FONT = '11px "IBM Plex Sans", sans-serif';
+  function legendLines(ctx, items, maxW) {
+    ctx.save(); ctx.font = LEG_FONT;
+    let lines = 1, x = 0;
+    for (const [, t] of items) {
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > 0 && x + iw > maxW) { lines++; x = 0; }
+      x += iw;
+    }
+    ctx.restore();
+    return lines;
+  }
+  function legendRow(ctx, R, items) {
+    ctx.save();
+    ctx.font = LEG_FONT; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    let x = R.x, y = R.y + R.h + 26;
+    for (const [c, t, kind] of items) {
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > R.x && x + iw > R.x + R.w) { x = R.x; y += 16; }
+      if (kind === 'dot') {
+        ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x + 9, y, 4, 0, 7); ctx.fill();
+      } else {
+        ctx.strokeStyle = c; ctx.lineWidth = 2;
+        ctx.setLineDash(kind === 'dash' ? [5, 4] : []);
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 18, y); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      ctx.fillStyle = SLATE; ctx.fillText(t, x + 23, y);
+      x += iw;
+    }
+    ctx.restore();
+  }
+
+  function curve(ctx, R, xs, ys, xr, yr, color, width, dash) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    if (dash) ctx.setLineDash(dash);
+    ctx.strokeStyle = color; ctx.lineWidth = width || 2;
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < xs.length; i++) {
+      if (!isFinite(ys[i]) || !isFinite(xs[i])) { started = false; continue; }
+      const x = R.x + ((xs[i] - xr[0]) / (xr[1] - xr[0])) * R.w;
+      const y = R.y + R.h - ((ys[i] - yr[0]) / (yr[1] - yr[0])) * R.h;
+      started ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      started = true;
+    }
+    ctx.stroke(); ctx.restore();
+  }
+
+  // ---- gathers, the concrete half of every step ----
+  function wiggleCol(ctx, R, tr, bounds) {
+    const x0 = R.x + R.w / 2;
+    const X = (a) => x0 + (a / AMP) * (R.w / 2) * 0.95;
+    const B = bounds || R;
+    ctx.save();
+    ctx.beginPath();
+    const lo = Math.max(B.x, R.x - R.w * 0.6), hi = Math.min(B.x + B.w, R.x + R.w * 1.6);
+    ctx.rect(lo, R.y, hi - lo, R.h); ctx.clip();
+    ctx.fillStyle = 'rgba(22,25,28,0.75)';
+    ctx.beginPath(); ctx.moveTo(x0, R.y);
+    for (let i = 0; i < NT; i++) ctx.lineTo(Math.max(x0, X(tr[i])), yOf(TR0 + i * DT, R));
+    ctx.lineTo(x0, R.y + R.h); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = INK; ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let i = 0; i < NT; i++) {
+      const x = X(tr[i]), y = yOf(TR0 + i * DT, R);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke(); ctx.restore();
+  }
+
+  function drawGather(ctx, R, rock, shale, n, seed) {
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const cw = R.w / n;
+    for (let i = 0; i < n; i++) {
+      const ang = (i / (n - 1)) * S.amax;
+      const tr = traceFor(rock, shale, ang, (seed || 7000) + i * 13);
+      if (!tr) continue;
+      wiggleCol(ctx, { x: R.x + i * cw, y: R.y, w: cw, h: R.h }, tr, R);
+    }
+    const dt = 2 * THICK / rock.vp;
+    SEIS.dashedLine(ctx, R.x, yOf(0, R), R.x + R.w, yOf(0, R), CRIM, [4, 3], 1.2);
+    SEIS.dashedLine(ctx, R.x, yOf(dt, R), R.x + R.w, yOf(dt, R), TEAL, [4, 3], 1.2);
+    SEIS.frame(ctx, R);
+  }
+
+  function gatherCard(ctx, R, rock, shale, lines, color) {
+    ctx.save();
+    ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h);
+    ctx.fillStyle = color || CRIM; ctx.fillRect(R.x, R.y, R.w, 3);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    let yy = R.y + 9;
+    lines.forEach((ln, k) => {
+      ctx.fillStyle = k === 0 ? INK : SLATE;
+      ctx.font = (k === 0 ? '600 12px' : '11.5px') + ' "IBM Plex Sans", sans-serif';
+      ctx.fillText(ln, R.x + R.w / 2, yy);
+      yy += k === 0 ? 17 : 15;
+    });
+    ctx.restore();
+    const g = { x: R.x + 4, y: yy + 6, w: R.w - 8, h: R.y + R.h - yy - 24 };
+    if (g.h > 30) {
+      drawGather(ctx, g, rock, shale, 8, 5000 + Math.round(rock.vp));
+      ctx.save();
+      ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
+      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      ctx.fillText('near', g.x, g.y + g.h + 4);
+      ctx.textAlign = 'right'; ctx.fillText('far', g.x + g.w, g.y + g.h + 4);
+      ctx.restore();
+    }
+    ctx.save();
+    ctx.strokeStyle = 'rgba(22,25,28,.28)'; ctx.lineWidth = 1;
+    ctx.strokeRect(R.x + 0.5, R.y + 0.5, R.w - 1, R.h - 1);
+    ctx.restore();
+  }
+
+  // ---- the crossplot ----
+  const cx = (v, R) => R.x + ((v - R0R[0]) / (R0R[1] - R0R[0])) * R.w;
+  const cy = (v, R) => R.y + R.h - ((v - GR[0]) / (GR[1] - GR[0])) * R.h;
+
+  function crossplot(ctx, R, opts) {
+    const o = opts || {};
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+
+    if (o.classes) {
+      const band = (x0, x1, y0, y1, fill) => {
+        ctx.save(); ctx.fillStyle = fill;
+        const a = cx(x0, R), b = cx(x1, R), c = cy(y1, R), d = cy(y0, R);
+        ctx.fillRect(Math.max(R.x, a), Math.max(R.y, c),
+          Math.min(R.x + R.w, b) - Math.max(R.x, a),
+          Math.min(R.y + R.h, d) - Math.max(R.y, c));
+        ctx.restore();
+      };
+      band(CLASS_EDGE, R0R[1], GR[0], GR[1], 'rgba(181,69,27,0.10)');       // I
+      band(-CLASS_EDGE, CLASS_EDGE, GR[0], GR[1], 'rgba(107,122,46,0.13)'); // II
+      band(R0R[0], -CLASS_EDGE, GR[0], 0, 'rgba(132,22,23,0.10)');          // III
+      band(R0R[0], -CLASS_EDGE, 0, GR[1], 'rgba(11,114,133,0.12)');         // IV
+      ctx.save();
+      ctx.font = '600 13px "IBM Plex Sans", sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      const lab = (t, x, y, c) => { ctx.fillStyle = c; ctx.fillText(t, cx(x, R), cy(y, R)); };
+      lab('I', 0.30, -0.68, ORANGE);
+      lab('II', 0, -0.68, OLIVE);
+      lab('III', -0.28, -0.68, CRIM);
+      lab('IV', -0.28, 0.18, TEAL);
+      ctx.restore();
+    }
+
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    if (o.wet !== false) {
+      ctx.fillStyle = 'rgba(92,102,112,0.42)';
+      D.wet.pts.forEach((q) => {
+        ctx.beginPath(); ctx.arc(cx(q.R0, R), cy(q.G, R), 2.1, 0, 7); ctx.fill();
+      });
+    }
+    if (o.hc !== false) {
+      D.hc.forEach((q) => {
+        ctx.fillStyle = q.fl === 'gas' ? 'rgba(181,69,27,0.55)' : 'rgba(107,122,46,0.55)';
+        ctx.beginPath(); ctx.arc(cx(q.R0, R), cy(q.G, R), 2.4, 0, 7); ctx.fill();
+      });
+    }
+    if (o.trend) {
+      ctx.strokeStyle = INK; ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(cx(R0R[0], R), cy(D.wet.inter + D.wet.slope * R0R[0], R));
+      ctx.lineTo(cx(R0R[1], R), cy(D.wet.inter + D.wet.slope * R0R[1], R));
+      ctx.stroke();
+    }
+    if (o.track) {
+      ctx.strokeStyle = INK; ctx.lineWidth = 2.6;
+      ctx.beginPath();
+      o.track.forEach((q, i) => {
+        const x = cx(q.R0, R), y = cy(q.G, R);
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      o.track.forEach((q) => {
+        ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(cx(q.R0, R), cy(q.G, R), 3.4, 0, 7); ctx.fill();
+        ctx.strokeStyle = INK; ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.arc(cx(q.R0, R), cy(q.G, R), 3.4, 0, 7); ctx.stroke();
+      });
+    }
+    ctx.restore();
+
+    // zero lines, then the current rock
+    SEIS.dashedLine(ctx, cx(0, R), R.y, cx(0, R), R.y + R.h, 'rgba(92,102,112,0.45)', [3, 3], 1);
+    SEIS.dashedLine(ctx, R.x, cy(0, R), R.x + R.w, cy(0, R), 'rgba(92,102,112,0.45)', [3, 3], 1);
+    if (o.you !== false && isFinite(D.fit.R0)) {
+      const x = cx(D.fit.R0, R), y = cy(D.fit.G, R);
+      ctx.save();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 3.6;
+      ctx.beginPath(); ctx.arc(x, y, 7, 0, 7); ctx.stroke();
+      ctx.strokeStyle = INK; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(x, y, 7, 0, 7); ctx.stroke();
+      ctx.restore();
+    }
+    SEIS.frame(ctx, R);
+        const bx = o.compact || R.w < 300 ? 'intercept R\u2080' : 'intercept R\u2080  (the near trace)';
+    const by = o.compact || R.h < 240 ? 'gradient G' : 'gradient G  (the change with offset)';
+    SEIS.axisBottom(ctx, R, R0R[0], R0R[1], bx, (v) => v.toFixed(1), { ticks: o.compact ? 3 : 5 });
+    SEIS.axisLeft(ctx, R, GR[0], GR[1], by, (v) => v.toFixed(1),
+      { ticks: o.compact ? 3 : 5, flip: true });
+  }
+
+  /* =====================================================================
+     HEADER
+     ===================================================================== */
+
+  function drawHeader() {
+    const el = $('cHead');
+    const w = pw(el), h = 208;
+    const ctx = SEIS.fitCanvas(el, w, h);
+    ctx.clearRect(0, 0, w, h);
+        const gap = 46;
+    const LEFT = 46;              // axisLeft draws its rotated label 42 px left of the box
+    const usable = w - LEFT - 14 - gap;
+    const half = Math.floor(usable / 2);
+
+    let R = { x: LEFT, y: 20, w: half, h: h - 20 - 30 };
+    drawFitPanel(ctx, R, true);
+    let R2 = { x: LEFT + half + gap, y: 20, w: w - (LEFT + half + gap) - 14, h: h - 20 - 30 };
+    crossplot(ctx, R2, { wet: true, hc: true, compact: true });
+    ctx.save();
+    ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    const cap = (t, short, RR) => {
+      ctx.fillText(ctx.measureText(t).width < RR.w ? t : short, RR.x + RR.w / 2, 4);
+    };
+    cap('one rock, one line', 'your rock', R);
+    cap('every rock, one dot each', 'every rock', R2);
+    ctx.restore();
+  }
+
+  /* Amplitude against sin^2(theta), with the fitted line. Compact mode omits
+     the labels so it fits in the sticky header. */
+  function drawFitPanel(ctx, R, compact) {
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const xr = [0, Math.pow(Math.sin(ANG_DISPLAY * DEG), 2)];
+    const yr = [-AMP, AMP];
+    const xs = [], ys = [];
+    for (let t = 0; t <= ANG_DISPLAY; t += 0.5) {
+      xs.push(Math.pow(Math.sin(t * DEG), 2));
+      ys.push(ROCK.zoeppritz(D.shale, D.res, t));
+    }
+    // the part you fitted over
+    const xf = Math.pow(Math.sin(S.amax * DEG), 2);
+    ctx.save();
+    ctx.fillStyle = 'rgba(11,114,133,0.10)';
+    ctx.fillRect(R.x, R.y, ((xf - xr[0]) / (xr[1] - xr[0])) * R.w, R.h);
+    ctx.restore();
+    SEIS.dashedLine(ctx, R.x, R.y + R.h - ((0 - yr[0]) / (yr[1] - yr[0])) * R.h,
+      R.x + R.w, R.y + R.h - ((0 - yr[0]) / (yr[1] - yr[0])) * R.h,
+      'rgba(92,102,112,0.5)', [4, 3], 1);
+    if (isFinite(D.fit.R0)) {
+      curve(ctx, R, xr, [D.fit.R0, D.fit.R0 + D.fit.G * xr[1]], xr, yr, TEAL, 2, [6, 4]);
+    }
+    curve(ctx, R, xs, ys, xr, yr, CRIM, 2.6);
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, xr[0], xr[1], compact ? 'sin\u00b2\u03b8' : 'sin\u00b2\u03b8  (0\u00b0 on the left)',
+      (v) => v.toFixed(2), { ticks: compact ? 3 : 5 });
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], compact ? 'R' : 'reflection coefficient',
+      (v) => v.toFixed(2), { ticks: 4 });
+  }
+
+  /* =====================================================================
+     STEP 1
+     ===================================================================== */
+
+  function drawStep1() {
+    const w = rowWidth('row1', 2);
+    const items = [[CRIM, 'the real curve', 'line'], [TEAL, 'the straight line fitted to it', 'dash']];
+    let ctx = SEIS.fitCanvas($('c1fit'), w, 330);
+    const hh = 330 + (legendLines(ctx, items, w - M.l - M.r) - 1) * 16;
+    ctx = SEIS.fitCanvas($('c1fit'), w, hh);
+    ctx.clearRect(0, 0, w, hh);
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: hh - M.t - M.b - 22 - (hh - 330) };
+    drawFitPanel(ctx, R, false);
+    if (isFinite(D.fit.R0)) {
+      SEIS.tag(ctx, R.x + 4, R.y + R.h - ((D.fit.R0 + AMP) / (2 * AMP)) * R.h - 12,
+        'intercept ' + D.fit.R0.toFixed(3), TEAL, 'left');
+    }
+    legendRow(ctx, R, items);
+
+    ctx = SEIS.fitCanvas($('c1gath'), w, 330);
+    ctx.clearRect(0, 0, w, 330);
+    R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 330 - M.t - M.b - 22 };
+    drawGather(ctx, R, D.res, D.shale, 14, 7100);
+    SEIS.axisBottom(ctx, R, 0, S.amax, 'incidence angle (deg)', (v) => v.toFixed(0), { ticks: 4 });
+    SEIS.axisLeft(ctx, R, TR0 * 1000, (TR0 + (NT - 1) * DT) * 1000, 'ms from the top',
+      (v) => v.toFixed(0), { ticks: 5, grid: true });
+    SEIS.tag(ctx, R.x + 4, R.y + 12, 'intercept = this trace', TEAL, 'left');
+    SEIS.tag(ctx, R.x + R.w - 4, R.y + 12, 'gradient = the change to here', CRIM, 'right');
+
+    const f20 = fit(D.shale, D.res, 20), f45 = fit(D.shale, D.res, 45);
+    set('s1a', isFinite(D.fit.R0) ? D.fit.R0.toFixed(4) : '\u2014');
+    set('s1b', isFinite(D.fit.G) ? D.fit.G.toFixed(4) : '\u2014');
+    set('s1c', '0\u2013' + S.amax + '\u00b0');
+    set('s1d', isFinite(f20.G) ? f20.G.toFixed(4) : '\u2014');
+    set('s1e', isFinite(f45.G) ? f45.G.toFixed(4) : '\u2014');
+    const dG = Math.abs(f45.G - f20.G), dR = Math.abs(f45.R0 - f20.R0);
+    set('s1f', isFinite(dG)
+      ? 'gradient by ' + dG.toFixed(4) + ', intercept by only ' + dR.toFixed(4) +
+        ' \u2014 a factor of ' + (dR > 1e-9 ? (dG / dR).toFixed(0) : '\u221e')
+      : '\u2014');
+  }
+
+  /* =====================================================================
+     STEP 2
+     ===================================================================== */
+
+  function nearestWet() {
+    let best = null;
+    for (let phi = 5; phi <= 35; phi += 1) {
+      for (const clay of [0, 10, 20, 30]) {
+        for (let shv = 2300; shv <= 3100; shv += 100) {
+          const rock = rockOf(phi, 'brine', 0, clay);
+          const shale = ROCK.mudrock(shv);
+          const f = fit(shale, rock, S.amax);
+          if (!isFinite(f.R0)) continue;
+          const d = Math.abs(f.R0 - D.fit.R0);
+          if (!best || d < best.d) best = { d, f, rock, shale, phi, clay, shv };
+        }
+      }
+    }
+    return best;
+  }
+
+  function drawStep2() {
+    const w = rowWidth('row2', 2);
+    let ctx = SEIS.fitCanvas($('c2plot'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 360 - M.t - M.b - 40 };
+    crossplot(ctx, R, {});
+    legendRow(ctx, R, [[SLATE, 'brine-filled rocks', 'dot'], [ORANGE, 'gas', 'dot'],
+                       [OLIVE, 'oil', 'dot'], [INK, 'your rock', 'line']]);
+
+    const nw = nearestWet();
+    ctx = SEIS.fitCanvas($('c2cards'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    R = { x: 2, y: M.t, w: w - 4, h: 360 - M.t - 20 };
+    const half = R.w / 2;
+    const near = (rock, shale) => ROCK.zoeppritz(shale, rock, 0);
+    const far = (rock, shale) => ROCK.zoeppritz(shale, rock, S.amax);
+    gatherCard(ctx, { x: R.x + 2, y: R.y, w: half - 4, h: R.h }, D.res, D.shale,
+      ['your rock',
+       'R\u2080 ' + D.fit.R0.toFixed(3) + '   G ' + D.fit.G.toFixed(3),
+       'near ' + near(D.res, D.shale).toFixed(3),
+       'far  ' + (isFinite(far(D.res, D.shale)) ? far(D.res, D.shale).toFixed(3) : '\u2014')],
+      CRIM);
+    if (nw) {
+      gatherCard(ctx, { x: R.x + half + 2, y: R.y, w: half - 4, h: R.h }, nw.rock, nw.shale,
+        ['brine, ' + nw.phi + '% porosity',
+         'R\u2080 ' + nw.f.R0.toFixed(3) + '   G ' + nw.f.G.toFixed(3),
+         'near ' + near(nw.rock, nw.shale).toFixed(3),
+         'far  ' + (isFinite(far(nw.rock, nw.shale)) ? far(nw.rock, nw.shale).toFixed(3) : '\u2014')],
+        SLATE);
+    }
+
+    set('s2a', 'R\u2080 ' + D.fit.R0.toFixed(4) + ',  G ' + D.fit.G.toFixed(4));
+    set('s2b', nw ? 'brine at ' + nw.phi + '% porosity under a ' + nw.shv + ' m/s shale' : '\u2014');
+    set('s2c', nw ? nw.d.toFixed(4) : '\u2014');
+    set('s2d', nw ? Math.abs(D.fit.G - nw.f.G).toFixed(4) : '\u2014');
+    set('s2e', nw ? Math.abs(near(D.res, D.shale) - near(nw.rock, nw.shale)).toFixed(4) : '\u2014');
+    const fa = far(D.res, D.shale), fb = nw ? far(nw.rock, nw.shale) : NaN;
+    set('s2f', isFinite(fa) && isFinite(fb)
+      ? Math.abs(fa - fb).toFixed(4) + '  \u2014 ' +
+        (Math.abs(fa - fb) / Math.max(1e-9, Math.abs(near(D.res, D.shale) -
+          near(nw.rock, nw.shale)))).toFixed(0) + '\u00d7 the near-trace difference'
+      : '\u2014');
+  }
+
+  /* =====================================================================
+     STEP 3
+     ===================================================================== */
+
+  function drawStep3() {
+    const w = rowWidth('row3', 2);
+    let ctx = SEIS.fitCanvas($('c3plot'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 360 - M.t - M.b - 40 };
+    crossplot(ctx, R, { trend: true });
+    // the drop from your rock to the trend, drawn so "distance off" is visible
+    if (isFinite(D.fit.R0)) {
+      const x = cx(D.fit.R0, R);
+      const y1 = cy(D.fit.G, R), y2 = cy(D.wet.inter + D.wet.slope * D.fit.R0, R);
+      SEIS.dashedLine(ctx, x, y1, x, y2, CRIM, [3, 3], 1.8);
+    }
+    legendRow(ctx, R, [[SLATE, 'brine-filled rocks', 'dot'], [INK, 'the wet trend', 'line'],
+                       [CRIM, 'how far off it your rock is', 'dash']]);
+
+    // the same frame with three different fluids
+    ctx = SEIS.fitCanvas($('c3bars'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    R = { x: M.l + 6, y: M.t + 6, w: w - M.l - M.r - 6, h: 360 - M.t - M.b - 40 };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const fills = [['brine', 0, SLATE], ['oil', 100, OLIVE], ['gas', 100, ORANGE]];
+    const vals = fills.map(([fl, sat]) =>
+      offTrend(fit(D.shale, rockOf(S.phi, fl, sat), S.amax), D.wet));
+    const lim = 0.42;
+    const zeroY = R.y + ((lim) / (2 * lim)) * R.h;
+    ctx.save();
+    // the band where the wet rocks themselves scatter
+    ctx.fillStyle = 'rgba(92,102,112,0.16)';
+    ctx.fillRect(R.x, zeroY - (D.wet.rms / (2 * lim)) * R.h,
+                 R.w, 2 * (D.wet.rms / (2 * lim)) * R.h);
+    const bw = R.w / fills.length;
+    fills.forEach(([fl, , col], i) => {
+      const v = vals[i];
+      if (!isFinite(v)) return;
+      const y = zeroY - (v / (2 * lim)) * R.h;
+      ctx.fillStyle = col;
+      ctx.fillRect(R.x + i * bw + bw * 0.24, Math.min(zeroY, y), bw * 0.52, Math.abs(y - zeroY));
+      ctx.fillStyle = INK;
+      ctx.font = '600 12px "IBM Plex Mono", monospace';
+      ctx.textAlign = 'center'; ctx.textBaseline = y > zeroY ? 'top' : 'bottom';
+      ctx.fillText(v.toFixed(3), R.x + i * bw + bw / 2, y + (y > zeroY ? 4 : -4));
+      ctx.fillStyle = SLATE;
+      ctx.font = '11.5px "IBM Plex Sans", sans-serif';
+      ctx.textBaseline = 'top';
+      ctx.fillText(fl, R.x + i * bw + bw / 2, R.y + R.h + 6);
+    });
+    ctx.restore();
+    SEIS.dashedLine(ctx, R.x, zeroY, R.x + R.w, zeroY, 'rgba(92,102,112,0.6)', [4, 3], 1.2);
+    SEIS.frame(ctx, R);
+        SEIS.axisLeft(ctx, R, -lim, lim, R.h < 240 ? 'off the trend' : 'distance off the wet trend',
+      (v) => v.toFixed(1), { ticks: 5, flip: true });
+    legendRow(ctx, R, [[SLATE, 'shaded: the wet scatter', 'line']]);
+
+    set('s3a', 'G = ' + D.wet.inter.toFixed(3) + (D.wet.slope < 0 ? ' \u2212 ' : ' + ') +
+      Math.abs(D.wet.slope).toFixed(3) + ' \u00d7 R\u2080');
+    set('s3b', 'R\u00b2 ' + D.wet.r2.toFixed(3) + ', scatter ' + D.wet.rms.toFixed(3));
+    set('s3c', isFinite(D.off) ? D.off.toFixed(4) : '\u2014');
+    set('s3d', isFinite(vals[0]) ? vals[0].toFixed(4) : '\u2014');
+    set('s3e', isFinite(vals[2]) ? vals[2].toFixed(4) : '\u2014');
+    set('s3f', isFinite(D.off)
+      ? (Math.abs(D.off) > 2 * D.wet.rms
+          ? 'yes \u2014 ' + (Math.abs(D.off) / D.wet.rms).toFixed(1) +
+            ' times the wet scatter'
+          : 'no \u2014 only ' + (Math.abs(D.off) / D.wet.rms).toFixed(1) +
+            ' times the wet scatter, which is not evidence of anything')
+      : '\u2014');
+  }
+
+  /* =====================================================================
+     STEP 4
+     ===================================================================== */
+
+  function drawStep4() {
+    const w = rowWidth('row4', 2);
+    let ctx = SEIS.fitCanvas($('c4plot'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 360 - M.t - M.b - 40 };
+    crossplot(ctx, R, { classes: true, trend: true, hc: false });
+    legendRow(ctx, R, [[SLATE, 'brine-filled rocks', 'dot'], [INK, 'the wet trend', 'line'],
+                       [INK, 'your rock', 'line']]);
+
+    const lo = rockOf(10, 'gas', 100), hi = rockOf(30, 'gas', 100);
+    const shale = ROCK.mudrock(2700);
+    const fl = fit(shale, lo, S.amax), fh = fit(shale, hi, S.amax);
+    ctx = SEIS.fitCanvas($('c4cards'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    R = { x: 2, y: M.t, w: w - 4, h: 360 - M.t - 20 };
+    const half = R.w / 2;
+    gatherCard(ctx, { x: R.x + 2, y: R.y, w: half - 4, h: R.h }, lo, shale,
+      ['gas, 10% porosity', 'Class ' + classOf(fl.R0, fl.G),
+       'R\u2080 ' + fl.R0.toFixed(3), 'G ' + fl.G.toFixed(3)], ORANGE);
+    gatherCard(ctx, { x: R.x + half + 2, y: R.y, w: half - 4, h: R.h }, hi, shale,
+      ['gas, 30% porosity', 'Class ' + classOf(fh.R0, fh.G),
+       'R\u2080 ' + fh.R0.toFixed(3), 'G ' + fh.G.toFixed(3)], CRIM);
+
+    set('s4a', 'Class ' + D.cls);
+    set('s4b', !isFinite(D.fit.R0) ? '\u2014'
+      : (Math.abs(D.fit.R0) < CLASS_EDGE ? 'near traces almost blank, far traces strong'
+        : D.fit.R0 > 0
+          ? (D.fit.G < 0 ? 'starts as a peak and weakens, may flip polarity'
+                         : 'starts as a peak and strengthens')
+          : (D.fit.G < 0 ? 'starts as a trough and gets stronger'
+                         : 'starts as a trough and fades with offset')));
+    set('s4c', 'R\u2080 ' + fl.R0.toFixed(3) + ' \u2014 Class ' + classOf(fl.R0, fl.G));
+    set('s4d', 'R\u2080 ' + fh.R0.toFixed(3) + ' \u2014 Class ' + classOf(fh.R0, fh.G));
+    set('s4e', 'R\u2080 = \u2212' + CLASS_EDGE.toFixed(2) + ', by convention only');
+    const dEdge = Math.min(Math.abs(Math.abs(D.fit.R0) - CLASS_EDGE), Math.abs(D.fit.G));
+    set('s4f', isFinite(dEdge) ? dEdge.toFixed(4) + ' in intercept or gradient' : '\u2014');
+  }
+
+  /* =====================================================================
+     STEP 5
+     ===================================================================== */
+
+  const SHALE_TRACK = [2300, 2500, 2700, 2900, 3100];
+
+  function drawStep5() {
+    const w = rowWidth('row5', 2);
+    const rock = rockOf(S.phi, S.fl, S.sat);
+    const track = SHALE_TRACK.map((v) => {
+      const f = fit(ROCK.mudrock(v), rock, S.amax);
+      return { ...f, shv: v, cls: classOf(f.R0, f.G),
+               off: offTrend(f, D.wet) };
+    }).filter((q) => isFinite(q.R0));
+
+    let ctx = SEIS.fitCanvas($('c5plot'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 360 - M.t - M.b - 40 };
+    crossplot(ctx, R, { classes: true, hc: false, track, you: false });
+    track.forEach((q, i) => {
+      if (i % 2) return;
+      SEIS.tag(ctx, cx(q.R0, R) + 9, cy(q.G, R) - 10, q.shv + ' m/s', INK, 'left');
+    });
+    legendRow(ctx, R, [[SLATE, 'brine-filled rocks', 'dot'],
+                       [INK, 'your reservoir under every shale', 'line']]);
+
+    ctx = SEIS.fitCanvas($('c5cards'), w, 360);
+    ctx.clearRect(0, 0, w, 360);
+    R = { x: 2, y: M.t, w: w - 4, h: 360 - M.t - 20 };
+    const pick = [2300, 2700, 3100];
+    const cw = R.w / pick.length;
+    pick.forEach((v, i) => {
+      const shale = ROCK.mudrock(v);
+      const f = fit(shale, rock, S.amax);
+      gatherCard(ctx, { x: R.x + i * cw + 2, y: R.y, w: cw - 4, h: R.h }, rock, shale,
+        ['shale ' + v + ' m/s', 'Class ' + classOf(f.R0, f.G),
+         'R\u2080 ' + f.R0.toFixed(3)], [TEAL, SLATE, CRIM][i]);
+    });
+
+    const at = (v) => track.find((q) => q.shv === v);
+    const fmt = (q) => q ? 'R\u2080 ' + q.R0.toFixed(3) + ' \u2014 Class ' + q.cls : '\u2014';
+    set('s5a', fmt(at(2300)));
+    set('s5b', fmt(at(2700)));
+    set('s5c', fmt(at(3100)));
+    const classes = [];
+    track.forEach((q) => { if (classes.indexOf(q.cls) < 0) classes.push(q.cls); });
+    set('s5d', classes.length > 1 ? classes.join(', ') + ' \u2014 all from one reservoir'
+                                  : 'Class ' + classes[0] + ' throughout');
+    set('s5e', 'none \u2014 porosity, clay, fluid and saturation all held fixed');
+    const offs = track.map((q) => q.off).filter(isFinite);
+    set('s5f', offs.length
+      ? offs.reduce((a, b) => Math.min(a, b)).toFixed(3) + ' to ' +
+        offs.reduce((a, b) => Math.max(a, b)).toFixed(3) +
+        ' \u2014 far steadier than the intercept, because the fluid never changed'
+      : '\u2014');
+  }
+
+  /* =====================================================================
+     LABELS, TABS, EVENTS
+     ===================================================================== */
+
+  function set(id, v) { const el = $(id); if (el) el.textContent = v; }
+
+  function syncLabels() {
+    set('phiV', S.phi + '%');
+    set('vclV', S.vcl + '%');
+    set('shvpV', S.shvp + ' m/s');
+    set('flV', S.fl);
+    set('satV', S.fl === 'brine' ? '\u2014' : S.sat + '%');
+    set('amaxV', '0\u2013' + S.amax + '\u00b0');
+    set('nzV', NOISE_NAME[S.nz]);
+    const sat = $('sat');
+    if (sat) { sat.disabled = S.fl === 'brine'; sat.value = S.sat; }
+    document.querySelectorAll('#segFluid button').forEach((b) => {
+      b.setAttribute('aria-pressed', b.dataset.fl === S.fl);
+    });
+    document.querySelectorAll('#segNoise button').forEach((b) => {
+      b.setAttribute('aria-pressed', String(+b.dataset.nz) === String(S.nz));
+    });
+    ['phi', 'vcl', 'shvp', 'amax'].forEach((k) => {
+      const el = $(k); if (el && String(el.value) !== String(S[k])) el.value = S[k];
+    });
+  }
+
+  function drawAll() {
+    syncLabels();
+    if (visible('p1') || visible('p2') || visible('p3') || visible('p4') || visible('p5')) {
+      drawHeader();
+    }
+    if (visible('p1')) drawStep1();
+    if (visible('p2')) drawStep2();
+    if (visible('p3')) drawStep3();
+    if (visible('p4')) drawStep4();
+    if (visible('p5')) drawStep5();
+  }
+
+  const PANES = ['p1', 'p2', 'p3', 'p4', 'p5', 'pw', 'pe', 'pk', 'pm'];
+  const STEPNAMES = {
+    p1: 'Two numbers', p2: 'The crossplot', p3: 'The trend', p4: 'The classes',
+    p5: 'Same rock', pw: 'Why it matters', pe: 'Exercises', pk: 'Key points', pm: 'Method',
+  };
+
+  function buildStepNav() {
+    PANES.forEach((id, i) => {
+      const pane = $(id);
+      if (!pane || pane.querySelector('.stepnav')) return;
+      const prev = PANES[i - 1], next = PANES[i + 1];
+      const nav = document.createElement('div');
+      nav.className = 'stepnav';
+      const mk = (target, text, ghost) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn' + (ghost ? ' ghost' : '') + ' small';
+        b.textContent = text;
+        b.addEventListener('click', () => {
+          showTab(target);
+          const t = document.querySelector('.tabhint');
+          if (t && t.scrollIntoView) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        return b;
+      };
+      nav.appendChild(prev ? mk(prev, '\u2190 ' + STEPNAMES[prev], true)
+                           : document.createElement('span'));
+      const where = document.createElement('span');
+      where.className = 'where';
+      where.textContent = i < 5 ? 'step ' + (i + 1) + ' of 5' : STEPNAMES[id];
+      nav.appendChild(where);
+      nav.appendChild(next ? mk(next, STEPNAMES[next] + ' \u2192')
+                           : document.createElement('span'));
+      pane.appendChild(nav);
+    });
+  }
+
+  function showTab(id) {
+    PANES.forEach((q) => { const el = $(q); if (el) el.hidden = q !== id; });
+    document.querySelectorAll('#tabs button').forEach((b) => {
+      b.setAttribute('aria-selected', b.dataset.tab === id);
+    });
+    const lab = document.querySelector('.labhead');
+    if (lab) lab.hidden = (id === 'pw' || id === 'pe' || id === 'pk' || id === 'pm');
+    const last = (id === 'pk' || id === 'pm');
+    if ($('nextup')) $('nextup').hidden = !last;
+    if ($('pager')) $('pager').hidden = !last;
+    S.tab = id;
+    drawAll();
+    saveState();
+  }
+  document.querySelectorAll('#tabs button').forEach((b) => {
+    b.addEventListener('click', () => showTab(b.dataset.tab));
+  });
+
+  document.addEventListener('input', (ev) => {
+    const key = ev.target && ev.target.dataset && ev.target.dataset.key;
+    if (!key) return;
+    S[key] = parseFloat(ev.target.value);
+    recompute(); drawAll(); saveState();
+  });
+  document.querySelectorAll('#segFluid button').forEach((b) => {
+    b.addEventListener('click', () => { S.fl = b.dataset.fl; recompute(); drawAll(); saveState(); });
+  });
+  document.querySelectorAll('#segNoise button').forEach((b) => {
+    b.addEventListener('click', () => { S.nz = +b.dataset.nz; recompute(); drawAll(); saveState(); });
+  });
+
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 140); });
+
+  recompute();
+  buildStepNav();
+  showTab(PANES.indexOf(S.tab) >= 0 ? S.tab : 'p1');
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+
+  window.__MOD = { S, get D() { return D; }, recompute, drawAll, showTab,
+                   fit, classOf, rockOf, offTrend, wetPopulation, nearestWet };
+})();
+</script>
+</body>
+</html>

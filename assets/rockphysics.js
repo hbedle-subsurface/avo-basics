@@ -582,6 +582,54 @@ const ROCK = (function () {
   }
 
   /* ---------------------------------------------------------------------
+     UNCERTAINTY IN A STRAIGHT-LINE FIT
+
+     An AVO intercept and gradient come from fitting a line to amplitudes
+     against sin^2(theta). If each amplitude carries independent noise of
+     standard deviation sigma, the uncertainty in the two fitted numbers has a
+     closed form, and it is worth using rather than simulating: it is exact,
+     it is instant, and it makes the structure obvious.
+
+        sigma(G)  = sigma / sqrt(Sxx)
+        sigma(R0) = sigma * sqrt(1/n + xbar^2 / Sxx)
+        cov       = -sigma^2 * xbar / Sxx
+
+     where Sxx is the spread of the x values about their own mean. Two things
+     fall straight out. The gradient's error depends only on how SPREAD OUT the
+     angles are, which is why a narrow angle range is so damaging. And the
+     covariance is negative, so the two errors are anti-correlated: a fit that
+     overestimates the intercept underestimates the gradient to compensate.
+     --------------------------------------------------------------------- */
+
+  function fitUncertainty(xs, sigma) {
+    const n = xs.length;
+    if (n < 3) return { sR0: NaN, sG: NaN, cov: NaN, rho: NaN };
+    let sx = 0;
+    for (const x of xs) sx += x;
+    const xbar = sx / n;
+    let Sxx = 0;
+    for (const x of xs) Sxx += (x - xbar) * (x - xbar);
+    const sG = sigma / Math.sqrt(Sxx);
+    const sR0 = sigma * Math.sqrt(1 / n + (xbar * xbar) / Sxx);
+    const cov = -sigma * sigma * xbar / Sxx;
+    return { sR0, sG, cov, rho: cov / (sR0 * sG), xbar, Sxx, n };
+  }
+
+  /* Ordinary least squares through points, returning the same two numbers the
+     modules fit. Separated out so the uncertainty above and the fit below
+     cannot drift apart. */
+  function fitLine(xs, ys) {
+    const n = xs.length;
+    if (n < 2) return { R0: NaN, G: NaN };
+    let sx = 0, sy = 0, sxx = 0, sxy = 0;
+    for (let i = 0; i < n; i++) { sx += xs[i]; sy += ys[i]; sxx += xs[i] * xs[i]; sxy += xs[i] * ys[i]; }
+    const den = n * sxx - sx * sx;
+    if (Math.abs(den) < 1e-15) return { R0: NaN, G: NaN };
+    const G = (n * sxy - sx * sy) / den;
+    return { R0: (sy - G * sx) / n, G };
+  }
+
+  /* ---------------------------------------------------------------------
      SMALL UTILITIES
      --------------------------------------------------------------------- */
 
@@ -598,6 +646,7 @@ const ROCK = (function () {
     rcNormal, zoeppritz, akiRichards, shueyTerms, shuey,
     tuningTable, tuningAt, TUNE_MAX,
     rayLinearGradient, angleFromOffset, angleStraightRay, overburden,
+    fitUncertainty, fitLine,
     clamp,
   };
 })();

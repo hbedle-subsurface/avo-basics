@@ -199,9 +199,9 @@ function thumb06() {
 const CARDS = [
   { no: '00', href: 'modules/start-here.html', flag: 'Start here', ready: true, level: 'foundation',
     title: 'What all of this is for',
-    body: 'No equations. What a seismic trace is, what makes an echo, what impedance means, what a ' +
-          'gather is, and what AVO promises to do.',
-    q: 'I have never met any of these words before.', thumb: thumb00() },
+    body: 'Assumes velocity and density, and nothing more. What a trace is, what makes a reflection, ' +
+          'impedance, polarity, offset, incidence angle, gathers — and what AVO promises to do.',
+    q: 'Where do I start?', thumb: thumb00() },
 
   { no: '01', href: 'modules/rock-to-trace.html', flag: 'Core', ready: true, level: 'core',
     title: 'Build a rock, make a trace',
@@ -236,7 +236,7 @@ const CARDS = [
 ];
 
 const LEVEL_NOTE = {
-  foundation: 'no equations \u00b7 start here if the words are new',
+  foundation: 'assumes velocity and density \u00b7 start here',
   core: 'the main sequence \u00b7 assumes module 00',
   advanced: 'assumes 01\u201304, and some statistics',
 };

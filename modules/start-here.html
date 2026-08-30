@@ -26,8 +26,9 @@
     <p class="eyebrow">Module 00 &nbsp;·&nbsp; Start here</p>
     <h1>What all of this is for</h1>
     <p class="sub">This is the foundation module. It has no equations in it, and it assumes you have never
-      met any of these words before. By the end you will know what a seismic trace is, what makes a
-      reflection, what impedance means, what a gather is, and what AVO promises to do — which is what the
+      met any of these words before. It assumes you know what velocity and density are, and nothing
+      else. By the end you will know what a seismic trace is, what makes a reflection, what impedance and
+      the reflection coefficient are, what a gather is, and what AVO promises to do — which is what the
       other six modules take for granted from their first sentence.</p>
   </div>
 
@@ -43,31 +44,31 @@
           <div class="ctl-col">
             <h2>The buried layer</h2>
             <div class="ctl">
-              <label for="vp">How fast sound travels in it <span class="val" id="vpV">3200 m/s</span></label>
+              <label for="vp">P-wave velocity <span class="val" id="vpV">3200 m/s</span></label>
               <input type="range" data-key="vp" id="vp" min="1800" max="4500" step="50" value="3200">
             </div>
             <div class="ctl">
-              <label for="rho">How heavy it is <span class="val" id="rhoV">2.35 g/cm³</span></label>
+              <label for="rho">Density <span class="val" id="rhoV">2.35 g/cm³</span></label>
               <input type="range" data-key="rho" id="rho" min="180" max="270" step="1" value="235">
             </div>
             <div class="ctl">
-              <label for="thk">How thick it is <span class="val" id="thkV">40 m</span></label>
+              <label for="thk">Thickness <span class="val" id="thkV">40 m</span></label>
               <input type="range" data-key="thk" id="thk" min="5" max="80" step="1" value="40">
             </div>
 
             <h2>The rock above it</h2>
             <div class="ctl">
-              <label for="vp1">How fast sound travels <span class="val" id="vp1V">2700 m/s</span></label>
+              <label for="vp1">P-wave velocity <span class="val" id="vp1V">2700 m/s</span></label>
               <input type="range" data-key="vp1" id="vp1" min="1800" max="4000" step="50" value="2700">
             </div>
             <div class="ctl">
-              <label for="rho1">How heavy it is <span class="val" id="rho1V">2.25 g/cm³</span></label>
+              <label for="rho1">Density <span class="val" id="rho1V">2.25 g/cm³</span></label>
               <input type="range" data-key="rho1" id="rho1" min="180" max="270" step="1" value="225">
             </div>
 
             <h2>The survey</h2>
             <div class="ctl">
-              <label for="fr">How sharp the pulse is <span class="val" id="frV">30 Hz</span></label>
+              <label for="fr">Wavelet peak frequency <span class="val" id="frV">30 Hz</span></label>
               <input type="range" data-key="fr" id="fr" min="15" max="50" step="1" value="30">
             </div>
           </div>
@@ -95,19 +96,19 @@
   <section class="tabpane" id="p1" role="tabpanel" hidden>
     <div class="plot-head">
       <h3><span class="stepno">1</span>Seismic is an echo</h3>
-      <span class="hint">Shout at the ground, listen for what comes back</span>
+      <span class="hint">A pulse goes down, reflections come back</span>
     </div>
     <p class="lede">A seismic survey is a very careful echo experiment. Someone makes a loud, sharp sound
       at the surface — an air gun at sea, a vibrating truck on land. The sound travels down through the
       rock. Wherever it crosses from one kind of rock into a different kind, <b>a little of it bounces
-      back up</b>, and a microphone at the surface records what returns.</p>
+      back up</b>, and a receiver at the surface records what returns.</p>
     <p class="lede">Two things get recorded for each echo. <b>When</b> it came back, which tells you how
-      deep the boundary is. And <b>how loud</b> it was, which tells you something about the two rocks
-      meeting at that boundary. This whole site is about that second number, and about how much it really
-      tells you.</p>
+      deep the boundary is. And how strong it was — its <b>amplitude</b> — which tells you something about
+      the two rocks meeting at that boundary. This whole site is about the amplitude, and about how much it
+      really tells you.</p>
     <p class="lede">The picture on the left is the simplest possible version: one layer of rock buried in
       another. There are two boundaries — the top of the buried layer and its base — so the echo comes
-      back twice. The recording of those echoes, drawn as a wiggly line down the page, is called a
+      back twice. The recording of those echoes, drawn as a wiggly line down the page, is a
       <b>trace</b>.</p>
     <p class="lede">Notice that the trace is drawn with time running <em>downward</em>. That is a
       convention you will meet everywhere in seismic: deeper things arrive later, and later is further
@@ -120,7 +121,7 @@
         <canvas id="c1echo" aria-label="A cartoon of a seismic source at the surface, sound travelling down, and echoes returning from the top and base of a buried layer"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> What the microphone records
+        <p class="sublabel"><b>2</b> What the receiver records
           <span class="note">time runs downward</span></p>
         <canvas id="c1trace" aria-label="The recorded trace, with the two echoes marked"></canvas>
       </div>
@@ -144,19 +145,23 @@
   <!-- =============================== STEP 2 =============================== -->
   <section class="tabpane" id="p2" role="tabpanel" hidden>
     <div class="plot-head">
-      <h3><span class="stepno">2</span>Hard rock, soft rock</h3>
-      <span class="hint">What decides how loud the echo is</span>
+      <h3><span class="stepno">2</span>Velocity, density, impedance</h3>
+      <span class="hint">What decides the strength of the echo</span>
     </div>
     <p class="lede">Why does any sound bounce back at all? Because the two rocks are <em>different</em>,
       and the sound notices the difference.</p>
-    <p class="lede">What it notices is a combination of two things: <b>how fast sound travels in the rock</b>
-      and <b>how heavy the rock is</b>. Multiply those two together and you get a single number that
-      geophysicists call the <b>acoustic impedance</b>, usually just "impedance". You can think of it as
-      how <em>stiff and heavy</em> the rock feels to a passing sound wave. A dense, fast limestone has a
-      high impedance. A light, slow, gas-filled sand has a low one.</p>
-    <p class="lede">Here is the rule, and it is the only rule in this module: <b>the echo is loud when the
-      two impedances are very different, and silent when they are the same.</b> Not when the impedance is
-      high. When it <em>changes</em>. Two identical rocks stacked on each other produce no echo at all,
+    <p class="lede">What it notices is a combination of two properties you already know: the
+      <b>velocity</b> of sound in the rock and the rock's <b>density</b>. Multiply them together and you
+      get a single number, the <b>acoustic impedance</b> — usually just impedance, and written I:</p>
+    <p class="lede" style="text-align:center;font-size:19px;margin:2px 0 14px">
+      <b>I&nbsp;=&nbsp;velocity&nbsp;×&nbsp;density</b></p>
+    <p class="lede">That is the only piece of arithmetic in this module. Impedance is how stiff and heavy
+      the rock feels to a passing wave: a fast, dense limestone has a high impedance, and a slow, light,
+      gas-filled sand has a low one. The panel on the left shows both properties for both rocks, and their
+      product underneath.</p>
+    <p class="lede">Here is the rule, and it is the only rule in this module: <b>the echo is strong when the two impedances are very
+      different, and silent when they are the same.</b> Not when the impedance is high. When it
+      <em>changes</em>. Two identical rocks stacked on each other produce no echo at all,
       however remarkable each of them is.</p>
     <p class="lede">There is one more thing the echo carries, which is its <b>polarity</b> — whether the
       wiggle kicks left or right. Going from a soft rock into a hard one gives one direction; hard into
@@ -165,28 +170,28 @@
 
     <div class="sec-row" id="row2">
       <div class="panel-col">
-        <p class="sublabel"><b>1</b> Speed times weight is impedance
+        <p class="sublabel"><b>1</b> Velocity × density = impedance
           <span class="note">both rocks, side by side</span></p>
         <canvas id="c2imp" aria-label="A bar chart of speed, weight and impedance for the upper rock and the buried layer"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> How the echo loudness follows the difference
+        <p class="sublabel"><b>2</b> Reflection coefficient against the impedance contrast
           <span class="note">your two rocks are marked</span></p>
         <canvas id="c2echo" aria-label="Echo strength plotted against the difference in impedance between the two rocks"></canvas>
       </div>
     </div>
 
     <div class="stats" style="margin-top:14px">
-      <div class="stat"><span>Impedance of the rock above</span><b id="s2a">—</b></div>
+            <div class="stat"><span>Impedance of the rock above</span><b id="s2a">—</b></div>
       <div class="stat"><span>Impedance of the buried layer</span><b id="s2b">—</b></div>
-      <div class="stat key"><span>How big the jump is</span><b id="s2c">—</b></div>
-      <div class="stat"><span>Echo strength</span><b id="s2d">—</b></div>
-      <div class="stat"><span>Which way the wiggle kicks</span><b id="s2e">—</b></div>
+      <div class="stat key"><span>Impedance contrast</span><b id="s2c">—</b></div>
+      <div class="stat"><span>Reflection coefficient</span><b id="s2d">—</b></div>
+      <div class="stat"><span>Polarity</span><b id="s2e">—</b></div>
       <div class="stat wide"><span>In plain words</span><b id="s2f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>That echo strength has a proper name, the <b>reflection coefficient</b>, and it is written as a
-        fraction: 0.1 means a tenth of the sound came back. It runs from about −0.3 to +0.3 for ordinary
+      <span>The reflection coefficient is written as a fraction: 0.1 means a tenth of the wave's
+        amplitude came back. It runs from about −0.3 to +0.3 for ordinary
         rocks, and the minus sign just means the wiggle kicks the other way. Every other module on this
         site calls it R.</span>
     </div>
@@ -245,19 +250,21 @@
   <!-- =============================== STEP 4 =============================== -->
   <section class="tabpane" id="p4" role="tabpanel" hidden>
     <div class="plot-head">
-      <h3><span class="stepno">4</span>Not one microphone, but hundreds</h3>
+      <h3><span class="stepno">4</span>Not one receiver, but hundreds</h3>
       <span class="hint">Where the word "offset" comes from</span>
     </div>
-    <p class="lede">So far there has been one source and one microphone in the same place, and the sound
+    <p class="lede">So far there has been one source and one receiver in the same place, and the sound
       has gone straight down and straight back. A real survey does not work like that. There is one source
-      and a long line of microphones stretching away from it, sometimes for several kilometres.</p>
-    <p class="lede">The distance from the source to a given microphone is called the <b>offset</b>. A
-      microphone right next to the source is a <em>near offset</em>; one at the far end of the line is a
-      <em>far offset</em>. Sound reaching a far microphone did not travel straight down — it went down at a
-      slant, bounced off the boundary at an angle, and came back up at a slant.</p>
-    <p class="lede">Every microphone records its own trace, and if you gather together all the traces that
-      bounced off the same spot on the boundary you get a <b>gather</b>: a set of traces of the same piece
-      of geology, seen from increasingly slanted angles. That word — gather — is one of the most-used in
+      and a long line of receivers — geophones on land, hydrophones at sea —
+      stretching away from it, sometimes for several kilometres.</p>
+    <p class="lede">The distance from the source to a given receiver is the <b>offset</b>. A receiver
+      right next to the source is a <em>near offset</em>; one at the far end of the line is a <em>far
+      offset</em>. Sound reaching a far receiver did not travel straight down — it went down at a
+      slant, bounced off the boundary at an angle, and came back up at a slant. That angle is the
+      <b>incidence angle</b>, and it is what AVO is really a function of.</p>
+    <p class="lede">Every receiver records its own trace, and if you collect all the traces that bounced off the same
+      spot on the boundary you get a <b>gather</b>: a set of traces of the same piece of
+      geology, recorded at increasing incidence angle. That word — gather — is one of the most-used in
       the whole subject, and it just means that collection.</p>
     <p class="lede">Usually all those traces get averaged together into one, which is called
       <b>stacking</b>, and the result is the seismic image everybody looks at. Stacking makes a much
@@ -267,8 +274,8 @@
 
     <div class="sec-row" id="row4">
       <div class="panel-col">
-        <p class="sublabel"><b>1</b> One source, many microphones
-          <span class="note">the far ones see a slanted bounce</span></p>
+        <p class="sublabel"><b>1</b> One source, many receivers
+          <span class="note">the far ones see a wider incidence angle</span></p>
         <canvas id="c4survey" aria-label="A cartoon of one source and a line of receivers, with rays bouncing off the boundary at increasing angles"></canvas>
       </div>
       <div class="panel-col">
@@ -280,8 +287,8 @@
 
     <div class="stats" style="margin-top:14px">
       <div class="stat"><span>Traces in this gather</span><b id="s4a">—</b></div>
-      <div class="stat"><span>Echo strength on the nearest trace</span><b id="s4b">—</b></div>
-      <div class="stat key"><span>Echo strength on the farthest</span><b id="s4c">—</b></div>
+            <div class="stat"><span>Reflection coefficient, nearest trace</span><b id="s4b">—</b></div>
+      <div class="stat key"><span>Reflection coefficient, farthest</span><b id="s4c">—</b></div>
       <div class="stat"><span>Change across the gather</span><b id="s4d">—</b></div>
       <div class="stat"><span>What stacking would give you</span><b id="s4e">—</b></div>
       <div class="stat wide"><span>What stacking would throw away</span><b id="s4f">—</b></div>
@@ -380,7 +387,7 @@
       one are an attempt to make that concrete rather than a matter of experience.</p>
 
     <div class="legend prose">
-      <span>If you take one thing from this module, take the rule from step 2: an echo tells you that two
+      <span>If you take one thing from this module, take the rule from step 2: a reflection tells you that two
         rocks are <em>different</em>, not what either of them is. Almost every mistake in amplitude
         interpretation is a version of forgetting that.</span>
     </div>
@@ -394,8 +401,8 @@
         <li><b>Make the echo disappear.</b> Adjust the buried layer's speed and weight until the trace goes
           flat. How many different ways can you find to do it?
           <details class="reveal"><summary>Hint</summary><span class="ans">There are many, and that is the
-            point. The echo vanishes whenever the two impedances match — whenever speed times weight is the
-            same for both rocks. A fast light layer and a slow heavy one can both do it. So a flat trace
+            point. The reflection vanishes whenever the two impedances match — whenever velocity × density is
+            the same for both rocks. A fast light layer and a slow heavy one can both do it. So a flat trace
             does not mean there is nothing there; it means there is nothing <em>different</em> there. A
             reservoir with the same impedance as its cap rock is completely invisible to seismic, and they
             exist.</span></details></li>
@@ -441,19 +448,19 @@
     <div class="takeaway" style="max-width:none">
       <h3>Key points</h3>
       <ul>
-        <li><b>Seismic is an echo experiment.</b> A sharp sound goes down, a little bounces back from every
-          boundary between different rocks, and a microphone records when it returned and how loud it
-          was.</li>
-        <li><b>Impedance is speed times weight.</b> It is how stiff and heavy a rock feels to a passing
-          sound wave, and it is the only rock property a straight-down echo responds to.</li>
-        <li><b>An echo measures a difference, not a thing.</b> Loud means the two rocks are very unlike
-          each other. Two identical rocks give no echo, and two matching impedances make a real boundary
+        <li><b>Seismic is an echo experiment.</b> A sharp pulse goes down, a little reflects from every
+          boundary between different rocks, and a receiver records when it returned and its
+          amplitude.</li>
+        <li><b>Impedance is velocity × density.</b> It is how stiff and heavy a rock feels to a passing
+          wave, and it is the only rock property a normal-incidence reflection responds to.</li>
+        <li><b>A reflection measures a difference, not a thing.</b> A strong one means the two rocks are
+          very unlike each other. Two identical rocks give no echo, and two matching impedances make a real boundary
           invisible.</li>
         <li><b>The trace is a wiggle because the pulse is.</b> Every echo comes back wearing the shape of
           the sound you sent down, so two boundaries closer than that shape is wide merge into one event
           you cannot separate.</li>
-        <li><b>A gather is the same spot seen from many angles.</b> Offset is the distance from the source
-          to the microphone; far offsets bounce at a slant. Stacking averages them for a cleaner picture
+        <li><b>A gather is the same spot seen at many incidence angles.</b> Offset is the distance from
+          the source to the receiver; far offsets reflect at wider angles. Stacking averages them for a cleaner picture
           and throws the variation away.</li>
         <li><b>AVO is the claim that the variation across the gather tells you about the pore fluid.</b>
           It is a real effect and it works. How far it can be trusted is what the other six modules are
@@ -495,10 +502,11 @@
         the plane-wave value rather than anything a real recording system would deliver.</li>
     </ul>
 
-    <p class="lede">If you want the terms in one place: <b>impedance</b> is speed times density;
+    <p class="lede">If you want the terms in one place: <b>impedance</b> is velocity times density;
       <b>reflection coefficient</b> is the fractional strength of an echo, written R; the <b>wavelet</b> is
       the shape of the pulse; <b>convolution</b> is putting a copy of the wavelet at every echo and adding
-      them; <b>offset</b> is source-to-microphone distance; a <b>gather</b> is the traces from one spot at
+      them; <b>offset</b> is source-to-receiver distance, and the <b>incidence angle</b> is the angle the
+      ray makes with the vertical where it reflects; a <b>gather</b> is the traces from one spot at
       many offsets; <b>stacking</b> is averaging a gather into one trace; <b>tuning</b> is what happens
       when two echoes merge; and <b>AVO</b> is the study of how echo strength changes across a gather.</p>
 
@@ -874,14 +882,14 @@
     tagIn(ctx, R2, R2.x + 4, yOf(D.tTop, R2) - 10, 'echo from the top', CRIM, 'left');
     tagIn(ctx, R2, R2.x + 4, yOf(D.tTop + D.dt, R2) + 12, 'echo from the base', TEAL, 'left');
     timeAxis(ctx, R2);
-    SEIS.axisBottom(ctx, R2, -AMP, AMP, 'how loud, and which way', (v) => v.toFixed(2), { ticks: 3 });
+    SEIS.axisBottom(ctx, R2, -AMP, AMP, 'amplitude', (v) => v.toFixed(2), { ticks: 3 });
 
     set('s1a', 'two \u2014 the top and the base');
     set('s1b', 'two');
     set('s1c', D.tTop.toFixed(3) + ' s');
     set('s1d', (D.dt * 1000).toFixed(1) + ' ms');
     set('s1e', S.thk + ' m, given the speed inside it');
-    set('s1f', 'how deep the boundaries are, and how far apart \u2014 nothing about the rock itself');
+    set('s1f', 'the depth of each boundary and the thickness between them \u2014 nothing about the rocks');
   }
 
   /* =====================================================================
@@ -897,8 +905,8 @@
     const R = { x: 4, y: M.t, w: w - 8, h: 340 - M.t - 30 };
     ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
     const rows = [
-      ['how fast', S.vp1 + ' m/s', S.vp + ' m/s', S.vp1 / 4500, S.vp / 4500],
-      ['how heavy', (S.rho1 / 100).toFixed(2), (S.rho / 100).toFixed(2), S.rho1 / 270, S.rho / 270],
+            ['velocity', S.vp1 + ' m/s', S.vp + ' m/s', S.vp1 / 4500, S.vp / 4500],
+      ['density', (S.rho1 / 100).toFixed(2), (S.rho / 100).toFixed(2), S.rho1 / 270, S.rho / 270],
       ['impedance', Math.round(D.up.ip).toLocaleString(), Math.round(D.lo.ip).toLocaleString(),
        D.up.ip / IPMAX, D.lo.ip / IPMAX],
     ];
@@ -931,12 +939,12 @@
     ctx.save();
     ctx.font = '10.5px "IBM Plex Sans", sans-serif';
     ctx.fillStyle = SLATE; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-    wrapText(ctx, 'Speed times weight gives impedance. Only the bottom row decides the echo.',
+        wrapText(ctx, 'Velocity \u00d7 density = impedance. Only the bottom row decides the echo.',
       R.x, R.y + R.h + 8, R.w, 14);
     ctx.restore();
 
     // echo strength against the impedance of the buried layer
-    const items = [[CRIM, 'echo strength', 'line'], [SLATE, 'no echo at all', 'dash']];
+        const items = [[CRIM, 'reflection coefficient', 'line'], [SLATE, 'no echo at all', 'dash']];
     const f = fitLegend('c2echo', w, 340, items);
     ctx = f.ctx;
     const R2 = { x: M.l, y: M.t, w: w - M.l - M.r, h: f.plotH };
@@ -962,7 +970,7 @@
     SEIS.frame(ctx, R2);
     SEIS.axisBottom(ctx, R2, xr[0], xr[1], 'impedance of the buried layer',
       (v) => (v / 1000).toFixed(0) + 'k', { ticks: 4 });
-    SEIS.axisLeft(ctx, R2, yr[0], yr[1], 'echo strength', (v) => v.toFixed(1),
+    SEIS.axisLeft(ctx, R2, yr[0], yr[1], 'reflection coefficient', (v) => v.toFixed(1),
       { ticks: 5, flip: true });
     legendRow(ctx, R2, items);
 
@@ -1028,7 +1036,7 @@
     wiggle(ctx, R2, D.trace, { fill: false, stroke: INK, lineWidth: 2.4, zero: false });
     SEIS.frame(ctx, R2);
     timeAxis(ctx, R2);
-    SEIS.axisBottom(ctx, R2, -AMP, AMP, 'how loud', (v) => v.toFixed(2), { ticks: 3 });
+    SEIS.axisBottom(ctx, R2, -AMP, AMP, 'amplitude', (v) => v.toFixed(2), { ticks: 3 });
     legendRow(ctx, R2, items);
 
     set('s3a', (D.sep * 1000).toFixed(1) + ' ms across');
@@ -1091,7 +1099,7 @@
     ctx.beginPath(); ctx.arc(sx, R.y + 6, 5.5, 0, 7); ctx.fill();
     ctx.restore();
     tagIn(ctx, R, sx + 8, R.y + 14, 'source', INK, 'left');
-    tagIn(ctx, R, R.x + R.w - 4, R.y + 14, 'microphones', SLATE, 'right');
+        tagIn(ctx, R, R.x + R.w - 4, R.y + 14, 'receivers', SLATE, 'right');
     tagIn(ctx, R, R.x + 5, g.yT + 10, 'same spot, different slants', SLATE, 'left');
     timeAxis(ctx, R);
 
@@ -1100,7 +1108,7 @@
     const R2 = { x: M.l, y: M.t, w: w - M.l - M.r, h: 340 - M.t - M.b };
     drawGather(ctx, R2, D.up, D.lo, NTRACE);
     timeAxis(ctx, R2);
-    SEIS.axisBottom(ctx, R2, 0, ANGMAX, 'slant of the bounce (degrees)',
+    SEIS.axisBottom(ctx, R2, 0, ANGMAX, 'incidence angle (degrees)',
       (v) => v.toFixed(0), { ticks: 4 });
     SEIS.tag(ctx, R2.x + 4, R2.y + 12, 'near', SLATE, 'left');
     SEIS.tag(ctx, R2.x + R2.w - 4, R2.y + 12, 'far', SLATE, 'right');
@@ -1146,7 +1154,7 @@
     tagIn(ctx, { x: R.x + half, y: R.y, w: half, h: R.h }, R.x + half + 8, R.y - 14,
       'same sand, full of gas', CRIM, 'left');
     timeAxis(ctx, R);
-    SEIS.axisBottom(ctx, R, 0, ANGMAX, 'slant of the bounce (degrees), both panels',
+    SEIS.axisBottom(ctx, R, 0, ANGMAX, 'incidence angle (degrees), both panels',
       (v) => v.toFixed(0), { ticks: 4 });
 
     ctx = SEIS.fitCanvas($('c5map'), w, 350);

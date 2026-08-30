@@ -1,0 +1,11 @@
+{
+  "name": "avo-teaching-modules",
+  "private": true,
+  "description": "Verification harness for the AVO teaching modules. Not needed to view the site.",
+  "scripts": {
+    "test": "./tools/verify-all.sh"
+  },
+  "devDependencies": {
+    "jsdom": "^24.0.0"
+  }
+}

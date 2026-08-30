@@ -1,128 +1,135 @@
 # How AVO Actually Works
 
-Interactive teaching modules on rock physics, fluid substitution and AVO.
-Heather Bedle, School of Geosciences, University of Oklahoma, with AASPI.
+**Interactive teaching modules on rock physics, fluid substitution and amplitude
+versus offset.**
 
-Live at <https://hbedle-subsurface.github.io/avo-basics/>.
+Heather Bedle, School of Geosciences, University of Oklahoma, with the
+[AASPI](https://www.ou.edu/mcee/labs/aaspi) consortium.
 
-Companion to [geometric-attributes](https://hbedle-subsurface.github.io/geometric-attributes/)
-and [seismic_resolution](https://hbedle-subsurface.github.io/seismic_resolution/).
+→ **[Open the modules](https://hbedle-subsurface.github.io/avo-basics/)**
 
-## Layout
+---
 
-    index.html                   landing page (generated — see below)
-    assets/style.css             shared stylesheet, copied from the geometric-attributes repo
-    assets/seismic.js            shared wavelets, traces, noise, plotting, URL state (copied, unchanged)
-    assets/rockphysics.js        NEW: minerals, dry frames, Batzle-Wang fluids, Gassmann, Zoeppritz
-    modules/rock-to-trace.html   Module 01 — build a rock, make a trace
-    modules/same-amplitude.html  Module 02 — same bright spot, different rock
-    modules/add-offset.html      Module 03 — add offset
-    modules/intercept-gradient.html  Module 04 — intercept, gradient and the classes
-    modules/reading-a-gather.html    Module 05 — reading a gather you did not make
-    modules/what-survives.html       Module 06 — what survives
-    tools/                       verification; not deployed
+## Why this exists
 
-`assets/style.css` and `assets/seismic.js` are **copies**, not links to the other
-repo. Each site has to work from a local folder with the network off, so
-cross-repo references are not an option. When either file changes upstream, copy
-it across and re-run the checks.
+Seismic amplitude interpretation is taught, almost everywhere, as a set of rules.
+Bright spots mean gas. Class III means gas. Low impedance means hydrocarbons. The
+rules are useful — they are how the subject is usable at all — and every one of
+them has a set of counterexamples that a student will not meet until a well comes
+in dry.
 
-## Deploying
+The gap is not knowledge. It is *calibration*: knowing which questions an
+amplitude can settle, which it cannot, and how to tell the two apart before
+committing to a decision. That kind of judgement is normally acquired slowly, by
+watching experienced people, and it is exactly what a newcomer to an
+interpretation role does not have.
 
-Static files. Push to GitHub and enable Pages on the branch root. Nothing to
-build, no dependencies at runtime. `tools/` and `package.json` are
-development only, but weigh a few KB and are worth keeping in the repo so the
-checks can be re-run later. `node_modules/` is gitignored.
+These modules are an attempt to teach it directly, and quickly, by letting people
+build the counterexamples themselves.
 
-## Verifying
+## What makes them different
 
-    npm install        # once, pulls jsdom for the headless harness
-    npm test           # or: ./tools/verify-all.sh
+**Everything is computed, live, from the parameters on screen.** There are no
+stored images and no curves drawn to look plausible. Move a slider and the rock
+physics runs again. This matters more than it sounds: a drawing cannot disagree
+with theory, but a calculation can — and during construction it repeatedly did.
+Several claims in the text were corrected because a measurement contradicted
+them, including a resolution rule of thumb that turned out to be 28% off for the
+geometry it was being applied to.
 
-which runs, in order:
+**Every number in the exercises is read off the running page.** Not estimated,
+not remembered from a textbook. An automated check re-derives all of them and
+fails if the prose and the code ever drift apart.
 
-| check | what it proves |
-|---|---|
-| `verify-physics.js` | 37 closed-form tests: Batzle-Wang against published water velocity, Gassmann round trips to 1e-15, Zoeppritz at 0° equal to (I₂−I₁)/(I₂+I₁), zero contrast returning exactly zero |
-| `harness.js` | the page boots, every `$(id)` resolves, every readout is populated, and 297 states per control produce no NaN |
-| `harness.js geometry` | nothing is drawn outside its canvas, at 7 viewport widths × 5 panes |
-| `harness.js` (axis check) | every vertical axis runs the same way as the data drawn against it. `SEIS.axisLeft` without `flip` puts the MINIMUM at the top, which is right for time and depth and wrong for everything else, because `curve()` and the other value plots put the minimum at the bottom. It found eleven upside-down axes the first time it ran, across three modules. |
-| `harness.js labels` | no two pieces of text land on top of each other. The geometry check cannot see this: an axis label and a legend can overlap perfectly while both sit inside the canvas, which is exactly what happened when `SEIS.axisBottom` put its label 22 px below the plot and `legendRow` put its first line at 26. It found 38 collisions the first time it ran. |
-| `harness.js tuning` | the tuning thickness the page *measures* matches √6·Vp/(4πf) |
-| `verify-prose.js` | every number module 01 quotes still matches what the page computes |
-| `verify-prose-m2.js` | the same for module 02, comparing values rather than strings |
-| `verify-prose-m3.js` | the same for module 03 |
-| `verify-prose-m4.js` | the same for module 04 |
-| `verify-prose-m5.js` | the same for module 05 |
-| `verify-prose-m6.js` | the same for module 06 |
+**Every module says what it leaves out.** Each has a Method tab listing its
+simplifications and where it departs from production software. Where two
+reasonable choices give different answers, both are shown with the difference
+quantified, because the choice between them is usually a larger effect than the
+one being studied.
 
-The `verify-prose` scripts are the ones to re-run after any physics change.
-They extract the numbers from the prose and from the running page and compare
-them, so the text cannot quietly drift away from the code. Both are wired into
-`npm test`.
+**The limits are the subject, not a caveat at the end.** The modules count how
+many different rocks are consistent with a measurement, and how many of those a
+second measurement removes. The answer is a number, and it changes with the
+noise, the mute and the fold.
 
-Module 02 sweeps 457,560 forward models on every update. That is only fast
-enough because the dry frame, the pore fluid, the shale and the tuning factor
-are each tabulated once rather than recomputed per cell, and because the
-step 5 panel is memoized on the parameters that can actually change its answer.
-If you add a parameter to the search, check `tools/harness.js m2` still returns
-promptly before assuming it scales.
+## Who they are for
 
-## A convention the modules follow
+The set is a ladder, and each card on the landing page says what it assumes.
 
-Every step pairs an abstract picture with a concrete one, always the same way
-round: the **left** panel shows all the possibilities at once (a parameter-space
-map in module 02, an amplitude-against-angle curve in module 03), and the
-**right** panel shows a few actual rocks written out — their parameters, their
-numbers, and the trace or gather each one produces. Beginners get very little
-from a contour on its own; they get the point immediately from two cards whose
-traces are visibly the same.
+| | | Assumes |
+|---|---|---|
+| **00** | What all of this is for | **Nothing.** No equations. Not rock physics, not mathematics, not even the word *impedance*. Teaches the AVO claim straight, in the confident form you would hear at work. |
+| **01–04** | The main sequence | Module 00. Builds a rock, follows it to a trace, and takes the standard rules apart one at a time. |
+| **05–06** | The advanced pair | Modules 01–04, and comfort with standard deviations and correlation. Written for people who already use these methods. |
 
-Two things follow from that if you edit these pages:
+**A student new to the subject** should read 00, then 01, 02 and 03, and stop.
+That is a complete and useful short course.
 
-- When an image is drawn with `ampMap`, row 0 is the TOP and holds the HIGHEST
-  value on the vertical axis, so the matching `SEIS.axisLeft` call needs
-  `flip: true`. Getting this wrong labels the picture upside down and nothing in
-  the test suite will notice — the geometry checker only knows whether ink lands
-  inside the canvas, not whether the axis agrees with the image.
-- `gatherCard` and `matchCards` are the concrete-panel helpers. Reuse them
-  rather than inventing a new layout, so the pattern stays learnable.
-- Any panel that carries a legend should be sized with `fitLegend`, which
-  measures how many lines the legend needs before the plot box is chosen. A
-  legend that wraps to a second line will otherwise draw it off the canvas.
-- `legendRow` draws at +46 below the plot, which clears the axis label at +22.
-  Do not move it back up.
-- Any `SEIS.axisLeft` for a value (not time or depth) needs `flip: true`. The
-  structural check enforces this by reading the label, so a new axis called
-  something with "time" or "depth" in it is treated as downward-increasing and
-  everything else is not.
+**Someone who has used AVO before** can start at 01.
 
-## Model choices worth knowing
+**A working interpreter** will find the new material in 05 and 06: the size of
+the error bars, and a count of what the gradient actually buys.
 
-- **Dry frame:** Dvorkin–Nur soft sand (Hertz–Mindlin at φc = 0.40, n = 9,
-  P = 23 MPa, joined by the modified Hashin–Shtrikman lower bound). Nur's
-  critical-porosity model is also implemented, for comparison only: it is an
-  upper bound and runs ~1500 m/s fast at 20% porosity.
-- **Shale:** empirical — Castagna mudrock for Vs, Gardner for density. A contact
-  model does not apply to shale.
-- **Conditions:** 23 MPa effective, 64 °C, fixed in every module. In module 03
-  the depth slider changes the ray geometry only, deliberately not the effective
-  pressure, so the angle lesson is not confounded by the rock also stiffening.
-- **Fit uncertainty (modules 05 and 06):** closed form, not simulated. For a
-  least-squares line, sigma(G) = sigma/sqrt(Sxx) and sigma(R0) =
-  sigma*sqrt(1/n + xbar^2/Sxx). The test suite checks these against 30,000
-  simulated fits (they agree to 0.5%) — the simulation is there to validate the
-  formula, not the other way round.
-- **Intercept and gradient (module 04):** fitted by least squares to the exact
-  Zoeppritz coefficients against sin²θ over the chosen angle range, which is what
-  a processor does. This is NOT Shuey's analytic G — that is the tangent at zero
-  offset, and on the default rock the two differ by more than a fifth. The
-  background trend and the class boundaries are both fitted or drawn live; the
-  boundaries are a convention (±0.03 in intercept) and the module says so.
-- **Ray geometry (module 03):** exact for a V(z) = 1600 + 0.6z overburden.
-  Rays are circular arcs, so the incidence angle is found by solving for the
-  ray parameter that lands on the requested offset, not by the straight-ray
-  shortcut — which under-reads the angle by 11.6° at 3 km offset on a 2 km
-  target.
+## Using them in teaching
 
-Each module's Method tab carries the full list of simplifications.
+They are built to be handed out rather than presented. Nothing installs, nothing
+needs an account, and each page works from a local copy with the network
+switched off.
+
+- **Set a specific configuration as an exercise.** Every control writes itself
+  into the address bar, so a particular rock, a particular mute and a particular
+  noise level can be sent as a link and will open exactly as you left it.
+- **Use the exercises as lab work.** Each module has five, each with a hidden
+  answer that gives the measured numbers and explains what they mean.
+- **Use the Key points as a revision sheet**, and the Method tabs when a student
+  asks why the model does not match something they have read.
+- **Lift a panel into a lecture.** Everything on screen is generated from the
+  physics, so a slide made from it will not disagree with the page.
+
+## The companion sets
+
+Part of a series on seismic interpretation, all built the same way:
+
+- [How geometric attributes actually work](https://hbedle-subsurface.github.io/geometric-attributes/)
+  — dip, coherence and curvature
+- [Seismic resolution](https://hbedle-subsurface.github.io/seismic_resolution/)
+  — what can and cannot be separated in time
+- **How AVO actually works** — this set
+
+Each has an accompanying SSRN working paper. *(link to follow)*
+
+## Privacy
+
+Everything runs in the browser. No installation and no account. Nothing you do
+inside a module — no slider, no click, no trace you generate — is transmitted
+anywhere, and the modules make no network requests at all.
+
+The one thing recorded is that a page was opened. No cookie, no account, nothing
+about you. I keep that count for two reasons: so the modules people actually use
+are the ones that get improved, and so I can show my university that these are
+being used — which is how they keep getting built.
+
+Counting is [GoatCounter](https://www.goatcounter.com), which is free for
+non-commercial use, sets no cookies, stores no personal data and needs no
+consent banner. The whole of it is `assets/count.js`, and you are welcome to
+read it. Adding `?nocount=1` is not needed — Do Not Track is honoured, and the
+settings in your address bar are never sent.
+
+## Using and citing
+
+Free to use for teaching, demonstration and non-commercial study, provided the
+source is credited. Please do not republish or redistribute it, modified or
+otherwise, without permission. If you use it in a course or a talk, a credit line
+and a link back are all that is asked.
+
+> H. Bedle, *How AVO Actually Works*, University of Oklahoma.
+> SSRN: *(article link to follow)*
+
+Corrections are welcome and wanted. If a number here disagrees with something you
+trust, that is worth knowing about — the whole point of computing everything live
+is that the site can be wrong in a way a set of drawings cannot.
+
+---
+
+*Editing this repository? See [MAINTAINING.md](MAINTAINING.md) for the layout,
+the verification suite and the model choices.*

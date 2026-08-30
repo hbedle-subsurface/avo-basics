@@ -58,7 +58,7 @@ The set is a ladder, and each card on the landing page says what it assumes.
 
 | | | Assumes |
 |---|---|---|
-| **00** | What all of this is for | **Nothing.** No equations. Not rock physics, not mathematics, not even the word *impedance*. Teaches the AVO claim straight, in the confident form you would hear at work. |
+| **00** | What all of this is for | **Velocity and density, and nothing else.** No equations beyond *impedance = velocity × density*. Introduces amplitude, reflection coefficient, polarity, wavelet, offset, incidence angle, gather and stacking, then states the AVO claim straight, in the confident form you would hear at work. |
 | **01–04** | The main sequence | Module 00. Builds a rock, follows it to a trace, and takes the standard rules apart one at a time. |
 | **05–06** | The advanced pair | Modules 01–04, and comfort with standard deviations and correlation. Written for people who already use these methods. |
 

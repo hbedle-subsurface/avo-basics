@@ -17,7 +17,7 @@
     <a class="brand" href="../index.html"><span class="dot"></span>How AVO <b>actually</b> works</a>
     <nav>
       <a href="../index.html">All modules</a>
-      <a href="same-amplitude.html">Module 02</a>
+      <a href="start-here.html">Module 00</a>
       <a href="#pm">Method &amp; references</a>
     </nav>
   </header>
@@ -30,6 +30,9 @@
       between two impedances makes a reflection, a wavelet smears that reflection out in time, and noise
       sits on top of the result. Every one of those steps throws information away. Build the rock at the
       top of this page and follow what happens to it.</p>
+    <p class="sub" style="font-size:15px;color:#5C6670">If <em>impedance</em>, <em>wavelet</em> or
+      <em>gather</em> are new words, <a href="start-here.html">module 00</a> covers them first, with no
+      equations.</p>
   </div>
 
   <div class="labhead">
@@ -603,7 +606,7 @@
   </section>
 
   <div class="pager" id="pager" hidden>
-    <a class="btn ghost" href="../index.html">← All modules</a>
+    <a class="btn ghost" href="start-here.html">← Module 00: what all of this is for</a>
     <a class="btn ghost" href="same-amplitude.html">Module 02: same bright spot, different rock →</a>
   </div>
 
@@ -614,12 +617,16 @@
       <p class="lic">Free to use for teaching, demonstration, and non-commercial study, provided the source
         is credited. Please do not republish or redistribute it, modified or otherwise, without permission.
         If you use it in a course or a talk, a credit line and a link back are all that is asked.</p>
+      <p class="lic">Nothing you do in this module leaves your browser. The only thing recorded is that
+        the page was opened, so that I can show the university these are being used — no cookie, no
+        account, nothing about you.</p>
       <p class="lic">To cite: H. Bedle, <i>How AVO Actually Works</i>, University of
         Oklahoma. <span class="k">SSRN: [article link to follow]</span></p>
     </div>
   </footer>
 </div>
 
+<script src="../assets/count.js"></script>
 <script src="../assets/seismic.js"></script>
 <script src="../assets/rockphysics.js"></script>
 <script>
@@ -1202,7 +1209,7 @@
     SEIS.frame(ctx, R);
     SEIS.axisBottom(ctx, R, 0, 40, 'porosity (%)', (v) => v.toFixed(0), { ticks: 5 });
     SEIS.axisLeft(ctx, R, MOD_RANGE[0], MOD_RANGE[1], 'modulus (GPa)',
-      (v) => v.toFixed(0), { ticks: 5, grid: true });
+      (v) => v.toFixed(0), { ticks: 5, grid: true, flip: true });
     legendRow(ctx, R, modItems);
 
     // --- velocity against gas saturation
@@ -1229,7 +1236,7 @@
     SEIS.axisBottom(ctx, R, 0, 100,
       (hcFl === 'gas' ? 'gas' : 'oil') + ' saturation (%)', (v) => v.toFixed(0), { ticks: 5 });
     SEIS.axisLeft(ctx, R, VP_RANGE[0], VP_RANGE[1], 'velocity (m/s)',
-      (v) => v.toFixed(0), { ticks: 5, grid: true });
+      (v) => v.toFixed(0), { ticks: 5, grid: true, flip: true });
     legendRow(ctx, R, satItems);
     if (S.fl === 'brine') {
       SEIS.tag(ctx, R.x + R.w - 4, R.y + 12, 'curve shows what gas WOULD do', SLATE, 'right');
@@ -1273,7 +1280,9 @@
     ctx.save();
     ctx.font = LEG_FONT;
     ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
-    let x = R.x, y = R.y + R.h + 26;
+    // +46 clears the axis label, which SEIS.axisBottom draws at +22 and which
+    // is about 11 px tall. At +26 the two sat exactly on top of each other.
+    let x = R.x, y = R.y + R.h + 46;
     for (const [c, t, dash] of items) {
       const iw = legItemW(ctx, t);
       if (x > R.x && x + iw > R.x + R.w) { x = R.x; y += 16; }
@@ -1369,7 +1378,7 @@
       R.x + R.w, R.y + R.h - (0.6 / 1.65) * R.h, 'rgba(92,102,112,0.45)', [3, 3], 1);
     SEIS.frame(ctx, R);
     SEIS.axisBottom(ctx, R, -80, 80, 'time (ms)', (v) => v.toFixed(0), { ticks: 5 });
-    SEIS.axisLeft(ctx, R, -0.6, 1.05, 'amplitude', (v) => v.toFixed(1), { ticks: 4 });
+    SEIS.axisLeft(ctx, R, -0.6, 1.05, 'amplitude', (v) => v.toFixed(1), { ticks: 4, flip: true });
     SEIS.tag(ctx, R.x + R.w - 4, R.y + 12, S.fr + ' Hz Ricker', CRIM, 'right');
 
     // trace

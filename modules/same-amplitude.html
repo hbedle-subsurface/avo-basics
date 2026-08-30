@@ -609,12 +609,16 @@
       <p class="lic">Free to use for teaching, demonstration, and non-commercial study, provided the source
         is credited. Please do not republish or redistribute it, modified or otherwise, without permission.
         If you use it in a course or a talk, a credit line and a link back are all that is asked.</p>
+      <p class="lic">Nothing you do in this module leaves your browser. The only thing recorded is that
+        the page was opened, so that I can show the university these are being used — no cookie, no
+        account, nothing about you.</p>
       <p class="lic">To cite: H. Bedle, <i>How AVO Actually Works</i>, University of
         Oklahoma. <span class="k">SSRN: [article link to follow]</span></p>
     </div>
   </footer>
 </div>
 
+<script src="../assets/count.js"></script>
 <script src="../assets/seismic.js"></script>
 <script src="../assets/rockphysics.js"></script>
 <script>
@@ -1138,7 +1142,7 @@
     SEIS.frame(ctx, R);
     SEIS.axisBottom(ctx, R, lo, hi, 'measured amplitude', (v) => v.toFixed(3), { ticks: 5 });
     SEIS.tag(ctx, X(OBS.amp), R.y - 10, 'measured', CRIM, 'left');
-    SEIS.tag(ctx, xm, R.y + R.h + 14, 'your model', TEAL, 'left');
+    SEIS.tag(ctx, xm, R.y + R.h - 14, 'your model', TEAL, 'left');
     ctx.save();
     ctx.font = '11.5px "IBM Plex Sans", sans-serif'; ctx.fillStyle = SLATE;
     ctx.textAlign = 'left'; ctx.textBaseline = 'top';
@@ -1466,7 +1470,7 @@
     });
     ctx.restore();
     SEIS.frame(ctx, R);
-    SEIS.axisLeft(ctx, R, 0, 1, 'models that fit (log scale)', () => '', { ticks: 2 });
+    SEIS.axisLeft(ctx, R, 0, 1, 'models that fit (log scale)', () => '', { ticks: 2, flip: true });
 
     // marginals
     ctx = SEIS.fitCanvas($('c5marg'), w, 330);

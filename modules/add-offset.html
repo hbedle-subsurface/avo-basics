@@ -186,14 +186,19 @@
     <p class="lede">That is the whole reason AVO exists. Vs is the property that responds differently to a
       gas fill than Vp does, and normal incidence cannot see it at all.</p>
 
-    <div class="sec-row" id="row2">
+        <div class="sec-row" id="row2">
       <div class="panel-col">
-        <p class="sublabel"><b>1</b> Change only Vs
+        <p class="sublabel"><b>1</b> What happens at the interface
+          <span class="note">straight down, then tilted</span></p>
+        <canvas id="c2why" aria-label="Cartoon comparing a wave arriving straight down, which produces no shear, with one arriving at an angle, which converts part of its energy to shear"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Change only Vs
           <span class="note">Vp and density held fixed</span></p>
         <canvas id="c2vs" aria-label="Reflection coefficient against angle for three shear velocities, with compressional velocity and density held constant"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> The same three rocks, as gathers
+        <p class="sublabel"><b>3</b> The same three rocks, as gathers
           <span class="note">identical on the left, different on the right</span></p>
         <canvas id="c2bar" aria-label="Gathers for the three shear velocities, identical at near offset and separating at far offset"></canvas>
       </div>
@@ -595,12 +600,16 @@
       <p class="lic">Free to use for teaching, demonstration, and non-commercial study, provided the source
         is credited. Please do not republish or redistribute it, modified or otherwise, without permission.
         If you use it in a course or a talk, a credit line and a link back are all that is asked.</p>
+      <p class="lic">Nothing you do in this module leaves your browser. The only thing recorded is that
+        the page was opened, so that I can show the university these are being used — no cookie, no
+        account, nothing about you.</p>
       <p class="lic">To cite: H. Bedle, <i>How AVO Actually Works</i>, University of
         Oklahoma. <span class="k">SSRN: [article link to follow]</span></p>
     </div>
   </footer>
 </div>
 
+<script src="../assets/count.js"></script>
 <script src="../assets/seismic.js"></script>
 <script src="../assets/rockphysics.js"></script>
 <script>
@@ -685,6 +694,7 @@
       D.offsets.push(x);
       D.angles.push(ROCK.angleFromOffset(x, S.dep, V0, KGRAD) * DEG);
     }
+    setAngleAxis();
     D.dtRes = 2 * THICK / D.res.vp;
     D.rc = (th) => ROCK.zoeppritz(D.shale, D.res, th);
     D.rcBase = (th) => ROCK.zoeppritz(D.res, D.shale, th);
@@ -724,7 +734,15 @@
 
   const M = { l: 58, r: 16, t: 14, b: 36 };
   const AMP = 0.34;
-  const ANGMAX = 50;
+  // The angle axis must be able to show the angle you are actually recording.
+  // A 5000 m offset on a 1200 m target reaches 85 degrees, so a fixed 50 degree
+  // axis silently cropped the very thing step 1 sends you to look at. It steps
+  // in 15 degree jumps so the axis stays still while you drag a slider and only
+  // moves when it has to.
+  let ANGMAX = 50;
+  function setAngleAxis() {
+    ANGMAX = Math.min(90, Math.max(45, Math.ceil((D.angMax + 4) / 15) * 15));
+  }
 
   function pw(el) {
     const par = el && el.parentElement;
@@ -811,11 +829,25 @@
     return lines;
   }
 
+
+  /* Size a canvas for the legend it is about to carry. A legend that wraps to a
+     second line needs 16 px more than one that does not, and without this the
+     second line lands outside the canvas. */
+  function fitLegend(id, w, baseH, items) {
+    let ctx = SEIS.fitCanvas($(id), w, baseH);
+    const H = baseH + (legendLines(ctx, items, w - M.l - M.r) - 1) * 16;
+    ctx = SEIS.fitCanvas($(id), w, H);
+    ctx.clearRect(0, 0, w, H);
+    return { ctx, H, plotH: H - M.t - M.b - 40 - (H - baseH) };
+  }
+
   function legendRow(ctx, R, items) {
     ctx.save();
         ctx.font = LEG_FONT;
     ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
-    let x = R.x, y = R.y + R.h + 26;
+    // +46 clears the axis label, which SEIS.axisBottom draws at +22 and which
+    // is about 11 px tall. At +26 the two sat exactly on top of each other.
+    let x = R.x, y = R.y + R.h + 46;
     for (const [c, t, dash] of items) {
       const iw = 23 + ctx.measureText(t).width + 18;
       if (x > R.x && x + iw > R.x + R.w) { x = R.x; y += 16; }
@@ -943,7 +975,7 @@
     curve(ctx, R, ts, vs, [0, ANGMAX], yr, CRIM, 2.4);
     SEIS.frame(ctx, R);
     SEIS.axisBottom(ctx, R, 0, ANGMAX, 'incidence angle (deg)', (v) => v.toFixed(0), { ticks: 5 });
-    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'R', (v) => v.toFixed(2), { ticks: 4 });
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'R', (v) => v.toFixed(2), { ticks: 4, flip: true });
     ctx.save();
     ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
     ctx.textAlign = 'center'; ctx.textBaseline = 'top';
@@ -1037,7 +1069,7 @@
     SEIS.axisBottom(ctx, R, xr[0], xr[1], 'source to receiver offset (m)',
       (v) => v.toFixed(0), { ticks: 5 });
     SEIS.axisLeft(ctx, R, yr[0], yr[1], 'incidence angle (deg)', (v) => v.toFixed(0),
-      { ticks: 5, grid: true });
+      { ticks: 5, grid: true, flip: true });
         legendRow(ctx, R, angItems);
 
     const need30 = (() => {
@@ -1066,14 +1098,116 @@
     return VS_FACTORS.map((f) => ({ vp: D.res.vp, vs: D.res.vs * f, rho: D.res.rho, f }));
   }
 
+    /* Why shear only appears at an angle, drawn rather than asserted. Left: the
+     wave arrives straight down, the interface moves straight up and down, and
+     nothing is sheared. Right: it arrives tilted, the motion has a sideways
+     component along the interface, and part of the energy leaves as a shear
+     wave. That is the whole physical reason the far offsets carry information
+     the near ones cannot. */
+  function drawWhyPanel(ctx, R) {
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const halfW = R.w / 2;
+    const panel = (x0, tiltDeg, title) => {
+      const cxm = x0 + halfW / 2;
+      const yInt = R.y + R.h * 0.62;
+      ctx.save();
+      ctx.beginPath(); ctx.rect(x0, R.y, halfW, R.h); ctx.clip();
+      // the two rocks
+      ctx.fillStyle = '#EFEDE6'; ctx.fillRect(x0, R.y + 26, halfW, yInt - R.y - 26);
+      ctx.fillStyle = 'rgba(132,22,23,0.10)'; ctx.fillRect(x0, yInt, halfW, R.y + R.h - yInt);
+      ctx.strokeStyle = INK; ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.moveTo(x0 + 4, yInt); ctx.lineTo(x0 + halfW - 4, yInt); ctx.stroke();
+
+      const th = tiltDeg * Math.PI / 180;
+      const L = Math.min(halfW * 0.40, (yInt - R.y - 32));
+      const arrow = (ang, len, color, dash, wide) => {
+        const dx = Math.sin(ang) * len, dy = Math.cos(ang) * len;
+        ctx.save();
+        ctx.strokeStyle = color; ctx.lineWidth = wide || 2.2;
+        if (dash) ctx.setLineDash(dash);
+        ctx.beginPath(); ctx.moveTo(cxm - dx, yInt - dy); ctx.lineTo(cxm, yInt); ctx.stroke();
+        ctx.restore();
+      };
+      // incident P, down-going
+      arrow(th, L, CRIM, null, 2.6);
+      // reflected P, up-going on the other side
+      ctx.save();
+      ctx.strokeStyle = CRIM; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(cxm, yInt);
+      ctx.lineTo(cxm + Math.sin(th) * L * 0.8, yInt - Math.cos(th) * L * 0.8);
+      ctx.stroke();
+      ctx.restore();
+      // reflected S, only when tilted — Snell puts it at a shallower angle
+      if (tiltDeg > 1) {
+        const ths = Math.asin(Math.max(0, Math.min(0.98, Math.sin(th) * 0.55)));
+        ctx.save();
+        ctx.strokeStyle = TEAL; ctx.lineWidth = 2.4; ctx.setLineDash([4, 3]);
+        ctx.beginPath(); ctx.moveTo(cxm, yInt);
+        ctx.lineTo(cxm + Math.sin(ths) * L * 0.72, yInt - Math.cos(ths) * L * 0.72);
+        ctx.stroke();
+        ctx.restore();
+      }
+      // what the interface is being asked to do
+      ctx.save();
+      ctx.strokeStyle = OLIVE; ctx.lineWidth = 2.6; ctx.lineCap = 'round';
+      const mx = cxm - halfW * 0.30;
+      if (tiltDeg > 1) {
+        ctx.beginPath(); ctx.moveTo(mx - 11, yInt); ctx.lineTo(mx + 11, yInt); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(mx + 11, yInt); ctx.lineTo(mx + 6, yInt - 4); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(mx + 11, yInt); ctx.lineTo(mx + 6, yInt + 4); ctx.stroke();
+      } else {
+        ctx.beginPath(); ctx.moveTo(mx, yInt - 11); ctx.lineTo(mx, yInt + 11); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(mx, yInt - 11); ctx.lineTo(mx - 4, yInt - 6); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(mx, yInt - 11); ctx.lineTo(mx + 4, yInt - 6); ctx.stroke();
+      }
+      ctx.restore();
+      ctx.restore();
+
+      ctx.save();
+      ctx.font = '600 12px "IBM Plex Sans", sans-serif';
+      ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      ctx.fillText(title, cxm, R.y + 6);
+      ctx.font = '11px "IBM Plex Sans", sans-serif';
+      ctx.fillStyle = SLATE; ctx.textBaseline = 'bottom';
+      wrapCentre(ctx, tiltDeg > 1
+        ? 'the interface is pushed sideways too, so part of the energy leaves as a shear wave'
+        : 'the interface is only pushed up and down, so nothing is sheared',
+        cxm, R.y + R.h - 6, halfW - 16, 14);
+      ctx.restore();
+    };
+    panel(R.x, 0, 'straight down');
+    panel(R.x + halfW, 34, 'at an angle');
+    SEIS.dashedLine(ctx, R.x + halfW, R.y + 4, R.x + halfW, R.y + R.h - 4,
+      'rgba(22,25,28,.25)', [4, 4], 1);
+    SEIS.frame(ctx, R);
+  }
+
+  function wrapCentre(ctx, text, cxm, yBottom, maxW, lh) {
+    const words = String(text).split(' ');
+    const lines = [];
+    let line = '';
+    for (const wd of words) {
+      const test = line ? line + ' ' + wd : wd;
+      if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = wd; }
+      else line = test;
+    }
+    if (line) lines.push(line);
+    lines.forEach((ln, i) => ctx.fillText(ln, cxm, yBottom - (lines.length - 1 - i) * lh));
+  }
+
   function drawStep2() {
-    const w = rowWidth('row2', 2);
+    const w = rowWidth('row2', 3);
+    let cw2 = SEIS.fitCanvas($('c2why'), w, 330);
+    cw2.clearRect(0, 0, w, 330);
+    drawWhyPanel(cw2, { x: 4, y: M.t, w: w - 8, h: 330 - M.t - 20 });
     const vars = vsVariants();
     const cols = [TEAL, CRIM, ORANGE];
 
-    let ctx = SEIS.fitCanvas($('c2vs'), w, 320);
-    ctx.clearRect(0, 0, w, 320);
-    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 320 - M.t - M.b - 22 };
+    const vsItems = [[TEAL, 'Vs \u2212 15%', false], [CRIM, 'your rock', false],
+                     [ORANGE, 'Vs + 15%', false]];
+    const vsF = fitLegend('c2vs', w, 320, vsItems);
+    let ctx = vsF.ctx;
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: vsF.plotH };
     ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
     const yr = [-AMP, AMP];
     const ts = []; for (let t = 0; t <= ANGMAX; t += 0.5) ts.push(t);
@@ -1085,9 +1219,9 @@
     });
     SEIS.frame(ctx, R);
     SEIS.axisBottom(ctx, R, 0, ANGMAX, 'incidence angle (deg)', (v) => v.toFixed(0), { ticks: 5 });
-    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'reflection coefficient', (v) => v.toFixed(2), { ticks: 4 });
-    legendRow(ctx, R, [[TEAL, 'Vs \u2212 15%', false], [CRIM, 'your rock', false],
-                       [ORANGE, 'Vs + 15%', false]]);
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'reflection coefficient', (v) => v.toFixed(2),
+      { ticks: 4, flip: true });
+    legendRow(ctx, R, vsItems);
 
     // the same three rocks, as gathers — what you would actually be looking at
     ctx = SEIS.fitCanvas($('c2bar'), w, 330);
@@ -1128,9 +1262,11 @@
 
   function drawStep3() {
     const w = rowWidth('row3', 2);
-    let ctx = SEIS.fitCanvas($('c3curve'), w, 330);
-    ctx.clearRect(0, 0, w, 330);
-    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 330 - M.t - M.b - 22 };
+        const c3Items = [[CRIM, 'your rock', false],
+                     [SLATE, 'the same rock filled with brine', true]];
+    const c3F = fitLegend('c3curve', w, 330, c3Items);
+    let ctx = c3F.ctx;
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: c3F.plotH };
     ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
     const yr = [-AMP, AMP];
     const ts = []; for (let t = 0; t <= ANGMAX; t += 0.5) ts.push(t);
@@ -1142,9 +1278,9 @@
     curve(ctx, R, ts, ts.map((t) => D.rc(t)), [0, ANGMAX], yr, CRIM, 2.6);
     SEIS.frame(ctx, R);
     SEIS.axisBottom(ctx, R, 0, ANGMAX, 'incidence angle (deg)', (v) => v.toFixed(0), { ticks: 5 });
-    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'reflection coefficient', (v) => v.toFixed(2), { ticks: 4 });
-    legendRow(ctx, R, [[CRIM, 'your rock', false],
-                       [SLATE, 'the same rock filled with brine', true]]);
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'reflection coefficient', (v) => v.toFixed(2),
+      { ticks: 4, flip: true });
+    legendRow(ctx, R, c3Items);
 
     ctx = SEIS.fitCanvas($('c3gath'), w, 330);
     ctx.clearRect(0, 0, w, 330);
@@ -1185,9 +1321,11 @@
     const s2 = ts.map((t) => ROCK.shuey(D.shale, D.res, t, 2));
     const s3 = ts.map((t) => ROCK.shuey(D.shale, D.res, t, 3));
 
-    let ctx = SEIS.fitCanvas($('c4approx'), w, 330);
-    ctx.clearRect(0, 0, w, 330);
-    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 330 - M.t - M.b - 22 };
+        const apItems = [[INK, 'exact Zoeppritz', false], [CRIM, 'Shuey, two terms', true],
+                     [TEAL, 'Shuey, three terms', true]];
+    const apF = fitLegend('c4approx', w, 330, apItems);
+    let ctx = apF.ctx;
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: apF.plotH };
     ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
     const yr = [-0.5, 0.5];
     zeroLine(ctx, R, yr);
@@ -1197,13 +1335,15 @@
     curve(ctx, R, ts, s3, [0, ANGMAX], yr, TEAL, 2, [2, 3]);
     SEIS.frame(ctx, R);
     SEIS.axisBottom(ctx, R, 0, ANGMAX, 'incidence angle (deg)', (v) => v.toFixed(0), { ticks: 5 });
-    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'reflection coefficient', (v) => v.toFixed(2), { ticks: 5 });
-    legendRow(ctx, R, [[INK, 'exact Zoeppritz', false], [CRIM, 'Shuey, two terms', true],
-                       [TEAL, 'Shuey, three terms', true]]);
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'reflection coefficient', (v) => v.toFixed(2),
+      { ticks: 5, flip: true });
+    legendRow(ctx, R, apItems);
 
-    ctx = SEIS.fitCanvas($('c4err'), w, 330);
-    ctx.clearRect(0, 0, w, 330);
-    R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 330 - M.t - M.b - 22 };
+        const erItems = [[CRIM, 'two terms', false], [TEAL, 'three terms', false],
+                     [SLATE, 'shaded: your noise level', false]];
+    const erF = fitLegend('c4err', w, 330, erItems);
+    ctx = erF.ctx;
+    R = { x: M.l, y: M.t, w: w - M.l - M.r, h: erF.plotH };
     ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
     const er = [-0.09, 0.09];
     zeroLine(ctx, R, er);
@@ -1221,15 +1361,14 @@
     SEIS.frame(ctx, R);
     SEIS.axisBottom(ctx, R, 0, ANGMAX, 'incidence angle (deg)', (v) => v.toFixed(0), { ticks: 5 });
     SEIS.axisLeft(ctx, R, er[0], er[1], 'approximation \u2212 exact', (v) => v.toFixed(2),
-      { ticks: 5, grid: true });
-    legendRow(ctx, R, [[CRIM, 'two terms', false], [TEAL, 'three terms', false],
-                       [SLATE, 'shaded band is your noise level', false]]);
+      { ticks: 5, grid: true, flip: true });
+    legendRow(ctx, R, erItems);
 
     const e2 = (t) => ROCK.shuey(D.shale, D.res, t, 2) - D.rc(t);
     const e3 = (t) => ROCK.shuey(D.shale, D.res, t, 3) - D.rc(t);
     let cross = NaN;
     if (NOISE[S.nz] > 0) {
-      for (let t = 0; t <= ANGMAX; t += 0.5) {
+      for (let t = 0; t <= D.angMax; t += 0.5) {
         if (Math.abs(e2(t)) > NOISE[S.nz]) { cross = t; break; }
       }
     }
@@ -1237,11 +1376,15 @@
     set('s4b', isFinite(e2(40)) ? e2(40).toFixed(4) : '—');
     set('s4c', isFinite(e3(40)) ? e3(40).toFixed(4) : '—');
     set('s4d', !isFinite(e2(40)) || !isFinite(e3(40)) ? '—'
-      : Math.abs(e2(40)) < Math.abs(e3(40))
-        ? 'two terms, by ' + (Math.abs(e3(40)) / Math.abs(e2(40))).toFixed(1) + '×'
-        : 'three terms, by ' + (Math.abs(e2(40)) / Math.abs(e3(40))).toFixed(1) + '×');
+      : Math.min(Math.abs(e2(40)), Math.abs(e3(40))) < 0.003
+        ? (Math.abs(e2(40)) < Math.abs(e3(40)) ? 'two terms' : 'three terms') +
+          ' — the other happens to cross zero near 40°'
+        : Math.abs(e2(40)) < Math.abs(e3(40))
+          ? 'two terms, by ' + (Math.abs(e3(40)) / Math.abs(e2(40))).toFixed(1) + '×'
+          : 'three terms, by ' + (Math.abs(e2(40)) / Math.abs(e3(40))).toFixed(1) + '×');
     set('s4e', NOISE[S.nz] === 0 ? 'no noise set'
-      : isFinite(cross) ? cross.toFixed(0) + '°' : 'never, out to ' + ANGMAX + '°');
+      : isFinite(cross) ? cross.toFixed(0) + '°'
+      : 'never, out to your widest angle of ' + D.angMax.toFixed(0) + '°');
     const eMax = Math.abs(e2(D.angMax));
     set('s4f', isFinite(eMax)
       ? 'the two-term error reaches ' + eMax.toFixed(4) + ' by ' + D.angMax.toFixed(0) + '°'
@@ -1262,9 +1405,11 @@
     /* Both pairs on ONE axis, against the noise. The question this step asks is
        "can I measure the difference", and that is a single readable picture:
        does the line climb out of the shaded band or not. */
-    let ctx = SEIS.fitCanvas($('c5a'), w, 340);
-    ctx.clearRect(0, 0, w, 340);
-    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 340 - M.t - M.b - 38 };
+        const sepItems = [[CRIM, 'oil vs brine', false], [TEAL, 'gas vs fizz gas', true],
+      ...(NOISE[S.nz] > 0 ? [[SLATE, 'below the line you cannot measure it', false]] : [])];
+    const sepF = fitLegend('c5a', w, 340, sepItems);
+    let ctx = sepF.ctx;
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: sepF.plotH };
     ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
     const yr = [0, 0.06];
     if (NOISE[S.nz] > 0) {
@@ -1282,9 +1427,8 @@
     SEIS.frame(ctx, R);
     SEIS.axisBottom(ctx, R, 0, ANGMAX, 'incidence angle (deg)', (v) => v.toFixed(0), { ticks: 5 });
     SEIS.axisLeft(ctx, R, yr[0], yr[1], 'gap between the two rocks',
-      (v) => v.toFixed(3), { ticks: 4, grid: true });
-    legendRow(ctx, R, [[CRIM, 'oil vs brine', false], [TEAL, 'gas vs fizz gas', true],
-      ...(NOISE[S.nz] > 0 ? [[SLATE, 'below the line you cannot measure it', false]] : [])]);
+      (v) => v.toFixed(3), { ticks: 4, grid: true, flip: true });
+    legendRow(ctx, R, sepItems);
 
     // the four rocks themselves, as gathers, two panels
     const cardPanel = (id, a2, b2, la, lb) => {

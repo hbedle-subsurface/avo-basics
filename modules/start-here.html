@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Start here | How AVO Actually Works</title>
+<meta name="description" content="The foundation, with no equations: what a seismic trace is, what makes a reflection, what impedance means, what a gather is, and what AVO claims to do. Everything the other six modules assume you already know.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <a class="brand" href="../index.html"><span class="dot"></span>How AVO <b>actually</b> works</a>
+    <nav>
+      <a href="../index.html">All modules</a>
+      <a href="rock-to-trace.html">Module 01</a>
+      <a href="#pm">Method &amp; references</a>
+    </nav>
+  </header>
+
+  <div class="mod-head">
+    <p class="eyebrow">Module 00 &nbsp;·&nbsp; Start here</p>
+    <h1>What all of this is for</h1>
+    <p class="sub">This is the foundation module. It has no equations in it, and it assumes you have never
+      met any of these words before. By the end you will know what a seismic trace is, what makes a
+      reflection, what impedance means, what a gather is, and what AVO promises to do — which is what the
+      other six modules take for granted from their first sentence.</p>
+  </div>
+
+  <div class="labhead">
+    <div class="labgrid">
+      <div>
+        <p class="cap">One rock under another <span>&mdash; and the wiggle it makes</span></p>
+        <canvas id="cHead" aria-label="A two-layer earth model beside the seismic trace it produces"></canvas>
+      </div>
+      <div>
+        <p class="cap">Change the buried layer <span>&mdash; watch the wiggle change</span></p>
+        <div class="controls" id="mainControls">
+          <div class="ctl-col">
+            <h2>The buried layer</h2>
+            <div class="ctl">
+              <label for="vp">How fast sound travels in it <span class="val" id="vpV">3200 m/s</span></label>
+              <input type="range" data-key="vp" id="vp" min="1800" max="4500" step="50" value="3200">
+            </div>
+            <div class="ctl">
+              <label for="rho">How heavy it is <span class="val" id="rhoV">2.35 g/cm³</span></label>
+              <input type="range" data-key="rho" id="rho" min="180" max="270" step="1" value="235">
+            </div>
+            <div class="ctl">
+              <label for="thk">How thick it is <span class="val" id="thkV">40 m</span></label>
+              <input type="range" data-key="thk" id="thk" min="5" max="80" step="1" value="40">
+            </div>
+
+            <h2>The rock above it</h2>
+            <div class="ctl">
+              <label for="vp1">How fast sound travels <span class="val" id="vp1V">2700 m/s</span></label>
+              <input type="range" data-key="vp1" id="vp1" min="1800" max="4000" step="50" value="2700">
+            </div>
+            <div class="ctl">
+              <label for="rho1">How heavy it is <span class="val" id="rho1V">2.25 g/cm³</span></label>
+              <input type="range" data-key="rho1" id="rho1" min="180" max="270" step="1" value="225">
+            </div>
+
+            <h2>The survey</h2>
+            <div class="ctl">
+              <label for="fr">How sharp the pulse is <span class="val" id="frV">30 Hz</span></label>
+              <input type="range" data-key="fr" id="fr" min="15" max="50" step="1" value="30">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="tabhint">Five short steps, <b>no equations</b>. If a word here is new to you, this is the right
+    place to be. Method and references are there when you want them.</p>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
+    <button role="tab" data-tab="p1" aria-selected="false">1 · The echo</button>
+    <button role="tab" data-tab="p2" aria-selected="false">2 · Hard and soft</button>
+    <button role="tab" data-tab="p3" aria-selected="false">3 · The wiggle</button>
+    <button role="tab" data-tab="p4" aria-selected="false">4 · Many ears</button>
+    <button role="tab" data-tab="p5" aria-selected="false">5 · The claim</button>
+    <button role="tab" data-tab="pw" aria-selected="false">Why it matters</button>
+    <span class="gap"></span>
+    <button role="tab" data-tab="pe" aria-selected="false">Exercises</button>
+    <button role="tab" data-tab="pk" aria-selected="false">Key points</button>
+    <button role="tab" data-tab="pm" aria-selected="false">Method</button>
+  </nav>
+
+  <!-- =============================== STEP 1 =============================== -->
+  <section class="tabpane" id="p1" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">1</span>Seismic is an echo</h3>
+      <span class="hint">Shout at the ground, listen for what comes back</span>
+    </div>
+    <p class="lede">A seismic survey is a very careful echo experiment. Someone makes a loud, sharp sound
+      at the surface — an air gun at sea, a vibrating truck on land. The sound travels down through the
+      rock. Wherever it crosses from one kind of rock into a different kind, <b>a little of it bounces
+      back up</b>, and a microphone at the surface records what returns.</p>
+    <p class="lede">Two things get recorded for each echo. <b>When</b> it came back, which tells you how
+      deep the boundary is. And <b>how loud</b> it was, which tells you something about the two rocks
+      meeting at that boundary. This whole site is about that second number, and about how much it really
+      tells you.</p>
+    <p class="lede">The picture on the left is the simplest possible version: one layer of rock buried in
+      another. There are two boundaries — the top of the buried layer and its base — so the echo comes
+      back twice. The recording of those echoes, drawn as a wiggly line down the page, is called a
+      <b>trace</b>.</p>
+    <p class="lede">Notice that the trace is drawn with time running <em>downward</em>. That is a
+      convention you will meet everywhere in seismic: deeper things arrive later, and later is further
+      down the page. It takes a little getting used to and then becomes invisible.</p>
+
+    <div class="sec-row" id="row1">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Sound goes down, echoes come back
+          <span class="note">one bounce per boundary</span></p>
+        <canvas id="c1echo" aria-label="A cartoon of a seismic source at the surface, sound travelling down, and echoes returning from the top and base of a buried layer"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> What the microphone records
+          <span class="note">time runs downward</span></p>
+        <canvas id="c1trace" aria-label="The recorded trace, with the two echoes marked"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Boundaries in this model</span><b id="s1a">—</b></div>
+      <div class="stat"><span>Echoes on the trace</span><b id="s1b">—</b></div>
+      <div class="stat"><span>Time to the top of the layer</span><b id="s1c">—</b></div>
+      <div class="stat key"><span>Time between the two echoes</span><b id="s1d">—</b></div>
+      <div class="stat"><span>How thick that makes the layer</span><b id="s1e">—</b></div>
+      <div class="stat wide"><span>What the timing alone tells you</span><b id="s1f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>Drag the <b>thickness</b> slider and watch the two echoes move apart. Timing is the easy part
+        of seismic and it works very well. The rest of this site is about the hard part, which is the
+        loudness.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 2 =============================== -->
+  <section class="tabpane" id="p2" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">2</span>Hard rock, soft rock</h3>
+      <span class="hint">What decides how loud the echo is</span>
+    </div>
+    <p class="lede">Why does any sound bounce back at all? Because the two rocks are <em>different</em>,
+      and the sound notices the difference.</p>
+    <p class="lede">What it notices is a combination of two things: <b>how fast sound travels in the rock</b>
+      and <b>how heavy the rock is</b>. Multiply those two together and you get a single number that
+      geophysicists call the <b>acoustic impedance</b>, usually just "impedance". You can think of it as
+      how <em>stiff and heavy</em> the rock feels to a passing sound wave. A dense, fast limestone has a
+      high impedance. A light, slow, gas-filled sand has a low one.</p>
+    <p class="lede">Here is the rule, and it is the only rule in this module: <b>the echo is loud when the
+      two impedances are very different, and silent when they are the same.</b> Not when the impedance is
+      high. When it <em>changes</em>. Two identical rocks stacked on each other produce no echo at all,
+      however remarkable each of them is.</p>
+    <p class="lede">There is one more thing the echo carries, which is its <b>polarity</b> — whether the
+      wiggle kicks left or right. Going from a soft rock into a hard one gives one direction; hard into
+      soft gives the other. Drag the sliders until the buried layer is softer than the rock above and watch
+      the whole wiggle flip over.</p>
+
+    <div class="sec-row" id="row2">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Speed times weight is impedance
+          <span class="note">both rocks, side by side</span></p>
+        <canvas id="c2imp" aria-label="A bar chart of speed, weight and impedance for the upper rock and the buried layer"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> How the echo loudness follows the difference
+          <span class="note">your two rocks are marked</span></p>
+        <canvas id="c2echo" aria-label="Echo strength plotted against the difference in impedance between the two rocks"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Impedance of the rock above</span><b id="s2a">—</b></div>
+      <div class="stat"><span>Impedance of the buried layer</span><b id="s2b">—</b></div>
+      <div class="stat key"><span>How big the jump is</span><b id="s2c">—</b></div>
+      <div class="stat"><span>Echo strength</span><b id="s2d">—</b></div>
+      <div class="stat"><span>Which way the wiggle kicks</span><b id="s2e">—</b></div>
+      <div class="stat wide"><span>In plain words</span><b id="s2f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>That echo strength has a proper name, the <b>reflection coefficient</b>, and it is written as a
+        fraction: 0.1 means a tenth of the sound came back. It runs from about −0.3 to +0.3 for ordinary
+        rocks, and the minus sign just means the wiggle kicks the other way. Every other module on this
+        site calls it R.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 3 =============================== -->
+  <section class="tabpane" id="p3" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">3</span>Why it is a wiggle and not a spike</h3>
+      <span class="hint">The sound you sent down has a shape</span>
+    </div>
+    <p class="lede">If the source made a perfect, instantaneous click, each echo would come back as a
+      single sharp spike and seismic would be a much easier subject. Real sources cannot do that. What goes
+      down is a short pulse with a shape to it — a little up-down-up wobble lasting a few hundredths of a
+      second. That shape is called the <b>wavelet</b>.</p>
+    <p class="lede">Every echo comes back wearing that shape. So the trace is not a set of spikes, it is
+      one copy of the wavelet per boundary, added together. That is all the word <b>convolution</b> means
+      when you meet it later: put a copy of the wavelet at each echo and add them up.</p>
+    <p class="lede">Now the important consequence. The wavelet has a width. If two boundaries are closer
+      together in time than that width, <b>their two wavelets overlap and merge into one event</b>, and you
+      can no longer see them separately. Take the thickness slider down and watch it happen: two clean
+      wiggles become one fat wiggle, and then the layer stops being resolvable at all.</p>
+    <p class="lede">The <b>sharp pulse</b> slider changes the wavelet's width. A sharper pulse — higher
+      frequency — separates thinner layers. Notice what this means: change nothing about the rocks, change
+      only the sound you sent down, and the picture changes. The trace is a picture of the earth taken with
+      a particular instrument, not the earth itself.</p>
+
+    <div class="sec-row" id="row3">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The pulse you sent down
+          <span class="note">this shape comes back on every echo</span></p>
+        <canvas id="c3wav" aria-label="The seismic wavelet, the shape of the pulse sent into the ground"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Two echoes, one for each boundary
+          <span class="note">and what happens when they meet</span></p>
+        <canvas id="c3merge" aria-label="The two echoes drawn separately and added together, showing them merging as the layer thins"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Width of the pulse</span><b id="s3a">—</b></div>
+      <div class="stat"><span>Time between the two echoes</span><b id="s3b">—</b></div>
+      <div class="stat key"><span>Can you see them separately</span><b id="s3c">—</b></div>
+      <div class="stat"><span>Thinnest layer you could resolve</span><b id="s3d">—</b></div>
+      <div class="stat"><span>Loudness you would measure</span><b id="s3e">—</b></div>
+      <div class="stat wide"><span>Compared with the true echo strength</span><b id="s3f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>When the two echoes merge, the loudness you measure is not either echo on its own — it is the
+        two of them adding. That is why a thin layer can look brighter than a thick one, and it is one of
+        the standing traps in interpretation. Module 02 takes it apart properly.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 4 =============================== -->
+  <section class="tabpane" id="p4" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">4</span>Not one microphone, but hundreds</h3>
+      <span class="hint">Where the word "offset" comes from</span>
+    </div>
+    <p class="lede">So far there has been one source and one microphone in the same place, and the sound
+      has gone straight down and straight back. A real survey does not work like that. There is one source
+      and a long line of microphones stretching away from it, sometimes for several kilometres.</p>
+    <p class="lede">The distance from the source to a given microphone is called the <b>offset</b>. A
+      microphone right next to the source is a <em>near offset</em>; one at the far end of the line is a
+      <em>far offset</em>. Sound reaching a far microphone did not travel straight down — it went down at a
+      slant, bounced off the boundary at an angle, and came back up at a slant.</p>
+    <p class="lede">Every microphone records its own trace, and if you gather together all the traces that
+      bounced off the same spot on the boundary you get a <b>gather</b>: a set of traces of the same piece
+      of geology, seen from increasingly slanted angles. That word — gather — is one of the most-used in
+      the whole subject, and it just means that collection.</p>
+    <p class="lede">Usually all those traces get averaged together into one, which is called
+      <b>stacking</b>, and the result is the seismic image everybody looks at. Stacking makes a much
+      cleaner picture. It also throws away the thing this entire site is about, because the echo is
+      <em>not the same loudness on every trace in the gather</em>, and that variation carries
+      information.</p>
+
+    <div class="sec-row" id="row4">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> One source, many microphones
+          <span class="note">the far ones see a slanted bounce</span></p>
+        <canvas id="c4survey" aria-label="A cartoon of one source and a line of receivers, with rays bouncing off the boundary at increasing angles"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> The gather
+          <span class="note">near offsets left, far offsets right</span></p>
+        <canvas id="c4gath" aria-label="A gather: one trace per offset, with the echo strength varying across it"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Traces in this gather</span><b id="s4a">—</b></div>
+      <div class="stat"><span>Echo strength on the nearest trace</span><b id="s4b">—</b></div>
+      <div class="stat key"><span>Echo strength on the farthest</span><b id="s4c">—</b></div>
+      <div class="stat"><span>Change across the gather</span><b id="s4d">—</b></div>
+      <div class="stat"><span>What stacking would give you</span><b id="s4e">—</b></div>
+      <div class="stat wide"><span>What stacking would throw away</span><b id="s4f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The traces here have already had their arrival times lined up, so the echoes sit at the same
+        depth on every trace. Real gathers arrive with the far traces later, because the slanted path is
+        longer, and straightening that out is one of the first jobs in processing.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 5 =============================== -->
+  <section class="tabpane" id="p5" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">5</span>What AVO claims to do</h3>
+      <span class="hint">The promise, stated the way it is usually taught</span>
+    </div>
+    <p class="lede">Now the whole idea can be stated in one paragraph. <b>Amplitude versus offset</b> — AVO
+      — is the observation that the loudness of an echo changes as you move out across the gather, and the
+      claim that <b>how it changes tells you what is in the rock's pore space</b>.</p>
+    <p class="lede">The reasoning goes like this. Gas is very light and very compressible. Put gas into a
+      porous sand and the rock gets lighter and much easier to squeeze, so its impedance drops a long way
+      and the echo gets loud — a <b>bright spot</b>. But gas does something else too: it changes how the
+      rock responds to being <em>twisted</em> as well as squeezed, and a slanted bounce twists the rock
+      where a straight-down bounce does not. So a gas-filled rock does not just give a loud echo, it gives
+      an echo whose loudness changes with offset in a particular way.</p>
+    <p class="lede">That is the promise, and it is worth stating in its confident form because it is what
+      you will hear: <em>brine sands and gas sands behave differently across a gather, so AVO can tell you
+      which one you are looking at</em>. It is a real effect, it is used every day, and it has found a
+      great deal of oil and gas.</p>
+    <p class="lede">The panel on the right shows it working. Same rock frame, same depth, same everything —
+      one filled with brine, one filled with gas. The gathers do not look alike.</p>
+    <p class="lede"><b>And that is where the other six modules start.</b> Each of them takes one link in
+      this argument and asks how much weight it will bear. Not to knock the method down: to find out which
+      of its answers you can rely on and which you cannot. If everything above made sense, you are ready
+      for module 01.</p>
+
+    <div class="sec-row" id="row5">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The same sand, twice
+          <span class="note">brine on the left, gas on the right</span></p>
+        <canvas id="c5pair" aria-label="Gathers for the same sand filled with brine and with gas, showing different behaviour with offset"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Where each module goes next
+          <span class="note">the question each one asks</span></p>
+        <canvas id="c5map" aria-label="A summary of the six following modules and the question each one asks"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Brine sand, near trace</span><b id="s5a">—</b></div>
+      <div class="stat"><span>Brine sand, far trace</span><b id="s5b">—</b></div>
+      <div class="stat key"><span>Gas sand, near trace</span><b id="s5c">—</b></div>
+      <div class="stat key"><span>Gas sand, far trace</span><b id="s5d">—</b></div>
+      <div class="stat"><span>Difference on the near traces</span><b id="s5e">—</b></div>
+      <div class="stat wide"><span>The claim, in one sentence</span><b id="s5f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>Everything in this module is true and everything in it is a simplification. That is fine —
+        it is how anyone learns a subject. The difference between this page and a textbook is that the
+        rest of this site comes back and tells you exactly which simplifications were made and what each
+        one costs.</span>
+    </div>
+  </section>
+
+  <!-- ============================ WHY IT MATTERS =========================== -->
+  <section class="tabpane" id="pw" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">W</span>Why it matters</h3>
+      <span class="hint">What this is used for, in one page</span>
+    </div>
+    <p class="lede">Seismic data is how anyone knows anything about rock that nobody has drilled. A well
+      tells you everything about one spot a few inches across. Seismic tells you a little about everywhere,
+      and the whole discipline is the business of turning that little into enough.</p>
+    <ul class="lede" style="padding-left:20px">
+      <li><b>Finding things worth drilling.</b> A well costs a great deal. Anything that improves the odds
+        before spudding is worth a lot, and amplitude is one of the few clues about pore fluid that can be
+        had without drilling.</li>
+      <li><b>Deciding where to put a well in a field already found.</b> Amplitudes map out laterally, so
+        they show where a reservoir thickens, thins or changes.</li>
+      <li><b>Monitoring a producing field.</b> Shoot the same survey again years later. Where the fluid has
+        moved, the amplitudes have changed, and you can see the effect of production.</li>
+      <li><b>Anything that needs the subsurface.</b> Carbon storage, geothermal, groundwater and
+        engineering all use the same physics. The word "reservoir" here is a habit of the oil industry, not
+        a limit on the method.</li>
+    </ul>
+
+    <p class="lede">There is one thing worth being clear about before you go further, because it shapes
+      everything else. <b>You are never measuring the rock.</b> You are measuring an echo that a rock
+      produced, through an instrument with its own character, with other rocks around it, and with noise on
+      top. Several different rocks can produce the same echo, and no amount of care with the recording
+      changes that.</p>
+    <p class="lede">That is not a flaw in seismic. It is what seismic is. The skill in interpretation lies
+      in knowing which questions the echo can settle and which it cannot, and the six modules after this
+      one are an attempt to make that concrete rather than a matter of experience.</p>
+
+    <div class="legend prose">
+      <span>If you take one thing from this module, take the rule from step 2: an echo tells you that two
+        rocks are <em>different</em>, not what either of them is. Almost every mistake in amplitude
+        interpretation is a version of forgetting that.</span>
+    </div>
+  </section>
+
+  <!-- ============================== EXERCISES ============================= -->
+  <section class="tabpane" id="pe" role="tabpanel" hidden>
+    <div class="tryit" style="max-width:none">
+      <h3>Exercises</h3>
+      <ol>
+        <li><b>Make the echo disappear.</b> Adjust the buried layer's speed and weight until the trace goes
+          flat. How many different ways can you find to do it?
+          <details class="reveal"><summary>Hint</summary><span class="ans">There are many, and that is the
+            point. The echo vanishes whenever the two impedances match — whenever speed times weight is the
+            same for both rocks. A fast light layer and a slow heavy one can both do it. So a flat trace
+            does not mean there is nothing there; it means there is nothing <em>different</em> there. A
+            reservoir with the same impedance as its cap rock is completely invisible to seismic, and they
+            exist.</span></details></li>
+
+        <li><b>Flip the polarity.</b> Start with the buried layer harder than the rock above, then make it
+          softer, and watch the wiggle.
+          <details class="reveal"><summary>Hint</summary><span class="ans">The whole wiggle turns over.
+            Going from soft into hard gives one direction, hard into soft gives the other, and the base of
+            the layer always does the opposite of the top because you are crossing the same boundary the
+            other way. This is why interpreters care so much about which way is "peak" and which is
+            "trough" in a given dataset — get the convention backwards and every soft rock looks hard.</span></details></li>
+
+        <li><b>Lose a layer by thinning it.</b> Set the pulse to 30 Hz and take the thickness down from
+          80 m, watching the two echoes.
+          <details class="reveal"><summary>Hint</summary><span class="ans">Somewhere around 25 to 30 m the
+            two echoes stop being separable and merge into one event. Below that you cannot measure the
+            layer's thickness from the trace at all — and worse, the merged event is often <em>louder</em>
+            than either echo alone, so a thin layer can look like a stronger reflector than a thick one.
+            Now raise the pulse frequency and watch the two echoes separate again. Nothing about the rock
+            changed.</span></details></li>
+
+        <li><b>Watch the gather fan out.</b> In step 4, set a large difference between the two rocks and
+          look along the gather from left to right.
+          <details class="reveal"><summary>Hint</summary><span class="ans">The echo is not the same
+            loudness on every trace. That variation is the entire subject of AVO, and stacking — averaging
+            the gather into a single trace — deliberately throws it away in exchange for a cleaner picture.
+            Both things are true: the stack is the better image, and the gather has more information in
+            it.</span></details></li>
+
+        <li><b>See the claim work.</b> In step 5, compare the brine and gas gathers on the near traces and
+          then on the far traces.
+          <details class="reveal"><summary>Hint</summary><span class="ans">They differ on the near traces
+            because gas lowers the impedance, and they differ <em>more</em> on the far traces because gas
+            also changes how the rock responds to a slanted bounce. That widening gap is the AVO signal.
+            Everything after this module is about how big that gap really is, what else could produce it,
+            and how confidently you could measure it on data that has noise in it.</span></details></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================== KEY POINTS ============================ -->
+  <section class="tabpane" id="pk" role="tabpanel" hidden>
+    <div class="takeaway" style="max-width:none">
+      <h3>Key points</h3>
+      <ul>
+        <li><b>Seismic is an echo experiment.</b> A sharp sound goes down, a little bounces back from every
+          boundary between different rocks, and a microphone records when it returned and how loud it
+          was.</li>
+        <li><b>Impedance is speed times weight.</b> It is how stiff and heavy a rock feels to a passing
+          sound wave, and it is the only rock property a straight-down echo responds to.</li>
+        <li><b>An echo measures a difference, not a thing.</b> Loud means the two rocks are very unlike
+          each other. Two identical rocks give no echo, and two matching impedances make a real boundary
+          invisible.</li>
+        <li><b>The trace is a wiggle because the pulse is.</b> Every echo comes back wearing the shape of
+          the sound you sent down, so two boundaries closer than that shape is wide merge into one event
+          you cannot separate.</li>
+        <li><b>A gather is the same spot seen from many angles.</b> Offset is the distance from the source
+          to the microphone; far offsets bounce at a slant. Stacking averages them for a cleaner picture
+          and throws the variation away.</li>
+        <li><b>AVO is the claim that the variation across the gather tells you about the pore fluid.</b>
+          It is a real effect and it works. How far it can be trusted is what the other six modules are
+          for.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================ METHOD ============================== -->
+  <section class="tabpane" id="pm" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">M</span>Method, simplifications and references</h3>
+      <span class="hint">What is computed, and what has been left out on purpose</span>
+    </div>
+
+    <p class="lede"><b>Everything on this page is computed</b>, from the same code the other six modules
+      use: exact reflection coefficients, a real Ricker wavelet, and traces built by convolution. Nothing
+      is a drawing of what the answer ought to look like.</p>
+
+    <p class="lede"><b>This module simplifies deliberately, and it is worth saying where.</b> You set the
+      buried layer's speed and weight directly here. In the real world you cannot: those come out of the
+      rock's mineral grains, its pore space and its pore fluid, and working out how is a subject of its
+      own. Module 01 does exactly that and hands you back the same two numbers you are setting by hand
+      here.</p>
+    <p class="lede">The step 5 comparison is the one place that shortcut is dropped: those two gathers come
+      from the full rock physics, with a real sand at 30% porosity filled first with brine and then with
+      gas, because the whole point of the panel is that a fluid change produces both effects at once.</p>
+
+    <p class="lede"><b>Other things left out on purpose:</b></p>
+    <ul class="lede" style="padding-left:20px">
+      <li><b>No noise.</b> Every trace here is perfectly clean, which no real trace is. Module 05 is
+        entirely about what noise does.</li>
+      <li><b>Only two layers.</b> Real sections have a boundary every few metres, and their echoes overlap
+        with each other constantly.</li>
+      <li><b>The gather is already flattened</b>, and the angles are computed with straight rays for
+        simplicity. Module 03 shows that straight rays under-read the true angle by more than ten degrees
+        at long offset, which matters a great deal later and not at all here.</li>
+      <li><b>No mode conversion, no multiples, no absorption, no anisotropy</b>, and the echo strength is
+        the plane-wave value rather than anything a real recording system would deliver.</li>
+    </ul>
+
+    <p class="lede">If you want the terms in one place: <b>impedance</b> is speed times density;
+      <b>reflection coefficient</b> is the fractional strength of an echo, written R; the <b>wavelet</b> is
+      the shape of the pulse; <b>convolution</b> is putting a copy of the wavelet at every echo and adding
+      them; <b>offset</b> is source-to-microphone distance; a <b>gather</b> is the traces from one spot at
+      many offsets; <b>stacking</b> is averaging a gather into one trace; <b>tuning</b> is what happens
+      when two echoes merge; and <b>AVO</b> is the study of how echo strength changes across a gather.</p>
+
+    <details class="reveal" style="margin-top:8px">
+      <summary>References</summary>
+      <ul style="padding-left:18px;margin-top:8px">
+        <li>Simm, R., and Bacon, M., 2014, <em>Seismic Amplitude: An Interpreter's Handbook</em>:
+          Cambridge University Press. — the best first book on this subject.</li>
+        <li>Sheriff, R. E., and Geldart, L. P., 1995, <em>Exploration Seismology</em>, 2nd ed.: Cambridge
+          University Press.</li>
+        <li>Herron, D. A., 2011, <em>First Steps in Seismic Interpretation</em>: SEG.</li>
+        <li>Brown, A. R., 2011, <em>Interpretation of Three-Dimensional Seismic Data</em>, 7th ed.:
+          AAPG/SEG.</li>
+        <li>Avseth, P., Mukerji, T., and Mavko, G., 2005, <em>Quantitative Seismic Interpretation</em>:
+          Cambridge University Press. — where to go after these modules.</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="nextup" id="nextup" hidden>
+    <p class="eyebrow">Next up</p>
+    <h3>01 · Build a rock, make a trace</h3>
+    <p>You set the buried layer's speed and weight by hand here. Module 01 takes that away and makes you
+      build the rock instead — grains, pore space and pore fluid — then follows it all the way to the same
+      trace.</p>
+    <a class="btn" href="rock-to-trace.html">Go to module 01 →</a>
+    <a class="btn ghost" href="../index.html">All modules</a>
+  </section>
+
+  <div class="pager" id="pager" hidden>
+    <a class="btn ghost" href="../index.html">← All modules</a>
+    <a class="btn ghost" href="rock-to-trace.html">Module 01: build a rock, make a trace →</a>
+  </div>
+
+  <footer>
+    <div class="foot-grid">
+      <p>Built for teaching by Heather Bedle, School of Geosciences, University of Oklahoma, with the
+        <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a> consortium.</p>
+      <p class="lic">Free to use for teaching, demonstration, and non-commercial study, provided the source
+        is credited. Please do not republish or redistribute it, modified or otherwise, without permission.
+        If you use it in a course or a talk, a credit line and a link back are all that is asked.</p>
+      <p class="lic">Nothing you do in this module leaves your browser. The only thing recorded is that
+        the page was opened, so that I can show the university these are being used — no cookie, no
+        account, nothing about you.</p>
+      <p class="lic">To cite: H. Bedle, <i>How AVO Actually Works</i>, University of
+        Oklahoma. <span class="k">SSRN: [article link to follow]</span></p>
+    </div>
+  </footer>
+</div>
+
+<script src="../assets/count.js"></script>
+<script src="../assets/seismic.js"></script>
+<script src="../assets/rockphysics.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const missing = [];
+  if (typeof SEIS === 'undefined') missing.push('assets/seismic.js');
+  if (typeof ROCK === 'undefined') missing.push('assets/rockphysics.js');
+  if (missing.length) {
+    const el = document.createElement('div');
+    el.setAttribute('style', 'background:#841617;color:#fff;padding:14px 18px;margin:16px 0;' +
+      'font:13px/1.6 ui-monospace,Menlo,monospace');
+    el.textContent = 'This module could not load ' + missing.join(' and ') +
+      '. It expects them one directory up, at ../assets/, and file names are ' +
+      'case-sensitive on GitHub Pages.';
+    const w = document.querySelector('.wrap');
+    (w || document.body).insertBefore(el, w ? w.firstChild : null);
+    return;
+  }
+
+  const $ = (id) => document.getElementById(id);
+  const visible = (id) => { const el = $(id); return el && !el.hidden; };
+  const CRIM = '#841617', TEAL = '#0B7285', SLATE = '#5C6670', INK = '#16191C';
+  const OLIVE = '#6B7A2E', ORANGE = '#B5451B';
+  const DEG = Math.PI / 180;
+
+  // rho sliders carry hundredths of g/cm3, so the control can step in 0.01
+  const DEF = { vp: 3200, rho: 235, thk: 40, vp1: 2700, rho1: 225, fr: 30, tab: 'p1' };
+  const S = SEIS.readState(DEF);
+  (function sanitize() {
+    const num = (k, lo, hi, step) => {
+      let v = Number(S[k]);
+      if (!isFinite(v)) v = DEF[k];
+      v = Math.min(hi, Math.max(lo, v));
+      S[k] = step ? Math.round(v / step) * step : v;
+    };
+    num('vp', 1800, 4500, 50); num('rho', 180, 270, 1); num('thk', 5, 80, 1);
+    num('vp1', 1800, 4000, 50); num('rho1', 180, 270, 1); num('fr', 15, 50, 1);
+  })();
+  const saveState = () => SEIS.writeState(S, DEF);
+
+  const DEPTH = 2000, VVOID = 2500;
+  const TR0 = 0.85, DT = 0.001, NT = 300;
+  const AMP = 0.34;
+  const NTRACE = 14, ANGMAX = 36;
+
+  /* =====================================================================
+     THE MODEL
+     ===================================================================== */
+
+  let D = {};
+  function recompute() {
+    const rho1 = S.rho1 / 100, rho2 = S.rho / 100;
+    D.up = { vp: S.vp1, vs: S.vp1 / 1.9, rho: rho1, ip: S.vp1 * rho1 };
+    D.lo = { vp: S.vp, vs: S.vp / 1.9, rho: rho2, ip: S.vp * rho2 };
+    D.rTop = (D.lo.ip - D.up.ip) / (D.lo.ip + D.up.ip);
+    D.rBase = -D.rTop;
+    D.tTop = 1.000;
+    D.dt = 2 * S.thk / S.vp;
+    D.wav = SEIS.makeWavelet({ type: 'ricker', f: S.fr });
+    D.trace = SEIS.traceFromSpikes(
+      [{ t: D.tTop, r: D.rTop }, { t: D.tTop + D.dt, r: D.rBase }], TR0, DT, NT, D.wav);
+    // the wavelet's own peak-to-trough separation sets what can be resolved
+    D.sep = Math.sqrt(6) / (2 * Math.PI * S.fr);
+    D.resolvable = D.dt > D.sep;
+    D.thinnest = D.sep * S.vp / 2;
+    // what you would actually measure off the merged event
+    let best = 0;
+    const c = Math.round((D.tTop - TR0) / DT);
+    const half = Math.max(4, Math.round(0.8 / S.fr / DT));
+    for (let i = Math.max(0, c - half); i <= Math.min(NT - 1, c + half); i++) {
+      if (D.rTop >= 0 ? D.trace[i] > best : D.trace[i] < best) best = D.trace[i];
+    }
+    D.measured = best;
+    // step 5 uses the real rock physics rather than hand-set numbers
+    D.brine = ROCK.rockModel({ vClay: 0, phi: 0.30, fluid: 'brine', sHc: 0, P: 23, T: 64 });
+    D.gas = ROCK.rockModel({ vClay: 0, phi: 0.30, fluid: 'gas', sHc: 1, P: 23, T: 64 });
+    D.shale = ROCK.mudrock(2700);
+  }
+
+  const angleAt = (i, n) => (i / (n - 1)) * ANGMAX;
+
+  /* =====================================================================
+     DRAWING
+     ===================================================================== */
+
+  const M = { l: 60, r: 16, t: 14, b: 36 };
+
+  function pw(el) {
+    const par = el && el.parentElement;
+    if (!par) return 900;
+    const cs = (typeof window.getComputedStyle === 'function')
+      ? window.getComputedStyle(par) : { paddingLeft: '0', paddingRight: '0' };
+    const inner = par.clientWidth
+      - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    return Math.max(200, Math.floor(inner || 900));
+  }
+  function rowWidth(rowId, n) {
+    const row = $(rowId);
+    const total = row ? pw(row.firstElementChild || row) : 800;
+    const narrow = (window.innerWidth || 1200) <= 700;
+    const w = narrow ? Math.max(240, total)
+                     : Math.max(150, Math.floor((total - 10 * (n - 1)) / n));
+    if (row) {
+      row.querySelectorAll(':scope > .panel-col').forEach((el) => {
+        el.style.width = w + 'px'; el.style.maxWidth = w + 'px';
+      });
+    }
+    return w;
+  }
+  const yOf = (t, R) => R.y + ((t - TR0) / ((NT - 1) * DT)) * R.h;
+
+  function wrapText(ctx, text, x, y, maxW, lh) {
+    const words = String(text).split(' ');
+    let line = '', yy = y;
+    for (const wd of words) {
+      const test = line ? line + ' ' + wd : wd;
+      if (ctx.measureText(test).width > maxW && line) {
+        ctx.fillText(line, x, yy); line = wd; yy += lh;
+      } else line = test;
+    }
+    if (line) ctx.fillText(line, x, yy);
+    return yy + lh;
+  }
+
+  const LEG_FONT = '11px "IBM Plex Sans", sans-serif';
+  function legendLines(ctx, items, maxW) {
+    ctx.save(); ctx.font = LEG_FONT;
+    let lines = 1, x = 0;
+    for (const [, t] of items) {
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > 0 && x + iw > maxW) { lines++; x = 0; }
+      x += iw;
+    }
+    ctx.restore();
+    return lines;
+  }
+  function legendRow(ctx, R, items) {
+    ctx.save();
+    ctx.font = LEG_FONT; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    let x = R.x, y = R.y + R.h + 46;
+    for (const [c, t, kind] of items) {
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > R.x && x + iw > R.x + R.w) { x = R.x; y += 16; }
+      if (kind === 'dot') {
+        ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x + 9, y, 4, 0, 7); ctx.fill();
+      } else {
+        ctx.strokeStyle = c; ctx.lineWidth = 2;
+        ctx.setLineDash(kind === 'dash' ? [5, 4] : []);
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 18, y); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      ctx.fillStyle = SLATE; ctx.fillText(t, x + 23, y);
+      x += iw;
+    }
+    ctx.restore();
+  }
+  function fitLegend(id, w, baseH, items) {
+    let ctx = SEIS.fitCanvas($(id), w, baseH);
+    const H = baseH + (legendLines(ctx, items, w - M.l - M.r) - 1) * 16;
+    ctx = SEIS.fitCanvas($(id), w, H);
+    ctx.clearRect(0, 0, w, H);
+    return { ctx, H, plotH: H - M.t - M.b - 40 - (H - baseH) };
+  }
+
+  function curve(ctx, R, xs, ys, xr, yr, color, width, dash) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    if (dash) ctx.setLineDash(dash);
+    ctx.strokeStyle = color; ctx.lineWidth = width || 2;
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < xs.length; i++) {
+      if (!isFinite(ys[i]) || !isFinite(xs[i])) { started = false; continue; }
+      const x = R.x + ((xs[i] - xr[0]) / (xr[1] - xr[0])) * R.w;
+      const y = R.y + R.h - ((ys[i] - yr[0]) / (yr[1] - yr[0])) * R.h;
+      started ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      started = true;
+    }
+    ctx.stroke(); ctx.restore();
+  }
+
+  function wiggle(ctx, R, tr, opts) {
+    const o = opts || {};
+    const x0 = R.x + R.w / 2;
+    const X = (a) => x0 + (a / AMP) * (R.w / 2) * 0.92;
+    ctx.save();
+    ctx.beginPath();
+    const B = o.bounds || R;
+    const lo = Math.max(B.x, R.x - R.w * 0.6), hi = Math.min(B.x + B.w, R.x + R.w * 1.6);
+    ctx.rect(lo, R.y, hi - lo, R.h); ctx.clip();
+    if (o.fill !== false) {
+      ctx.fillStyle = o.fillColor || 'rgba(22,25,28,0.75)';
+      ctx.beginPath(); ctx.moveTo(x0, R.y);
+      for (let i = 0; i < NT; i++) ctx.lineTo(Math.max(x0, X(tr[i])), yOf(TR0 + i * DT, R));
+      ctx.lineTo(x0, R.y + R.h); ctx.closePath(); ctx.fill();
+    }
+    ctx.strokeStyle = o.stroke || INK; ctx.lineWidth = o.lineWidth || 1.2;
+    if (o.dash) ctx.setLineDash(o.dash);
+    ctx.beginPath();
+    for (let i = 0; i < NT; i++) {
+      const x = X(tr[i]), y = yOf(TR0 + i * DT, R);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke(); ctx.restore();
+    if (o.zero !== false) {
+      SEIS.dashedLine(ctx, x0, R.y, x0, R.y + R.h, 'rgba(92,102,112,0.45)', [3, 3], 1);
+    }
+  }
+
+  /* SEIS.tag draws wherever you put it, so a long label near the right edge
+     runs off the canvas. This clamps the anchor so the tag stays inside R. */
+  function tagIn(ctx, R, x, y, text, color, align) {
+    ctx.save();
+    ctx.font = '11px "IBM Plex Sans", sans-serif';
+    const w = ctx.measureText(text).width + 12;
+    ctx.restore();
+    let ax = x, al = align || 'left';
+    if (al === 'left' && x + w > R.x + R.w - 2) {
+      if (x - w >= R.x + 2) { al = 'right'; } else { ax = R.x + R.w - 2; al = 'right'; }
+    } else if (al === 'right' && x - w < R.x + 2) {
+      ax = R.x + 2; al = 'left';
+    }
+    SEIS.tag(ctx, ax, y, text, color, al);
+  }
+
+  const timeAxis = (ctx, R) => SEIS.axisLeft(ctx, R, TR0, TR0 + (NT - 1) * DT,
+    'time, running downward (s)', (v) => v.toFixed(2), { ticks: 5, grid: true });
+
+  /* The two-layer earth, drawn to the same time axis as the trace so the
+     boundaries line up with the echoes they produce. */
+  function drawEarth(ctx, R, opts) {
+    const o = opts || {};
+    const yT = yOf(D.tTop, R), yB = yOf(D.tTop + D.dt, R);
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    const shade = (col) => { ctx.fillStyle = col; };
+    shade('#E4E0D6'); ctx.fillRect(R.x, R.y, R.w, yT - R.y);
+    // the buried layer, coloured by whether it is harder or softer than its cap
+    shade(D.rTop >= 0 ? 'rgba(11,114,133,0.22)' : 'rgba(181,69,27,0.22)');
+    ctx.fillRect(R.x, yT, R.w, Math.max(2, yB - yT));
+    shade('#E4E0D6'); ctx.fillRect(R.x, yB, R.w, R.y + R.h - yB);
+    ctx.strokeStyle = INK; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(R.x, yT); ctx.lineTo(R.x + R.w, yT); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(R.x, yB); ctx.lineTo(R.x + R.w, yB); ctx.stroke();
+    ctx.restore();
+    if (o.labels !== false) {
+      SEIS.tag(ctx, R.x + 5, R.y + 12, 'rock above', SLATE, 'left');
+      SEIS.tag(ctx, R.x + 5, (yT + yB) / 2 - 8, 'the buried layer',
+               D.rTop >= 0 ? TEAL : ORANGE, 'left');
+    }
+    SEIS.frame(ctx, R);
+    return { yT, yB };
+  }
+
+  /* =====================================================================
+     HEADER
+     ===================================================================== */
+
+  function drawHeader() {
+    const el = $('cHead');
+    const w = pw(el), h = 208;
+    const ctx = SEIS.fitCanvas(el, w, h);
+    ctx.clearRect(0, 0, w, h);
+    const LEFT = 46, gap = 26;
+    const half = Math.floor((w - LEFT - 14 - gap) / 2);
+    const R = { x: LEFT, y: 22, w: half, h: h - 22 - 26 };
+    drawEarth(ctx, R, { labels: false });
+    const R2 = { x: LEFT + half + gap, y: 22, w: w - (LEFT + half + gap) - 14, h: h - 22 - 26 };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R2.x, R2.y, R2.w, R2.h); ctx.restore();
+    wiggle(ctx, R2, D.trace);
+    SEIS.dashedLine(ctx, R2.x, yOf(D.tTop, R2), R2.x + R2.w, yOf(D.tTop, R2), CRIM, [4, 3], 1.2);
+    SEIS.dashedLine(ctx, R2.x, yOf(D.tTop + D.dt, R2), R2.x + R2.w,
+                    yOf(D.tTop + D.dt, R2), TEAL, [4, 3], 1.2);
+    SEIS.frame(ctx, R2);
+    ctx.save();
+    ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.fillText('the rocks', R.x + R.w / 2, 4);
+    ctx.fillText('the echoes', R2.x + R2.w / 2, 4);
+    ctx.restore();
+  }
+
+  /* =====================================================================
+     STEP 1
+     ===================================================================== */
+
+  function drawStep1() {
+    const w = rowWidth('row1', 2);
+    let ctx = SEIS.fitCanvas($('c1echo'), w, 340);
+    ctx.clearRect(0, 0, w, 340);
+    const R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 340 - M.t - M.b };
+    const g = drawEarth(ctx, R);
+    // source and receiver at the surface, and the two echo paths
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    const sx = R.x + R.w * 0.32, rx = R.x + R.w * 0.68;
+    ctx.strokeStyle = CRIM; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(sx, R.y + 4); ctx.lineTo((sx + rx) / 2, g.yT);
+    ctx.lineTo(rx, R.y + 4); ctx.stroke();
+    ctx.strokeStyle = TEAL; ctx.lineWidth = 2; ctx.setLineDash([5, 4]);
+    ctx.beginPath(); ctx.moveTo(sx, R.y + 4); ctx.lineTo((sx + rx) / 2, g.yB);
+    ctx.lineTo(rx, R.y + 4); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = INK;
+    ctx.beginPath(); ctx.arc(sx, R.y + 4, 5, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(rx, R.y + 4, 5, 0, 7); ctx.fill();
+    ctx.restore();
+    tagIn(ctx, R, sx - 26, R.y + 12, 'bang', INK, 'left');
+    tagIn(ctx, R, rx + 6, R.y + 12, 'listen', INK, 'left');
+    timeAxis(ctx, R);
+
+    ctx = SEIS.fitCanvas($('c1trace'), w, 340);
+    ctx.clearRect(0, 0, w, 340);
+    const R2 = { x: M.l, y: M.t, w: w - M.l - M.r, h: 340 - M.t - M.b };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R2.x, R2.y, R2.w, R2.h); ctx.restore();
+    wiggle(ctx, R2, D.trace);
+    SEIS.dashedLine(ctx, R2.x, yOf(D.tTop, R2), R2.x + R2.w, yOf(D.tTop, R2), CRIM, [4, 3], 1.4);
+    SEIS.dashedLine(ctx, R2.x, yOf(D.tTop + D.dt, R2), R2.x + R2.w,
+                    yOf(D.tTop + D.dt, R2), TEAL, [4, 3], 1.4);
+    SEIS.frame(ctx, R2);
+    tagIn(ctx, R2, R2.x + 4, yOf(D.tTop, R2) - 10, 'echo from the top', CRIM, 'left');
+    tagIn(ctx, R2, R2.x + 4, yOf(D.tTop + D.dt, R2) + 12, 'echo from the base', TEAL, 'left');
+    timeAxis(ctx, R2);
+    SEIS.axisBottom(ctx, R2, -AMP, AMP, 'how loud, and which way', (v) => v.toFixed(2), { ticks: 3 });
+
+    set('s1a', 'two \u2014 the top and the base');
+    set('s1b', 'two');
+    set('s1c', D.tTop.toFixed(3) + ' s');
+    set('s1d', (D.dt * 1000).toFixed(1) + ' ms');
+    set('s1e', S.thk + ' m, given the speed inside it');
+    set('s1f', 'how deep the boundaries are, and how far apart \u2014 nothing about the rock itself');
+  }
+
+  /* =====================================================================
+     STEP 2
+     ===================================================================== */
+
+  const IPMAX = 12000;
+
+  function drawStep2() {
+    const w = rowWidth('row2', 2);
+    let ctx = SEIS.fitCanvas($('c2imp'), w, 340);
+    ctx.clearRect(0, 0, w, 340);
+    const R = { x: 4, y: M.t, w: w - 8, h: 340 - M.t - 30 };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const rows = [
+      ['how fast', S.vp1 + ' m/s', S.vp + ' m/s', S.vp1 / 4500, S.vp / 4500],
+      ['how heavy', (S.rho1 / 100).toFixed(2), (S.rho / 100).toFixed(2), S.rho1 / 270, S.rho / 270],
+      ['impedance', Math.round(D.up.ip).toLocaleString(), Math.round(D.lo.ip).toLocaleString(),
+       D.up.ip / IPMAX, D.lo.ip / IPMAX],
+    ];
+    const rh = R.h / rows.length;
+    ctx.save();
+    rows.forEach(([label, a, b, fa, fb], i) => {
+      const y0 = R.y + i * rh;
+      if (i) SEIS.dashedLine(ctx, R.x + 6, y0, R.x + R.w - 6, y0, 'rgba(22,25,28,.16)', [2, 3], 1);
+      ctx.font = (i === 2 ? '600 12px' : '11.5px') + ' "IBM Plex Sans", sans-serif';
+      ctx.fillStyle = i === 2 ? INK : SLATE;
+      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      ctx.fillText(label, R.x + 10, y0 + 8);
+      const bx = R.x + 120, bw = R.w - 120 - 96;
+      [[fa, SLATE, a, 0], [fb, D.rTop >= 0 ? TEAL : ORANGE, b, 1]].forEach(([f, col, txt, k]) => {
+        const yy = y0 + 26 + k * 20;
+        ctx.fillStyle = col;
+        ctx.fillRect(bx, yy, Math.max(2, bw * Math.min(1, f)), 12);
+        ctx.font = '11px "IBM Plex Mono", monospace';
+        ctx.fillStyle = INK; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+        ctx.fillText(txt, bx + bw + 8, yy + 6);
+      });
+      ctx.font = '10px "IBM Plex Sans", sans-serif';
+      ctx.fillStyle = SLATE; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      ctx.fillText('above', bx - 6, y0 + 32);
+      ctx.fillText('buried', bx - 6, y0 + 52);
+      ctx.textAlign = 'left';
+    });
+    ctx.restore();
+    SEIS.frame(ctx, R);
+    ctx.save();
+    ctx.font = '10.5px "IBM Plex Sans", sans-serif';
+    ctx.fillStyle = SLATE; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    wrapText(ctx, 'Speed times weight gives impedance. Only the bottom row decides the echo.',
+      R.x, R.y + R.h + 8, R.w, 14);
+    ctx.restore();
+
+    // echo strength against the impedance of the buried layer
+    const items = [[CRIM, 'echo strength', 'line'], [SLATE, 'no echo at all', 'dash']];
+    const f = fitLegend('c2echo', w, 340, items);
+    ctx = f.ctx;
+    const R2 = { x: M.l, y: M.t, w: w - M.l - M.r, h: f.plotH };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R2.x, R2.y, R2.w, R2.h); ctx.restore();
+    const xr = [3000, IPMAX], yr = [-0.4, 0.4];
+    const xs = [], ys = [];
+    for (let ip = xr[0]; ip <= xr[1]; ip += 40) {
+      xs.push(ip); ys.push((ip - D.up.ip) / (ip + D.up.ip));
+    }
+    SEIS.dashedLine(ctx, R2.x, R2.y + R2.h * 0.5, R2.x + R2.w, R2.y + R2.h * 0.5,
+      'rgba(92,102,112,0.5)', [4, 3], 1);
+    const zx = R2.x + ((D.up.ip - xr[0]) / (xr[1] - xr[0])) * R2.w;
+    SEIS.dashedLine(ctx, zx, R2.y, zx, R2.y + R2.h, SLATE, [5, 4], 1.6);
+    curve(ctx, R2, xs, ys, xr, yr, CRIM, 2.6);
+    const mx = R2.x + ((D.lo.ip - xr[0]) / (xr[1] - xr[0])) * R2.w;
+    const my = R2.y + R2.h - ((D.rTop - yr[0]) / (yr[1] - yr[0])) * R2.h;
+    ctx.save();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 3.4;
+    ctx.beginPath(); ctx.arc(mx, my, 6, 0, 7); ctx.stroke();
+    ctx.strokeStyle = INK; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(mx, my, 6, 0, 7); ctx.stroke();
+    ctx.restore();
+    SEIS.frame(ctx, R2);
+    SEIS.axisBottom(ctx, R2, xr[0], xr[1], 'impedance of the buried layer',
+      (v) => (v / 1000).toFixed(0) + 'k', { ticks: 4 });
+    SEIS.axisLeft(ctx, R2, yr[0], yr[1], 'echo strength', (v) => v.toFixed(1),
+      { ticks: 5, flip: true });
+    legendRow(ctx, R2, items);
+
+    const dIp = D.lo.ip - D.up.ip;
+    set('s2a', Math.round(D.up.ip).toLocaleString());
+    set('s2b', Math.round(D.lo.ip).toLocaleString());
+    set('s2c', (dIp >= 0 ? '+' : '') + Math.round(dIp).toLocaleString());
+    set('s2d', (D.rTop >= 0 ? '+' : '') + D.rTop.toFixed(3));
+    set('s2e', Math.abs(D.rTop) < 0.005 ? 'neither \u2014 there is barely an echo'
+      : D.rTop > 0 ? 'one way (into a harder rock)' : 'the other way (into a softer rock)');
+    set('s2f', Math.abs(D.rTop) < 0.005
+      ? 'the two rocks have almost the same impedance, so almost nothing comes back'
+      : Math.abs(D.rTop) < 0.06
+        ? 'a quiet echo \u2014 the two rocks are not very different'
+        : 'a loud echo \u2014 the two rocks are very different');
+  }
+
+  /* =====================================================================
+     STEP 3
+     ===================================================================== */
+
+  function drawStep3() {
+    const w = rowWidth('row3', 2);
+    let ctx = SEIS.fitCanvas($('c3wav'), w, 340);
+    ctx.clearRect(0, 0, w, 340);
+    const R = { x: M.l, y: M.t + 10, w: w - M.l - M.r, h: 340 - M.t - M.b - 30 };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const half = 0.09, xr = [-half * 1000, half * 1000], yr = [-0.6, 1.05];
+    const wx = [], wy = [];
+    for (let t = -half; t <= half; t += 0.0005) { wx.push(t * 1000); wy.push(D.wav.fn(t)); }
+    SEIS.dashedLine(ctx, R.x, R.y + R.h - ((0 - yr[0]) / (yr[1] - yr[0])) * R.h,
+      R.x + R.w, R.y + R.h - ((0 - yr[0]) / (yr[1] - yr[0])) * R.h,
+      'rgba(92,102,112,0.5)', [4, 3], 1);
+    curve(ctx, R, wx, wy, xr, yr, CRIM, 2.6);
+    // the width that matters: peak to trough
+    const pxOf = (ms) => R.x + ((ms - xr[0]) / (xr[1] - xr[0])) * R.w;
+    const yTop = R.y + 14;
+    ctx.save();
+    ctx.strokeStyle = TEAL; ctx.lineWidth = 1.8;
+    ctx.beginPath(); ctx.moveTo(pxOf(0), yTop); ctx.lineTo(pxOf(D.sep * 1000), yTop); ctx.stroke();
+    [0, D.sep * 1000].forEach((m2) => {
+      ctx.beginPath(); ctx.moveTo(pxOf(m2), yTop - 5); ctx.lineTo(pxOf(m2), yTop + 5); ctx.stroke();
+    });
+    ctx.restore();
+    tagIn(ctx, R, pxOf(D.sep * 1000) + 6, yTop - 8,
+      'the width that matters', TEAL, 'left');
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, xr[0], xr[1], 'time (ms)', (v) => v.toFixed(0), { ticks: 5 });
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'the pulse', (v) => v.toFixed(1),
+      { ticks: 4, flip: true });
+
+    // the two echoes, separately and added
+    const items = [[CRIM, 'echo from the top', 'line'], [TEAL, 'echo from the base', 'dash'],
+                   [INK, 'what you record: the two added', 'line']];
+    const f = fitLegend('c3merge', w, 340, items);
+    ctx = f.ctx;
+    const R2 = { x: M.l, y: M.t, w: w - M.l - M.r, h: f.plotH };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R2.x, R2.y, R2.w, R2.h); ctx.restore();
+    const one = SEIS.traceFromSpikes([{ t: D.tTop, r: D.rTop }], TR0, DT, NT, D.wav);
+    const two = SEIS.traceFromSpikes([{ t: D.tTop + D.dt, r: D.rBase }], TR0, DT, NT, D.wav);
+    wiggle(ctx, R2, one, { fill: false, stroke: CRIM, lineWidth: 1.6 });
+    wiggle(ctx, R2, two, { fill: false, stroke: TEAL, lineWidth: 1.6, dash: [5, 4], zero: false });
+    wiggle(ctx, R2, D.trace, { fill: false, stroke: INK, lineWidth: 2.4, zero: false });
+    SEIS.frame(ctx, R2);
+    timeAxis(ctx, R2);
+    SEIS.axisBottom(ctx, R2, -AMP, AMP, 'how loud', (v) => v.toFixed(2), { ticks: 3 });
+    legendRow(ctx, R2, items);
+
+    set('s3a', (D.sep * 1000).toFixed(1) + ' ms across');
+    set('s3b', (D.dt * 1000).toFixed(1) + ' ms');
+    set('s3c', D.resolvable ? 'yes \u2014 two separate echoes'
+      : 'no \u2014 they have merged into one');
+    set('s3d', D.thinnest.toFixed(0) + ' m at this pulse and this speed');
+    set('s3e', (D.measured >= 0 ? '+' : '') + D.measured.toFixed(3));
+    const ratio = Math.abs(D.rTop) > 1e-6 ? Math.abs(D.measured / D.rTop) : NaN;
+    set('s3f', !isFinite(ratio) ? '\u2014'
+      : ratio > 1.08 ? ratio.toFixed(2) + '\u00d7 louder than the true echo, because the two are adding'
+      : ratio < 0.92 ? ratio.toFixed(2) + '\u00d7 the true echo \u2014 they are partly cancelling'
+      : 'about the same \u2014 the two echoes are far enough apart');
+  }
+
+  /* =====================================================================
+     STEP 4
+     ===================================================================== */
+
+  function gatherTrace(up, lo, angle) {
+    const rt = ROCK.zoeppritz(up, lo, angle);
+    const rb = ROCK.zoeppritz(lo, up, angle);
+    if (!isFinite(rt) || !isFinite(rb)) return null;
+    const dt = 2 * S.thk / lo.vp;
+    return SEIS.traceFromSpikes(
+      [{ t: D.tTop, r: rt }, { t: D.tTop + dt, r: rb }], TR0, DT, NT, D.wav);
+  }
+  function drawGather(ctx, R, up, lo, n) {
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const cw = R.w / n;
+    for (let i = 0; i < n; i++) {
+      const tr = gatherTrace(up, lo, angleAt(i, n));
+      if (!tr) continue;
+      wiggle(ctx, { x: R.x + i * cw, y: R.y, w: cw, h: R.h }, tr, { bounds: R, zero: false });
+    }
+    SEIS.dashedLine(ctx, R.x, yOf(D.tTop, R), R.x + R.w, yOf(D.tTop, R), CRIM, [4, 3], 1.2);
+    SEIS.frame(ctx, R);
+  }
+
+  function drawStep4() {
+    const w = rowWidth('row4', 2);
+    let ctx = SEIS.fitCanvas($('c4survey'), w, 340);
+    ctx.clearRect(0, 0, w, 340);
+    const R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 340 - M.t - M.b };
+    const g = drawEarth(ctx, R, { labels: false });
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    const sx = R.x + 14;
+    for (let i = 0; i < 6; i++) {
+      const rxp = sx + ((R.w - 28) * (i + 1) / 6);
+      const mid = (sx + rxp) / 2;
+      const col = i < 2 ? TEAL : i < 4 ? OLIVE : CRIM;
+      ctx.strokeStyle = col; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(sx, R.y + 6); ctx.lineTo(mid, g.yT);
+      ctx.lineTo(rxp, R.y + 6); ctx.stroke();
+      ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(rxp, R.y + 6, 3.6, 0, 7); ctx.fill();
+    }
+    ctx.fillStyle = INK;
+    ctx.beginPath(); ctx.arc(sx, R.y + 6, 5.5, 0, 7); ctx.fill();
+    ctx.restore();
+    tagIn(ctx, R, sx + 8, R.y + 14, 'source', INK, 'left');
+    tagIn(ctx, R, R.x + R.w - 4, R.y + 14, 'microphones', SLATE, 'right');
+    tagIn(ctx, R, R.x + 5, g.yT + 10, 'same spot, different slants', SLATE, 'left');
+    timeAxis(ctx, R);
+
+    ctx = SEIS.fitCanvas($('c4gath'), w, 340);
+    ctx.clearRect(0, 0, w, 340);
+    const R2 = { x: M.l, y: M.t, w: w - M.l - M.r, h: 340 - M.t - M.b };
+    drawGather(ctx, R2, D.up, D.lo, NTRACE);
+    timeAxis(ctx, R2);
+    SEIS.axisBottom(ctx, R2, 0, ANGMAX, 'slant of the bounce (degrees)',
+      (v) => v.toFixed(0), { ticks: 4 });
+    SEIS.tag(ctx, R2.x + 4, R2.y + 12, 'near', SLATE, 'left');
+    SEIS.tag(ctx, R2.x + R2.w - 4, R2.y + 12, 'far', SLATE, 'right');
+
+    const near = ROCK.zoeppritz(D.up, D.lo, 0);
+    const far = ROCK.zoeppritz(D.up, D.lo, ANGMAX);
+    set('s4a', String(NTRACE));
+    set('s4b', isFinite(near) ? (near >= 0 ? '+' : '') + near.toFixed(3) : '\u2014');
+    set('s4c', isFinite(far) ? (far >= 0 ? '+' : '') + far.toFixed(3) : '\u2014');
+    set('s4d', isFinite(near) && isFinite(far)
+      ? (far - near >= 0 ? '+' : '') + (far - near).toFixed(3) : '\u2014');
+    set('s4e', isFinite(near) && isFinite(far)
+      ? 'about ' + ((near + far) / 2).toFixed(3) + ' \u2014 one number, the average'
+      : '\u2014');
+    set('s4f', isFinite(near) && isFinite(far)
+      ? 'the change of ' + Math.abs(far - near).toFixed(3) + ' across the gather, which is the AVO signal'
+      : '\u2014');
+  }
+
+  /* =====================================================================
+     STEP 5
+     ===================================================================== */
+
+  const NEXTUP = [
+    ['01', 'Build a rock, make a trace', 'where do speed and weight come from?'],
+    ['02', 'Same bright spot, different rock', 'how many rocks fit one amplitude?'],
+    ['03', 'Add offset', 'why does the echo change across the gather?'],
+    ['04', 'Intercept, gradient, classes', 'how is that change summarized?'],
+    ['05', 'Reading a gather you did not make', 'how well can you measure it?'],
+    ['06', 'What survives', 'what can you honestly conclude?'],
+  ];
+
+  function drawStep5() {
+    const w = rowWidth('row5', 2);
+    let ctx = SEIS.fitCanvas($('c5pair'), w, 350);
+    ctx.clearRect(0, 0, w, 350);
+    const R = { x: M.l, y: M.t + 16, w: w - M.l - M.r, h: 350 - M.t - M.b - 30 };
+    const half = R.w / 2;
+    drawGather(ctx, { x: R.x, y: R.y, w: half - 4, h: R.h }, D.shale, D.brine, 9);
+    drawGather(ctx, { x: R.x + half + 4, y: R.y, w: half - 4, h: R.h }, D.shale, D.gas, 9);
+    tagIn(ctx, { x: R.x, y: R.y, w: half, h: R.h }, R.x + 4, R.y - 14,
+      'sand full of brine', TEAL, 'left');
+    tagIn(ctx, { x: R.x + half, y: R.y, w: half, h: R.h }, R.x + half + 8, R.y - 14,
+      'same sand, full of gas', CRIM, 'left');
+    timeAxis(ctx, R);
+    SEIS.axisBottom(ctx, R, 0, ANGMAX, 'slant of the bounce (degrees), both panels',
+      (v) => v.toFixed(0), { ticks: 4 });
+
+    ctx = SEIS.fitCanvas($('c5map'), w, 350);
+    ctx.clearRect(0, 0, w, 350);
+    const R2 = { x: 4, y: M.t, w: w - 8, h: 350 - M.t - 20 };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R2.x, R2.y, R2.w, R2.h); ctx.restore();
+    ctx.save();
+    ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = CRIM;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText('WHERE THIS GOES NEXT', R2.x + 10, R2.y + 8);
+    ctx.restore();
+    SEIS.dashedLine(ctx, R2.x + 8, R2.y + 26, R2.x + R2.w - 8, R2.y + 26,
+      'rgba(22,25,28,.28)', [3, 3], 1);
+    const rh = (R2.h - 34) / NEXTUP.length;
+    ctx.save();
+    NEXTUP.forEach(([no, title, q], i) => {
+      const y = R2.y + 34 + i * rh;
+      ctx.font = '600 12px "IBM Plex Mono", monospace';
+      ctx.fillStyle = CRIM; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      ctx.fillText(no, R2.x + 10, y + 2);
+      ctx.font = '600 11.5px "IBM Plex Sans", sans-serif';
+      ctx.fillStyle = INK;
+      ctx.fillText(title, R2.x + 36, y + 2);
+      ctx.font = '11px "IBM Plex Sans", sans-serif';
+      ctx.fillStyle = SLATE;
+      wrapText(ctx, q, R2.x + 36, y + 18, R2.w - 46, 13);
+    });
+    ctx.restore();
+    SEIS.frame(ctx, R2);
+
+    const bn = ROCK.zoeppritz(D.shale, D.brine, 0), bf = ROCK.zoeppritz(D.shale, D.brine, ANGMAX);
+    const gn = ROCK.zoeppritz(D.shale, D.gas, 0), gf = ROCK.zoeppritz(D.shale, D.gas, ANGMAX);
+    set('s5a', bn.toFixed(3));
+    set('s5b', bf.toFixed(3));
+    set('s5c', gn.toFixed(3));
+    set('s5d', gf.toFixed(3));
+    set('s5e', Math.abs(gn - bn).toFixed(3) + '  \u2014 and ' +
+      Math.abs(gf - bf).toFixed(3) + ' on the far traces');
+    set('s5f', 'the echo from a gas sand behaves differently across the gather than the echo ' +
+      'from the same sand full of brine');
+  }
+
+  /* =====================================================================
+     LABELS, TABS, EVENTS
+     ===================================================================== */
+
+  function set(id, v) { const el = $(id); if (el) el.textContent = v; }
+
+  function syncLabels() {
+    set('vpV', S.vp + ' m/s');
+    set('rhoV', (S.rho / 100).toFixed(2) + ' g/cm\u00b3');
+    set('thkV', S.thk + ' m');
+    set('vp1V', S.vp1 + ' m/s');
+    set('rho1V', (S.rho1 / 100).toFixed(2) + ' g/cm\u00b3');
+    set('frV', S.fr + ' Hz');
+    ['vp', 'rho', 'thk', 'vp1', 'rho1', 'fr'].forEach((k) => {
+      const el = $(k); if (el && String(el.value) !== String(S[k])) el.value = S[k];
+    });
+  }
+
+  function drawAll() {
+    syncLabels();
+    if (visible('p1') || visible('p2') || visible('p3') || visible('p4') || visible('p5')) {
+      drawHeader();
+    }
+    if (visible('p1')) drawStep1();
+    if (visible('p2')) drawStep2();
+    if (visible('p3')) drawStep3();
+    if (visible('p4')) drawStep4();
+    if (visible('p5')) drawStep5();
+  }
+
+  const PANES = ['p1', 'p2', 'p3', 'p4', 'p5', 'pw', 'pe', 'pk', 'pm'];
+  const STEPNAMES = {
+    p1: 'The echo', p2: 'Hard and soft', p3: 'The wiggle', p4: 'Many ears',
+    p5: 'The claim', pw: 'Why it matters', pe: 'Exercises', pk: 'Key points', pm: 'Method',
+  };
+
+  function buildStepNav() {
+    PANES.forEach((id, i) => {
+      const pane = $(id);
+      if (!pane || pane.querySelector('.stepnav')) return;
+      const prev = PANES[i - 1], next = PANES[i + 1];
+      const nav = document.createElement('div');
+      nav.className = 'stepnav';
+      const mk = (target, text, ghost) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn' + (ghost ? ' ghost' : '') + ' small';
+        b.textContent = text;
+        b.addEventListener('click', () => {
+          showTab(target);
+          const t = document.querySelector('.tabhint');
+          if (t && t.scrollIntoView) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        return b;
+      };
+      nav.appendChild(prev ? mk(prev, '\u2190 ' + STEPNAMES[prev], true)
+                           : document.createElement('span'));
+      const where = document.createElement('span');
+      where.className = 'where';
+      where.textContent = i < 5 ? 'step ' + (i + 1) + ' of 5' : STEPNAMES[id];
+      nav.appendChild(where);
+      nav.appendChild(next ? mk(next, STEPNAMES[next] + ' \u2192')
+                           : document.createElement('span'));
+      pane.appendChild(nav);
+    });
+  }
+
+  function showTab(id) {
+    PANES.forEach((q) => { const el = $(q); if (el) el.hidden = q !== id; });
+    document.querySelectorAll('#tabs button').forEach((b) => {
+      b.setAttribute('aria-selected', b.dataset.tab === id);
+    });
+    const lab = document.querySelector('.labhead');
+    if (lab) lab.hidden = (id === 'pw' || id === 'pe' || id === 'pk' || id === 'pm');
+    const last = (id === 'pk' || id === 'pm');
+    if ($('nextup')) $('nextup').hidden = !last;
+    if ($('pager')) $('pager').hidden = !last;
+    S.tab = id;
+    drawAll();
+    saveState();
+  }
+  document.querySelectorAll('#tabs button').forEach((b) => {
+    b.addEventListener('click', () => showTab(b.dataset.tab));
+  });
+
+  document.addEventListener('input', (ev) => {
+    const key = ev.target && ev.target.dataset && ev.target.dataset.key;
+    if (!key) return;
+    S[key] = parseFloat(ev.target.value);
+    recompute(); drawAll(); saveState();
+  });
+
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 140); });
+
+  recompute();
+  buildStepNav();
+  showTab(PANES.indexOf(S.tab) >= 0 ? S.tab : 'p1');
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+
+  window.__MOD = { S, get D() { return D; }, recompute, drawAll, showTab };
+})();
+</script>
+</body>
+</html>

@@ -34,17 +34,20 @@
    <div class="hero-grid">
     <div class="hero-copy">
       <p class="eyebrow">AASPI &nbsp;·&nbsp; University of Oklahoma</p>
-      <h1 class="title">A seismic amplitude is <em>evidence</em>, not an answer.</h1>
-      <p class="lede">Several things have to happen between a rock and a seismic amplitude. Grains and pores
-        set a stiffness. The fluid changes it. Stiffness and density are multiplied together into one
-        impedance. Two impedances are reduced to one contrast. A wavelet blurs the contrast in time, and
-        noise puts an error bar around what is left. <strong>Every one of those steps throws information
-        away</strong>, so working back from a bright spot to the rock does not have one answer.</p>
-      <p class="lede">These modules build that calculation in front of you, one step at a time, and then
-        go looking for the rocks that share an amplitude. Adding offset is what wins some of that information
-        back — not all of it. Nothing to install, and nothing leaves your machine.</p>
+      <h1 class="title">How a rock becomes a <em>seismic amplitude</em>.</h1>
+      <p class="lede">Grains and pore space set how stiff a rock is. The fluid in the pores changes that
+        stiffness, but not in every direction equally. Stiffness and density together set the velocities.
+        Two rocks meeting at a boundary set a reflection. And once the sound arrives at an angle rather
+        than straight down, that reflection stops being a single number and becomes a curve.</p>
+      <p class="lede">These modules build that chain one step at a time, with every panel computed from
+        the controls on screen. The later ones work the chain backwards, which is harder and does not
+        have one answer. Nothing to install, and nothing leaves your machine.</p>
+      <p class="lede prereq"><b>Start with the resolution modules.</b> This set assumes
+        <a href="https://hbedle-subsurface.github.io/seismic_resolution/">What Can You REALLY See in Seismic?</a>, where impedance, the reflection
+        coefficient, the wavelet and tuning are built from scratch. Module 00 here restates those results
+        and picks up where they stop.</p>
       <div class="hero-cta">
-        <a class="btn" href="modules/start-here.html">Start here — no equations →</a>
+        <a class="btn" href="modules/beyond-normal-incidence.html">Start at module 00 →</a>
         <a class="btn ghost" href="#modules">See all modules</a>
       </div>
     </div>
@@ -57,18 +60,22 @@
   <section class="primer">
    <div class="primer-grid">
     <div>
-      <h3>It only works in one direction</h3>
-      <p>A rock model predicts an amplitude exactly. An amplitude does not predict a rock at all, because
-        several rocks arrive at the same number and nothing downstream can separate them.</p>
+      <h3>Stiffness comes in two parts</h3>
+      <p>A rock resists being squeezed and resists being sheared, and those are separate properties. A
+        pore fluid changes the first and leaves the second almost alone, which is what makes a fluid
+        visible to seismic data at all.</p>
     </div>
     <div>
-      <h3>The rules are shortcuts</h3>
-      <p>Bright spot means gas. Class III means gas. Low impedance means hydrocarbons. Each is sometimes
-        true, and each has a set of counterexamples you can build here in about thirty seconds.</p>
+      <h3>Angle turns one number into a curve</h3>
+      <p>A wave arriving straight down only compresses the rock. One arriving at an angle also shears it,
+        so the reflection changes across a recording — and changes differently depending on what is in
+        the pores.</p>
     </div>
     <div>
-      <h3>AVO narrows, it does not solve</h3>
-      <p>Offset adds a second measurement, so some ties get broken. Others do not. Knowing which ties break and which do not is the part that takes judgment.</p>
+      <h3>Then the chain runs backwards</h3>
+      <p>Going from a rock to an amplitude is exact. Going the other way is not, because several rocks
+        arrive at the same number. The last modules measure how many, and how much the second
+        measurement removes.</p>
     </div>
    </div>
   </section>
@@ -77,39 +84,42 @@
   <section id="modules" class="modules">
     <div class="sec-head">
       <h2>The modules</h2>
-      <p>In the order they build on each other. Each one adds a step, or takes one apart.
-        Seven now, counting the foundation module. Each card says what it assumes.</p>
+      <p>In the order they build on each other, from the rock outward. Each card says what it assumes.
+        The set is being re-leveled for undergraduate geology students: the cards marked
+        <em>being re-leveled</em> work correctly and are pitched higher than the rest, and the ones
+        marked <em>to build</em> are not written yet.</p>
     </div>
 
     <div class="primer" style="margin:0 0 26px">
      <div class="primer-grid">
       <div>
         <h3>New to this</h3>
-        <p>Read <b>00</b> first — it has no equations and assumes nothing. Then <b>01</b>, <b>02</b> and
-          <b>03</b>, and stop there. That is a complete and useful course on its own.</p>
+        <p>Work through the <a href="https://hbedle-subsurface.github.io/seismic_resolution/">resolution modules</a> first. Then <b>00</b>,
+          <b>01</b>, <b>02</b> and <b>03</b>, and stop there. That is a complete and useful course on
+          its own.</p>
       </div>
       <div>
         <h3>You have used AVO before</h3>
-        <p>Start at <b>01</b> and go straight through. Module 00 is still worth ten minutes if only to see
-          which simplifications the rest of the set is going to come back for.</p>
+        <p>Start at <b>04</b> and go straight through. Module 00 is still worth ten minutes if only to
+          see which simplifications the rest of the set is going to come back for.</p>
       </div>
       <div>
         <h3>You do this for a living</h3>
-        <p><b>05</b> and <b>06</b> are the ones with something new in them: the size of the error bars,
-          and a count of what the gradient actually buys you.</p>
+        <p><b>07</b> and <b>08</b> are the ones with something new in them: how many rocks share an
+          amplitude, the size of the error bars, and a count of what the gradient actually buys you.</p>
       </div>
      </div>
     </div>
 
     <div class="card-grid">
 
-      <a class="card" href="modules/the-echo.html">
+      <a class="card" href="modules/beyond-normal-incidence.html">
         <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><rect x="10" y="6" width="96" height="32.9" fill="#E4E0D6"/><rect x="10" y="38.9" width="96" height="23.1" fill="rgba(181,69,27,0.25)"/><rect x="10" y="61.9" width="96" height="36.1" fill="#E4E0D6"/><line x1="10" y1="38.9" x2="106" y2="38.9" stroke="#16191C" stroke-width="1.6"/><line x1="10" y1="61.9" x2="106" y2="61.9" stroke="#16191C" stroke-width="1.6"/><line x1="140" y1="6" x2="140" y2="98" stroke="#C7C9C0" stroke-width="1"/><polyline points="140,6 140,7 140,7.9 140,8.9 140,9.8 140,10.8 140,11.8 140,12.7 140,13.7 140,14.6 140,15.6 140,16.5 140,17.5 140.1,18.5 140.1,19.4 140.3,20.4 140.5,21.3 140.9,22.3 141.5,23.3 142.3,24.2 143.4,25.2 144.9,26.1 146.6,27.1 148.3,28 149.8,29 150.7,30 150.6,30.9 148.9,31.9 145.7,32.8 140.8,33.8 134.8,34.8 128.3,35.7 122.4,36.7 118,37.6 115.9,38.6 116.5,39.5 119.6,40.5 124.7,41.5 130.9,42.4 137.2,43.4 142.6,44.3 146.4,45.3 148.4,46.3 148.5,47.2 147.1,48.2 144.4,49.1 141.1,50.1 137.6,51 134.5,52 132.2,53 131.3,53.9 132.1,54.9 134.8,55.8 139.3,56.8 145.1,57.8 151.4,58.7 157.4,59.7 161.8,60.6 164.1,61.6 163.6,62.5 160.6,63.5 155.5,64.5 149.3,65.4 142.9,66.4 137.2,67.3 132.9,68.3 130.3,69.3 129.2,70.2 129.5,71.2 130.7,72.1 132.3,73.1 134.1,74 135.7,75 137,76 138.1,76.9 138.8,77.9 139.3,78.8 139.6,79.8 139.8,80.8 139.9,81.7 139.9,82.7 140,83.6 140,84.6 140,85.5 140,86.5 140,87.5 140,88.4 140,89.4 140,90.3 140,91.3 140,92.3 140,93.2 140,94.2 140,95.1 140,96.1 140,97 140,98" fill="none" stroke="#841617" stroke-width="2.4" stroke-linejoin="round"/><text x="58" y="103" font-family="monospace" font-size="8" fill="#16191C" text-anchor="middle">two rocks</text><text x="150" y="103" font-family="monospace" font-size="8" fill="#841617">the echo</text></svg></div>
         <div class="card-body">
-          <div class="card-no">01<span class="lvl">assumes first-year geology · start here</span></div>
-          <h3>A pulse, a boundary, an echo</h3>
-          <p>What a seismic survey physically does. The trace, two-way time, one echo per boundary, thickness from a time gap, and how single traces line up into a section.</p>
-          <div class="q">What is a seismic trace a record of?</div>
+          <div class="card-no">00<span class="lvl">assumes the seismic resolution modules</span></div>
+          <h3>Beyond normal incidence</h3>
+          <p>A recap of what the resolution modules established, the assumption every one of them shared, and the observation this set begins from: a reflection coefficient is not one number.</p>
+          <div class="q">What does this set assume I already know?</div>
         </div>
         <span class="flag next">Start here</span>
       </a>
@@ -117,31 +127,9 @@
       <div class="card planned">
         <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><line x1="60" y1="4" x2="60" y2="100" stroke="#C7C9C0" stroke-width="1"/><line x1="140" y1="4" x2="140" y2="100" stroke="#C7C9C0" stroke-width="1"/><polyline points="60,4 60,5 60,6 60,7 60,8 60,9 60,10 60,11 60,12 60,13 60,14 60,15 60,16 60,17 60,18 60.1,19 60.1,20 60.2,21 60.2,22 60.3,23 60.4,24 60.5,25 60.6,26 60.7,27 60.7,28 60.6,29 60.5,30 60.2,31 59.9,32 59.5,33 59.1,34 58.7,35 58.4,36 58.3,37 58.2,38 58.3,39 58.5,40 58.8,41 59.1,42 59.4,43 59.7,44 59.9,45 60.2,46 60.4,47 60.7,48 61,49 61.3,50 61.5,51 61.7,52 61.8,53 61.7,54 61.5,55 61.2,56 60.8,57 60.4,58 60,59 59.7,60 59.5,61 59.3,62 59.3,63 59.3,64 59.4,65 59.5,66 59.6,67 59.7,68 59.8,69 59.9,70 59.9,71 59.9,72 60,73 60,74 60,75 60,76 60,77 60,78 60,79 60,80 60,81 60,82 60,83 60,84 60,85 60,86 60,87 60,88 60,89 60,90 60,91 60,92 60,93 60,94 60,95 60,96 60,97 60,98 60,99 60,100" fill="none" stroke="#16191C" stroke-width="2" stroke-linejoin="round"/><polyline points="140,4 140,5 140,6 140,7 140,8 140,9 140,10 140,11 140,12 140,13 140.1,14 140.1,15 140.2,16 140.4,17 140.6,18 141.1,19 141.7,20 142.5,21 143.6,22 145,23 146.6,24 148.2,25 149.7,26 150.6,27 150.7,28 149.7,29 147.3,30 143.4,31 138.3,32 132.4,33 126.4,34 121.1,35 117.2,36 115.3,37 115.6,38 118,39 121.8,40 126.6,41 131.3,42 135.3,43 138.1,44 139.7,45 140.1,46 140,47 139.9,48 140.4,49 142.1,50 145.1,51 149.2,52 154,53 158.6,54 162.4,55 164.5,56 164.6,57 162.4,58 158.4,59 152.9,60 146.9,61 141.1,62 136.1,63 132.4,64 130.1,65 129.2,66 129.5,67 130.5,68 132,69 133.6,70 135.2,71 136.5,72 137.6,73 138.4,74 139,75 139.4,76 139.6,77 139.8,78 139.9,79 139.9,80 140,81 140,82 140,83 140,84 140,85 140,86 140,87 140,88 140,89 140,90 140,91 140,92 140,93 140,94 140,95 140,96 140,97 140,98 140,99 140,100" fill="none" stroke="#841617" stroke-width="2.4" stroke-linejoin="round"/><text x="60" y="100" font-family="monospace" font-size="9" fill="#16191C" text-anchor="middle">brine</text><text x="140" y="100" font-family="monospace" font-size="9" fill="#841617" text-anchor="middle">gas</text></svg></div>
         <div class="card-body">
-          <div class="card-no">02<span class="lvl">assumes first-year geology · start here</span></div>
-          <h3>Impedance and the reflection coefficient</h3>
-          <p>Velocity and density combined into one number, why a reflection responds to a change rather than to a value, and what sets the sign.</p>
-          <div class="q">What decides how strong an echo is?</div>
-        </div>
-        <span class="flag">To build</span>
-      </div>
-
-      <div class="card planned">
-        <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><path d="M14 20.5 L15.9 23.3 L17.8 25.9 L19.7 28.5 L21.6 31.1 L23.6 33.6 L25.5 36 L27.4 38.4 L29.3 40.8 L31.2 43 L33.1 45.3 L35 47.5 L36.9 49.7 L38.8 51.8 L40.8 53.9 L42.7 55.9 L44.6 57.9 L46.5 59.9 L48.4 61.8 L50.3 63.7 L52.2 65.6 L54.1 67.4 L56 69.2 L58 71 L59.9 72.7 L61.8 74.4 L63.7 76.1 L65.6 77.7 L67.5 79.3 L69.4 80.9 L71.3 82.5 L73.2 84 L75.2 85.5 L77.1 87 L79 88.5 L80.9 89.9 L82.8 91.3 L84.7 92.7" fill="none" stroke="#841617" stroke-width="2.4"/><circle cx="59.9" cy="72.7" r="4" fill="#841617"/><circle cx="65.6" cy="77.7" r="4" fill="#841617"/><line x1="14" y1="94" x2="186" y2="94" stroke="#C7C9C0" stroke-width="1.4"/><line x1="14" y1="12" x2="14" y2="94" stroke="#C7C9C0" stroke-width="1.4"/><text x="100" y="103" font-family="monospace" font-size="8" fill="#16191C" text-anchor="middle">one impedance, many rocks</text></svg></div>
-        <div class="card-body">
-          <div class="card-no">03<span class="lvl">assumes first-year geology · start here</span></div>
-          <h3>The wavelet, tuning and resolution</h3>
-          <p>Why an echo is a wiggle and not a spike, what convolution means, and what happens to two echoes as a layer thins.</p>
-          <div class="q">How thin a layer can seismic data separate?</div>
-        </div>
-        <span class="flag">To build</span>
-      </div>
-
-      <div class="card planned">
-        <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><line x1="60" y1="4" x2="60" y2="100" stroke="#C7C9C0" stroke-width="1"/><line x1="140" y1="4" x2="140" y2="100" stroke="#C7C9C0" stroke-width="1"/><polyline points="60,4 60,5 60,6 60,7 60,8 60,9 60,10 60,11 60,12 60,13 60,14 60,15 60,16 60,17 60,18 60.1,19 60.1,20 60.2,21 60.2,22 60.3,23 60.4,24 60.5,25 60.6,26 60.7,27 60.7,28 60.6,29 60.5,30 60.2,31 59.9,32 59.5,33 59.1,34 58.7,35 58.4,36 58.3,37 58.2,38 58.3,39 58.5,40 58.8,41 59.1,42 59.4,43 59.7,44 59.9,45 60.2,46 60.4,47 60.7,48 61,49 61.3,50 61.5,51 61.7,52 61.8,53 61.7,54 61.5,55 61.2,56 60.8,57 60.4,58 60,59 59.7,60 59.5,61 59.3,62 59.3,63 59.3,64 59.4,65 59.5,66 59.6,67 59.7,68 59.8,69 59.9,70 59.9,71 59.9,72 60,73 60,74 60,75 60,76 60,77 60,78 60,79 60,80 60,81 60,82 60,83 60,84 60,85 60,86 60,87 60,88 60,89 60,90 60,91 60,92 60,93 60,94 60,95 60,96 60,97 60,98 60,99 60,100" fill="none" stroke="#16191C" stroke-width="2" stroke-linejoin="round"/><polyline points="140,4 140,5 140,6 140,7 140,8 140,9 140,10 140,11 140,12 140,13 140.1,14 140.1,15 140.2,16 140.4,17 140.6,18 141.1,19 141.7,20 142.5,21 143.6,22 145,23 146.6,24 148.2,25 149.7,26 150.6,27 150.7,28 149.7,29 147.3,30 143.4,31 138.3,32 132.4,33 126.4,34 121.1,35 117.2,36 115.3,37 115.6,38 118,39 121.8,40 126.6,41 131.3,42 135.3,43 138.1,44 139.7,45 140.1,46 140,47 139.9,48 140.4,49 142.1,50 145.1,51 149.2,52 154,53 158.6,54 162.4,55 164.5,56 164.6,57 162.4,58 158.4,59 152.9,60 146.9,61 141.1,62 136.1,63 132.4,64 130.1,65 129.2,66 129.5,67 130.5,68 132,69 133.6,70 135.2,71 136.5,72 137.6,73 138.4,74 139,75 139.4,76 139.6,77 139.8,78 139.9,79 139.9,80 140,81 140,82 140,83 140,84 140,85 140,86 140,87 140,88 140,89 140,90 140,91 140,92 140,93 140,94 140,95 140,96 140,97 140,98 140,99 140,100" fill="none" stroke="#841617" stroke-width="2.4" stroke-linejoin="round"/><text x="60" y="100" font-family="monospace" font-size="9" fill="#16191C" text-anchor="middle">brine</text><text x="140" y="100" font-family="monospace" font-size="9" fill="#841617" text-anchor="middle">gas</text></svg></div>
-        <div class="card-body">
-          <div class="card-no">04<span class="lvl">assumes modules 01–03</span></div>
+          <div class="card-no">01<span class="lvl">assumes module 00</span></div>
           <h3>Rocks, pores and stiffness</h3>
-          <p>Grains and pore space, bulk density from volume fractions, and the two moduli that describe resistance to squeezing and to shearing.</p>
+          <p>Grains and pore space, where bulk density comes from, and the two separate ways a rock resists deformation — against compression, and against shearing.</p>
           <div class="q">What makes one rock faster than another?</div>
         </div>
         <span class="flag">To build</span>
@@ -150,7 +138,7 @@
       <div class="card planned">
         <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><path d="M14 20.5 L15.9 23.3 L17.8 25.9 L19.7 28.5 L21.6 31.1 L23.6 33.6 L25.5 36 L27.4 38.4 L29.3 40.8 L31.2 43 L33.1 45.3 L35 47.5 L36.9 49.7 L38.8 51.8 L40.8 53.9 L42.7 55.9 L44.6 57.9 L46.5 59.9 L48.4 61.8 L50.3 63.7 L52.2 65.6 L54.1 67.4 L56 69.2 L58 71 L59.9 72.7 L61.8 74.4 L63.7 76.1 L65.6 77.7 L67.5 79.3 L69.4 80.9 L71.3 82.5 L73.2 84 L75.2 85.5 L77.1 87 L79 88.5 L80.9 89.9 L82.8 91.3 L84.7 92.7" fill="none" stroke="#841617" stroke-width="2.4"/><circle cx="59.9" cy="72.7" r="4" fill="#841617"/><circle cx="65.6" cy="77.7" r="4" fill="#841617"/><line x1="14" y1="94" x2="186" y2="94" stroke="#C7C9C0" stroke-width="1.4"/><line x1="14" y1="12" x2="14" y2="94" stroke="#C7C9C0" stroke-width="1.4"/><text x="100" y="103" font-family="monospace" font-size="8" fill="#16191C" text-anchor="middle">one impedance, many rocks</text></svg></div>
         <div class="card-body">
-          <div class="card-no">05<span class="lvl">assumes modules 01–03</span></div>
+          <div class="card-no">02<span class="lvl">assumes module 00</span></div>
           <h3>Fluid in the pores</h3>
           <p>Why a pore fluid stiffens a rock against compression and not against shear, what that does to Vp, Vs and density, and where gas saturation stops mattering.</p>
           <div class="q">What does replacing brine with gas actually change?</div>
@@ -161,8 +149,8 @@
       <a class="card" href="modules/rock-to-trace.html">
         <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><line x1="60" y1="4" x2="60" y2="100" stroke="#C7C9C0" stroke-width="1"/><line x1="140" y1="4" x2="140" y2="100" stroke="#C7C9C0" stroke-width="1"/><polyline points="60,4 60,5 60,6 60,7 60,8 60,9 60,10 60,11 60,12 60,13 60,14 60,15 60,16 60,17 60,18 60.1,19 60.1,20 60.2,21 60.2,22 60.3,23 60.4,24 60.5,25 60.6,26 60.7,27 60.7,28 60.6,29 60.5,30 60.2,31 59.9,32 59.5,33 59.1,34 58.7,35 58.4,36 58.3,37 58.2,38 58.3,39 58.5,40 58.8,41 59.1,42 59.4,43 59.7,44 59.9,45 60.2,46 60.4,47 60.7,48 61,49 61.3,50 61.5,51 61.7,52 61.8,53 61.7,54 61.5,55 61.2,56 60.8,57 60.4,58 60,59 59.7,60 59.5,61 59.3,62 59.3,63 59.3,64 59.4,65 59.5,66 59.6,67 59.7,68 59.8,69 59.9,70 59.9,71 59.9,72 60,73 60,74 60,75 60,76 60,77 60,78 60,79 60,80 60,81 60,82 60,83 60,84 60,85 60,86 60,87 60,88 60,89 60,90 60,91 60,92 60,93 60,94 60,95 60,96 60,97 60,98 60,99 60,100" fill="none" stroke="#16191C" stroke-width="2" stroke-linejoin="round"/><polyline points="140,4 140,5 140,6 140,7 140,8 140,9 140,10 140,11 140,12 140,13 140.1,14 140.1,15 140.2,16 140.4,17 140.6,18 141.1,19 141.7,20 142.5,21 143.6,22 145,23 146.6,24 148.2,25 149.7,26 150.6,27 150.7,28 149.7,29 147.3,30 143.4,31 138.3,32 132.4,33 126.4,34 121.1,35 117.2,36 115.3,37 115.6,38 118,39 121.8,40 126.6,41 131.3,42 135.3,43 138.1,44 139.7,45 140.1,46 140,47 139.9,48 140.4,49 142.1,50 145.1,51 149.2,52 154,53 158.6,54 162.4,55 164.5,56 164.6,57 162.4,58 158.4,59 152.9,60 146.9,61 141.1,62 136.1,63 132.4,64 130.1,65 129.2,66 129.5,67 130.5,68 132,69 133.6,70 135.2,71 136.5,72 137.6,73 138.4,74 139,75 139.4,76 139.6,77 139.8,78 139.9,79 139.9,80 140,81 140,82 140,83 140,84 140,85 140,86 140,87 140,88 140,89 140,90 140,91 140,92 140,93 140,94 140,95 140,96 140,97 140,98 140,99 140,100" fill="none" stroke="#841617" stroke-width="2.4" stroke-linejoin="round"/><text x="60" y="100" font-family="monospace" font-size="9" fill="#16191C" text-anchor="middle">brine</text><text x="140" y="100" font-family="monospace" font-size="9" fill="#841617" text-anchor="middle">gas</text></svg></div>
         <div class="card-body">
-          <div class="card-no">06<span class="lvl">written before the re-leveling · pitched higher</span></div>
-          <h3>Build a rock, make a trace</h3>
+          <div class="card-no">03<span class="lvl">written before the re-leveling · pitched higher</span></div>
+          <h3>From a rock to a trace</h3>
           <p>Porosity, clay and pore fluid to a dry frame, Gassmann to a saturated rock, impedance, reflectivity, a wavelet, and noise. Every step from the rock to the trace, on one page.</p>
           <div class="q">How does a change in the rock reach the seismic trace?</div>
         </div>
@@ -172,7 +160,7 @@
       <div class="card planned">
         <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><line x1="16" y1="52" x2="184" y2="52" stroke="#C7C9C0" stroke-width="1.4"/><path d="M16 77.8 L20.2 77.8 L24.4 77.9 L28.6 77.9 L32.8 78 L37 78.1 L41.2 78.3 L45.4 78.4 L49.6 78.6 L53.8 78.8 L58 79.1 L62.2 79.3 L66.4 79.6 L70.6 79.9 L74.8 80.2 L79 80.6 L83.2 81 L87.4 81.4 L91.6 81.8 L95.8 82.3 L100 82.7 L104.2 83.2 L108.4 83.7 L112.6 84.3 L116.8 84.9 L121 85.4 L125.2 86.1 L129.4 86.7 L133.6 87.4 L137.8 88 L142 88.8 L146.2 89.5 L150.4 90.2 L154.6 91 L158.8 91.8 L163 92.7 L167.2 93.5 L171.4 94.4 L175.6 95.3 L179.8 96.2 L184 97.2" fill="none" stroke="#841617" stroke-width="2.4" stroke-linecap="round"/><path d="M16 53.7 L20.2 53.7 L24.4 53.7 L28.6 53.8 L32.8 53.8 L37 53.9 L41.2 54 L45.4 54.1 L49.6 54.2 L53.8 54.4 L58 54.5 L62.2 54.7 L66.4 54.9 L70.6 55.1 L74.8 55.3 L79 55.6 L83.2 55.8 L87.4 56.1 L91.6 56.4 L95.8 56.7 L100 57 L104.2 57.3 L108.4 57.6 L112.6 58 L116.8 58.3 L121 58.7 L125.2 59.1 L129.4 59.5 L133.6 59.9 L137.8 60.3 L142 60.7 L146.2 61.1 L150.4 61.6 L154.6 62 L158.8 62.5 L163 62.9 L167.2 63.4 L171.4 63.9 L175.6 64.4 L179.8 64.9 L184 65.3" fill="none" stroke="#0B7285" stroke-width="2.4" stroke-linecap="round"/><text x="100" y="103" font-family="monospace" font-size="8" fill="#16191C" text-anchor="middle">0°　→　40°</text></svg></div>
         <div class="card-body">
-          <div class="card-no">07<span class="lvl">assumes modules 01–06</span></div>
+          <div class="card-no">04<span class="lvl">assumes modules 00–03</span></div>
           <h3>Offset, angle and the gather</h3>
           <p>Where offset comes from, why offset is not the same thing as angle, moveout, the gather, and what stacking keeps and discards.</p>
           <div class="q">What is a gather?</div>
@@ -183,10 +171,10 @@
       <a class="card" href="modules/add-offset.html">
         <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><line x1="16" y1="52" x2="184" y2="52" stroke="#C7C9C0" stroke-width="1.4"/><path d="M16 77.8 L20.2 77.8 L24.4 77.9 L28.6 77.9 L32.8 78 L37 78.1 L41.2 78.3 L45.4 78.4 L49.6 78.6 L53.8 78.8 L58 79.1 L62.2 79.3 L66.4 79.6 L70.6 79.9 L74.8 80.2 L79 80.6 L83.2 81 L87.4 81.4 L91.6 81.8 L95.8 82.3 L100 82.7 L104.2 83.2 L108.4 83.7 L112.6 84.3 L116.8 84.9 L121 85.4 L125.2 86.1 L129.4 86.7 L133.6 87.4 L137.8 88 L142 88.8 L146.2 89.5 L150.4 90.2 L154.6 91 L158.8 91.8 L163 92.7 L167.2 93.5 L171.4 94.4 L175.6 95.3 L179.8 96.2 L184 97.2" fill="none" stroke="#841617" stroke-width="2.4" stroke-linecap="round"/><path d="M16 53.7 L20.2 53.7 L24.4 53.7 L28.6 53.8 L32.8 53.8 L37 53.9 L41.2 54 L45.4 54.1 L49.6 54.2 L53.8 54.4 L58 54.5 L62.2 54.7 L66.4 54.9 L70.6 55.1 L74.8 55.3 L79 55.6 L83.2 55.8 L87.4 56.1 L91.6 56.4 L95.8 56.7 L100 57 L104.2 57.3 L108.4 57.6 L112.6 58 L116.8 58.3 L121 58.7 L125.2 59.1 L129.4 59.5 L133.6 59.9 L137.8 60.3 L142 60.7 L146.2 61.1 L150.4 61.6 L154.6 62 L158.8 62.5 L163 62.9 L167.2 63.4 L171.4 63.9 L175.6 64.4 L179.8 64.9 L184 65.3" fill="none" stroke="#0B7285" stroke-width="2.4" stroke-linecap="round"/><text x="100" y="103" font-family="monospace" font-size="8" fill="#16191C" text-anchor="middle">0°　→　40°</text></svg></div>
         <div class="card-body">
-          <div class="card-no">08<span class="lvl">written before the re-leveling · pitched higher</span></div>
+          <div class="card-no">05<span class="lvl">written before the re-leveling · pitched higher</span></div>
           <h3>Amplitude against angle</h3>
           <p>The ray stops arriving straight down, shear velocity becomes visible, and one measurement becomes a curve.</p>
-          <div class="q">Why does the amplitude change with offset at all?</div>
+          <div class="q">Why does the amplitude change with angle at all?</div>
         </div>
         <span class="flag next">Being re-leveled</span>
       </a>
@@ -194,7 +182,7 @@
       <a class="card" href="modules/intercept-gradient.html">
         <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><line x1="10" y1="54" x2="190" y2="54" stroke="#C7C9C0" stroke-width="1.4"/><line x1="100" y1="6" x2="100" y2="98" stroke="#C7C9C0" stroke-width="1.4"/><line x1="26" y1="98" x2="174" y2="6" stroke="#C7C9C0" stroke-width="1.6" stroke-dasharray="5 4"/><circle cx="36.2" cy="84.9" r="4" fill="#841617"/><circle cx="9.9" cy="21.5" r="4" fill="#0B7285"/><circle cx="48.8" cy="45.4" r="4" fill="#0B7285"/><circle cx="76.5" cy="66.1" r="4" fill="#0B7285"/><text x="186" y="50" font-family="monospace" font-size="8" fill="#16191C" text-anchor="end">G</text><text x="104" y="14" font-family="monospace" font-size="8" fill="#16191C">R0</text></svg></div>
         <div class="card-body">
-          <div class="card-no">09<span class="lvl">written before the re-leveling · pitched higher</span></div>
+          <div class="card-no">06<span class="lvl">written before the re-leveling · pitched higher</span></div>
           <h3>Intercept, gradient and the classes</h3>
           <p>Two numbers instead of a curve, the crossplot they live in, the wet trend that makes an anomaly anomalous, and why Classes I to IV are regions somebody drew.</p>
           <div class="q">What is a Class III response actually telling me?</div>
@@ -205,7 +193,7 @@
       <a class="card" href="modules/same-amplitude.html">
         <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><path d="M14 20.5 L15.9 23.3 L17.8 25.9 L19.7 28.5 L21.6 31.1 L23.6 33.6 L25.5 36 L27.4 38.4 L29.3 40.8 L31.2 43 L33.1 45.3 L35 47.5 L36.9 49.7 L38.8 51.8 L40.8 53.9 L42.7 55.9 L44.6 57.9 L46.5 59.9 L48.4 61.8 L50.3 63.7 L52.2 65.6 L54.1 67.4 L56 69.2 L58 71 L59.9 72.7 L61.8 74.4 L63.7 76.1 L65.6 77.7 L67.5 79.3 L69.4 80.9 L71.3 82.5 L73.2 84 L75.2 85.5 L77.1 87 L79 88.5 L80.9 89.9 L82.8 91.3 L84.7 92.7" fill="none" stroke="#841617" stroke-width="2.4"/><circle cx="59.9" cy="72.7" r="4" fill="#841617"/><circle cx="65.6" cy="77.7" r="4" fill="#841617"/><line x1="14" y1="94" x2="186" y2="94" stroke="#C7C9C0" stroke-width="1.4"/><line x1="14" y1="12" x2="14" y2="94" stroke="#C7C9C0" stroke-width="1.4"/><text x="100" y="103" font-family="monospace" font-size="8" fill="#16191C" text-anchor="middle">one impedance, many rocks</text></svg></div>
         <div class="card-body">
-          <div class="card-no">10<span class="lvl">written before the re-leveling · pitched higher</span></div>
+          <div class="card-no">07<span class="lvl">written before the re-leveling · pitched higher</span></div>
           <h3>Several rocks, one amplitude</h3>
           <p>Fix the amplitude and search for every rock that could have produced it. Porosity against saturation, the shale nobody measured, tuning, and a full count of what survives.</p>
           <div class="q">How many rocks fit the amplitude I measured?</div>
@@ -216,9 +204,9 @@
       <a class="card" href="modules/reading-a-gather.html">
         <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><line x1="16" y1="52" x2="184" y2="52" stroke="#C7C9C0" stroke-width="1.4"/><path d="M16 82.6 L20.2 82.6 L24.4 82.6 L28.6 82.7 L32.8 82.8 L37 82.9 L41.2 83 L45.4 83.1 L49.6 83.3 L53.8 83.5 L58 83.7 L62.2 83.9 L66.4 84.2 L70.6 84.4 L74.8 84.7 L79 85.1 L83.2 85.4 L87.4 85.8 L91.6 86.1 L95.8 86.5 L100 87 L104.2 87.4 L108.4 87.9 L112.6 88.4 L116.8 88.9 L121 89.4 L125.2 90 L129.4 90.6 L133.6 91.2 L137.8 91.8 L142 92.4 L146.2 93.1 L150.4 93.8 L154.6 94.5 L158.8 95.3 L163 96 L167.2 96.8 L171.4 97.6 L175.6 98.5 L179.8 99.3 L184 100.2" fill="none" stroke="#841617" stroke-width="2.1" stroke-linecap="round"/><path d="M16 52.6 L20.2 52.7 L24.4 52.7 L28.6 52.8 L32.8 53 L37 53.1 L41.2 53.4 L45.4 53.6 L49.6 53.9 L53.8 54.2 L58 54.6 L62.2 55 L66.4 55.5 L70.6 56 L74.8 56.5 L79 57 L83.2 57.6 L87.4 58.3 L91.6 58.9 L95.8 59.6 L100 60.3 L104.2 61.1 L108.4 61.9 L112.6 62.7 L116.8 63.6 L121 64.5 L125.2 65.4 L129.4 66.4 L133.6 67.3 L137.8 68.4 L142 69.4 L146.2 70.5 L150.4 71.5 L154.6 72.6 L158.8 73.8 L163 74.9 L167.2 76.1 L171.4 77.3 L175.6 78.5 L179.8 79.8 L184 81" fill="none" stroke="#B5451B" stroke-width="2.1" stroke-linecap="round"/><path d="M16 53.7 L20.2 53.7 L24.4 53.7 L28.6 53.8 L32.8 53.8 L37 53.9 L41.2 54 L45.4 54.1 L49.6 54.2 L53.8 54.4 L58 54.5 L62.2 54.7 L66.4 54.9 L70.6 55.1 L74.8 55.3 L79 55.6 L83.2 55.8 L87.4 56.1 L91.6 56.4 L95.8 56.7 L100 57 L104.2 57.3 L108.4 57.6 L112.6 58 L116.8 58.3 L121 58.7 L125.2 59.1 L129.4 59.5 L133.6 59.9 L137.8 60.3 L142 60.7 L146.2 61.1 L150.4 61.6 L154.6 62 L158.8 62.5 L163 62.9 L167.2 63.4 L171.4 63.9 L175.6 64.4 L179.8 64.9 L184 65.3" fill="none" stroke="#0B7285" stroke-width="2.1" stroke-linecap="round"/><path d="M16 62.2 L20.2 62.2 L24.4 62.2 L28.6 62.2 L32.8 62.3 L37 62.3 L41.2 62.4 L45.4 62.4 L49.6 62.5 L53.8 62.6 L58 62.7 L62.2 62.8 L66.4 63 L70.6 63.1 L74.8 63.2 L79 63.4 L83.2 63.6 L87.4 63.7 L91.6 63.9 L95.8 64.1 L100 64.3 L104.2 64.6 L108.4 64.8 L112.6 65 L116.8 65.3 L121 65.6 L125.2 65.8 L129.4 66.1 L133.6 66.4 L137.8 66.7 L142 67 L146.2 67.4 L150.4 67.7 L154.6 68 L158.8 68.4 L163 68.8 L167.2 69.2 L171.4 69.6 L175.6 70 L179.8 70.4 L184 70.8" fill="none" stroke="#2A7B9B" stroke-width="2.1" stroke-linecap="round"/><path d="M16 62.2 L20.2 62.2 L24.4 62.2 L28.6 62.3 L32.8 62.4 L37 62.5 L41.2 62.6 L45.4 62.7 L49.6 62.9 L53.8 63 L58 63.2 L62.2 63.4 L66.4 63.7 L70.6 63.9 L74.8 64.2 L79 64.5 L83.2 64.8 L87.4 65.1 L91.6 65.5 L95.8 65.9 L100 66.2 L104.2 66.6 L108.4 67.1 L112.6 67.5 L116.8 68 L121 68.5 L125.2 69 L129.4 69.5 L133.6 70 L137.8 70.6 L142 71.1 L146.2 71.7 L150.4 72.3 L154.6 72.9 L158.8 73.6 L163 74.2 L167.2 74.9 L171.4 75.6 L175.6 76.3 L179.8 77 L184 77.8" fill="none" stroke="#6B7A2E" stroke-width="2.1" stroke-linecap="round"/><text x="100" y="103" font-family="monospace" font-size="8" fill="#16191C" text-anchor="middle">five reservoirs, one gather</text></svg></div>
         <div class="card-body">
-          <div class="card-no">11<span class="lvl">written before the re-leveling · pitched higher</span></div>
-          <h3>Reading a gather you did not make</h3>
-          <p>Noise, a limited angle range, and a gradient much less certain than the intercept. Where the error bars come from, and how big they really are.</p>
+          <div class="card-no">08<span class="lvl">written before the re-leveling · pitched higher</span></div>
+          <h3>Noise, error bars and what you can conclude</h3>
+          <p>Noise, a limited angle range, and a gradient much less certain than the intercept. Where the error bars come from, how big they are, and what a defensible statement looks like.</p>
           <div class="q">How much do I trust this gradient?</div>
         </div>
         <span class="flag next">Being re-leveled</span>
@@ -227,12 +215,12 @@
       <a class="card" href="modules/what-survives.html">
         <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><line x1="16" y1="52" x2="184" y2="52" stroke="#C7C9C0" stroke-width="1.4"/><path d="M16 77.8 L20.2 77.8 L24.4 77.9 L28.6 77.9 L32.8 78 L37 78.1 L41.2 78.3 L45.4 78.4 L49.6 78.6 L53.8 78.8 L58 79.1 L62.2 79.3 L66.4 79.6 L70.6 79.9 L74.8 80.2 L79 80.6 L83.2 81 L87.4 81.4 L91.6 81.8 L95.8 82.3 L100 82.7 L104.2 83.2 L108.4 83.7 L112.6 84.3 L116.8 84.9 L121 85.4 L125.2 86.1 L129.4 86.7 L133.6 87.4 L137.8 88 L142 88.8 L146.2 89.5 L150.4 90.2 L154.6 91 L158.8 91.8 L163 92.7 L167.2 93.5 L171.4 94.4 L175.6 95.3 L179.8 96.2 L184 97.2" fill="none" stroke="#C7C9C0" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/><circle cx="24.4" cy="76.9" r="3.4" fill="#841617"/><circle cx="39.1" cy="78" r="3.4" fill="#841617"/><circle cx="53.8" cy="73.9" r="3.4" fill="#841617"/><circle cx="68.5" cy="77.4" r="3.4" fill="#841617"/><circle cx="83.2" cy="77.9" r="3.4" fill="#841617"/><circle cx="97.9" cy="80.2" r="3.4" fill="#841617"/><circle cx="112.6" cy="84" r="3.4" fill="#841617"/><circle cx="127.3" cy="90.6" r="3.4" fill="#841617"/><circle cx="142" cy="94.2" r="3.4" fill="#841617"/><circle cx="156.7" cy="94.7" r="3.4" fill="#841617"/><circle cx="171.4" cy="96.9" r="3.4" fill="#841617"/><text x="100" y="103" font-family="monospace" font-size="8" fill="#16191C" text-anchor="middle">what would you fit through this?</text></svg></div>
         <div class="card-body">
-          <div class="card-no">12<span class="lvl">written before the re-leveling · pitched higher</span></div>
+          <div class="card-no">—<span class="lvl">written before the re-leveling · pitched higher</span></div>
           <h3>What survives</h3>
-          <p>Every loss added up, a count of what the second measurement removes, four rules of thumb with computed counterexamples, and a statement you could defend.</p>
+          <p>Every loss added up, a count of what the second measurement removes, four rules of thumb with computed counterexamples. Being merged with the module above.</p>
           <div class="q">What can I actually say from this?</div>
         </div>
-        <span class="flag next">Being re-leveled</span>
+        <span class="flag next">To merge into 08</span>
       </a>
 
       <a class="card" href="modules/start-here.html">
@@ -240,10 +228,21 @@
         <div class="card-body">
           <div class="card-no">—<span class="lvl">written before the re-leveling · pitched higher</span></div>
           <h3>What all of this is for (the old module 00)</h3>
-          <p>The single foundation module the set used to open with. Its material is being spread across the new modules 01, 02, 03 and 07, at a slower pace. Kept while that is in progress.</p>
+          <p>The original single foundation module. Its material is covered by the resolution modules and by the new module 00. Kept while the rebuild is in progress.</p>
           <div class="q">Where do I start?</div>
         </div>
         <span class="flag next">Superseded</span>
+      </a>
+
+      <a class="card" href="modules/the-echo.html">
+        <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><rect x="10" y="6" width="96" height="32.9" fill="#E4E0D6"/><rect x="10" y="38.9" width="96" height="23.1" fill="rgba(181,69,27,0.25)"/><rect x="10" y="61.9" width="96" height="36.1" fill="#E4E0D6"/><line x1="10" y1="38.9" x2="106" y2="38.9" stroke="#16191C" stroke-width="1.6"/><line x1="10" y1="61.9" x2="106" y2="61.9" stroke="#16191C" stroke-width="1.6"/><line x1="140" y1="6" x2="140" y2="98" stroke="#C7C9C0" stroke-width="1"/><polyline points="140,6 140,7 140,7.9 140,8.9 140,9.8 140,10.8 140,11.8 140,12.7 140,13.7 140,14.6 140,15.6 140,16.5 140,17.5 140.1,18.5 140.1,19.4 140.3,20.4 140.5,21.3 140.9,22.3 141.5,23.3 142.3,24.2 143.4,25.2 144.9,26.1 146.6,27.1 148.3,28 149.8,29 150.7,30 150.6,30.9 148.9,31.9 145.7,32.8 140.8,33.8 134.8,34.8 128.3,35.7 122.4,36.7 118,37.6 115.9,38.6 116.5,39.5 119.6,40.5 124.7,41.5 130.9,42.4 137.2,43.4 142.6,44.3 146.4,45.3 148.4,46.3 148.5,47.2 147.1,48.2 144.4,49.1 141.1,50.1 137.6,51 134.5,52 132.2,53 131.3,53.9 132.1,54.9 134.8,55.8 139.3,56.8 145.1,57.8 151.4,58.7 157.4,59.7 161.8,60.6 164.1,61.6 163.6,62.5 160.6,63.5 155.5,64.5 149.3,65.4 142.9,66.4 137.2,67.3 132.9,68.3 130.3,69.3 129.2,70.2 129.5,71.2 130.7,72.1 132.3,73.1 134.1,74 135.7,75 137,76 138.1,76.9 138.8,77.9 139.3,78.8 139.6,79.8 139.8,80.8 139.9,81.7 139.9,82.7 140,83.6 140,84.6 140,85.5 140,86.5 140,87.5 140,88.4 140,89.4 140,90.3 140,91.3 140,92.3 140,93.2 140,94.2 140,95.1 140,96.1 140,97 140,98" fill="none" stroke="#841617" stroke-width="2.4" stroke-linejoin="round"/><text x="58" y="103" font-family="monospace" font-size="8" fill="#16191C" text-anchor="middle">two rocks</text><text x="150" y="103" font-family="monospace" font-size="8" fill="#841617">the echo</text></svg></div>
+        <div class="card-body">
+          <div class="card-no">—<span class="lvl">written before the re-leveling · pitched higher</span></div>
+          <h3>A pulse, a boundary, an echo</h3>
+          <p>Written before the resolution modules were taken as a prerequisite, and largely duplicated by them. Its two original pieces are being folded into the resolution set.</p>
+          <div class="q">What is a seismic trace a record of?</div>
+        </div>
+        <span class="flag next">Moving out</span>
       </a>
 
     </div>
@@ -254,22 +253,22 @@
     <h2>About these modules</h2>
     <p>They are built for students meeting seismic interpretation for the first time, and for anyone who
       arrived in an interpretation role from an adjacent discipline and is expected to be productive in
-      weeks. <b>Module 00 assumes nothing at all</b> — not rock physics, not mathematics, not even that you
-      know what impedance means. Modules 01 to 04 assume module 00. Modules 05 and 06 assume the four
-      before them and are comfortable with standard deviations and correlation; they are written for
-      people who already use these methods.</p>
+      weeks. <b>The set assumes the <a href="https://hbedle-subsurface.github.io/seismic_resolution/">seismic resolution modules</a></b> and
+      first-year geology, and nothing else. Module 00 restates what those modules established. Modules 01
+      to 03 build the rock. Module 04 introduces offset and the gather, and 05 to 08 work on what the
+      angles add and what they cost.</p>
     <p>The title is a promise about the later modules rather than the early ones. "Actually" means that
       each rule of thumb gets tested until it breaks, and that where it breaks is measured rather than
-      asserted. If you have never met the rules, module 00 teaches them straight, in the confident form
-      you would hear them at work, before anything comes back to qualify them.</p>
+      asserted. The early modules build the forward calculation without qualifying it, because running
+      that calculation confidently is what the later ones take apart.</p>
     <p>Everything runs in the browser. No installation and no account. Nothing you do inside a module —
       no slider, no click, no trace you generate — is transmitted anywhere, and the modules make no
       network requests at all. Each one works from a local copy with the network switched off, and the
       state of every control is written into the address bar, so a specific configuration can be handed
       out as a link.</p>
-    <p>The one thing recorded is that a page was opened. No cookie, no account, nothing about you. I keep
+    <p>The one thing recorded is that a page was opened. No cookie, no account, nothing about you. We keep
       that count for two reasons: so the modules people actually use are the ones that get improved, and
-      so I can show my university that you all are using these — which is how they keep getting built.</p>
+      so we can show the university that these are being used, which is how they keep getting built.</p>
 
     <p>Every panel is <b>computed</b> from the parameters on screen. There are no stored images and no
       curves drawn to look plausible, which means the tool can be wrong — and during construction it
@@ -277,23 +276,25 @@
       where the corrections came from. Every module carries a Method tab listing what has been left out and
       where the implementation departs from production software, and every number quoted in the exercises
       is read off the running page rather than estimated.</p>
-    <p>A companion set on <a href="https://hbedle-subsurface.github.io/geometric-attributes/">geometric
-      attributes</a> covers dip, coherence and curvature, and one on
-      <a href="https://hbedle-subsurface.github.io/seismic_resolution/">seismic resolution</a> covers what
-      you can and cannot separate in time.</p>
+    <p><a href="https://hbedle-subsurface.github.io/seismic_resolution/">Seismic resolution</a> is the prerequisite for this set and covers what
+      can and cannot be separated in time. A further companion set on
+      <a href="https://hbedle-subsurface.github.io/geometric-attributes/">geometric attributes</a> covers
+      dip, coherence and curvature, and is independent of both.</p>
   </section>
 
   <footer>
     <div class="foot-grid">
-      <p>Built for teaching by Heather Bedle, School of Geosciences, University of Oklahoma, with the
-        <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a> consortium.</p>
-      <p class="lic">Free to use for teaching, demonstration, and non-commercial study, provided the source
-        is credited. Please do not republish or redistribute it, modified or otherwise, without permission.
-        If you use it in a course or a talk, a credit line and a link back are all that is asked.</p>
+      <p>Built for teaching by Dr. Heather Bedle and Dr. April Moreno-Ward, School of Geosciences,
+        University of Oklahoma, with the <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a>
+        consortium.</p>
+      <p class="lic">Licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+        Free to use, adapt and share, including in teaching and including commercially, provided the
+        source is credited and any adaptation is released under the same license. The full legal text is
+        in <code>LICENSE</code> at the repository root.</p>
       <p class="lic">Nothing you do in these modules leaves your browser. The only thing recorded is that
-        a page was opened, so that I can show the university these are being used — no cookie, no account,
-        nothing about you.</p>
-      <p class="lic">To cite: H. Bedle, <i>How AVO Actually Works</i>, University of
+        a page was opened, so that we can show the university these are being used — no cookie, no
+        account, nothing about you.</p>
+      <p class="lic">To cite: H. Bedle and A. Moreno-Ward, <i>How AVO Actually Works</i>, University of
         Oklahoma. <span class="k">SSRN: [article link to follow]</span></p>
     </div>
   </footer>

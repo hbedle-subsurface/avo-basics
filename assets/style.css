@@ -810,3 +810,14 @@ details.reveal .ans { display: block; margin-top: 9px; }
   body { background: #fff; }
   .lab { grid-template-columns: 1fr; }
 }
+
+/* The prerequisite note in the hero. This set is no longer self-contained:
+   it assumes the seismic resolution modules, and a reader landing here cold
+   needs to be told that before the module list, not in the About section. */
+.hero-copy .lede.prereq{
+  margin-top:18px; padding:12px 14px;
+  background:var(--fill,#F4F6F7);
+  border-left:3px solid var(--crimson,#841617);
+  font-size:15px;
+}
+.hero-copy .lede.prereq b{color:var(--ink,#16191C)}

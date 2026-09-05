@@ -33,53 +33,84 @@ function assertTrue(claim, ok) {
   console.log('  ' + (ok ? 'ok  ' : 'FAIL') + ' ' + claim);
 }
 
-console.log('\nMODULE 00 — PROSE AGAINST THE RUNNING PAGE\n');
+console.log('\nMODULE 00 - PROSE AGAINST THE RUNNING PAGE\n');
 
-const d0 = readAt({ phi: 30, ang: 0 });
-const d40 = readAt({ phi: 30, ang: 40 });
+const DEF = { off: 2400, zb: 2000, phi: 30 };
+const d = readAt(DEF);
+
+/* ---- exercise 1: offset is not angle ---- */
+check('exercise 1: 2400 m offset over 2000 m depth is about 31 degrees',
+  d.D.angle, 31, 0.3);
+check('exercise 1: the same offset at 3000 m depth is about 21.8 degrees',
+  readAt({ off: 2400, zb: 3000, phi: 30 }).D.angle, 21.8, 0.15);
 
 /* ---- exercise 3: the two curves at normal incidence ---- */
-check('exercise 3: brine sand at 0° is about -0.011', d0.D.bAt0, -0.011, 0.001);
-check('exercise 3: gas sand at 0° is about -0.162', d0.D.gAt0, -0.162, 0.001);
-check('exercise 3: a gap of about 0.151', d0.D.gap0, 0.151, 0.001);
+check('exercise 3: brine sand at 0 degrees is about -0.011', d.D.bAt0, -0.011, 0.001);
+check('exercise 3: gas sand at 0 degrees is about -0.162', d.D.gAt0, -0.162, 0.001);
+check('exercise 3: a gap of about 0.151', d.D.gap0, 0.151, 0.001);
 
-/* ---- exercise 4: the same two at the far end ---- */
-check('exercise 4: brine sand at 40° is about -0.083', d40.D.bAtA, -0.083, 0.001);
-check('exercise 4: gas sand at 40° is about -0.282', d40.D.gAtA, -0.282, 0.001);
-check('exercise 4: a gap of about 0.199', d40.D.gapA, 0.199, 0.001);
-check('exercise 4: the gap grew by about a third', d40.D.gapA / d40.D.gap0, 1.33, 0.05);
+/* ---- exercise 4: the widest angle the sliders reach ---- */
+const wide = readAt({ off: 3000, zb: 1500, phi: 30 });
+check('exercise 4: 1500 m half-offset over 1500 m depth is exactly 45 degrees',
+  wide.D.angle, 45, 0.01);
+check('exercise 4: brine sand there is about -0.099', wide.D.bAtA, -0.099, 0.001);
+check('exercise 4: gas sand there is about -0.315', wide.D.gAtA, -0.315, 0.001);
+check('exercise 4: a gap of about 0.216', wide.D.gapA, 0.216, 0.001);
+check('exercise 4: about 1.4 times the gap at normal incidence',
+  wide.D.gapA / wide.D.gap0, 1.4, 0.05);
 
-/* ---- exercise 5: the porosity trend, and the sign change ---- */
-const lo0 = readAt({ phi: 18, ang: 0 });
-const hi0 = readAt({ phi: 35, ang: 0 });
-const lo40 = readAt({ phi: 18, ang: 40 });
-const hi40 = readAt({ phi: 35, ang: 40 });
-check('exercise 5: the 0° gap runs 0.172 at 35% porosity', hi0.D.gap0, 0.172, 0.001);
-check('exercise 5: down to 0.100 at 18% porosity', lo0.D.gap0, 0.100, 0.001);
-check('exercise 5: the 40° gap runs 0.212 at 35% porosity', hi40.D.gapA, 0.212, 0.001);
-check('exercise 5: down to 0.176 at 18% porosity', lo40.D.gapA, 0.176, 0.001);
+/* ---- step 3 prose: what the fluid does to Vp, Vs and the ratio ---- */
+check('step 3: brine sand Vp is about 2732 m/s', d.D.brine.vp, 2732, 2);
+check('step 3: gas sand Vp is about 2280 m/s', d.D.gas.vp, 2280, 2);
+assertTrue('step 3: gas lowers Vp', d.D.gas.vp < d.D.brine.vp);
+assertTrue('step 3: gas raises Vs slightly', d.D.gas.vs > d.D.brine.vs);
+assertTrue('step 3: and by much less than it lowers Vp',
+  (d.D.gas.vs - d.D.brine.vs) < 0.3 * (d.D.brine.vp - d.D.gas.vp));
+assertTrue('step 3: so Vp/Vs falls sharply', d.D.gas.vpvs < d.D.brine.vpvs - 0.3);
 
-/* The trend is only claimed over the slider's range, so check it over that
-   range rather than asserting it in general — it does not hold below 18%,
-   which is why the slider stops there. */
-let mono0 = true, mono40 = true, prev0 = null, prev40 = null;
+/* the shear modulus is untouched by the fluid swap, so the whole of the Vs
+   change has to be the density drop. This is the claim the Method tab makes. */
+const vsFromRho = d.D.brine.vs * Math.sqrt(d.D.brine.rho / d.D.gas.rho);
+check('method: the rise in Vs is entirely the density drop',
+  d.D.gas.vs, vsFromRho, 1);
+
+/* ---- exercise 5: the porosity trend, over the slider's range only ---- */
+const lo0 = readAt({ off: 0, zb: 2000, phi: 18 });
+const hi0 = readAt({ off: 0, zb: 2000, phi: 35 });
+const lo45 = readAt({ off: 3000, zb: 1500, phi: 18 });
+const hi45 = readAt({ off: 3000, zb: 1500, phi: 35 });
+assertTrue('exercise 5: the 0 degree gap shrinks as porosity falls', lo0.D.gap0 < hi0.D.gap0);
+assertTrue('exercise 5: but the wide-angle gap does not shrink with it',
+  Math.abs(lo45.D.gapA - hi45.D.gapA) < 0.02);
+
+let mono0 = true, prev0 = null, cross = null, ratios = [];
+let g45lo = Infinity, g45hi = 0;
 for (let phi = 18; phi <= 35; phi++) {
-  const a = readAt({ phi: phi, ang: 0 });
-  const b = readAt({ phi: phi, ang: 40 });
+  const a = readAt({ off: 3000, zb: 1500, phi: phi });
   if (prev0 !== null && a.D.gap0 <= prev0) mono0 = false;
-  if (prev40 !== null && b.D.gapA <= prev40) mono40 = false;
-  prev0 = a.D.gap0; prev40 = b.D.gapA;
+  prev0 = a.D.gap0;
+  g45lo = Math.min(g45lo, a.D.gapA); g45hi = Math.max(g45hi, a.D.gapA);
+  ratios.push(a.D.gapA / a.D.gap0);
+  if (cross === null && a.D.bAt0 <= 0) cross = phi;
 }
-assertTrue('exercise 5: the 0° gap grows with porosity across the whole slider', mono0);
-assertTrue('exercise 5: the 40° gap does too, across the whole slider', mono40);
+assertTrue('exercise 5: the 0 degree gap grows steadily with porosity across the slider', mono0);
 
-/* the sign change the answer points at */
-let cross = null;
-for (let phi = 18; phi <= 35; phi++) {
-  const a = readAt({ phi: phi, ang: 0 });
-  if (a.D.bAt0 <= 0) { cross = phi; break; }
-}
-check('exercise 5: the brine sand crosses zero at 0° just below 30% porosity', cross, 30, 0.5);
+/* The wide-angle gap is NOT monotonic — it has a shallow minimum near 24% —
+   so the answer says it barely moves rather than claiming a trend. Check the
+   band it stays inside, which is what "stays near 0.21" has to mean. */
+assertTrue('exercise 5: the 45 degree gap stays inside a narrow band (max/min < 1.10)',
+  g45hi / g45lo < 1.10);
+check('exercise 5: and that band sits near 0.21', (g45lo + g45hi) / 2, 0.21, 0.01);
+
+let ratioFalls = true;
+for (let i = 1; i < ratios.length; i++) if (ratios[i] >= ratios[i - 1]) ratioFalls = false;
+assertTrue('exercise 5: so the wide-angle gain over normal incidence falls as porosity rises',
+  ratioFalls);
+check('exercise 5: about 2.2 times at 18% porosity', ratios[0], 2.2, 0.06);
+check('exercise 5: and about 1.3 times at 35%', ratios[ratios.length - 1], 1.3, 0.06);
+
+check('exercise 5: the brine sand crosses zero at 0 degrees just below 30% porosity',
+  cross, 30, 0.5);
 
 console.log('\n' + (bad ? bad + ' PROSE CLAIMS NO LONGER HOLD' :
   'every number in module 00 matches the running page') + '\n');

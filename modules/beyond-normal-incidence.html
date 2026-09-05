@@ -64,14 +64,23 @@
               <input type="range" data-key="rho2" id="rho2" min="180" max="265" step="1" value="191">
             </div>
 
+            <h2>Where the angle comes from</h2>
+            <div class="ctl">
+              <label for="off">Source-to-receiver distance <span class="val" id="offV">2400 m</span></label>
+              <input type="range" data-key="off" id="off" min="0" max="3000" step="50" value="2400">
+            </div>
+            <div class="ctl">
+              <label for="zb">Depth to the boundary <span class="val" id="zbV">2000 m</span></label>
+              <input type="range" data-key="zb" id="zb" min="1500" max="3000" step="50" value="2000">
+            </div>
+            <div class="ctl readonly">
+              <label>Incidence angle that gives <span class="val k" id="angV">—</span></label>
+            </div>
+
             <h2>Step 3 only</h2>
             <div class="ctl">
               <label for="phi">Porosity of the sand <span class="val" id="phiV">30%</span></label>
               <input type="range" data-key="phi" id="phi" min="18" max="35" step="1" value="30">
-            </div>
-            <div class="ctl">
-              <label for="ang">Incidence angle <span class="val" id="angV">30°</span></label>
-              <input type="range" data-key="ang" id="ang" min="0" max="40" step="1" value="30">
             </div>
           </div>
         </div>
@@ -159,35 +168,42 @@
       says it is normal incidence only, with no offset, no AVO and no mode conversion. The wedge module
       lists offset among the things left out because each deserves separate treatment. This set is that
       separate treatment.</p>
-    <p class="lede">Where the angles come from, how they relate to the distance between source and
-      receiver, and how the traces are organized is the subject of module 04. What matters here is only
-      that a range of angles exists and that the resolution modules covered one end of it.</p>
+    <p class="lede">The two controls under <em>where the angle comes from</em> set the distance between
+      the source and the receiver, which is called the <b>offset</b>, and the depth of the boundary. For a
+      ray that travels in a straight line and reflects at the midpoint, the half-offset and the depth are
+      the two short sides of a right triangle, so the angle is the arctangent of one divided by the other.
+      Offset and angle are related but not the same number: the same offset gives a wide angle at a
+      shallow boundary and a narrow one at a deep boundary.</p>
+    <p class="lede">How the traces recorded at different offsets are organized, and what happens once
+      velocity increases with depth and the ray stops travelling in a straight line, is the subject of
+      module 04. What matters here is that a range of angles exists and that the resolution modules
+      covered one end of it.</p>
 
     <div class="sec-row" id="row2">
       <div class="panel-col">
         <p class="sublabel"><b>1</b> The case that has been covered
-          <span class="note">perpendicular to the boundary</span></p>
-        <canvas id="c2normal" aria-label="A cartoon of a wave arriving perpendicular to a boundary and reflecting straight back"></canvas>
+          <span class="note">zero offset, straight down and back</span></p>
+        <canvas id="c2normal" aria-label="A to-scale section showing a source and receiver at the same point and a ray travelling straight down to the boundary and back"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> The cases a survey actually records
-          <span class="note">a fan of angles from one shot</span></p>
-        <canvas id="c2fan" aria-label="A cartoon of one source and several receivers, with rays meeting the boundary at a range of angles"></canvas>
+        <p class="sublabel"><b>2</b> The offset you set
+          <span class="note">drawn to the same scale</span></p>
+        <canvas id="c2fan" aria-label="A to-scale section showing a source and a receiver separated by the chosen offset, with the ray reflecting at the midpoint and the incidence angle marked"></canvas>
       </div>
     </div>
 
     <div class="stats" style="margin-top:14px">
-      <div class="stat"><span>Angle assumed by every earlier module</span><b id="s2a">—</b></div>
-      <div class="stat key"><span>Angle selected here</span><b id="s2b">—</b></div>
-      <div class="stat"><span>Rays drawn in the right-hand panel</span><b id="s2c">—</b></div>
-      <div class="stat"><span>Angle range they span</span><b id="s2d">—</b></div>
-      <div class="stat"><span>Reflection coefficient at 0°</span><b id="s2e">—</b></div>
+      <div class="stat"><span>Offset, source to receiver</span><b id="s2a">—</b></div>
+      <div class="stat"><span>Depth to the boundary</span><b id="s2b">—</b></div>
+      <div class="stat"><span>Half-offset ÷ depth</span><b id="s2c">—</b></div>
+      <div class="stat key"><span>Incidence angle that gives</span><b id="s2d">—</b></div>
+      <div class="stat"><span>Same offset at 3000 m depth</span><b id="s2e">—</b></div>
       <div class="stat wide"><span>What the impedance result covers</span><b id="s2f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>The rays here are drawn straight for clarity. Velocity generally increases with depth, which
-        bends them, and the difference between the drawn angle and the real one grows with distance.
-        Module 04 works that out.</span>
+      <span>The rays are straight here. Velocity generally increases with depth, which bends a real ray
+        and makes the true angle at the boundary larger than this triangle gives, by an amount that grows
+        with offset. Module 04 works that out.</span>
     </div>
   </section>
 
@@ -209,10 +225,24 @@
       measurement made only at normal incidence sees the difference at the left-hand edge of that plot; a
       measurement that uses the whole range sees the difference grow. That is the observation the rest of
       this set examines.</p>
-    <p class="lede">Producing those curves required a property of the rock that has not appeared in any
-      module so far. Impedance describes how a rock responds to being compressed. A wave arriving at an
-      angle also shears the rock, and how a rock resists shearing is a separate property that impedance
-      does not carry. Where it comes from, and what controls it, is module 01.</p>
+    <p class="lede">The reason the curves have shapes at all is worth setting out. A wave arriving
+      perpendicular to a boundary moves the rock particles along the direction it travels, straight into
+      the boundary and back out. The rock is compressed and nothing slides, so the reflection depends only
+      on how the two rocks resist compression, and impedance is a complete description of that.</p>
+    <p class="lede">A wave arriving at an angle moves the particles along a direction that is no longer
+      perpendicular to the boundary. Part of that motion is parallel to the boundary, so the rock either
+      side is also sheared. Resistance to shearing is a separate property from resistance to compression,
+      and it has its own velocity: the <b>shear velocity</b>, or Vs, alongside the P-wave velocity Vp that
+      the earlier modules used. The wider the angle, the more of the motion is parallel to the boundary
+      and the more the shear velocities matter. That is why one number becomes a curve.</p>
+    <p class="lede">The third panel shows why the two fluids give differently shaped curves. Filling the
+      pores with gas instead of brine lowers Vp, because a gas resists compression far less than a brine
+      does. It leaves Vs almost alone, because a fluid of either kind offers no resistance to shearing at
+      all — and Vs even rises slightly, because the gas is lighter and the same shear resistance is now
+      carried by less mass. Vp falls while Vs holds, so the ratio Vp/Vs falls sharply, and it is the
+      contrast in Vp/Vs across the boundary that sets how steeply a curve falls away.</p>
+    <p class="lede">Where Vp and Vs come from in the first place, and why a pore fluid acts on one and
+      not the other, is module 01.</p>
 
     <div class="sec-row" id="row3">
       <div class="panel-col">
@@ -227,18 +257,26 @@
       </div>
     </div>
 
+    <div class="sec-row" id="row3b">
+      <div class="panel-col">
+        <p class="sublabel"><b>3</b> Where the two shapes come from
+          <span class="note">Vp and Vs for all three rocks, and the ratio between them</span></p>
+        <canvas id="c3props" aria-label="Bar chart of P-wave and shear velocity for the shale, the brine sand and the gas sand, with the Vp over Vs ratio labeled for each"></canvas>
+      </div>
+    </div>
+
     <div class="stats" style="margin-top:14px">
-      <div class="stat"><span>Brine sand at 0°</span><b id="s3a">—</b></div>
-      <div class="stat"><span>Gas sand at 0°</span><b id="s3b">—</b></div>
-      <div class="stat"><span>Brine sand at the selected angle</span><b id="s3c">—</b></div>
-      <div class="stat"><span>Gas sand at the selected angle</span><b id="s3d">—</b></div>
-      <div class="stat key"><span>Gap between them, 0° to selected</span><b id="s3e">—</b></div>
+      <div class="stat"><span>Vp of the sand, brine → gas</span><b id="s3a">—</b></div>
+      <div class="stat"><span>Vs of the sand, brine → gas</span><b id="s3b">—</b></div>
+      <div class="stat"><span>Vp/Vs, brine → gas</span><b id="s3c">—</b></div>
+      <div class="stat"><span>Reflection at 0°, brine / gas</span><b id="s3d">—</b></div>
+      <div class="stat key"><span>Gap between them, 0° → this angle</span><b id="s3e">—</b></div>
       <div class="stat wide"><span>What the extra angles added</span><b id="s3f">—</b></div>
     </div>
     <div class="legend prose">
       <span>The two rocks in this step are computed from a rock physics model rather than set by the
-        sliders, because their behavior with angle depends on a property the sliders do not carry.
-        Building that model is what modules 01 and 02 do.</span>
+        sliders, because their behavior with angle depends on the shear velocity and the sliders carry only
+        Vp and density. Building that model is what modules 01 and 02 do.</span>
     </div>
   </section>
 
@@ -270,6 +308,15 @@
         described. <button type="button" class="btn ghost small" id="popEx">Open these in a separate
         window</button></p>
       <ol id="exList">
+        <li><b>Separate offset from angle.</b> Set the offset to 2400 m and the depth to 2000 m and read
+          the incidence angle. Then leave the offset alone and take the depth to 3000 m.
+          <details class="reveal"><summary>Answer</summary><span class="ans">The angle falls from about
+            31° to about 21.8°, on an unchanged offset. The angle is set by the half-offset divided by
+            the depth, so the same receiver spread reaches a wide angle on a shallow target and a narrow
+            one on a deep target. A statement about which offsets to include in an analysis is not
+            transferable between targets at different depths, and a deep target may not reach a usable
+            angle range at all.</span></details></li>
+
         <li><b>Confirm that the impedance result still holds.</b> Set the rock below to 2280 m/s and
           1.91 g/cm³ with the rock above at 2700 m/s and 2.23 g/cm³, then find a different pair of
           numbers for the rock below that gives the same reflection coefficient.
@@ -283,35 +330,32 @@
           across the boundary so the trace goes flat, and note that step 3 is unaffected.
           <details class="reveal"><summary>Answer</summary><span class="ans">Steps 1 and 2 use the four
             sliders; step 3 uses a modeled sand and shale instead. They are deliberately not connected.
-            The sliders carry velocity and density, which is enough for a normal-incidence reflection and
-            not enough for a reflection at an angle, and separating them is the cleanest way to show
-            that.</span></details></li>
+            The sliders carry Vp and density, which is enough for a normal-incidence reflection and not
+            enough for a reflection at an angle, because that also needs the shear velocity. Separating
+            them is the cleanest way to show which properties each case
+            requires.</span></details></li>
 
-        <li><b>Read the two curves at their left-hand edge.</b> With porosity at 30%, compare the brine
-          and gas values at 0°.
-          <details class="reveal"><summary>Answer</summary><span class="ans">About −0.011 for brine and
-            −0.162 for gas, a gap of roughly 0.151. At normal incidence the gas sand is a strong negative
-            reflection and the brine sand is close to invisible. This much is impedance and would have
-            been predictable from the resolution modules alone.</span></details></li>
-
-        <li><b>Read them again at 40°.</b> Move the angle slider to its maximum and compare the same two
-          values.
-          <details class="reveal"><summary>Answer</summary><span class="ans">About −0.083 for brine and
-            −0.282 for gas, a gap of roughly 0.199. Both became more negative, but the gas curve moved
-            further, so the gap grew by about a third across the angle range. The extra angles did not
-            just repeat the normal-incidence measurement more times; they carried information the normal
-            incidence measurement did not have.</span></details></li>
+        <li><b>Reach the widest angle the geometry allows.</b> Put the offset at 3000 m and the depth at
+          1500 m, read the angle, and compare the two curves there against their values at 0°.
+          <details class="reveal"><summary>Answer</summary><span class="ans">A half-offset of 1500 m over
+            a depth of 1500 m gives a tangent of exactly 1, so the angle is 45°. There the brine sand
+            reads about −0.099 and the gas sand about −0.315, a gap of roughly 0.216 against 0.151 at
+            normal incidence — about 1.4 times as large. The extra angles did not repeat the
+            normal-incidence measurement more times; they carried information it did not
+            have.</span></details></li>
 
         <li><b>Reduce the porosity and watch both curves.</b> Take porosity from 35% down to 18% and
           follow the gap panel, then look at where the two curves start.
-          <details class="reveal"><summary>Answer</summary><span class="ans">The gap shrinks at every
-            angle: at normal incidence from about 0.172 to 0.100, and at 40° from about 0.212 to 0.176.
-            A tight sand has little pore space, so its fluid has little influence on the rock as a whole.
-            Something else changes at the same time — the brine sand's reflection coefficient at 0°
-            crosses zero just below 30% porosity, because a tighter sand becomes harder
-            than the shale above it rather than softer. The reflection has not stopped responding to the
-            fluid; it has changed sign for a reason that has nothing to do with the
-            fluid.</span></details></li>
+          <details class="reveal"><summary>Answer</summary><span class="ans">At normal incidence the gap
+            shrinks steadily, from about 0.172 at 35% porosity to about 0.100 at 18%, because a tight sand
+            has little pore space and its fluid has correspondingly little influence on the rock as a
+            whole. At 45° the gap barely moves at all: it stays near 0.21 across the whole range, dipping
+            slightly around 24%. So what the wide angles add over normal incidence grows as the sand
+            tightens — about 1.3 times at 35% porosity and about 2.2 times at 18%. The angle information
+            counts for most where the normal-incidence measurement is weakest. Watch the brine curve as
+            well: its value at 0° crosses zero just below 30% porosity, because a tighter sand becomes
+            harder than the shale above it rather than softer, and that sign change has nothing to do with
+            the fluid.</span></details></li>
       </ol>
     </div>
   </section>
@@ -332,8 +376,15 @@
           fluids change differently. That is the observation this set examines.</li>
         <li><b>The variation supplies a second measurement</b> from the same recording, which is what
           makes separating two unknowns possible in principle.</li>
-        <li><b>Describing the variation needs a property impedance does not carry</b> — how the rock
-          resists shearing rather than compression. Module 01 introduces it.</li>
+        <li><b>Offset and angle are related but not equal.</b> The angle comes from the half-offset
+          divided by the depth, so the same offset reaches a wide angle on a shallow boundary and a
+          narrow one on a deep boundary.</li>
+        <li><b>The variation exists because an angled wave shears the rock.</b> At normal incidence the
+          motion is perpendicular to the boundary and only compression matters. At an angle part of the
+          motion is parallel to it, so the shear velocities on both sides enter the reflection.</li>
+        <li><b>A pore fluid moves Vp and leaves Vs almost alone</b>, so replacing brine with gas drops
+          Vp/Vs sharply, and it is the Vp/Vs contrast across the boundary that sets how steeply a curve
+          falls away. Where Vp and Vs come from is module 01.</li>
       </ul>
     </div>
   </section>
@@ -359,9 +410,15 @@
 
     <p class="lede"><b>Deferred rather than simplified:</b></p>
     <ul class="lede" style="padding-left:20px">
-      <li><b>Where the angles come from.</b> The rays in step 2 are drawn straight and the angle is set
-        directly. Real ray paths bend as velocity increases with depth, and the relationship between
-        source-receiver distance and incidence angle is module 04.</li>
+      <li><b>Straight rays.</b> Step 2 computes the angle as arctan of the half-offset over the depth,
+        which is exact only for constant velocity. Velocity generally rises with depth, so a real ray
+        curves and arrives at the boundary at a wider angle than this triangle gives, by an amount that
+        grows with offset. It also means the reflection point is not exactly at the midpoint once the
+        layers dip. Module 04 handles both.</li>
+      <li><b>One boundary, no moveout.</b> The geometry panels show a single reflector and say nothing
+        about the extra travel time a longer offset costs, which is what has to be removed before the
+        amplitudes at different offsets can be compared at all. That correction, and what it does to the
+        data, is module 04.</li>
       <li><b>Why the curves have the shape they do.</b> Step 3 shows that they differ without explaining
         it. The explanation needs the shear response, which is modules 01 and 02, and the reflection
         equations themselves, which are module 05.</li>
@@ -378,10 +435,18 @@
       between the two fluid cases at wide angle stops behaving monotonically for that reason rather than
       a physical one. A cemented-sand or constant-cement model would be the appropriate choice there.</p>
 
-    <p class="lede">The angle range stops at 40°, which is a common practical limit for usable angles on
-      a marine gather at reservoir depth. Beyond roughly that angle the reflection coefficient starts to
-      change rapidly, the approximations most people use stop holding, and the processing that flattened
-      the gather is less reliable.</p>
+    <p class="lede"><b>The angle reaches 45° at the extremes of the sliders</b>, at the shortest depth
+      with the longest offset. On a marine gather at reservoir depth, 30° to 40° is a more usual practical
+      limit: beyond that the reflection coefficient changes rapidly, the linear approximations most people
+      use stop holding, and the processing that flattened the gather is less reliable. The curves here are
+      exact Zoeppritz, so they remain correct across the whole range even where an approximation would
+      not.</p>
+
+    <p class="lede"><b>The shear velocities used in step 3</b> come out of the rock model rather than from
+      a Vp-to-Vs trend. The shale takes its Vs from Castagna's mudrock line, which is a fit to shales. The
+      sand takes its Vs from the shear modulus of the dry grain frame, which Gassmann's relation leaves
+      unchanged when the pore fluid is swapped — the small rise in Vs from brine to gas is entirely the
+      density drop, not a change in the frame.</p>
 
     <details class="reveal" style="margin-top:8px">
       <summary>References</summary>
@@ -459,7 +524,8 @@
   const DEG = Math.PI / 180;
 
   // rho sliders carry hundredths of g/cm3; phi carries whole percent
-  const DEF = { vp1: 2700, rho1: 223, vp2: 2280, rho2: 191, phi: 30, ang: 30, tab: 'p1' };
+  const DEF = { vp1: 2700, rho1: 223, vp2: 2280, rho2: 191, phi: 30,
+    off: 2400, zb: 2000, tab: 'p1' };
   const S = SEIS.readState(DEF);
   (function sanitize() {
     const num = (k, lo, hi, step) => {
@@ -470,7 +536,7 @@
     };
     num('vp1', 1800, 3600, 50); num('rho1', 190, 265, 1);
     num('vp2', 1800, 4200, 50); num('rho2', 180, 265, 1);
-    num('phi', 18, 35, 1); num('ang', 0, 40, 1);
+    num('phi', 18, 35, 1); num('off', 0, 3000, 50); num('zb', 1500, 3000, 50);
   })();
   const saveState = () => SEIS.writeState(S, DEF);
 
@@ -487,13 +553,24 @@
   const FREQ = 30;
   const TR0 = 0, DT = 0.002, NT = 501;      // 0 to 1.000 s
   const T_REF = 0.40;                       // where the single reflection sits
-  const ANGMAX = 40;
-  const NANG = 81;
+  const ANGMAX = 45;      // the widest angle the sliders can reach
+  const NANG = 91;
+  const ZAX = 3200;       // depth axis for the step 2 geometry panels, metres
+  const XAX = 3200;       // distance axis, metres
   const WAV = SEIS.makeWavelet({ f: FREQ });
 
   const D = {};
 
   function recompute() {
+    /* Offset and depth set the angle, for a straight ray reflecting at the
+       midpoint: the half-offset and the depth are the two sides of a right
+       triangle. Real rays bend as velocity increases with depth, so this
+       overstates nothing at short offset and understates the angle at long
+       offset. Module 04 does it properly. */
+    D.halfOff = S.off / 2;
+    D.angle = Math.atan2(D.halfOff, S.zb) * 180 / Math.PI;
+    D.tanTheta = D.halfOff / S.zb;
+
     const r1 = S.rho1 / 100, r2 = S.rho2 / 100;
     D.i1 = S.vp1 * r1;
     D.i2 = S.vp2 * r2;
@@ -518,8 +595,8 @@
     }
     D.bAt0 = ROCK.zoeppritz(D.shale, D.brine, 0);
     D.gAt0 = ROCK.zoeppritz(D.shale, D.gas, 0);
-    D.bAtA = ROCK.zoeppritz(D.shale, D.brine, S.ang);
-    D.gAtA = ROCK.zoeppritz(D.shale, D.gas, S.ang);
+    D.bAtA = ROCK.zoeppritz(D.shale, D.brine, D.angle);
+    D.gAtA = ROCK.zoeppritz(D.shale, D.gas, D.angle);
     D.gap0 = Math.abs(D.gAt0 - D.bAt0);
     D.gapA = Math.abs(D.gAtA - D.bAtA);
   }
@@ -559,7 +636,8 @@
   function legendLines(ctx, items, maxW) {
     ctx.save(); ctx.font = LEG_FONT;
     let lines = 1, x = 0;
-    for (const [, t] of items) {
+    for (const [, t0] of items) {
+      const t = fitLabel(ctx, t0, maxW - 41);
       const iw = 23 + ctx.measureText(t).width + 18;
       if (x > 0 && x + iw > maxW) { lines++; x = 0; }
       x += iw;
@@ -576,11 +654,22 @@
     ctx.clearRect(0, 0, W, H);
     return { ctx, R: { x: M.l, y: M.t, w: W - M.l - M.r, h: plotH } };
   }
+  /* An item wider than the plot cannot wrap onto a line of its own and would
+     run off the canvas, so it gets shortened to fit instead. */
+  function fitLabel(ctx, t, maxW) {
+    if (ctx.measureText(t).width <= maxW) return t;
+    let out = t;
+    while (out.length > 4 && ctx.measureText(out + '\u2026').width > maxW) {
+      out = out.slice(0, -1);
+    }
+    return out.replace(/[ ,]+$/, '') + '\u2026';
+  }
   function legendRow(ctx, R, items) {
     ctx.save();
     ctx.font = LEG_FONT; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
     let x = R.x, y = R.y + R.h + 46;
-    for (const [c, t, kind] of items) {
+    for (const [c, t0, kind] of items) {
+      const t = fitLabel(ctx, t0, R.w - 41);
       const iw = 23 + ctx.measureText(t).width + 18;
       if (x > R.x && x + iw > R.x + R.w) { x = R.x; y += 16; }
       if (kind === 'dot') {
@@ -635,17 +724,74 @@
     ctx.stroke(); ctx.restore();
   }
 
-  /* two rocks stacked, shaded by impedance */
-  function drawInterface(ctx, R) {
-    const yMid = R.y + R.h * 0.45;
-    const shade = (imp) => {
-      const f = Math.max(0, Math.min(1, (imp - 3500) / 6000));
-      const g = Math.round(232 - f * 92);
-      return 'rgb(' + g + ',' + (g - 6) + ',' + (g - 20) + ')';
-    };
+  /* ------------------------------- ROCK COLORS -------------------------
+     Two hues rather than two grays: the upper rock runs through a cool sage
+     and the lower through a warm sand, each darkening as its impedance rises.
+     The texture carries the same information a second way — laminations above,
+     a grain stipple below — which keeps the two layers apart for a reader who
+     cannot separate the hues. Both are deterministic, so the panels do not
+     shimmer when a slider moves.
+     --------------------------------------------------------------------- */
+
+  const RAMP = {
+    upper: [[209, 213, 199], [104, 113,  96]],   // pale sage  -> deep sage
+    lower: [[233, 216, 182], [166, 124,  62]],   // pale sand  -> ochre
+  };
+  function ramp(which, f) {
+    const [a, b] = RAMP[which];
+    const t = Math.max(0, Math.min(1, f));
+    const c = (i) => Math.round(a[i] + (b[i] - a[i]) * t);
+    return 'rgb(' + c(0) + ',' + c(1) + ',' + c(2) + ')';
+  }
+  const impFrac = (imp) => (imp - 3200) / 6200;
+
+  /* a repeatable value in [0,1) from a pair of integers */
+  function hash2(a, b) {
+    let h = (a * 374761393 + b * 668265263) | 0;
+    h = (h ^ (h >> 13)) * 1274126177 | 0;
+    return ((h ^ (h >> 16)) >>> 0) / 4294967296;
+  }
+
+  function laminate(ctx, R, yTop, yBot) {
     ctx.save();
-    ctx.fillStyle = shade(D.i1); ctx.fillRect(R.x, R.y, R.w, yMid - R.y);
-    ctx.fillStyle = shade(D.i2); ctx.fillRect(R.x, yMid, R.w, R.y + R.h - yMid);
+    ctx.beginPath(); ctx.rect(R.x, yTop, R.w, Math.max(0, yBot - yTop)); ctx.clip();
+    ctx.strokeStyle = 'rgba(38,44,34,0.16)'; ctx.lineWidth = 1;
+    for (let y = yTop + 5, k = 0; y < yBot; y += 7, k++) {
+      const jitter = (hash2(k, 7) - 0.5) * 2.5;
+      ctx.beginPath();
+      ctx.moveTo(R.x, y + jitter); ctx.lineTo(R.x + R.w, y + jitter);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function stipple(ctx, R, yTop, yBot) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, yTop, R.w, Math.max(0, yBot - yTop)); ctx.clip();
+    ctx.fillStyle = 'rgba(94,66,26,0.22)';
+    const step = 9;
+    for (let i = 0; i * step < R.w; i++) {
+      for (let j = 0; yTop + j * step < yBot; j++) {
+        const x = R.x + i * step + hash2(i, j) * step;
+        const y = yTop + j * step + hash2(j, i) * step;
+        ctx.beginPath(); ctx.arc(x, y, 1.15, 0, 7); ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+
+  /* Two rocks stacked. yMid may be supplied so the geometry panels can put
+     the boundary at its real depth rather than at a fixed fraction. */
+  function drawInterface(ctx, R, yMidIn) {
+    const yMid = (yMidIn === undefined) ? R.y + R.h * 0.45 : yMidIn;
+    ctx.save();
+    ctx.fillStyle = ramp('upper', impFrac(D.i1));
+    ctx.fillRect(R.x, R.y, R.w, yMid - R.y);
+    ctx.fillStyle = ramp('lower', impFrac(D.i2));
+    ctx.fillRect(R.x, yMid, R.w, R.y + R.h - yMid);
+    ctx.restore();
+    laminate(ctx, R, R.y, yMid);
+    stipple(ctx, R, yMid, R.y + R.h);
+    ctx.save();
     ctx.strokeStyle = INK; ctx.lineWidth = 1.8;
     ctx.beginPath(); ctx.moveTo(R.x, yMid); ctx.lineTo(R.x + R.w, yMid); ctx.stroke();
     ctx.restore();
@@ -737,71 +883,83 @@
   /* --------------------------------- step 2 --------------------------- */
   function drawStep2() {
     const W = rowWidth('row2', 2);
+    const PH = 246;
 
-    const LEG2 = [[CRIM, 'down and back, perpendicular']];
-    const P2 = panel('c2normal', W, 246, LEG2);
-    const ctx = P2.ctx, R = P2.R;
-    const yMid = drawInterface(ctx, R);
-    const xc = R.x + R.w / 2;
-    ctx.save();
-    ctx.strokeStyle = CRIM; ctx.lineWidth = 2.4;
-    ctx.beginPath(); ctx.moveTo(xc - 5, R.y); ctx.lineTo(xc - 5, yMid); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(xc + 5, yMid); ctx.lineTo(xc + 5, R.y); ctx.stroke();
-    ctx.restore();
-    SEIS.tag(ctx, xc + 12, (R.y + yMid) / 2, '0\u00b0', CRIM);
-    SEIS.tag(ctx, xc - 40, R.y + 10, 'source and receiver together', CRIM);
-    legendRow(ctx, R, LEG2);
+    /* Both panels share one distance axis and one depth axis, so the two
+       geometries are directly comparable and the offset is drawn to scale
+       against the depth rather than schematically. */
+    const px = (R, xm) => R.x + (xm / XAX) * R.w;
+    const py = (R, zm) => R.y + (zm / ZAX) * R.h;
 
-    const LEG2b = [[TEAL, 'other receivers'], [CRIM, 'the selected angle']];
-    const P2b = panel('c2fan', W, 246, LEG2b);
-    const ctx2 = P2b.ctx, R2 = P2b.R;
-    const yMid2 = drawInterface(ctx2, R2);
-    const xs = R2.x + R2.w * 0.12;
-    const depth = yMid2 - R2.y;
-    const NRAY = 6;
-    ctx2.save();
-    for (let i = 0; i < NRAY; i++) {
-      const th = (i / (NRAY - 1)) * ANGMAX;
-      const dx = depth * Math.tan(th * DEG);
-      const xb = xs + dx, xr2 = xs + 2 * dx;
-      if (xr2 > R2.x + R2.w) continue;
-      const sel = Math.abs(th - S.ang) < ANGMAX / (2 * (NRAY - 1));
-      ctx2.strokeStyle = sel ? CRIM : TEAL;
-      ctx2.lineWidth = sel ? 2.4 : 1.3;
-      ctx2.beginPath(); ctx2.moveTo(xs, R2.y); ctx2.lineTo(xb, yMid2);
-      ctx2.lineTo(xr2, R2.y); ctx2.stroke();
+    function geom(id, legend, offset) {
+      const P = panel(id, W, PH, legend);
+      const ctx = P.ctx, R = P.R;
+      const yMid = py(R, S.zb);
+      drawInterface(ctx, R, yMid);
+      SEIS.axisLeft(ctx, R, 0, ZAX, 'depth (m)', (v) => String(Math.round(v)));
+      SEIS.axisBottom(ctx, R, 0, XAX, 'distance (m)', (v) => String(Math.round(v)));
+      const xs = px(R, 0), xr = px(R, offset), xm = px(R, offset / 2);
+      ctx.save();
+      ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+      SEIS.dashedLine(ctx, xm, R.y, xm, yMid, SLATE, [4, 4], 1.1);
+      ctx.strokeStyle = CRIM; ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      ctx.moveTo(offset === 0 ? xs - 4 : xs, R.y);
+      ctx.lineTo(xm, yMid);
+      ctx.lineTo(offset === 0 ? xs + 4 : xr, R.y);
+      ctx.stroke();
+      ctx.restore();
+      const mark = (x, c) => {
+        ctx.save(); ctx.fillStyle = c;
+        ctx.beginPath(); ctx.moveTo(x, R.y + 1); ctx.lineTo(x - 5, R.y + 10);
+        ctx.lineTo(x + 5, R.y + 10); ctx.closePath(); ctx.fill(); ctx.restore();
+      };
+      mark(xs, CRIM);
+      if (offset > 0) mark(xr, ORANGE);
+      SEIS.frame(ctx, R);
+      legendRow(ctx, R, legend);
+      return { ctx, R, yMid, xm };
     }
-    ctx2.restore();
-    SEIS.tag(ctx2, xs - 4, R2.y + 10, 'source', CRIM);
-    // the selected angle, drawn heavier over the fan
-    const dxA = depth * Math.tan(S.ang * DEG);
-    if (xs + 2 * dxA <= R2.x + R2.w) {
-      ctx2.save();
-      ctx2.strokeStyle = CRIM; ctx2.lineWidth = 2.6;
-      ctx2.beginPath(); ctx2.moveTo(xs, R2.y); ctx2.lineTo(xs + dxA, yMid2);
-      ctx2.lineTo(xs + 2 * dxA, R2.y); ctx2.stroke();
-      ctx2.restore();
-      SEIS.tag(ctx2, xs + dxA + 6, yMid2 - 12, S.ang + '\u00b0', CRIM);
-    }
-    SEIS.frame(ctx2, R2);
-    legendRow(ctx2, R2, LEG2b);
 
-    set('s2a', '0\u00b0 — normal incidence');
-    set('s2b', S.ang + '\u00b0');
-    set('s2c', String(NRAY));
-    set('s2d', '0\u00b0 to ' + ANGMAX + '\u00b0');
-    set('s2e', D.rc.toFixed(4));
+    const g1 = geom('c2normal', [[CRIM, 'the ray, down and back'],
+      [SLATE, 'vertical at the reflection point', 'dash']], 0);
+    SEIS.tag(g1.ctx, g1.xm + 10, (g1.R.y + g1.yMid) / 2, '0\u00b0', CRIM);
+
+    const g2 = geom('c2fan', [[CRIM, 'source and the ray'], [ORANGE, 'receiver'],
+      [SLATE, 'vertical at the reflection point', 'dash']], S.off);
+    if (S.off > 0) {
+      const ctx = g2.ctx, R = g2.R;
+      const r = Math.min(52, (g2.yMid - R.y) * 0.45);
+      ctx.save();
+      ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+      ctx.strokeStyle = CRIM; ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.arc(g2.xm, g2.yMid, r, -Math.PI / 2, -Math.PI / 2 + D.angle * DEG);
+      ctx.stroke(); ctx.restore();
+      SEIS.tag(ctx, g2.xm + r * 0.45, g2.yMid - r - 6,
+        D.angle.toFixed(1) + '\u00b0', CRIM);
+    } else {
+      SEIS.tag(g2.ctx, g2.xm + 10, (g2.R.y + g2.yMid) / 2, '0\u00b0', CRIM);
+    }
+
+    const deep = Math.atan2(D.halfOff, 3000) * 180 / Math.PI;
+    set('s2a', S.off + ' m');
+    set('s2b', S.zb + ' m');
+    set('s2c', D.tanTheta.toFixed(3));
+    set('s2d', D.angle.toFixed(1) + '\u00b0');
+    set('s2e', deep.toFixed(1) + '\u00b0');
     set('s2f', 'the leftmost point of a curve, treated until now as the whole of it');
   }
 
   /* --------------------------------- step 3 --------------------------- */
   function drawStep3() {
-    const W = rowWidth('row3', 2);
+    const W = rowWidth('row3', 3);
     const xr = [0, ANGMAX];
+    const PH = 246;
 
     const LEG3 = [[TEAL, 'brine sand'], [CRIM, 'gas sand'],
-      [SLATE, 'the selected angle', 'dash']];
-    const P3 = panel('c3curve', W, 246, LEG3);
+      [SLATE, 'your angle', 'dash']];
+    const P3 = panel('c3curve', W, PH, LEG3);
     const ctx = P3.ctx, R = P3.R;
     let lo = 0, hi = 0;
     for (let i = 0; i < NANG; i++) {
@@ -815,40 +973,82 @@
       (v) => v.toFixed(2), { flip: true, grid: true });
     SEIS.axisBottom(ctx, R, xr[0], xr[1], 'incidence angle (degrees)',
       (v) => String(Math.round(v)));
-    // zero line
     if (yr[0] < 0 && yr[1] > 0) {
       const y0 = R.y + R.h - ((0 - yr[0]) / (yr[1] - yr[0])) * R.h;
       SEIS.dashedLine(ctx, R.x, y0, R.x + R.w, y0, 'rgba(22,25,28,0.35)', [3, 3], 1);
     }
     curve(ctx, R, D.ang, D.rB, xr, yr, TEAL, 2.4);
     curve(ctx, R, D.ang, D.rG, xr, yr, CRIM, 2.4);
-    const xA = R.x + (S.ang / ANGMAX) * R.w;
+    const xA = R.x + (D.angle / ANGMAX) * R.w;
     SEIS.dashedLine(ctx, xA, R.y, xA, R.y + R.h, SLATE, [5, 4], 1.3);
     SEIS.frame(ctx, R);
     legendRow(ctx, R, LEG3);
 
-    const LEG3b = [[ORANGE, 'gap between the two curves'],
-      [SLATE, 'the selected angle', 'dash']];
-    const P3b = panel('c3gap', W, 246, LEG3b);
+    const LEG3b = [[ORANGE, 'gap between the two curves'], [SLATE, 'your angle', 'dash']];
+    const P3b = panel('c3gap', W, PH, LEG3b);
     const ctx2 = P3b.ctx, R2 = P3b.R;
     let gHi = 0;
     for (let i = 0; i < NANG; i++) gHi = Math.max(gHi, D.gap[i]);
     const yr2 = [0, Math.max(0.05, gHi * 1.2)];
     ctx2.save(); ctx2.fillStyle = '#FBFAF7'; ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
-    SEIS.axisLeft(ctx2, R2, yr2[0], yr2[1], 'difference in reflection coefficient',
+    SEIS.axisLeft(ctx2, R2, yr2[0], yr2[1],
+      W > 340 ? 'difference in reflection coefficient' : 'difference in R',
       (v) => v.toFixed(2), { flip: true, grid: true });
     SEIS.axisBottom(ctx2, R2, xr[0], xr[1], 'incidence angle (degrees)',
       (v) => String(Math.round(v)));
     curve(ctx2, R2, D.ang, D.gap, xr, yr2, ORANGE, 2.6);
-    const xA2 = R2.x + (S.ang / ANGMAX) * R2.w;
+    const xA2 = R2.x + (D.angle / ANGMAX) * R2.w;
     SEIS.dashedLine(ctx2, xA2, R2.y, xA2, R2.y + R2.h, SLATE, [5, 4], 1.3);
     SEIS.frame(ctx2, R2);
     legendRow(ctx2, R2, LEG3b);
 
-    set('s3a', D.bAt0.toFixed(3));
-    set('s3b', D.gAt0.toFixed(3));
-    set('s3c', D.bAtA.toFixed(3));
-    set('s3d', D.gAtA.toFixed(3));
+    /* Panel 3: the velocities behind the two shapes. Vp and Vs share the same
+       units, so they go on one axis; the ratio is written above each pair
+       because that is the quantity the curve shape responds to. */
+    const LEG3c = [[SLATE, 'shale', 'dot'], [TEAL, 'brine sand', 'dot'],
+      [CRIM, 'gas sand', 'dot']];
+    const Wc = rowWidth('row3b', 1);
+    const P3c = panel('c3props', Wc, 250, LEG3c);
+    const ctx3 = P3c.ctx, R3 = P3c.R;
+    const rocks = [['shale', D.shale, SLATE], ['brine', D.brine, TEAL], ['gas', D.gas, CRIM]];
+    let vMax = 0;
+    for (const [, r] of rocks) vMax = Math.max(vMax, r.vp);
+    vMax *= 1.30;
+    ctx3.save(); ctx3.fillStyle = '#FBFAF7'; ctx3.fillRect(R3.x, R3.y, R3.w, R3.h); ctx3.restore();
+    SEIS.axisLeft(ctx3, R3, 0, vMax, 'velocity (m/s)',
+      (v) => String(Math.round(v)), { flip: true, grid: true });
+    const slot = R3.w / 3;
+    const bw = Math.min(52, slot * 0.26);
+    rocks.forEach(([name, r, c], k) => {
+      const x0 = R3.x + slot * k + slot * 0.14;
+      const bars = [[r.vp, c, 1.0], [r.vs, c, 0.42]];
+      bars.forEach(([v, col, alpha], b) => {
+        const h = (v / vMax) * R3.h;
+        const x = x0 + b * (bw + 5);
+        ctx3.save();
+        ctx3.globalAlpha = alpha; ctx3.fillStyle = col;
+        ctx3.fillRect(x, R3.y + R3.h - h, bw, h);
+        ctx3.restore();
+      });
+      const topY = R3.y + R3.h - (r.vp / vMax) * R3.h;
+      SEIS.tag(ctx3, x0 + bw * 0.5, topY - 24,
+        'Vp/Vs ' + r.vpvs.toFixed(2), c);
+      SEIS.tag(ctx3, x0 + bw * 0.5, R3.y + R3.h - 8, name, c);
+    });
+    ctx3.save();
+    ctx3.font = '10px "IBM Plex Sans", sans-serif';
+    ctx3.fillStyle = SLATE; ctx3.textAlign = 'center';
+    const capC = ['solid bar = Vp,  pale bar = Vs', 'solid = Vp,  pale = Vs', 'Vp / Vs']
+      .find((t) => ctx3.measureText(t).width <= R3.w - 8) || 'Vp / Vs';
+    ctx3.fillText(capC, R3.x + R3.w / 2, R3.y + R3.h + 30);
+    ctx3.restore();
+    SEIS.frame(ctx3, R3);
+    legendRow(ctx3, R3, LEG3c);
+
+    set('s3a', Math.round(D.brine.vp) + ' \u2192 ' + Math.round(D.gas.vp) + ' m/s');
+    set('s3b', Math.round(D.brine.vs) + ' \u2192 ' + Math.round(D.gas.vs) + ' m/s');
+    set('s3c', D.brine.vpvs.toFixed(2) + ' \u2192 ' + D.gas.vpvs.toFixed(2));
+    set('s3d', D.bAt0.toFixed(3) + '  /  ' + D.gAt0.toFixed(3));
     set('s3e', D.gap0.toFixed(3) + '  \u2192  ' + D.gapA.toFixed(3));
     set('s3f', D.gapA > D.gap0
       ? 'a difference ' + (D.gapA / D.gap0).toFixed(2) + ' times the one at normal incidence'
@@ -867,8 +1067,10 @@
     set('vp2V', S.vp2 + ' m/s');
     set('rho2V', (S.rho2 / 100).toFixed(2) + ' g/cm\u00b3');
     set('phiV', S.phi + '%');
-    set('angV', S.ang + '\u00b0');
-    ['vp1', 'rho1', 'vp2', 'rho2', 'phi', 'ang'].forEach((k) => {
+    set('offV', S.off + ' m');
+    set('zbV', S.zb + ' m');
+    set('angV', D.angle.toFixed(1) + '\u00b0');
+    ['vp1', 'rho1', 'vp2', 'rho2', 'phi', 'off', 'zb'].forEach((k) => {
       const el = $(k); if (el && String(el.value) !== String(S[k])) el.value = S[k];
     });
   }

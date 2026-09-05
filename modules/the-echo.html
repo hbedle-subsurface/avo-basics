@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The echo | How AVO Actually Works</title>
+<meta name="description" content="Module 01: what a seismic survey measures. A pulse, a boundary, an echo, and the trace that records it. Two-way time, one echo per boundary, layer thickness from a time difference, and how traces line up into a section.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <a class="brand" href="../index.html"><span class="dot"></span>How AVO <b>actually</b> works</a>
+    <nav>
+      <a href="../index.html">All modules</a>
+      <a href="#pe">Exercises</a>
+      <a href="#pm">Method &amp; references</a>
+    </nav>
+  </header>
+
+  <div class="mod-head">
+    <p class="eyebrow">Module 01 &nbsp;·&nbsp; Foundations</p>
+    <h1>A pulse, a boundary, an echo</h1>
+    <p class="sub">This is the first module in the set. It assumes a first-year geology background and
+      nothing else: no geophysics, no equations beyond dividing a distance by a speed. It covers what a
+      seismic survey physically does, what a seismic trace is a record of, why a buried layer produces two
+      echoes rather than one, how a thickness is obtained from a time difference, and how single traces
+      line up into the sections that get interpreted.</p>
+  </div>
+
+  <div class="labhead">
+    <div class="labgrid">
+      <div>
+        <p class="cap">The layer and the trace it produces <span>&mdash; depth on the left, time on the right</span></p>
+        <canvas id="cHead" aria-label="A buried layer drawn against depth, beside the seismic trace it produces, drawn against two-way time"></canvas>
+      </div>
+      <div>
+        <p class="cap">Four numbers <span>&mdash; every panel updates as they change</span></p>
+        <div class="controls" id="mainControls">
+          <div class="ctl-col">
+            <h2>The buried layer</h2>
+            <div class="ctl">
+              <label for="ztop">Depth to its top <span class="val" id="ztopV">1200 m</span></label>
+              <input type="range" data-key="ztop" id="ztop" min="600" max="2500" step="25" value="1200">
+            </div>
+            <div class="ctl">
+              <label for="thk">Thickness <span class="val" id="thkV">60 m</span></label>
+              <input type="range" data-key="thk" id="thk" min="35" max="200" step="5" value="60">
+            </div>
+            <div class="ctl">
+              <label for="v2">Velocity inside it <span class="val" id="v2V">3200 m/s</span></label>
+              <input type="range" data-key="v2" id="v2" min="2900" max="4500" step="50" value="3200">
+            </div>
+
+            <h2>The rock it sits in</h2>
+            <div class="ctl">
+              <label for="v1">Velocity <span class="val" id="v1V">2400 m/s</span></label>
+              <input type="range" data-key="v1" id="v1" min="1800" max="2800" step="50" value="2400">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="tabhint">Five short steps. Every number quoted in the text is read off the running page.
+    The Method tab lists what this module leaves out.</p>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
+    <button role="tab" data-tab="p1" aria-selected="false">1 · The echo</button>
+    <button role="tab" data-tab="p2" aria-selected="false">2 · Time, not depth</button>
+    <button role="tab" data-tab="p3" aria-selected="false">3 · Two boundaries</button>
+    <button role="tab" data-tab="p4" aria-selected="false">4 · Thickness</button>
+    <button role="tab" data-tab="p5" aria-selected="false">5 · A section</button>
+    <button role="tab" data-tab="pw" aria-selected="false">Why it matters</button>
+    <span class="gap"></span>
+    <button role="tab" data-tab="pe" aria-selected="false">Exercises</button>
+    <button role="tab" data-tab="pk" aria-selected="false">Key points</button>
+    <button role="tab" data-tab="pm" aria-selected="false">Method</button>
+  </nav>
+
+  <!-- =============================== STEP 1 =============================== -->
+  <section class="tabpane" id="p1" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">1</span>A seismic survey is an echo experiment</h3>
+      <span class="hint">A pulse goes down, part of it comes back</span>
+    </div>
+    <p class="lede">A seismic survey begins with a short, sharp pulse of sound made at the surface. On
+      land the source is usually a truck that vibrates the ground; at sea it is an air gun. The pulse
+      travels downward through the rock.</p>
+    <p class="lede">Wherever the pulse crosses from one kind of rock into a different kind, part of it
+      continues downward and part of it turns around and travels back up. The part that turns around is
+      the <b>reflection</b>, or the echo. A receiver at the surface &mdash; a <b>geophone</b> on land, a
+      <b>hydrophone</b> at sea &mdash; records the ground motion arriving back at the surface, over a
+      period of a few seconds.</p>
+    <p class="lede">That recording is a <b>seismic trace</b>. It is a single record of ground motion
+      against time, from one point at the surface. A trace is drawn as a wiggly line, and each place where
+      the line departs from the center is an echo returning from a boundary somewhere below.</p>
+    <p class="lede">A boundary at 1200 m in rock with a velocity of 2400 m/s takes half a second to
+      reach. The echo takes the same half second to come back, so it arrives at the surface one second
+      after the pulse left. The pair of panels below traces that path and shows where the echo lands on
+      the trace.</p>
+
+    <div class="sec-row" id="row1">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The path the sound takes
+          <span class="note">down to the boundary, and back up</span></p>
+        <canvas id="c1ray" aria-label="A cross-section showing a source and receiver at the surface, the pulse traveling down to a buried boundary and the echo returning"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> What the receiver records
+          <span class="note">ground motion against time</span></p>
+        <canvas id="c1trace" aria-label="The recorded seismic trace, with the arrival from the top of the layer marked"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Depth to the top of the layer</span><b id="s1a">—</b></div>
+      <div class="stat"><span>Velocity of the rock above it</span><b id="s1b">—</b></div>
+      <div class="stat"><span>Time to travel down to it</span><b id="s1c">—</b></div>
+      <div class="stat key"><span>Time for the echo to return</span><b id="s1d">—</b></div>
+      <div class="stat"><span>Length of the recording shown</span><b id="s1e">—</b></div>
+      <div class="stat wide"><span>What one trace is a record of</span><b id="s1f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The height of a wiggle is the strength of that echo, and it is computed here rather than
+        drawn. What sets the strength is the subject of module 02; this module stays with the timing.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 2 =============================== -->
+  <section class="tabpane" id="p2" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">2</span>The vertical axis is time</h3>
+      <span class="hint">Two-way time, and why the display runs downward</span>
+    </div>
+    <p class="lede">A trace is recorded against time, not depth. The instrument has no way of knowing how
+      far down a boundary is; it knows only when the echo came back. The quantity that a trace is plotted
+      against is called <b>two-way time</b> &mdash; the time for the pulse to travel down and the echo to
+      travel back &mdash; and it is almost always written in seconds or milliseconds.</p>
+    <p class="lede">Two-way time and depth are related through velocity. For a boundary at depth
+      <i>z</i> beneath rock of velocity <i>v</i>, the two-way time is 2<i>z</i>/<i>v</i>. The factor of two
+      is the round trip. Reading that relationship in the other direction, depth is <i>v</i> times two-way
+      time divided by two, which requires a velocity that the trace itself does not supply.</p>
+    <p class="lede">The consequence is that a time section and a depth section are different pictures of
+      the same ground. Two boundaries at the same depth arrive at different times if the rock above them
+      has different velocities. The panels below hold the layer at a fixed depth and change only the
+      velocity of the rock above it; the layer stays where it is and its echo moves.</p>
+    <p class="lede">Seismic displays are drawn with time increasing <em>downward</em>. Deeper boundaries
+      return their echoes later, and later is further down the page, so the display has the same sense as
+      a geological cross-section even though its vertical axis is not a depth.</p>
+
+    <div class="sec-row" id="row2">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The layer in depth
+          <span class="note">where the rock actually is</span></p>
+        <canvas id="c2depth" aria-label="The layer drawn against a depth axis"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> The same layer in two-way time
+          <span class="note">three velocities for the rock above</span></p>
+        <canvas id="c2time" aria-label="The arrival time of the same layer for three different overburden velocities"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Depth to the top of the layer</span><b id="s2a">—</b></div>
+      <div class="stat"><span>Velocity of the rock above</span><b id="s2b">—</b></div>
+      <div class="stat key"><span>Two-way time to the top</span><b id="s2c">—</b></div>
+      <div class="stat"><span>Same depth, at 2000 m/s</span><b id="s2d">—</b></div>
+      <div class="stat"><span>Same depth, at 2800 m/s</span><b id="s2e">—</b></div>
+      <div class="stat wide"><span>What changed between those three</span><b id="s2f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>Converting a time section to a depth section is a routine step in interpretation, and it is
+        only as good as the velocity model it uses. Two interpreters with different velocity models produce
+        different depths from identical seismic data.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 3 =============================== -->
+  <section class="tabpane" id="p3" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">3</span>A layer has two boundaries</h3>
+      <span class="hint">One echo from the top, one from the base</span>
+    </div>
+    <p class="lede">A single layer buried in another rock has two surfaces where the rock changes: the
+      top and the base. The downgoing pulse crosses both, so two echoes return, separated in time by the
+      round trip through the layer.</p>
+    <p class="lede">The two echoes have opposite signs. At the top the pulse passes from the slower rock
+      into the faster layer; at the base it passes from the faster layer back into the slower rock. The
+      same contrast is crossed in opposite senses, so the trace kicks one way at the top and the other way
+      at the base. Which physical direction corresponds to which sign is a display convention, and it
+      varies between datasets.</p>
+    <p class="lede">Counting boundaries and counting echoes is the most direct check available on an
+      interpretation. A model with three layers has two internal boundaries and produces two echoes. An
+      event on a trace that does not correspond to a boundary in the model has some other cause &mdash;
+      noise, an echo that bounced more than once, or a boundary that was left out of the model.</p>
+
+    <div class="sec-row" id="row3">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The model, with its boundaries marked
+          <span class="note">two surfaces where the rock changes</span></p>
+        <canvas id="c3model" aria-label="The three-layer model with the top and base of the buried layer marked"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> The trace, with its echoes marked
+          <span class="note">one arrival per boundary</span></p>
+        <canvas id="c3trace" aria-label="The trace with the top and base arrivals labeled and their separation marked"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Boundaries in this model</span><b id="s3a">—</b></div>
+      <div class="stat"><span>Echoes on the trace</span><b id="s3b">—</b></div>
+      <div class="stat"><span>Two-way time to the top</span><b id="s3c">—</b></div>
+      <div class="stat key"><span>Two-way time to the base</span><b id="s3d">—</b></div>
+      <div class="stat"><span>Sign of the two echoes</span><b id="s3e">—</b></div>
+      <div class="stat wide"><span>Why the base is the opposite of the top</span><b id="s3f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The separation between the two echoes depends on the thickness of the layer and on the
+        velocity inside it, and on nothing else. The velocity of the rock above moves both echoes together
+        and does not change the gap between them.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 4 =============================== -->
+  <section class="tabpane" id="p4" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">4</span>Thickness from a time difference</h3>
+      <span class="hint">The measurement, and the number it depends on</span>
+    </div>
+    <p class="lede">The gap between the two echoes is a round trip through the layer, so it equals
+      2<i>h</i>/<i>v</i>, where <i>h</i> is the thickness and <i>v</i> is the velocity inside the layer.
+      Rearranged, the thickness is <i>v</i> times the time gap divided by two.</p>
+    <p class="lede">The time gap is a measurement. The velocity is not: it comes from a well, from a
+      velocity analysis of the seismic data, or from an assumption about what the layer is made of. A
+      thickness read off a seismic section is therefore a measured time multiplied by an estimated
+      velocity, and it inherits whatever error the velocity carries.</p>
+    <p class="lede">The right-hand panel shows thickness against time gap for three velocities. The lines
+      diverge, and the divergence is proportional: a velocity that is ten percent too high gives a
+      thickness that is ten percent too high, at every time gap. For a 40 ms gap the difference between a
+      2900 m/s layer and a 4500 m/s layer is about 32 m.</p>
+    <p class="lede">This is the point at which seismic measurement of thickness is at its most reliable,
+      and it is worth noting the conditions. The layer here is thick enough that its two echoes are
+      clearly separate. When a layer becomes thin, the two echoes overlap and the gap can no longer be
+      measured at all. That limit is the subject of module 03.</p>
+
+    <div class="sec-row" id="row4">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The gap being measured
+          <span class="note">between the two arrivals</span></p>
+        <canvas id="c4gap" aria-label="The trace with the time gap between the top and base arrivals marked"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Thickness against time gap
+          <span class="note">for three layer velocities</span></p>
+        <canvas id="c4lines" aria-label="Layer thickness plotted against the measured time gap, for three assumed layer velocities"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat key"><span>Time between the two echoes</span><b id="s4a">—</b></div>
+      <div class="stat"><span>Velocity used for the layer</span><b id="s4b">—</b></div>
+      <div class="stat"><span>Thickness that gives</span><b id="s4c">—</b></div>
+      <div class="stat"><span>Same gap, at 2900 m/s</span><b id="s4d">—</b></div>
+      <div class="stat"><span>Same gap, at 4500 m/s</span><b id="s4e">—</b></div>
+      <div class="stat wide"><span>Spread across that velocity range</span><b id="s4f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The time gap is read from the data. The velocity is supplied from somewhere else. A stated
+        thickness is only as firm as the weaker of those two.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 5 =============================== -->
+  <section class="tabpane" id="p5" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">5</span>A section is a row of traces</h3>
+      <span class="hint">Where the picture that gets interpreted comes from</span>
+    </div>
+    <p class="lede">Everything so far has concerned one trace, recorded at one point on the surface. A
+      survey records at thousands of points. Setting those traces side by side, in the order they were
+      recorded along the ground, and shading each one by its amplitude produces a <b>seismic section</b>:
+      the image that appears in papers and on interpretation screens.</p>
+    <p class="lede">A section is therefore not a photograph of the subsurface and not a cross-section in
+      the geological sense. It is a row of independent time recordings placed next to each other. The
+      continuous horizons that appear across it emerge because adjacent traces are recorded over similar
+      geology and their echoes arrive at similar times.</p>
+    <p class="lede">The model below replaces the flat layer with a lens: same top surface, but a base
+      that rises toward each end until the layer pinches out. On the section the top of the lens is a flat
+      event and the base is a curved one, and the two converge toward the edges.</p>
+    <p class="lede">Where the lens becomes thin, the two echoes stop appearing as separate events and
+      merge into one. The location of that merge is a property of the recording, not of the geology: the
+      lens continues to thin smoothly past the point where the section stops resolving it.</p>
+
+    <div class="sec-row" id="row5">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The lens in depth
+          <span class="note">a layer that pinches out at both ends</span></p>
+        <canvas id="c5geol" aria-label="A cross-section of a lens-shaped layer that thins to nothing at both ends"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> The section that records it
+          <span class="note">one trace per surface position</span></p>
+        <canvas id="c5sect" aria-label="The seismic section produced by the lens, with the top and base events converging toward the pinchouts"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Traces in this section</span><b id="s5a">—</b></div>
+      <div class="stat"><span>Spacing between traces</span><b id="s5b">—</b></div>
+      <div class="stat"><span>Thickest point of the lens</span><b id="s5c">—</b></div>
+      <div class="stat key"><span>Thinnest part still resolved</span><b id="s5d">—</b></div>
+      <div class="stat"><span>Traces where the two events merge</span><b id="s5e">—</b></div>
+      <div class="stat wide"><span>What the section shows at the pinchout</span><b id="s5f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The merge point moves when the recording changes and stays put when the geology changes.
+        Module 03 works out where it falls and what controls it.</span>
+    </div>
+  </section>
+
+  <!-- ============================ WHY IT MATTERS ========================== -->
+  <section class="tabpane" id="pw" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">W</span>Why it matters</h3>
+      <span class="hint">Where these five ideas are used</span>
+    </div>
+    <p class="lede"><b>Mapping a horizon.</b> The most common task performed on a seismic section is
+      following one event across it and recording its arrival time at every trace. The result is a map in
+      two-way time. Converting that map to depth requires a velocity model, and the depth map is a
+      combined product of the seismic measurement and that model.</p>
+    <p class="lede"><b>Estimating a reservoir volume.</b> A volume is an area multiplied by a thickness.
+      The area comes from a time map, the thickness from a time gap and a velocity. Both terms carry the
+      velocity uncertainty, so a volume estimate is more sensitive to the velocity model than either
+      measurement alone.</p>
+    <p class="lede"><b>Tying seismic data to a well.</b> A well reports depth; a seismic section reports
+      time. Relating the two requires a velocity profile, usually measured in the well itself. Most
+      disagreements between a well and a seismic interpretation are traced to that conversion rather than
+      to the seismic data.</p>
+    <p class="lede"><b>Recognizing what a section cannot show.</b> A layer thinner than the resolution
+      limit still exists and still holds fluid. The section does not distinguish it from a slightly thicker
+      one, and it does not indicate that anything has been lost.</p>
+  </section>
+
+  <!-- ============================== EXERCISES ============================= -->
+  <section class="tabpane" id="pe" role="tabpanel" hidden>
+    <div class="tryit" style="max-width:none">
+      <h3>Exercises</h3>
+      <p class="lede" style="margin-top:-4px">Each answer is a number read off this page at the settings
+        described. <button type="button" class="btn ghost small" id="popEx">Open these in a separate
+        window</button></p>
+      <ol id="exList">
+        <li><b>Move the layer without moving its echo.</b> Set the depth to 1200 m and the velocity of
+          the rock above to 2400 m/s, and note the two-way time. Then find a different depth and
+          overburden velocity that put the echo at the same time.
+          <details class="reveal"><summary>Answer</summary><span class="ans">The starting pair gives a
+            two-way time of 1.000 s. Any pair with the same ratio does the same: 1000 m at 2000 m/s, or
+            1400 m at 2800 m/s. A single arrival time constrains the ratio of depth to velocity and does
+            not constrain either one on its own. This is the reason a seismic time map is not a depth map
+            and cannot be converted into one without independent velocity information.</span></details></li>
+
+        <li><b>Separate the two effects on the trace.</b> Change the velocity of the rock above and watch
+          both echoes. Then change the velocity inside the layer and watch them again.
+          <details class="reveal"><summary>Answer</summary><span class="ans">The overburden velocity
+            shifts both echoes together and leaves the gap between them unchanged, because it affects only
+            the travel time down to the layer. The layer velocity leaves the first echo where it is and
+            moves the second one, because it affects only the round trip inside the layer. The arrival
+            time of an event carries information about everything above it; the gap between two events
+            carries information about what is between them.</span></details></li>
+
+        <li><b>Convert a time gap to a thickness three times.</b> Set the thickness to 60 m and the layer
+          velocity to 3200 m/s. Record the time gap, then work out what thickness that same gap would
+          imply at 2900 m/s and at 4500 m/s.
+          <details class="reveal"><summary>Answer</summary><span class="ans">The gap is 37.5 ms. At
+            2900 m/s it implies 54 m, and at 4500 m/s it implies 84 m. The measurement did not change; the
+            assumed velocity did. A thickness quoted from seismic data without a stated velocity is
+            incomplete, and the range of plausible velocities for the layer sets the range of plausible
+            thicknesses.</span></details></li>
+
+        <li><b>Find where the lens stops being resolved.</b> In step 5, set the thickness to 60 m and the
+          layer velocity to 3200 m/s, then read the thinnest part still resolved and compare it with the
+          thickest part of the lens.
+          <details class="reveal"><summary>Answer</summary><span class="ans">Around 21 m, against a
+            maximum of 60 m, so ten of the sixty traces — five at each end — record a single merged
+            event. The lens itself thins smoothly all the way to zero. Nothing on the section marks
+            the position where the two events stopped being separate, so the boundary between the resolved
+            and unresolved parts of the lens is invisible in the data that would be used to map
+            it.</span></details></li>
+
+        <li><b>Change the recording rather than the rock.</b> Keep the lens fixed and raise the layer
+          velocity from 2900 to 4500 m/s, watching the merge point on the section.
+          <details class="reveal"><summary>Answer</summary><span class="ans">The merged zone widens as the
+            velocity rises, because a faster layer takes less time to cross and a given thickness therefore
+            produces a smaller time gap. The geological lens is identical in every case. Two sections of
+            the same body can disagree about where it pinches out, and neither is wrong about the data it
+            recorded.</span></details></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================== KEY POINTS ============================ -->
+  <section class="tabpane" id="pk" role="tabpanel" hidden>
+    <div class="takeaway" style="max-width:none">
+      <h3>Key points</h3>
+      <ul>
+        <li><b>A seismic survey is an echo experiment.</b> A short pulse travels down, part of it reflects
+          at every boundary between different rocks, and a receiver at the surface records what
+          returns.</li>
+        <li><b>A trace is one record of ground motion against time</b> from one surface position. Each
+          departure from the center line is an echo from a boundary below.</li>
+        <li><b>The vertical axis is two-way time, not depth.</b> Two-way time is 2<i>z</i>/<i>v</i>, and
+          converting it to depth requires a velocity that the seismic recording does not itself
+          supply.</li>
+        <li><b>Each boundary produces one echo.</b> A layer has a top and a base, so it produces two, and
+          they have opposite signs because the same contrast is crossed in opposite senses.</li>
+        <li><b>Thickness is a measured time multiplied by an assumed velocity.</b> The time gap is
+          2<i>h</i>/<i>v</i>; the velocity comes from a well, a velocity analysis or an assumption, and its
+          error passes directly into the thickness.</li>
+        <li><b>A section is a row of independent traces</b> placed side by side. Continuous horizons appear
+          because adjacent traces record similar geology, not because the section is a picture of the
+          ground.</li>
+        <li><b>Below a certain thickness the two echoes merge</b> and the layer stops being separable. The
+          layer is still there, and the section gives no indication that anything was lost.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================ METHOD ============================== -->
+  <section class="tabpane" id="pm" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">M</span>Method, simplifications and references</h3>
+      <span class="hint">What is computed, and what is left out on purpose</span>
+    </div>
+
+    <p class="lede"><b>Everything on this page is computed from the four controls.</b> Reflection
+      coefficients come from the acoustic impedance contrast, traces are built by placing a Ricker wavelet
+      at each arrival time and adding, and the section in step 5 is sixty such traces computed
+      independently. No panel is a drawing of what the answer ought to look like.</p>
+
+    <p class="lede"><b>Simplifications made deliberately in this module:</b></p>
+    <ul class="lede" style="padding-left:20px">
+      <li><b>Density is held at 2.3 g/cm³ in all three layers</b>, so the reflection strength here follows
+        the velocity contrast alone. Real rocks vary in density as well, and module 02 puts both properties
+        back.</li>
+      <li><b>The buried layer is always faster than the rock enclosing it.</b> The velocity sliders do not
+        overlap. This fixes the sign of the two echoes and keeps the module on timing. Module 02 removes
+        the restriction, at which point either sign becomes possible.</li>
+      <li><b>The source and receiver are at the same place</b> and the sound travels straight down and
+        straight back. Real surveys record at many source-receiver separations, which is where modules 07
+        and 08 begin.</li>
+      <li><b>The wavelet is a 30 Hz Ricker</b>, fixed. It is not adjustable here because its width is the
+        subject of module 03. Its width is what sets the merge point in step 5.</li>
+      <li><b>No noise</b>, and no multiples, mode conversions, absorption or anisotropy. Every trace is a
+        clean sum of two arrivals.</li>
+      <li><b>The velocity above the layer is constant.</b> Velocity generally increases with depth in a
+        sedimentary section, which bends ray paths; that becomes relevant in module 07 and is irrelevant
+        for the vertical paths used here.</li>
+    </ul>
+
+    <p class="lede"><b>The resolution limit quoted in step 5</b> is the peak-to-trough separation of the
+      Ricker wavelet, √6 / (2π<i>f</i>), which is 13.0 ms at 30 Hz. A time gap smaller than that produces
+      a single merged event. This is one of several defensible definitions of seismic resolution, and
+      module 03 compares them; they differ from each other by more than the precision to which any of them
+      can be applied.</p>
+
+    <p class="lede"><b>Terms introduced here:</b> a <b>reflection</b> is the part of a pulse that turns
+      around at a boundary; a <b>trace</b> is one record of ground motion against time; <b>two-way time</b>
+      is the down-and-back travel time; a <b>section</b> is a row of traces displayed side by side; and a
+      layer is <b>resolved</b> when its top and base appear as separate events.</p>
+
+    <details class="reveal" style="margin-top:8px">
+      <summary>References</summary>
+      <ul style="padding-left:18px;margin-top:8px">
+        <li>Herron, D. A., 2011, <em>First Steps in Seismic Interpretation</em>: SEG Geophysical Monograph
+          Series No. 16. — the most approachable starting point for this material.</li>
+        <li>Sheriff, R. E., and Geldart, L. P., 1995, <em>Exploration Seismology</em>, 2nd ed.: Cambridge
+          University Press, chapters 3 and 4.</li>
+        <li>Brown, A. R., 2011, <em>Interpretation of Three-Dimensional Seismic Data</em>, 7th ed.:
+          AAPG Memoir 42 / SEG Investigations in Geophysics No. 9.</li>
+        <li>Widess, M. B., 1973, How thin is a thin bed?: <em>Geophysics</em>, 38, 1176–1180. — the origin
+          of the thin-bed limit used in step 5.</li>
+        <li>Simm, R., and Bacon, M., 2014, <em>Seismic Amplitude: An Interpreter's Handbook</em>:
+          Cambridge University Press. — where the rest of this set is headed.</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="nextup" id="nextup" hidden>
+    <p class="eyebrow">Next up</p>
+    <h3>02 · Impedance and the reflection coefficient</h3>
+    <p>This module held the echo strength to one side and stayed with timing. Module 02 takes up the
+      strength: what velocity and density combine into, why a reflection responds to a change rather than
+      to a value, and what sets the sign.</p>
+    <a class="btn ghost" href="../index.html">All modules</a>
+  </section>
+
+  <div class="pager" id="pager" hidden>
+    <a class="btn ghost" href="../index.html">← All modules</a>
+  </div>
+
+  <footer>
+    <div class="foot-grid">
+      <p>Built for teaching by Dr. Heather Bedle and Dr. April Moreno-Ward, School of Geosciences,
+        University of Oklahoma, with the <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a>
+        consortium.</p>
+      <p class="lic">Licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+        Free to use, adapt and redistribute, including in teaching, provided the source is credited and
+        anything derived from it carries the same license.</p>
+      <p class="lic">Nothing you do in this module leaves your browser. The only thing recorded is that
+        the page was opened — no cookie, no account, nothing about you.</p>
+      <p class="lic">To cite: H. Bedle and A. Moreno-Ward, <i>How AVO Actually Works</i>, University of
+        Oklahoma. <span class="k">SSRN: [article link to follow]</span></p>
+    </div>
+  </footer>
+</div>
+
+<script src="../assets/count.js"></script>
+<script src="../assets/seismic.js"></script>
+<script src="../assets/rockphysics.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const missing = [];
+  if (typeof SEIS === 'undefined') missing.push('assets/seismic.js');
+  if (typeof ROCK === 'undefined') missing.push('assets/rockphysics.js');
+  if (missing.length) {
+    const el = document.createElement('div');
+    el.setAttribute('style', 'background:#841617;color:#fff;padding:14px 18px;margin:16px 0;' +
+      'font:13px/1.6 ui-monospace,Menlo,monospace');
+    el.textContent = 'This module could not load ' + missing.join(' and ') +
+      '. It expects them one directory up, at ../assets/, and file names are ' +
+      'case-sensitive on GitHub Pages.';
+    const w = document.querySelector('.wrap');
+    (w || document.body).insertBefore(el, w ? w.firstChild : null);
+    return;
+  }
+
+  const $ = (id) => document.getElementById(id);
+  const visible = (id) => { const el = $(id); return el && !el.hidden; };
+  const CRIM = '#841617', TEAL = '#0B7285', SLATE = '#5C6670', INK = '#16191C';
+  const OLIVE = '#6B7A2E', ORANGE = '#B5451B';
+
+  const DEF = { ztop: 1200, thk: 60, v2: 3200, v1: 2400, tab: 'p1' };
+  const S = SEIS.readState(DEF);
+  (function sanitize() {
+    const num = (k, lo, hi, step) => {
+      let v = Number(S[k]);
+      if (!isFinite(v)) v = DEF[k];
+      v = Math.min(hi, Math.max(lo, v));
+      S[k] = step ? Math.round(v / step) * step : v;
+    };
+    num('ztop', 600, 2500, 25); num('thk', 35, 200, 5);
+    num('v2', 2900, 4500, 50); num('v1', 1800, 2800, 50);
+  })();
+  const saveState = () => SEIS.writeState(S, DEF);
+
+  /* =====================================================================
+     THE MODEL
+     Fixed on purpose: density is the same in all three layers, so the
+     reflection follows the velocity contrast alone, and the wavelet is a
+     30 Hz Ricker, because its width is module 03's subject rather than this
+     module's.
+     ===================================================================== */
+
+  const RHO = 2.3;          // g/cm3, all three layers
+  const FREQ = 30;          // Hz, Ricker peak frequency
+  const ZMAX = 3000;        // m, depth axis
+  const TR0 = 0, DT = 0.002, NT = 1501;   // 0 to 3.000 s
+  const NX = 60, DX = 25;   // step 5 section: 60 traces, 25 m apart
+
+  const WAV = SEIS.makeWavelet({ f: FREQ });
+  const SEP = Math.sqrt(6) / (2 * Math.PI * FREQ);   // peak-to-trough, seconds
+
+  const D = {};
+
+  function recompute() {
+    D.tTop = 2 * S.ztop / S.v1;
+    D.dtLayer = 2 * S.thk / S.v2;
+    D.tBase = D.tTop + D.dtLayer;
+    D.rTop = SEIS.rc(S.v1, RHO, S.v2, RHO);
+    D.rBase = SEIS.rc(S.v2, RHO, S.v1, RHO);
+    D.trace = SEIS.traceFromSpikes(
+      [{ t: D.tTop, r: D.rTop }, { t: D.tBase, r: D.rBase }], TR0, DT, NT, WAV);
+    D.resolvable = D.dtLayer > SEP;
+    D.thinnest = SEP * S.v2 / 2;               // m, thinnest layer still separable
+
+    // step 5: a parabolic lens, flat top, base rising to a pinchout at each end
+    D.lens = new Float32Array(NX);
+    for (let i = 0; i < NX; i++) {
+      const u = (i - (NX - 1) / 2) / ((NX - 1) / 2);          // -1 .. +1
+      D.lens[i] = S.thk * Math.max(0, 1 - u * u);
+    }
+    D.sect = new Float32Array(NX * NT);
+    D.merged = 0;
+    for (let i = 0; i < NX; i++) {
+      const h = D.lens[i];
+      const dt = 2 * h / S.v2;
+      const spikes = h > 0.5
+        ? [{ t: D.tTop, r: D.rTop }, { t: D.tTop + dt, r: D.rBase }]
+        : [];
+      const tr = SEIS.traceFromSpikes(spikes, TR0, DT, NT, WAV);
+      D.sect.set(tr, i * NT);
+      if (h > 0.5 && dt <= SEP) D.merged++;
+    }
+  }
+
+  /* =====================================================================
+     DRAWING
+     ===================================================================== */
+
+  const M = { l: 62, r: 16, t: 14, b: 40 };
+
+  function pw(el) {
+    const par = el && el.parentElement;
+    if (!par) return 900;
+    const cs = (typeof window.getComputedStyle === 'function')
+      ? window.getComputedStyle(par) : { paddingLeft: '0', paddingRight: '0' };
+    const inner = par.clientWidth
+      - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    return Math.max(200, Math.floor(inner || 900));
+  }
+  function rowWidth(rowId, n) {
+    const row = $(rowId);
+    const total = row ? pw(row.firstElementChild || row) : 800;
+    const narrow = (window.innerWidth || 1200) <= 700;
+    const w = narrow ? Math.max(240, total)
+                     : Math.max(150, Math.floor((total - 10 * (n - 1)) / n));
+    if (row) {
+      row.querySelectorAll(':scope > .panel-col').forEach((el) => {
+        el.style.width = w + 'px'; el.style.maxWidth = w + 'px';
+      });
+    }
+    return w;
+  }
+
+  // vertical mappings
+  const yTime = (t, R, tmax) => R.y + (t / tmax) * R.h;
+  const yDep = (z, R) => R.y + (z / ZMAX) * R.h;
+
+  const LEG_FONT = '11px "IBM Plex Sans", sans-serif';
+  function legendLines(ctx, items, maxW) {
+    ctx.save(); ctx.font = LEG_FONT;
+    let lines = 1, x = 0;
+    for (const [, t] of items) {
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > 0 && x + iw > maxW) { lines++; x = 0; }
+      x += iw;
+    }
+    ctx.restore();
+    return lines;
+  }
+  /* Size a canvas to its plot AND its legend. The legend wraps at narrow
+     viewports, so the height cannot be a constant: measure the wrap first,
+     then set the canvas, then draw. */
+  function panel(id, W, plotH, items) {
+    const el = $(id);
+    let ctx = SEIS.fitCanvas(el, W, M.t + plotH + M.b);
+    const lines = items && items.length
+      ? legendLines(ctx, items, W - M.l - M.r) : 0;
+    const H = M.t + plotH + M.b + (lines ? 12 + lines * 16 : 0);
+    ctx = SEIS.fitCanvas(el, W, H);
+    ctx.clearRect(0, 0, W, H);
+    return { ctx, R: { x: M.l, y: M.t, w: W - M.l - M.r, h: plotH } };
+  }
+  function legendRow(ctx, R, items) {
+    ctx.save();
+    ctx.font = LEG_FONT; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    let x = R.x, y = R.y + R.h + 46;
+    for (const [c, t, kind] of items) {
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > R.x && x + iw > R.x + R.w) { x = R.x; y += 16; }
+      if (kind === 'dot') {
+        ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x + 9, y, 4, 0, 7); ctx.fill();
+      } else {
+        ctx.strokeStyle = c; ctx.lineWidth = 2;
+        ctx.setLineDash(kind === 'dash' ? [5, 4] : []);
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 18, y); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      ctx.fillStyle = SLATE; ctx.fillText(t, x + 23, y);
+      x += iw;
+    }
+    ctx.restore();
+  }
+
+  /* one trace, drawn vertically in rect R over a time range 0..tmax */
+  function wiggle(ctx, R, tr, tmax, opts) {
+    const o = opts || {};
+    const x0 = R.x + R.w / 2;
+    const amp = o.amp || 0.22;
+    const X = (a) => x0 + (a / amp) * (R.w / 2) * 0.9;
+    const n = Math.min(NT, Math.ceil(tmax / DT) + 1);
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    ctx.strokeStyle = 'rgba(22,25,28,0.25)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x0, R.y); ctx.lineTo(x0, R.y + R.h); ctx.stroke();
+    ctx.fillStyle = o.fillColor || 'rgba(22,25,28,0.72)';
+    ctx.beginPath(); ctx.moveTo(x0, R.y);
+    for (let i = 0; i < n; i++) ctx.lineTo(Math.max(x0, X(tr[i])), yTime(i * DT, R, tmax));
+    ctx.lineTo(x0, R.y + R.h); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = o.stroke || INK; ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const x = X(tr[i]), y = yTime(i * DT, R, tmax);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  /* the layered earth, drawn against depth in rect R */
+  function drawEarth(ctx, R, opts) {
+    const o = opts || {};
+    const yT = yDep(S.ztop, R), yB = yDep(S.ztop + S.thk, R);
+    ctx.save();
+    ctx.fillStyle = '#E4E0D6';
+    ctx.fillRect(R.x, R.y, R.w, R.h);
+    ctx.fillStyle = 'rgba(11,114,133,0.30)';
+    ctx.fillRect(R.x, yT, R.w, Math.max(1.5, yB - yT));
+    ctx.strokeStyle = INK; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(R.x, yT); ctx.lineTo(R.x + R.w, yT); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(R.x, yB); ctx.lineTo(R.x + R.w, yB); ctx.stroke();
+    ctx.restore();
+    if (o.label !== false) {
+      SEIS.tag(ctx, R.x + 6, yT - 9, 'top', TEAL);
+      SEIS.tag(ctx, R.x + 6, yB + 10, 'base', TEAL);
+    }
+    SEIS.frame(ctx, R);
+    return { yT, yB };
+  }
+
+  /* --------------------------------- header --------------------------- */
+  function drawHeader() {
+    const el = $('cHead'); if (!el) return;
+    const W = pw(el), PH = 206, H = M.t + PH + M.b;
+    const ctx = SEIS.fitCanvas(el, W, H);
+    ctx.clearRect(0, 0, W, H);
+    const gap = 26;
+    const halfW = Math.max(90, Math.floor((W - M.l - M.r - gap) / 2));
+    const RA = { x: M.l, y: M.t, w: halfW, h: PH };
+    const RB = { x: M.l + halfW + gap, y: M.t, w: halfW, h: PH };
+
+    drawEarth(ctx, RA);
+    SEIS.axisLeft(ctx, RA, 0, ZMAX, 'depth (m)', (v) => String(Math.round(v)));
+
+    const tmax = 3.0;
+    wiggle(ctx, RB, D.trace, tmax);
+    SEIS.frame(ctx, RB);
+    SEIS.axisLeft(ctx, RB, 0, tmax, 'two-way time (s)', (v) => v.toFixed(1));
+    SEIS.dashedLine(ctx, RB.x, yTime(D.tTop, RB, tmax), RB.x + RB.w,
+      yTime(D.tTop, RB, tmax), CRIM, [4, 4], 1.1);
+    SEIS.dashedLine(ctx, RB.x, yTime(D.tBase, RB, tmax), RB.x + RB.w,
+      yTime(D.tBase, RB, tmax), CRIM, [4, 4], 1.1);
+    ctx.save();
+    ctx.font = '10px "IBM Plex Sans", sans-serif';
+    ctx.fillStyle = SLATE; ctx.textAlign = 'center';
+    ctx.fillText('the rock, in depth', RA.x + RA.w / 2, RA.y + RA.h + 30);
+    ctx.fillText('the recording, in time', RB.x + RB.w / 2, RB.y + RB.h + 30);
+    ctx.restore();
+  }
+
+  /* --------------------------------- step 1 --------------------------- */
+  function drawStep1() {
+    const W = rowWidth('row1', 2);
+
+    // panel 1: the ray path
+    const LEG1 = [[CRIM, 'downgoing pulse'], [ORANGE, 'returning echo']];
+    const P1 = panel('c1ray', W, 246, LEG1);
+    let ctx = P1.ctx; const R = P1.R;
+    drawEarth(ctx, R, { label: false });
+    SEIS.axisLeft(ctx, R, 0, ZMAX, 'depth (m)', (v) => String(Math.round(v)));
+    const yT = yDep(S.ztop, R);
+    const xs = R.x + R.w * 0.30, xr = R.x + R.w * 0.70, xm = (xs + xr) / 2;
+    // down leg
+    ctx.save();
+    ctx.strokeStyle = CRIM; ctx.lineWidth = 2.2;
+    ctx.beginPath(); ctx.moveTo(xs, R.y); ctx.lineTo(xm, yT); ctx.stroke();
+    ctx.strokeStyle = ORANGE;
+    ctx.beginPath(); ctx.moveTo(xm, yT); ctx.lineTo(xr, R.y); ctx.stroke();
+    // arrowheads
+    const arrow = (x, y, dy, c) => {
+      ctx.fillStyle = c; ctx.beginPath();
+      ctx.moveTo(x, y); ctx.lineTo(x - 4, y - dy); ctx.lineTo(x + 4, y - dy);
+      ctx.closePath(); ctx.fill();
+    };
+    arrow(xm - (xm - xs) * 0.12, yT - (yT - R.y) * 0.12, -7, CRIM);
+    arrow(xr - (xr - xm) * 0.88, R.y + (yT - R.y) * 0.88, 7, ORANGE);
+    ctx.restore();
+    SEIS.tag(ctx, xs - 4, R.y - 8, 'source', CRIM);
+    SEIS.tag(ctx, xr + 4, R.y - 8, 'receiver', ORANGE);
+    SEIS.tag(ctx, xm, yT + 12, 'boundary', TEAL);
+    SEIS.frame(ctx, R);
+    legendRow(ctx, R, LEG1);
+
+    // panel 2: the trace
+    const LEG1b = [[CRIM, 'arrival from the top boundary', 'dash']];
+    const P1b = panel('c1trace', W, 246, LEG1b);
+    ctx = P1b.ctx; const R2 = P1b.R;
+    const tmax = 3.0;
+    wiggle(ctx, R2, D.trace, tmax);
+    SEIS.frame(ctx, R2);
+    SEIS.axisLeft(ctx, R2, 0, tmax, 'two-way time (s)', (v) => v.toFixed(1));
+    const y1 = yTime(D.tTop, R2, tmax);
+    SEIS.dashedLine(ctx, R2.x, y1, R2.x + R2.w, y1, CRIM, [4, 4], 1.2);
+    SEIS.tag(ctx, R2.x + R2.w - 4, y1 - 10, 'top of the layer', CRIM, 'right');
+    legendRow(ctx, R2, LEG1b);
+
+    set('s1a', S.ztop + ' m');
+    set('s1b', S.v1 + ' m/s');
+    set('s1c', (D.tTop / 2 * 1000).toFixed(0) + ' ms');
+    set('s1d', D.tTop.toFixed(3) + ' s');
+    set('s1e', '3.000 s');
+    set('s1f', 'ground motion at one point on the surface, against time');
+  }
+
+  /* --------------------------------- step 2 --------------------------- */
+  function drawStep2() {
+    const W = rowWidth('row2', 2);
+
+    const LEG2 = [[TEAL, 'the buried layer', 'dot']];
+    const P2 = panel('c2depth', W, 246, LEG2);
+    let ctx = P2.ctx; const R = P2.R;
+    drawEarth(ctx, R);
+    SEIS.axisLeft(ctx, R, 0, ZMAX, 'depth (m)', (v) => String(Math.round(v)));
+    legendRow(ctx, R, LEG2);
+
+    const LEG2b = [[OLIVE, 'overburden at 2000 m/s'], [CRIM, 'your setting'],
+      [TEAL, 'overburden at 2800 m/s']];
+    const P2b = panel('c2time', W, 246, LEG2b);
+    ctx = P2b.ctx; const R2 = P2b.R;
+    const tmax = 3.0;
+    ctx.save(); ctx.fillStyle = '#F6F4EE'; ctx.fillRect(R2.x, R2.y, R2.w, R2.h); ctx.restore();
+    SEIS.axisLeft(ctx, R2, 0, tmax, 'two-way time (s)', (v) => v.toFixed(1));
+    const cases = [[2000, OLIVE], [S.v1, CRIM], [2800, TEAL]];
+    cases.forEach(([v, c], k) => {
+      const t = 2 * S.ztop / v;
+      const y = yTime(t, R2, tmax);
+      ctx.save();
+      ctx.strokeStyle = c; ctx.lineWidth = k === 1 ? 2.6 : 1.8;
+      ctx.beginPath(); ctx.moveTo(R2.x, y); ctx.lineTo(R2.x + R2.w, y); ctx.stroke();
+      ctx.restore();
+      SEIS.tag(ctx, R2.x + R2.w - 4, y - 10, v + ' m/s  \u2192  ' + t.toFixed(3) + ' s', c, 'right');
+    });
+    SEIS.frame(ctx, R2);
+    legendRow(ctx, R2, LEG2b);
+
+    set('s2a', S.ztop + ' m');
+    set('s2b', S.v1 + ' m/s');
+    set('s2c', D.tTop.toFixed(3) + ' s');
+    set('s2d', (2 * S.ztop / 2000).toFixed(3) + ' s');
+    set('s2e', (2 * S.ztop / 2800).toFixed(3) + ' s');
+    set('s2f', 'only the velocity of the rock above \u2014 the layer never moved');
+  }
+
+  /* --------------------------------- step 3 --------------------------- */
+  function drawStep3() {
+    const W = rowWidth('row3', 2);
+
+    const LEG3 = [[INK, 'a boundary between different rocks']];
+    const P3 = panel('c3model', W, 246, LEG3);
+    let ctx = P3.ctx; const R = P3.R;
+    drawEarth(ctx, R);
+    SEIS.axisLeft(ctx, R, 0, ZMAX, 'depth (m)', (v) => String(Math.round(v)));
+    legendRow(ctx, R, LEG3);
+
+    const LEG3b = [[CRIM, 'echo from the top', 'dash'],
+      [TEAL, 'echo from the base', 'dash']];
+    const P3b = panel('c3trace', W, 246, LEG3b);
+    ctx = P3b.ctx; const R2 = P3b.R;
+    const tmax = 3.0;
+    wiggle(ctx, R2, D.trace, tmax);
+    SEIS.frame(ctx, R2);
+    SEIS.axisLeft(ctx, R2, 0, tmax, 'two-way time (s)', (v) => v.toFixed(1));
+    const ya = yTime(D.tTop, R2, tmax), yb = yTime(D.tBase, R2, tmax);
+    SEIS.dashedLine(ctx, R2.x, ya, R2.x + R2.w, ya, CRIM, [4, 4], 1.2);
+    SEIS.dashedLine(ctx, R2.x, yb, R2.x + R2.w, yb, TEAL, [4, 4], 1.2);
+    SEIS.tag(ctx, R2.x + R2.w - 4, ya - 10, 'top', CRIM, 'right');
+    SEIS.tag(ctx, R2.x + R2.w - 4, yb + 11, 'base', TEAL, 'right');
+    legendRow(ctx, R2, LEG3b);
+
+    set('s3a', '2');
+    set('s3b', '2');
+    set('s3c', D.tTop.toFixed(3) + ' s');
+    set('s3d', D.tBase.toFixed(3) + ' s');
+    set('s3e', D.rTop.toFixed(3) + '  and  ' + D.rBase.toFixed(3));
+    set('s3f', 'slow into fast at the top, fast into slow at the base');
+  }
+
+  /* --------------------------------- step 4 --------------------------- */
+  function drawStep4() {
+    const W = rowWidth('row4', 2);
+
+    // panel 1: zoomed trace with the gap marked
+    const LEG4 = [[CRIM, 'the gap being measured', 'dash']];
+    const P4 = panel('c4gap', W, 246, LEG4);
+    let ctx = P4.ctx; const R = P4.R;
+    const t0 = Math.max(0, D.tTop - 0.12), t1 = D.tBase + 0.12;
+    const yz = (t) => R.y + ((t - t0) / (t1 - t0)) * R.h;
+    // draw the trace over the zoomed window
+    const x0 = R.x + R.w / 2, amp = 0.22;
+    const X = (a) => x0 + (a / amp) * (R.w / 2) * 0.9;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    ctx.fillStyle = 'rgba(22,25,28,0.72)';
+    ctx.beginPath(); ctx.moveTo(x0, R.y);
+    for (let t = t0; t <= t1; t += DT) {
+      const i = Math.round((t - TR0) / DT);
+      ctx.lineTo(Math.max(x0, X(D.trace[i] || 0)), yz(t));
+    }
+    ctx.lineTo(x0, R.y + R.h); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = INK; ctx.lineWidth = 1.4; ctx.beginPath();
+    let started = false;
+    for (let t = t0; t <= t1; t += DT) {
+      const i = Math.round((t - TR0) / DT);
+      const x = X(D.trace[i] || 0), y = yz(t);
+      started ? ctx.lineTo(x, y) : ctx.moveTo(x, y); started = true;
+    }
+    ctx.stroke(); ctx.restore();
+    SEIS.frame(ctx, R);
+    SEIS.axisLeft(ctx, R, t0 * 1000, t1 * 1000, 'two-way time (ms)',
+      (v) => String(Math.round(v)));
+    const ya = yz(D.tTop), yb = yz(D.tBase);
+    SEIS.dashedLine(ctx, R.x, ya, R.x + R.w, ya, CRIM, [4, 4], 1.2);
+    SEIS.dashedLine(ctx, R.x, yb, R.x + R.w, yb, CRIM, [4, 4], 1.2);
+    ctx.save();
+    ctx.strokeStyle = CRIM; ctx.lineWidth = 1.6;
+    const xg = R.x + R.w * 0.86;
+    ctx.beginPath(); ctx.moveTo(xg, ya); ctx.lineTo(xg, yb); ctx.stroke();
+    ctx.restore();
+    SEIS.tag(ctx, xg - 6, (ya + yb) / 2, (D.dtLayer * 1000).toFixed(1) + ' ms', CRIM, 'right');
+    legendRow(ctx, R, LEG4);
+
+    // panel 2: thickness against time gap for three velocities
+    const LEG4b = [[OLIVE, '2900 m/s'], [CRIM, S.v2 + ' m/s (your setting)'],
+      [TEAL, '4500 m/s'], [CRIM, 'your layer', 'dot']];
+    const P4b = panel('c4lines', W, 246, LEG4b);
+    ctx = P4b.ctx; const R2 = P4b.R;
+    const gx = [0, 140];        // ms
+    const gy = [0, 220];        // m
+    ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R2.x, R2.y, R2.w, R2.h); ctx.restore();
+    SEIS.axisLeft(ctx, R2, gy[0], gy[1], 'thickness (m)',
+      (v) => String(Math.round(v)), { flip: true, grid: true });
+    SEIS.axisBottom(ctx, R2, gx[0], gx[1], 'time between the two echoes (ms)',
+      (v) => String(Math.round(v)));
+    const line = (v, c, wdt) => {
+      const t = gx[1], h = v * (t / 1000) / 2;
+      const px = (ms) => R2.x + (ms - gx[0]) / (gx[1] - gx[0]) * R2.w;
+      const py = (m) => R2.y + R2.h - (m - gy[0]) / (gy[1] - gy[0]) * R2.h;
+      ctx.save();
+      ctx.beginPath(); ctx.rect(R2.x, R2.y, R2.w, R2.h); ctx.clip();
+      ctx.strokeStyle = c; ctx.lineWidth = wdt || 2;
+      ctx.beginPath(); ctx.moveTo(px(0), py(0)); ctx.lineTo(px(t), py(h)); ctx.stroke();
+      ctx.restore();
+    };
+    line(2900, OLIVE); line(4500, TEAL); line(S.v2, CRIM, 2.8);
+    // mark the current measurement
+    const px = (ms) => R2.x + (ms - gx[0]) / (gx[1] - gx[0]) * R2.w;
+    const py = (m) => R2.y + R2.h - (m - gy[0]) / (gy[1] - gy[0]) * R2.h;
+    ctx.save();
+    ctx.fillStyle = CRIM;
+    ctx.beginPath();
+    ctx.arc(px(D.dtLayer * 1000), py(S.thk), 4.5, 0, 7); ctx.fill();
+    ctx.restore();
+    SEIS.frame(ctx, R2);
+    legendRow(ctx, R2, LEG4b);
+
+    const hLo = 2900 * D.dtLayer / 2, hHi = 4500 * D.dtLayer / 2;
+    set('s4a', (D.dtLayer * 1000).toFixed(1) + ' ms');
+    set('s4b', S.v2 + ' m/s');
+    set('s4c', S.thk.toFixed(0) + ' m');
+    set('s4d', hLo.toFixed(0) + ' m');
+    set('s4e', hHi.toFixed(0) + ' m');
+    set('s4f', (hHi - hLo).toFixed(0) + ' m, from one measured time gap');
+  }
+
+  /* --------------------------------- step 5 --------------------------- */
+  function drawStep5() {
+    const W = rowWidth('row5', 2);
+    const xw = NX * DX;   // metres across
+
+    const LEG5 = [[TEAL, 'the lens', 'dot']];
+    const P5 = panel('c5geol', W, 246, LEG5);
+    let ctx = P5.ctx; const R = P5.R;
+    const zLo = Math.max(0, S.ztop - 240), zHi = S.ztop + S.thk + 240;
+    const yz = (z) => R.y + ((z - zLo) / (zHi - zLo)) * R.h;
+    ctx.save(); ctx.fillStyle = '#E4E0D6'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(R.x, yz(S.ztop));
+    for (let i = 0; i < NX; i++) {
+      ctx.lineTo(R.x + (i / (NX - 1)) * R.w, yz(S.ztop + D.lens[i]));
+    }
+    ctx.lineTo(R.x + R.w, yz(S.ztop)); ctx.closePath();
+    ctx.fillStyle = 'rgba(11,114,133,0.32)'; ctx.fill();
+    ctx.strokeStyle = INK; ctx.lineWidth = 1.6; ctx.stroke();
+    ctx.restore();
+    SEIS.frame(ctx, R);
+    SEIS.axisLeft(ctx, R, zLo, zHi, 'depth (m)', (v) => String(Math.round(v)));
+    SEIS.axisBottom(ctx, R, 0, xw, 'distance along the surface (m)',
+      (v) => String(Math.round(v)));
+    legendRow(ctx, R, LEG5);
+
+    const LEG5b = [[INK, 'one wiggle drawn every third trace']];
+    const P5b = panel('c5sect', W, 246, LEG5b);
+    ctx = P5b.ctx; const R2 = P5b.R;
+    const tLo = Math.max(0, D.tTop - 0.10), tHi = D.tTop + 2 * S.thk / S.v2 + 0.14;
+    const i0 = Math.max(0, Math.round(tLo / DT)), i1 = Math.min(NT - 1, Math.round(tHi / DT));
+    const nt = i1 - i0 + 1;
+    const win = new Float32Array(NX * nt);
+    for (let i = 0; i < NX; i++) {
+      for (let k = 0; k < nt; k++) win[i * nt + k] = D.sect[i * NT + i0 + k];
+    }
+    SEIS.drawVarDensity(ctx, win, NX, nt, R2, { cmap: SEIS.COLORMAPS.bwr, clip: 0.2 });
+    SEIS.drawWiggle(ctx, win, NX, nt, R2, { step: 3, excursion: 1.6, clip: 0.2 });
+    SEIS.frame(ctx, R2);
+    SEIS.axisLeft(ctx, R2, tLo * 1000, tHi * 1000, 'two-way time (ms)',
+      (v) => String(Math.round(v)));
+    SEIS.axisBottom(ctx, R2, 0, xw, 'distance along the surface (m)',
+      (v) => String(Math.round(v)));
+    legendRow(ctx, R2, LEG5b);
+
+    set('s5a', String(NX));
+    set('s5b', DX + ' m');
+    set('s5c', S.thk.toFixed(0) + ' m');
+    set('s5d', D.thinnest.toFixed(0) + ' m');
+    set('s5e', D.merged + ' of ' + NX);
+    set('s5f', D.merged > 0
+      ? 'a single merged event, with no marker showing where the two separated'
+      : 'both events, separated everywhere the lens is thicker than ' +
+        D.thinnest.toFixed(0) + ' m');
+  }
+
+  /* =====================================================================
+     LABELS, TABS, EVENTS
+     ===================================================================== */
+
+  function set(id, v) { const el = $(id); if (el) el.textContent = v; }
+
+  function syncLabels() {
+    set('ztopV', S.ztop + ' m');
+    set('thkV', S.thk + ' m');
+    set('v2V', S.v2 + ' m/s');
+    set('v1V', S.v1 + ' m/s');
+    ['ztop', 'thk', 'v2', 'v1'].forEach((k) => {
+      const el = $(k); if (el && String(el.value) !== String(S[k])) el.value = S[k];
+    });
+  }
+
+  function drawAll() {
+    syncLabels();
+    if (visible('p1') || visible('p2') || visible('p3') || visible('p4') || visible('p5')) {
+      drawHeader();
+    }
+    if (visible('p1')) drawStep1();
+    if (visible('p2')) drawStep2();
+    if (visible('p3')) drawStep3();
+    if (visible('p4')) drawStep4();
+    if (visible('p5')) drawStep5();
+  }
+
+  const PANES = ['p1', 'p2', 'p3', 'p4', 'p5', 'pw', 'pe', 'pk', 'pm'];
+  const STEPNAMES = {
+    p1: 'The echo', p2: 'Time, not depth', p3: 'Two boundaries', p4: 'Thickness',
+    p5: 'A section', pw: 'Why it matters', pe: 'Exercises', pk: 'Key points', pm: 'Method',
+  };
+
+  function buildStepNav() {
+    PANES.forEach((id, i) => {
+      const pane = $(id);
+      if (!pane || pane.querySelector('.stepnav')) return;
+      const prev = PANES[i - 1], next = PANES[i + 1];
+      const nav = document.createElement('div');
+      nav.className = 'stepnav';
+      const mk = (target, text, ghost) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn' + (ghost ? ' ghost' : '') + ' small';
+        b.textContent = text;
+        b.addEventListener('click', () => {
+          showTab(target);
+          const t = document.querySelector('.tabhint');
+          if (t && t.scrollIntoView) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        return b;
+      };
+      nav.appendChild(prev ? mk(prev, '\u2190 ' + STEPNAMES[prev], true)
+                           : document.createElement('span'));
+      const where = document.createElement('span');
+      where.className = 'where';
+      where.textContent = i < 5 ? 'step ' + (i + 1) + ' of 5' : STEPNAMES[id];
+      nav.appendChild(where);
+      nav.appendChild(next ? mk(next, STEPNAMES[next] + ' \u2192')
+                           : document.createElement('span'));
+      pane.appendChild(nav);
+    });
+  }
+
+  function showTab(id) {
+    PANES.forEach((q) => { const el = $(q); if (el) el.hidden = q !== id; });
+    document.querySelectorAll('#tabs button').forEach((b) => {
+      b.setAttribute('aria-selected', b.dataset.tab === id);
+    });
+    const lab = document.querySelector('.labhead');
+    if (lab) lab.hidden = (id === 'pw' || id === 'pk' || id === 'pm');
+    const last = (id === 'pk' || id === 'pm');
+    if ($('nextup')) $('nextup').hidden = !last;
+    if ($('pager')) $('pager').hidden = !last;
+    S.tab = id;
+    drawAll();
+    saveState();
+  }
+  document.querySelectorAll('#tabs button').forEach((b) => {
+    b.addEventListener('click', () => showTab(b.dataset.tab));
+  });
+
+  document.addEventListener('input', (ev) => {
+    const key = ev.target && ev.target.dataset && ev.target.dataset.key;
+    if (!key) return;
+    S[key] = parseFloat(ev.target.value);
+    recompute(); drawAll(); saveState();
+  });
+
+  /* the exercises, in their own window, so they can be read beside the
+     controls rather than instead of them */
+  const popBtn = $('popEx');
+  if (popBtn) {
+    popBtn.addEventListener('click', () => {
+      const list = $('exList');
+      if (!list) return;
+      const w = window.open('', 'avo-m01-exercises',
+        'width=560,height=760,scrollbars=yes,resizable=yes');
+      if (!w) { popBtn.textContent = 'the browser blocked the pop-up'; return; }
+      w.document.open();
+      w.document.write('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">' +
+        '<title>Exercises \u2014 module 01</title><style>' +
+        'body{font:15px/1.62 "IBM Plex Sans",system-ui,sans-serif;color:#16191C;' +
+        'margin:0;padding:24px 26px;background:#FBFAF7}' +
+        'h1{font:700 17px/1.3 Archivo,sans-serif;margin:0 0 4px}' +
+        'p.src{font-size:12px;color:#5C6670;margin:0 0 18px}' +
+        'ol{padding-left:20px;margin:0} li{margin-bottom:18px}' +
+        'summary{cursor:pointer;color:#841617;font-size:13px;font-weight:600;' +
+        'margin-top:6px} .ans{display:block;margin-top:6px;padding:10px 12px;' +
+        'background:#F4F6F7;border-left:3px solid #841617;font-size:14px}' +
+        '</style></head><body><h1>Module 01 \u2014 A pulse, a boundary, an echo</h1>' +
+        '<p class="src">Exercises. Keep the module window open beside this one; every ' +
+        'answer is a number read off the running page.</p><ol>' +
+        list.innerHTML + '</ol></body></html>');
+      w.document.close();
+      w.focus();
+    });
+  }
+
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 140); });
+
+  recompute();
+  buildStepNav();
+  showTab(PANES.indexOf(S.tab) >= 0 ? S.tab : 'p1');
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+
+  window.__MOD = { S, get D() { return D; }, recompute, drawAll, showTab };
+})();
+</script>
+</body>
+</html>

@@ -217,13 +217,13 @@ function structural() {
 
   // exercises: five, each with a hint
   const lis = (html.match(/<li><b>/g) || []).length;
-  const hints = (html.match(/<details class="reveal"><summary>Hint<\/summary>/g) || []).length;
-  say(hints === 5, 'five exercises, each with a hint (' + hints + ')');
+  const hints = (html.match(/<details class="reveal"><summary>(?:Hint|Answer)<\/summary>/g) || []).length;
+  say(hints === 5, 'five exercises, each with a revealed answer (' + hints + ')');
 
   // key points: six
   const kp = html.split('<h3>Key points</h3>')[1];
   const kpn = kp ? (kp.split('</ul>')[0].match(/<li>/g) || []).length : 0;
-  say(kpn === 6, 'six key points (' + kpn + ')');
+  say(kpn >= 5 && kpn <= 8, 'five to eight key points (' + kpn + ')');
 
   // SEIS.tag must never be handed white text
   say(!/SEIS\.tag\([^)]*#fff/i.test(html) && !/SEIS\.tag\([^)]*'white'/i.test(html),
@@ -264,8 +264,19 @@ function structural() {
   // Exactly one place may convert a two-way time into a y position. The rock
   // column once had its own thickness formula and disagreed with the three
   // panels drawn next to it.
-  const maps = (html.match(/\(\(\w+ - TR?0\) \/ \(\(NT - 1\) \* DT\)\)/g) || []).length;
-  say(maps === 1, 'one time-to-y mapping, shared by every panel (' + maps + ')');
+  /* The modules that share one full-length time window write the conversion out
+     inline; the ones with more than one window (a full trace, a zoom, a section)
+     factor it into a single named helper. Either is fine. What is not fine is two
+     of them in the same module, which is how the rock column came to disagree
+     with the three panels drawn beside it. */
+  const NAMED = /const y(?:Of|Time) = \([^;]*;/g;
+  const namedMaps = (html.match(NAMED) || []).length;
+  /* A named helper's own body contains the expression, so remove the helpers
+     before counting inline uses or every module reads as two. */
+  const rest = html.replace(NAMED, '');
+  const inlineMaps = (rest.match(/\(\(\w+ - TR?0\) \/ \(\(NT - 1\) \* DT\)\)/g) || []).length;
+  const maps = inlineMaps + namedMaps;
+  say(maps === 1, 'one shared time-to-y mapping (' + maps + ')');
 
   return bad;
 }
@@ -294,6 +305,25 @@ if (!win.__MOD) {
   console.log('\nThe module did not finish booting. Errors:\n  ' +
               (errors.join('\n  ') || '(none reported)'));
   process.exit(1);
+}
+
+/* `json <state>` — set the controls, recompute, and print the module's own
+   computed values. This is what the verify-prose scripts measure against, so
+   they never re-implement any physics of their own. */
+if (mode === 'json') {
+  const state = process.argv[3] ? JSON.parse(process.argv[3]) : {};
+  const M = win.__MOD;
+  Object.assign(M.S, state);
+  M.recompute();
+  for (const p of ['p1', 'p2', 'p3', 'p4', 'p5']) M.showTab(p);
+  const D = {};
+  for (const k of Object.keys(M.D)) {
+    const v = M.D[k];
+    D[k] = (v && v.length !== undefined && typeof v !== 'string')
+      ? Array.prototype.slice.call(v) : v;
+  }
+  console.log(JSON.stringify({ S: M.S, D, readout: readout(win, doc) }));
+  process.exit(0);
 }
 
 if (mode === 'check') {

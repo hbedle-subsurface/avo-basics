@@ -197,50 +197,84 @@ function thumb06() {
 /* ------------------------------------------------------------------------ */
 
 const CARDS = [
-  { no: '00', href: 'modules/start-here.html', flag: 'Start here', ready: true, level: 'foundation',
-    title: 'What all of this is for',
-    body: 'Assumes velocity and density, and nothing more. What a trace is, what makes a reflection, ' +
-          'impedance, polarity, offset, incidence angle, gathers — and what AVO promises to do.',
-    q: 'Where do I start?', thumb: thumb00() },
+  { no: '01', href: 'modules/the-echo.html', flag: 'Start here', ready: true, level: 'foundation',
+    title: 'A pulse, a boundary, an echo',
+    body: 'What a seismic survey physically does. The trace, two-way time, one echo per boundary, ' +
+          'thickness from a time gap, and how single traces line up into a section.',
+    q: 'What is a seismic trace a record of?', thumb: thumb00() },
 
-  { no: '01', href: 'modules/rock-to-trace.html', flag: 'Core', ready: true, level: 'core',
+  { no: '02', flag: 'To build', ready: false, level: 'foundation',
+    title: 'Impedance and the reflection coefficient',
+    body: 'Velocity and density combined into one number, why a reflection responds to a change ' +
+          'rather than to a value, and what sets the sign.',
+    q: 'What decides how strong an echo is?', thumb: thumb01() },
+  { no: '03', flag: 'To build', ready: false, level: 'foundation',
+    title: 'The wavelet, tuning and resolution',
+    body: 'Why an echo is a wiggle and not a spike, what convolution means, and what happens to two ' +
+          'echoes as a layer thins.',
+    q: 'How thin a layer can seismic data separate?', thumb: thumb02() },
+  { no: '04', flag: 'To build', ready: false, level: 'rock',
+    title: 'Rocks, pores and stiffness',
+    body: 'Grains and pore space, bulk density from volume fractions, and the two moduli that ' +
+          'describe resistance to squeezing and to shearing.',
+    q: 'What makes one rock faster than another?', thumb: thumb01() },
+  { no: '05', flag: 'To build', ready: false, level: 'rock',
+    title: 'Fluid in the pores',
+    body: 'Why a pore fluid stiffens a rock against compression and not against shear, what that does ' +
+          'to Vp, Vs and density, and where gas saturation stops mattering.',
+    q: 'What does replacing brine with gas actually change?', thumb: thumb02() },
+
+  { no: '06', href: 'modules/rock-to-trace.html', flag: 'Being re-leveled', ready: true, level: 'legacy',
     title: 'Build a rock, make a trace',
     body: 'Porosity, clay and pore fluid to a dry frame, Gassmann to a saturated rock, impedance, ' +
           'reflectivity, a wavelet, and noise. Every step from the rock to the trace, on one page.',
     q: 'How does a change in the rock reach the seismic trace?', thumb: thumb01() },
-  { no: '02', href: 'modules/same-amplitude.html', flag: 'Core', ready: true, level: 'core',
-    title: 'Same bright spot, different rock',
-    body: 'Fix the amplitude and search for every rock that could have produced it. Porosity against ' +
-          'saturation, the shale nobody measured, tuning, and a full count of what survives.',
-    q: 'How many rocks fit the amplitude I measured?', thumb: thumb02() },
-  { no: '03', href: 'modules/add-offset.html', flag: 'Core', ready: true, level: 'core',
-    title: 'Add offset',
+  { no: '07', flag: 'To build', ready: false, level: 'avo',
+    title: 'Offset, angle and the gather',
+    body: 'Where offset comes from, why offset is not the same thing as angle, moveout, the gather, ' +
+          'and what stacking keeps and discards.',
+    q: 'What is a gather?', thumb: thumb03() },
+  { no: '08', href: 'modules/add-offset.html', flag: 'Being re-leveled', ready: true, level: 'legacy',
+    title: 'Amplitude against angle',
     body: 'The ray stops arriving straight down, shear velocity becomes visible, and one measurement ' +
-          'becomes a curve. Which of the earlier ambiguities that resolves, and which it does not.',
+          'becomes a curve.',
     q: 'Why does the amplitude change with offset at all?', thumb: thumb03() },
-  { no: '04', href: 'modules/intercept-gradient.html', flag: 'Core', ready: true, level: 'core',
+  { no: '09', href: 'modules/intercept-gradient.html', flag: 'Being re-leveled', ready: true, level: 'legacy',
     title: 'Intercept, gradient and the classes',
     body: 'Two numbers instead of a curve, the crossplot they live in, the wet trend that makes an ' +
           'anomaly anomalous, and why Classes I to IV are regions somebody drew.',
     q: 'What is a Class III response actually telling me?', thumb: thumb04() },
-  { no: '05', href: 'modules/reading-a-gather.html', flag: 'Advanced', ready: true, level: 'advanced',
+  { no: '10', href: 'modules/same-amplitude.html', flag: 'Being re-leveled', ready: true, level: 'legacy',
+    title: 'Several rocks, one amplitude',
+    body: 'Fix the amplitude and search for every rock that could have produced it. Porosity against ' +
+          'saturation, the shale nobody measured, tuning, and a full count of what survives.',
+    q: 'How many rocks fit the amplitude I measured?', thumb: thumb02() },
+  { no: '11', href: 'modules/reading-a-gather.html', flag: 'Being re-leveled', ready: true, level: 'legacy',
     title: 'Reading a gather you did not make',
-    body: 'Noise, a limited angle range, and a gradient eight times less certain than the intercept. ' +
+    body: 'Noise, a limited angle range, and a gradient much less certain than the intercept. ' +
           'Where the error bars come from, and how big they really are.',
     q: 'How much do I trust this gradient?', thumb: thumb05() },
-  { no: '06', href: 'modules/what-survives.html', flag: 'Advanced', ready: true, level: 'advanced',
+  { no: '12', href: 'modules/what-survives.html', flag: 'Being re-leveled', ready: true, level: 'legacy',
     title: 'What survives',
     body: 'Every loss added up, a count of what the second measurement removes, four rules of thumb ' +
           'with computed counterexamples, and a statement you could defend.',
     q: 'What can I actually say from this?', thumb: thumb06() },
+
+  { no: '\u2014', href: 'modules/start-here.html', flag: 'Superseded', ready: true, level: 'legacy',
+    title: 'What all of this is for (the old module 00)',
+    body: 'The single foundation module the set used to open with. Its material is being spread across ' +
+          'the new modules 01, 02, 03 and 07, at a slower pace. Kept while that is in progress.',
+    q: 'Where do I start?', thumb: thumb00() },
 ];
 
 const LEVEL_NOTE = {
-  foundation: 'assumes velocity and density \u00b7 start here',
-  core: 'the main sequence \u00b7 assumes module 00',
-  advanced: 'assumes 01\u201304, and some statistics',
+  foundation: 'assumes first-year geology \u00b7 start here',
+  rock: 'assumes modules 01\u201303',
+  avo: 'assumes modules 01\u201306',
+  closing: 'assumes everything before it',
+  legacy: 'written before the re-leveling \u00b7 pitched higher',
 };
-const cardHtml = (c) => `      <a class="card${c.ready ? '' : ' planned'}" href="${c.href}">
+const cardHtml = (c) => `      <${c.ready ? 'a' : 'div'} class="card${c.ready ? '' : ' planned'}"${c.ready ? ` href="${c.href}"` : ''}>
         <div class="thumb">${c.thumb}</div>
         <div class="card-body">
           <div class="card-no">${c.no}<span class="lvl">${LEVEL_NOTE[c.level] || ''}</span></div>
@@ -249,7 +283,7 @@ const cardHtml = (c) => `      <a class="card${c.ready ? '' : ' planned'}" href=
           <div class="q">${c.q}</div>
         </div>
         <span class="flag${c.ready ? ' next' : ''}">${c.flag}</span>
-      </a>`;
+      </${c.ready ? 'a' : 'div'}>`;
 
 const html = `<!DOCTYPE html>
 <html lang="en">

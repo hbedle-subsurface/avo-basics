@@ -13,6 +13,9 @@ const { JSDOM, VirtualConsole } = require('jsdom');
 
 const MODULE = path.join(__dirname, '..', 'modules', process.env.MOD || 'rock-to-trace.html');
 const html = fs.readFileSync(MODULE, 'utf8');
+/* Step panes, read off the page rather than assumed: modules do not all
+   have five steps. */
+const PANE_IDS = [...html.matchAll(/class="tabpane" id="(p\d)"/g)].map((m) => m[1]);
 
 /* ---------- stubbed 2D context: records nothing, throws on nothing ---------- */
 /* The stub records the extent of everything drawn, so overflow past the canvas
@@ -293,7 +296,7 @@ function drive(win, doc, state, panes) {
   const M = win.__MOD;
   Object.assign(M.S, state);
   M.recompute();
-  for (const p of (panes || ['p1', 'p2', 'p3', 'p4', 'p5'])) M.showTab(p);
+  for (const p of (panes || PANE_IDS)) M.showTab(p);
   return readout(win, doc);
 }
 
@@ -315,7 +318,7 @@ if (mode === 'json') {
   const M = win.__MOD;
   Object.assign(M.S, state);
   M.recompute();
-  for (const p of ['p1', 'p2', 'p3', 'p4', 'p5']) M.showTab(p);
+  for (const p of PANE_IDS) M.showTab(p);
   const D = {};
   for (const k of Object.keys(M.D)) {
     const v = M.D[k];
@@ -444,7 +447,7 @@ if (mode === 'geometry') {
     Object.defineProperty(win.HTMLElement.prototype, 'clientWidth',
       { get() { return Math.min(vw - 48, 1220 - 48); }, configurable: true });
     Object.defineProperty(win, 'innerWidth', { get() { return vw; }, configurable: true });
-    for (const pane of ['p1', 'p2', 'p3', 'p4', 'p5']) {
+    for (const pane of PANE_IDS) {
       M.showTab(pane);
       resetDrawn(); CLIP = null; PENDING = null;
       CLIPSTACK.length = 0; TXSTACK.length = 0; TX = [1, 0, 0, 1, 0, 0];
@@ -482,7 +485,7 @@ if (mode === 'axes') {
   let bad = 0;
   const DOWNWARD = /time|\bms\b|depth/i;
   console.log('\n canvas      vertical axis');
-  for (const pane of ['p1', 'p2', 'p3', 'p4', 'p5']) {
+  for (const pane of PANE_IDS) {
     M.showTab(pane);
     resetDrawn(); CLIP = null; PENDING = null;
     CLIPSTACK.length = 0; TXSTACK.length = 0; TX = [1, 0, 0, 1, 0, 0];
@@ -548,7 +551,7 @@ if (mode === 'labels') {
     Object.defineProperty(win.HTMLElement.prototype, 'clientWidth',
       { get() { return Math.min(vw - 48, 1220 - 48); }, configurable: true });
     Object.defineProperty(win, 'innerWidth', { get() { return vw; }, configurable: true });
-    for (const pane of ['p1', 'p2', 'p3', 'p4', 'p5']) {
+    for (const pane of PANE_IDS) {
       M.showTab(pane);
       resetDrawn(); CLIP = null; PENDING = null;
       CLIPSTACK.length = 0; TXSTACK.length = 0; TX = [1, 0, 0, 1, 0, 0];

@@ -2,7 +2,7 @@
 # Everything, in the order a failure is cheapest to diagnose.
 set -e
 cd "$(dirname "$0")/.."
-MODULES="the-echo start-here rock-to-trace same-amplitude add-offset intercept-gradient reading-a-gather what-survives"
+MODULES="beyond-normal-incidence the-echo start-here rock-to-trace same-amplitude add-offset intercept-gradient reading-a-gather what-survives"
 echo "== the repository is complete and consistent =="
 node tools/verify-deploy.js | grep -E "FAIL|note|complete and internally" | sed 's/^/  /'
 echo "== physics against closed forms =="
@@ -18,7 +18,7 @@ done
 echo "== measured tuning vs the Ricker closed form =="
 MOD=rock-to-trace.html node tools/harness.js tuning | tail -2 | head -1
 echo "== every number quoted in the prose =="
-for f in verify-prose-m01 verify-prose verify-prose-m2 verify-prose-m3 verify-prose-m4 verify-prose-m5 verify-prose-m6; do
+for f in verify-prose-m00 verify-prose-m01 verify-prose verify-prose-m2 verify-prose-m3 verify-prose-m4 verify-prose-m5 verify-prose-m6; do
   node tools/$f.js | tail -2 | head -1
 done
 echo "== the usage counter =="

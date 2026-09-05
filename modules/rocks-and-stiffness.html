@@ -26,16 +26,20 @@
     <p class="eyebrow">Module 01 &nbsp;·&nbsp; The rock</p>
     <h1>Rocks, pores and stiffness</h1>
     <p class="sub">Module 00 ended on a property that impedance does not carry: how a rock resists being
-      sheared. This module builds it. A rock is grains with space between them; the grains have their own
-      stiffness, the arrangement of grains has a much smaller one, and the two together with the density
-      set both velocities. The pores are left empty throughout — putting something in them is module 02.</p>
+      sheared. This module builds it. A rock is grains with space between them, and it resists being
+      deformed in two separate ways — resisting a change in <em>volume</em>, measured by the <b>bulk
+      modulus K</b>, and resisting a change in <em>shape</em>, measured by the <b>shear modulus G</b>.
+      Both are set by how the grains are arranged rather than by the grains themselves, and both, with the
+      density, set the two seismic velocities. Step 2 defines them properly. The pores are left empty
+      throughout — putting something in them is module 02.</p>
   </div>
 
   <div class="labhead">
     <div class="labgrid">
       <div>
         <p class="cap">The rock, and how stiff it is
-          <span>&mdash; the grain pack, and its two moduli against the grains' own</span></p>
+          <span>&mdash; how hard it is to squeeze (K) and to change its shape (G), against the same two
+          numbers for the solid mineral it is made of</span></p>
         <canvas id="cHead" aria-label="A drawing of the grain pack at the chosen porosity and clay content, beside bars comparing the frame's bulk and shear moduli with those of the mineral grains"></canvas>
       </div>
       <div>
@@ -779,9 +783,25 @@
   /* --------------------------------- header --------------------------- */
   function drawHeader() {
     const el = $('cHead'); if (!el) return;
-    const W = pw(el), PH = 206, H = M.t + PH + M.b;
-    const ctx = SEIS.fitCanvas(el, W, H);
+    const W = pw(el), PH = 206;
+
+    /* One legend across the whole header rather than two half-width ones: it
+       has to explain the grain colors on the left and the pale-against-solid
+       convention on the right, and a beginner meets both at once here, before
+       step 2 has defined either modulus. */
+    const LEGH = [
+      ['#D8C9A4', 'quartz grain', 'dot'],
+      ['#8A8574', 'clay grain', 'dot'],
+      ['#F2EEE4', 'empty pore space', 'dot'],
+      ['rgba(92,102,112,0.35)', 'pale bar: the solid mineral on its own', 'dot'],
+      [SLATE, 'solid bar: this rock, grains and pores together', 'dot'],
+    ];
+    let ctx = SEIS.fitCanvas(el, W, M.t + PH + M.b);
+    const lines = legendLines(ctx, LEGH, W - M.l - M.r);
+    const H = M.t + PH + M.b + 12 + lines * 16;
+    ctx = SEIS.fitCanvas(el, W, H);
     ctx.clearRect(0, 0, W, H);
+
     const gap = 26;
     const halfW = Math.max(90, Math.floor((W - M.l - M.r - gap) / 2));
     const RA = { x: M.l, y: M.t, w: halfW, h: PH };
@@ -789,15 +809,16 @@
 
     drawPack(ctx, RA);
 
-    const maxM = Math.max(D.r.min.K, D.r.min.G) * 1.12;
+    const maxM = Math.max(D.r.min.K, D.r.min.G) * 1.20;
     ctx.save(); ctx.fillStyle = '#FBFAF7';
     ctx.fillRect(RB.x, RB.y, RB.w, RB.h); ctx.restore();
-    SEIS.axisLeft(ctx, RB, 0, maxM, 'modulus (GPa)',
+    SEIS.axisLeft(ctx, RB, 0, maxM, 'stiffness (GPa)',
       (v) => String(Math.round(v)), { flip: true, grid: true });
-    const slot = RB.w / 2, bw = Math.min(34, slot * 0.30);
-    [['K', D.r.min.K, D.r.K, TEAL], ['G', D.r.min.G, D.r.G, CRIM]]
-      .forEach(([name, mv, fv, col], k) => {
-        const x0 = RB.x + slot * k + slot * 0.20;
+    const slot = RB.w / 2, bw = Math.min(30, slot * 0.26);
+    [['K', 'squeezing', D.r.min.K, D.r.K, TEAL],
+     ['G', 'shearing', D.r.min.G, D.r.G, CRIM]]
+      .forEach(([name, verb, mv, fv, col], k) => {
+        const x0 = RB.x + slot * k + slot * 0.16;
         const hM = (mv / maxM) * RB.h, hF = (fv / maxM) * RB.h;
         ctx.save();
         ctx.globalAlpha = 0.30; ctx.fillStyle = col;
@@ -805,19 +826,40 @@
         ctx.globalAlpha = 1; ctx.fillStyle = col;
         ctx.fillRect(x0 + bw + 4, RB.y + RB.h - hF, bw, hF);
         ctx.restore();
-        SEIS.tag(ctx, x0 + bw, RB.y + RB.h - hM - 12, name, col);
+        // the mineral value over the pale bar, this rock's over the solid one
+        ctx.save(); ctx.font = LEG_FONT;
+        const mLab = fitLabel(ctx, mv.toFixed(0), bw + 10);
+        const fLab = fitLabel(ctx, fv.toFixed(1), bw + 10);
+        ctx.restore();
+        SEIS.tag(ctx, x0 + bw / 2, RB.y + RB.h - hM - 11, mLab, SLATE);
+        SEIS.tag(ctx, x0 + bw * 1.5 + 4, RB.y + RB.h - hF - 11, fLab, col);
+        /* What the pair is, in words, under the pair. SEIS.tag anchors its box
+           at the x given and runs rightward, so the label has to be fitted to
+           the space actually left inside the panel, not to the slot. */
+        const nextX = (k === 0) ? RB.x + slot + slot * 0.16 : RB.x + RB.w - 4;
+        const avail = nextX - x0 - 6;
+        ctx.save(); ctx.font = '10px "IBM Plex Mono", monospace';
+        const wanted = name + ' \u00b7 resists ' + verb;
+        const nameLab = avail < 62 ? name : fitLabel(ctx, wanted, avail - 8);
+        ctx.restore();
+        SEIS.tag(ctx, x0, RB.y + RB.h - 10, nameLab, col);
       });
     SEIS.frame(ctx, RB);
+
     ctx.save();
     ctx.font = '10px "IBM Plex Sans", sans-serif';
     ctx.fillStyle = SLATE; ctx.textAlign = 'center';
-    const capA = ['the grain pack at ' + S.phi + '% porosity', S.phi + '% porosity']
+    const capA = ['the grain pack at ' + S.phi + '% porosity, ' + S.vcl + '% clay',
+      S.phi + '% porosity, ' + S.vcl + '% clay', S.phi + '% porosity']
       .find((t) => ctx.measureText(t).width <= halfW - 4) || 'the pack';
     ctx.fillText(capA, RA.x + RA.w / 2, RA.y + RA.h + 30);
-    const capB = ['pale = the mineral,  solid = this rock', 'mineral vs rock']
-      .find((t) => ctx.measureText(t).width <= halfW - 4) || 'mineral vs rock';
+    const capB = ['the rock is far softer than the mineral in both',
+      'the rock is softer than the mineral', 'rock vs mineral']
+      .find((t) => ctx.measureText(t).width <= halfW - 4) || 'rock vs mineral';
     ctx.fillText(capB, RB.x + RB.w / 2, RB.y + RB.h + 30);
     ctx.restore();
+
+    legendRow(ctx, { x: M.l, y: M.t, w: W - M.l - M.r, h: PH }, LEGH);
   }
 
   /* --------------------------------- step 1 --------------------------- */

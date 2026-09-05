@@ -977,11 +977,13 @@
     c.save();
     c.beginPath(); c.rect(Rs.x, Rs.y, Rs.w, Rs.h); c.clip();
 
-    // wavefronts: circles of constant travel distance from the source
-    c.strokeStyle = 'rgba(92,102,112,0.45)';
-    c.lineWidth = 1; c.setLineDash([3, 4]);
+    /* Wavefronts: circles of constant travel distance from the source. Drawn
+       heavily on purpose — they are the point of the panel, and a hairline
+       reads as a construction line rather than as the energy itself. */
+    c.strokeStyle = 'rgba(92,102,112,0.80)';
+    c.lineWidth = 2.6; c.setLineDash([7, 5]);
     const kx = Rs.w / XAX, kz = Rs.h / ZAX;
-    for (let rm = 700; rm <= 3400; rm += 700) {
+    for (let rm = 600; rm <= 3600; rm += 600) {
       c.save();
       c.translate(sx(0), Rs.y);
       c.scale(kx, kz);          // metres are not square on the canvas

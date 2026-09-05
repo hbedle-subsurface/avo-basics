@@ -323,12 +323,22 @@ if (mode === 'json') {
   Object.assign(M.S, state);
   M.recompute();
   for (const p of PANE_IDS) M.showTab(p);
+  /* Modules that build whole gathers hold megabytes of samples in D. The
+     verifiers only ever read scalars and short curves, so anything longer
+     than this is reported by length instead of by value. */
+  const ARRAY_CAP = 512;
+  const shrink = (v) => {
+    if (v === null || typeof v !== 'object') return v;
+    if (typeof v.length === 'number' && typeof v !== 'string') {
+      if (v.length > ARRAY_CAP) return { omitted: true, length: v.length };
+      return Array.prototype.slice.call(v).map(shrink);
+    }
+    const o = {};
+    for (const k of Object.keys(v)) o[k] = shrink(v[k]);
+    return o;
+  };
   const D = {};
-  for (const k of Object.keys(M.D)) {
-    const v = M.D[k];
-    D[k] = (v && v.length !== undefined && typeof v !== 'string')
-      ? Array.prototype.slice.call(v) : v;
-  }
+  for (const k of Object.keys(M.D)) D[k] = shrink(M.D[k]);
   console.log(JSON.stringify({ S: M.S, D, readout: readout(win, doc) }));
   process.exit(0);
 }

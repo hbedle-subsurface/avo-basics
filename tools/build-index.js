@@ -209,21 +209,21 @@ const CARDS = [
     body: 'Grains and pore space, where bulk density comes from, the two separate ways a rock resists ' +
           'deformation, and why a change in one of them moves Vp and leaves Vs exactly where it was.',
     q: 'What makes one rock faster than another?', thumb: thumb01() },
-  { no: '02', flag: 'To build', ready: false, level: 'rock',
+  { no: '02', href: 'modules/fluid-in-the-pores.html', flag: 'New', ready: true, level: 'rock',
     title: 'Fluid in the pores',
-    body: 'Why a pore fluid stiffens a rock against compression and not against shear, what that does ' +
-          'to Vp, Vs and density, and where gas saturation stops mattering.',
+    body: 'Brine, oil and gas as elastic materials, Gassmann\'s relation putting one into the frame, ' +
+          'and why the first few percent of gas does almost all of the work.',
     q: 'What does replacing brine with gas actually change?', thumb: thumb02() },
-  { no: '03', href: 'modules/rock-to-trace.html', flag: 'Being re-leveled', ready: true, level: 'legacy',
+  { no: '03', href: 'modules/rock-to-trace.html', flag: 'New', ready: true, level: 'rock',
     title: 'From a rock to a trace',
-    body: 'Porosity, clay and pore fluid to a dry frame, Gassmann to a saturated rock, impedance, ' +
-          'reflectivity, a wavelet, and noise. Every step from the rock to the trace, on one page.',
+    body: 'A reflection needs two rocks. Velocity and density collapse into impedance, impedance into a ' +
+          'contrast, and the shear velocity never arrives at all.',
     q: 'How does a change in the rock reach the seismic trace?', thumb: thumb01() },
 
-  { no: '04', flag: 'To build', ready: false, level: 'avo',
+  { no: '04', href: 'modules/offset-and-the-gather.html', flag: 'New', ready: true, level: 'avo',
     title: 'Offset, angle and the gather',
-    body: 'Where offset comes from, why offset is not the same thing as angle, moveout, the gather, ' +
-          'and what stacking keeps and discards.',
+    body: 'Where offset comes from, why it is not the same thing as the incidence angle, what moveout ' +
+          'costs to remove, and what stacking throws away.',
     q: 'What is a gather?', thumb: thumb03() },
   { no: '05', href: 'modules/add-offset.html', flag: 'Being re-leveled', ready: true, level: 'legacy',
     title: 'Amplitude against angle',
@@ -253,6 +253,14 @@ const CARDS = [
     body: 'Every loss added up, a count of what the second measurement removes, four rules of thumb ' +
           'with computed counterexamples. Being merged with the module above.',
     q: 'What can I actually say from this?', thumb: thumb06() },
+
+  { no: '\u2014', href: 'modules/rock-to-trace-old.html', flag: 'Superseded', ready: true,
+    level: 'legacy',
+    title: 'Build a rock, make a trace (the original module 03)',
+    body: 'The single page that built the rock, the fluid, the impedance, the wavelet and the noise all ' +
+          'at once. Its first two steps are now modules 01 and 02, and its fourth is in the ' +
+          'resolution set.',
+    q: 'How does a change in the rock reach the seismic trace?', thumb: thumb01() },
 
   { no: '\u2014', href: 'modules/start-here.html', flag: 'Superseded', ready: true, level: 'legacy',
     title: 'What all of this is for (the old module 00)',

@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Offset, angle and the gather | How AVO Actually Works</title>
+<meta name="description" content="Module 04: where offset comes from, why offset is not the same thing as incidence angle, what moveout is and how it is removed, and what stacking keeps and throws away.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <a class="brand" href="../index.html"><span class="dot"></span>How AVO <b>actually</b> works</a>
+    <nav>
+      <a href="../index.html">All modules</a>
+      <a href="#pe">Exercises</a>
+      <a href="#pm">Method &amp; references</a>
+    </nav>
+  </header>
+
+  <div class="mod-head">
+    <p class="eyebrow">Module 04 &nbsp;·&nbsp; The measurement</p>
+    <h1>Offset, angle and the gather</h1>
+    <p class="sub">Module 03 ended on a rock property that exists and does not reach a normal-incidence
+      trace. Reaching it means recording the same reflection at more than one angle, and that means
+      understanding the recording geometry: where the angles come from, why the distance between source
+      and receiver is not the same thing as the angle at the reflector, what the extra travel time at long
+      offset does, and what is lost when the traces are added together.</p>
+  </div>
+
+  <div class="labhead">
+    <div class="labgrid">
+      <div>
+        <p class="cap">The gather, before and after the moveout is removed
+          <span>&mdash; one reflector, recorded at twenty-four offsets</span></p>
+        <canvas id="cHead" aria-label="A common-midpoint gather shown with its hyperbolic moveout and again after the moveout correction has flattened it"></canvas>
+      </div>
+      <div>
+        <p class="cap">Five controls <span>&mdash; the target, the spread and the overburden</span></p>
+        <div class="controls" id="mainControls">
+          <div class="ctl-col">
+            <h2>The target</h2>
+            <div class="ctl">
+              <label for="depth">Depth to the reflector <span class="val" id="depthV">2000 m</span></label>
+              <input type="range" data-key="depth" id="depth" min="1000" max="3500" step="50" value="2000">
+            </div>
+
+            <h2>The recording spread</h2>
+            <div class="ctl">
+              <label for="maxoff">Longest offset <span class="val" id="maxoffV">3000 m</span></label>
+              <input type="range" data-key="maxoff" id="maxoff" min="1000" max="4000" step="100" value="3000">
+            </div>
+
+            <h2>The overburden</h2>
+            <div class="ctl">
+              <label for="v0">Velocity at the surface <span class="val" id="v0V">1600 m/s</span></label>
+              <input type="range" data-key="v0" id="v0" min="1400" max="2200" step="25" value="1600">
+            </div>
+            <div class="ctl">
+              <label for="grad">How fast it climbs <span class="val" id="gradV">0.50 /s</span></label>
+              <input type="range" data-key="grad" id="grad" min="0" max="90" step="1" value="50">
+            </div>
+
+            <h2>The seismic</h2>
+            <div class="ctl">
+              <label for="freq">Wavelet peak frequency <span class="val" id="freqV">30 Hz</span></label>
+              <input type="range" data-key="freq" id="freq" min="20" max="45" step="1" value="30">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="tabhint">Five steps, from a line of receivers on the ground to a single stacked trace. Every
+    number quoted in the text is read off the running page.</p>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
+    <button role="tab" data-tab="p1" aria-selected="false">1 · The gather</button>
+    <button role="tab" data-tab="p2" aria-selected="false">2 · Not the same</button>
+    <button role="tab" data-tab="p3" aria-selected="false">3 · Moveout</button>
+    <button role="tab" data-tab="p4" aria-selected="false">4 · Flattening</button>
+    <button role="tab" data-tab="p5" aria-selected="false">5 · Stacking</button>
+    <button role="tab" data-tab="pw" aria-selected="false">Why it matters</button>
+    <span class="gap"></span>
+    <button role="tab" data-tab="pe" aria-selected="false">Exercises</button>
+    <button role="tab" data-tab="pk" aria-selected="false">Key points</button>
+    <button role="tab" data-tab="pm" aria-selected="false">Method</button>
+  </nav>
+
+  <!-- =============================== STEP 1 =============================== -->
+  <section class="tabpane" id="p1" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">1</span>Sorting the shots into gathers</h3>
+      <span class="hint">What a gather is, and why it is not a shot record</span>
+    </div>
+    <p class="lede">A survey fires a source, records at a line of receivers, moves along and fires again.
+      One firing gives a <b>shot record</b>: many receivers, one source position. Each trace in it
+      reflected at a different place in the subsurface, so a shot record mixes geometry with geology.</p>
+    <p class="lede">The traces are therefore re-sorted before anything else is done to them. The
+      <b>midpoint</b> of a trace is the point on the surface halfway between its source and its receiver,
+      and for a flat reflector it is directly above the point where that trace reflected. Collecting every
+      trace that shares a midpoint gives a <b>common-midpoint gather</b>, or CMP gather: several
+      recordings of the same piece of subsurface, at different source-receiver separations.</p>
+    <p class="lede">That separation is the <b>offset</b>. A CMP gather is therefore a set of traces of one
+      reflection point, ordered by offset, and it is the object every later module works on. The number
+      of traces in it is the <b>fold</b>.</p>
+    <p class="lede">The right-hand panel shows this gather as recorded. The event is not flat, because a
+      longer offset means a longer path and a later arrival. That curvature is the subject of step 3.</p>
+
+    <div class="sec-row" id="row1">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Rays to one reflection point
+          <span class="note">every trace in the gather, drawn to scale</span></p>
+        <canvas id="c1geom" aria-label="A cross-section showing source-receiver pairs whose rays all reflect at the same point beneath a shared midpoint"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> The gather as recorded
+          <span class="note">one trace per offset</span></p>
+        <canvas id="c1cmp" aria-label="The common-midpoint gather, with traces ordered by offset and the reflection arriving later at longer offsets"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Traces in the gather</span><b id="s1a">—</b></div>
+      <div class="stat"><span>Offset range</span><b id="s1b">—</b></div>
+      <div class="stat"><span>Spacing between offsets</span><b id="s1c">—</b></div>
+      <div class="stat key"><span>Arrival time at zero offset</span><b id="s1d">—</b></div>
+      <div class="stat"><span>Arrival time at the longest offset</span><b id="s1e">—</b></div>
+      <div class="stat wide"><span>What every trace in the gather has in common</span><b id="s1f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>Real gathers have gaps, uneven fold, and a near-offset mute that removes the shortest traces
+        entirely. This one is regular so the geometry stays readable.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 2 =============================== -->
+  <section class="tabpane" id="p2" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">2</span>Offset is not the angle</h3>
+      <span class="hint">And the shortcut is worse than it looks</span>
+    </div>
+    <p class="lede">Everything from module 05 onward is about how the reflection changes with the
+      <em>angle</em> at which the wave meets the boundary. What a survey records is <em>offset</em>. The
+      two are related, and converting between them is where a good deal of trouble starts.</p>
+    <p class="lede">Module 00 used the simplest relationship: treat the ray as a straight line, and the
+      half-offset and the depth are two sides of a right triangle, so the angle is the arctangent of one
+      over the other. That is exact only if the velocity is constant all the way down.</p>
+    <p class="lede">It is not. Velocity generally rises with depth as sediments compact, which is the
+      trend module 01 built into the grain frame. A ray travelling through rising velocity bends
+      continuously, refracting away from the vertical as it goes, so it reaches the reflector at a
+      <em>steeper</em> angle than a straight line from the same source would.</p>
+    <p class="lede">The left-hand panel draws both. The right-hand panel plots the two angles against
+      offset, and the gap between them widens the whole way. It is not a small correction: at the settings
+      this module opens with, the shortcut is 6.6 degrees low at 2000 m offset and 10.1 degrees low at
+      3000 m. An analysis that uses the wrong angle is fitting the right data to the
+      wrong axis.</p>
+
+    <div class="sec-row" id="row2">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The two ray paths
+          <span class="note">straight, and bent by the velocity gradient</span></p>
+        <canvas id="c2rays" aria-label="A cross-section comparing a straight ray path with the curved path a ray actually takes through an overburden whose velocity increases with depth"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Incidence angle against offset
+          <span class="note">the shortcut and the real thing</span></p>
+        <canvas id="c2ang" aria-label="Incidence angle plotted against offset, comparing the straight-ray approximation with the true angle"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Straight-ray angle at the longest offset</span><b id="s2a">—</b></div>
+      <div class="stat key"><span>True angle at the longest offset</span><b id="s2b">—</b></div>
+      <div class="stat"><span>How much the shortcut misses by</span><b id="s2c">—</b></div>
+      <div class="stat"><span>Interval velocity at the reflector</span><b id="s2d">—</b></div>
+      <div class="stat"><span>Offset that reaches 30°</span><b id="s2e">—</b></div>
+      <div class="stat wide"><span>What the shortcut assumes</span><b id="s2f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>Set the velocity gradient to zero and the two curves land on top of each other, because with
+        a constant velocity the straight ray is the real ray. Every bit of the gap is the gradient.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 3 =============================== -->
+  <section class="tabpane" id="p3" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">3</span>Moveout</h3>
+      <span class="hint">The far traces arrive late, by a lot</span>
+    </div>
+    <p class="lede">A longer offset is a longer path, so the reflection arrives later. The difference
+      between the arrival time at some offset and the arrival time at zero offset is the
+      <b>normal moveout</b>, and on a gather it is the curvature of the event.</p>
+    <p class="lede">To a good approximation the arrival time follows a hyperbola: t² = t₀² + x²/V², where
+      x is the offset, t₀ the zero-offset time, and V a velocity that describes the whole overburden. The
+      velocity that makes this work is close to the <b>root-mean-square velocity</b> down to the
+      reflector, which is not the same as the average velocity and not the same as the velocity at the
+      reflector itself. Three different velocities are in play and confusing them is a common source of
+      error.</p>
+    <p class="lede">The moveout is large. At the settings here the longest trace arrives several hundred
+      milliseconds after the nearest one, which is far more than the length of the wavelet. Nothing can be
+      compared across the gather until it is removed.</p>
+
+    <div class="sec-row" id="row3">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The gather with the hyperbola drawn on
+          <span class="note">t² = t₀² + x²/V²</span></p>
+        <canvas id="c3raw" aria-label="The gather before correction, with the hyperbolic moveout curve drawn over the reflection"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Arrival time against offset
+          <span class="note">and the three velocities</span></p>
+        <canvas id="c3tx" aria-label="Arrival time plotted against offset, with the hyperbolic curve and the zero-offset time marked"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Zero-offset two-way time</span><b id="s3a">—</b></div>
+      <div class="stat key"><span>Moveout at the longest offset</span><b id="s3b">—</b></div>
+      <div class="stat"><span>RMS velocity to the reflector</span><b id="s3c">—</b></div>
+      <div class="stat"><span>Average velocity</span><b id="s3d">—</b></div>
+      <div class="stat"><span>Interval velocity at the reflector</span><b id="s3e">—</b></div>
+      <div class="stat wide"><span>Moveout compared with the wavelet length</span><b id="s3f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The hyperbola is an approximation and it degrades at long offset. Beyond roughly one offset
+        per depth it starts to depart from the true traveltime, and a higher-order correction is used
+        instead.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 4 =============================== -->
+  <section class="tabpane" id="p4" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">4</span>Flattening it, and what that costs</h3>
+      <span class="hint">The correction is not free</span>
+    </div>
+    <p class="lede">Removing the moveout means shifting every sample on every trace up by the difference
+      between its own arrival time and the zero-offset time. Do it correctly and the event becomes flat
+      across the gather, which is what makes the amplitudes comparable.</p>
+    <p class="lede">The shift is not the same at every time on a trace, because moveout depends on t₀ as
+      well as on offset. Shallow samples move up further than deep ones, so the trace is not translated,
+      it is <em>stretched</em>. The waveform on a far trace comes out longer and lower in frequency than
+      the one on a near trace, and the effect grows with offset and shrinks with depth.</p>
+    <p class="lede">That matters here more than it does for most purposes. An amplitude read from a
+      stretched far trace is not measuring the same thing as one read from an unstretched near trace, and
+      the stretch is worst exactly where the angle range is widest and the AVO information is largest.
+      Processing normally mutes the far traces where the stretch exceeds some threshold, which throws away
+      the angles that carried the most.</p>
+
+    <div class="sec-row" id="row4">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Before the correction
+          <span class="note">the event curving away</span></p>
+        <canvas id="c4before" aria-label="The gather before the moveout correction"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> After it
+          <span class="note">flat, and stretched at the far offsets</span></p>
+        <canvas id="c4after" aria-label="The gather after the moveout correction, flat but with the far traces stretched"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Shift applied to the longest trace</span><b id="s4a">—</b></div>
+      <div class="stat key"><span>Stretch factor at the longest offset</span><b id="s4b">—</b></div>
+      <div class="stat"><span>Apparent frequency there</span><b id="s4c">—</b></div>
+      <div class="stat"><span>Offset where stretch reaches 1.20</span><b id="s4d">—</b></div>
+      <div class="stat"><span>Angle at that offset</span><b id="s4e">—</b></div>
+      <div class="stat wide"><span>What a 20% stretch mute would remove</span><b id="s4f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The stretch here is a consequence of the correction and is computed rather than imposed. It
+        would be smaller for a deeper target at the same offset, which is why deep reflectors tolerate
+        long offsets and shallow ones do not.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 5 =============================== -->
+  <section class="tabpane" id="p5" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">5</span>Stacking, and what it discards</h3>
+      <span class="hint">Why AVO work is done on gathers</span>
+    </div>
+    <p class="lede">Once the gather is flat the usual next step is to add the traces together and divide
+      by the fold. That is the <b>stack</b>, and it is the section almost every interpreter works from. It
+      is a good thing to do: the reflection is the same on every trace and adds coherently, while random
+      noise does not, so the signal-to-noise ratio improves roughly with the square root of the fold.</p>
+    <p class="lede">It is also the end of the road for everything this set is about. The amplitude in this
+      gather is not constant across offset — the rocks are the shale and gas sand from modules 02 and 03,
+      and their reflection coefficient changes with angle. Adding the traces together replaces that whole
+      trend with its average.</p>
+    <p class="lede">The left-hand panel plots the amplitude trace by trace, which is the AVO response
+      seen as data rather than as a curve. The right-hand panel shows the stack: one number, sitting
+      somewhere in the middle of the trend, carrying no record that a trend existed.</p>
+    <p class="lede">Nothing is wrong with the stack. It answers a different question. A measurement that
+      depends on how the amplitude varies with angle has to be made before the stack, on the gather, which
+      is why AVO analysis lives where it does in a processing sequence and why a stacked volume alone
+      cannot be used for it.</p>
+
+    <div class="sec-row" id="row5">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The amplitude along the gather
+          <span class="note">measured trace by trace</span></p>
+        <canvas id="c5avo" aria-label="The measured amplitude of the flattened event plotted against offset and against incidence angle"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> The stack
+          <span class="note">the whole gather, as one trace</span></p>
+        <canvas id="c5stack" aria-label="The stacked trace, a single trace formed by averaging the flattened gather"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Amplitude on the nearest trace</span><b id="s5a">—</b></div>
+      <div class="stat"><span>Amplitude on the farthest usable trace</span><b id="s5b">—</b></div>
+      <div class="stat key"><span>How much it changed across the gather</span><b id="s5c">—</b></div>
+      <div class="stat"><span>Amplitude on the stack</span><b id="s5d">—</b></div>
+      <div class="stat"><span>Angle range the stack averaged over</span><b id="s5e">—</b></div>
+      <div class="stat wide"><span>What survives stacking, and what does not</span><b id="s5f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The rocks here are the shale and the 30% porosity gas sand from modules 02 and 03, and the
+        amplitudes are exact Zoeppritz coefficients at the true angle of each trace. Why the curve has the
+        shape it does is module 05.</span>
+    </div>
+  </section>
+
+  <!-- ============================ WHY IT MATTERS ========================== -->
+  <section class="tabpane" id="pw" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">W</span>Why it matters</h3>
+      <span class="hint">Where the geometry decides the answer</span>
+    </div>
+    <p class="lede"><b>Deciding whether a target is reachable.</b> The angle a survey achieves at a target
+      depends on the offsets recorded and the depth of the target. A deep reservoir on a short spread may
+      never reach a wide enough angle range for the amplitude variation to be measurable, and that is a
+      survey design question rather than a processing one.</p>
+    <p class="lede"><b>Converting offsets to angles correctly.</b> Every AVO analysis needs an angle for
+      each trace. Using the straight-ray shortcut with a real velocity gradient puts every point on the
+      wrong part of the axis, and the error grows with offset, so it distorts the shape of the trend
+      rather than shifting it.</p>
+    <p class="lede"><b>Reading angle stacks.</b> A near stack and a far stack are averages over ranges of
+      angle, and which angles fell into which stack depends on the velocity model used to sort them. Two
+      processing runs with different velocities produce different angle stacks from identical field
+      data.</p>
+    <p class="lede"><b>Knowing what the mute removed.</b> Stretch mutes are applied routinely and they
+      remove the far offsets first. Since those carry most of the angle information, a gather that looks
+      clean after processing may have had the most useful part of it removed.</p>
+  </section>
+
+  <!-- ============================== EXERCISES ============================= -->
+  <section class="tabpane" id="pe" role="tabpanel" hidden>
+    <div class="tryit" style="max-width:none">
+      <h3>Exercises</h3>
+      <p class="lede" style="margin-top:-4px">Each answer is a number read off this page at the settings
+        described. <button type="button" class="btn ghost small" id="popEx">Open these in a separate
+        window</button></p>
+      <ol id="exList">
+        <li><b>Measure the error in the straight-ray shortcut.</b> With the default overburden, read the
+          straight-ray angle and the true angle at the longest offset. Then set the velocity gradient to
+          zero and read them again.
+          <details class="reveal"><summary>Answer</summary><span class="ans">At a 0.50 /s gradient the
+            shortcut gives 36.9° where the true angle is 47.0° — it is 10.1 degrees low. With the gradient
+            at zero the two agree exactly, because a constant velocity is the one case in which a ray
+            really does travel in a straight line. The entire discrepancy is the gradient, and since it
+            grows with offset it bends the shape of an AVO trend rather than simply
+            shifting it.</span></details></li>
+
+        <li><b>Find the offset you need for a given angle.</b> Read the offset that reaches 30° at 2000 m
+          depth, then take the target to 3500 m and read it again.
+          <details class="reveal"><summary>Answer</summary><span class="ans">About 1780 m at 2000 m
+            depth, and about 2820 m at 3500 m. A deeper target needs a longer spread to reach the same
+            angle, roughly in proportion to its depth. This is why deep prospects on short-offset surveys
+            are often not candidates for amplitude work at all: the data exists, and the angle range in it
+            does not.</span></details></li>
+
+        <li><b>Compare the moveout with the wavelet.</b> Read the moveout at the longest offset and
+          compare it with the length of a 30 Hz wavelet, roughly 33 ms from peak to peak.
+          <details class="reveal"><summary>Answer</summary><span class="ans">The moveout is 477 ms at the
+            default settings, about fourteen times the wavelet length. The far trace and the near
+            trace are not slightly misaligned; the event on one is nowhere near the event on the other.
+            Nothing about amplitude can be compared across a gather until this is
+            removed.</span></details></li>
+
+        <li><b>Watch the stretch appear.</b> Compare the waveform on the near and far traces in step 4,
+          then read the stretch factor and the apparent frequency at the longest offset.
+          <details class="reveal"><summary>Answer</summary><span class="ans">The far trace is stretched
+            by 1.25, so a 30 Hz wavelet arrives looking like 24 Hz. The correction shifts shallow samples
+            further than deep ones, which lengthens the waveform rather than moving it. A mute set at a
+            stretch of 1.20 cuts in at 2679 m, where the incidence angle is 42.9°, and removes three of
+            the twenty-four traces. Those three carry the widest angles on the gather, which are the ones
+            with the most to say about the fluid.</span></details></li>
+
+        <li><b>Stack the gather and see what is left.</b> Read the amplitude on the near trace, on the
+          far trace, and on the stack.
+          <details class="reveal"><summary>Answer</summary><span class="ans">The amplitude runs from
+            −0.161 on the zero-offset trace to −0.328 at 47°, so it roughly doubles in magnitude across
+            the gather, and the stack reports −0.223. That single number is a weighted average of a trend, and nothing in it records
+            that the trend existed or which direction it ran. A different set of offsets would average to
+            a different number from identical rocks. Everything this set does from here on has to happen
+            before this step.</span></details></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================== KEY POINTS ============================ -->
+  <section class="tabpane" id="pk" role="tabpanel" hidden>
+    <div class="takeaway" style="max-width:none">
+      <h3>Key points</h3>
+      <ul>
+        <li><b>A CMP gather is several recordings of one reflection point</b>, sorted by the distance
+          between source and receiver. That distance is the offset, and the number of traces is the
+          fold.</li>
+        <li><b>Offset is not the incidence angle.</b> The angle depends on the offset, the depth and the
+          whole velocity profile above the reflector.</li>
+        <li><b>A ray in rising velocity bends.</b> It reaches the reflector at a steeper angle than a
+          straight line does, and the straight-ray shortcut is 10.1 degrees low at 3000 m offset
+          here.</li>
+        <li><b>The moveout is far larger than the wavelet.</b> Several hundred milliseconds against tens,
+          so nothing can be compared across a gather until it is removed.</li>
+        <li><b>Removing it stretches the far traces</b>, because the shift depends on time as well as on
+          offset. A stretched waveform is longer and lower in frequency than the one it came from.</li>
+        <li><b>Stretch mutes remove the far offsets</b>, which are the traces carrying the widest angles
+          and the most information about the fluid.</li>
+        <li><b>Stacking replaces the whole trend with its average.</b> It improves the signal-to-noise
+          ratio and destroys the angle dependence at the same time.</li>
+        <li><b>So AVO analysis has to happen on the gather</b>, before the stack. A stacked volume cannot
+          be used for it, however good it looks.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================ METHOD ============================== -->
+  <section class="tabpane" id="pm" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">M</span>Method, simplifications and references</h3>
+      <span class="hint">What is computed, and what is idealized</span>
+    </div>
+
+    <p class="lede"><b>The overburden</b> is a linear velocity gradient, V(z) = V₀ + kz, which is a
+      reasonable description of a compacting clastic section and has closed-form ray paths. The true
+      incidence angle is obtained by finding the ray parameter whose path emerges at the requested offset,
+      by bisection, and then reading the angle at the reflector. The straight-ray angle drawn beside it is
+      arctan of the half-offset over the depth, which is the same shortcut module 00 used and said it
+      would revisit here.</p>
+
+    <p class="lede"><b>Moveout</b> is the hyperbolic approximation, t² = t₀² + x²/V²rms, with the RMS
+      velocity computed from the same gradient. This is the standard correction and it is an
+      approximation: it is exact for a single homogeneous layer and degrades as offset approaches depth.
+      The correction applied to the gather is done by resampling each trace at the moveout time for every
+      output sample, which is how the stretch arises — it is a consequence of the arithmetic rather than
+      something added afterwards.</p>
+
+    <p class="lede"><b>The reflection amplitudes</b> are exact Zoeppritz P-wave coefficients for the
+      module 03 rock pair: a Castagna mudrock shale over a 30% porosity gas sand from the module 01 frame
+      and the module 02 fluid, at 23 MPa and 64 °C. They are evaluated at each trace's own true incidence
+      angle. Traces whose angle exceeds 60° are dropped, because the coefficient changes very rapidly
+      there and the approximations used downstream have stopped holding; the readouts report the farthest
+      trace that survived.</p>
+
+    <p class="lede"><b>Idealized rather than modeled:</b></p>
+    <ul class="lede" style="padding-left:20px">
+      <li><b>The reflector is flat and horizontal</b>, so the midpoint really is above the reflection
+        point. On a dipping reflector it is not, and that is what migration exists to fix.</li>
+      <li><b>The fold is uniform and the offsets are regular.</b> Real gathers are irregular, have gaps,
+        and vary in fold across a survey.</li>
+      <li><b>No geometrical spreading, transmission loss, absorption or multiples.</b> Each of these
+        changes amplitude with offset for reasons that have nothing to do with the rock, and correcting
+        for them is a large part of what preparing gathers for AVO involves.</li>
+      <li><b>No anisotropy.</b> In a shale-rich section the moveout is not hyperbolic even in principle,
+        and an anisotropic correction with a third parameter is used instead.</li>
+      <li><b>No noise.</b> What noise does to a measurement made across a gather is module 08.</li>
+    </ul>
+
+    <details class="reveal" style="margin-top:8px">
+      <summary>References</summary>
+      <ul style="padding-left:18px;margin-top:8px">
+        <li>Yilmaz, Ö., 2001, <em>Seismic Data Analysis</em>: SEG Investigations in Geophysics No. 10. —
+          the standard reference for gathers, moveout and stacking.</li>
+        <li>Slotnick, M. M., 1959, <em>Lessons in Seismic Computing</em>: SEG. — ray paths in a linear
+          velocity gradient.</li>
+        <li>Dix, C. H., 1955, Seismic velocities from surface measurements: <em>Geophysics</em>, 20,
+          68–86.</li>
+        <li>Dunkin, J. W., and Levin, F. K., 1973, Effect of normal moveout on a seismic pulse:
+          <em>Geophysics</em>, 38, 635–642. — where the stretch is worked out.</li>
+        <li>Simm, R., and Bacon, M., 2014, <em>Seismic Amplitude: An Interpreter's Handbook</em>:
+          Cambridge University Press.</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="nextup" id="nextup" hidden>
+    <p class="eyebrow">Next up</p>
+    <h3>05 · Amplitude against angle</h3>
+    <p>Step 5 measured a trend across the gather without explaining its shape. Module 05 takes that up:
+      why the reflection changes with angle at all, what the shear velocities have to do with it, and what
+      the standard equations do and do not capture.</p>
+    <a class="btn ghost" href="add-offset.html">Go to module 05 →</a>
+  </section>
+
+  <div class="pager" id="pager" hidden>
+    <a class="btn ghost" href="rock-to-trace.html">← 03 · From a rock to a trace</a>
+    <a class="btn ghost" href="../index.html">All modules</a>
+  </div>
+
+  <footer>
+    <div class="foot-grid">
+      <p>Built for teaching by Dr. Heather Bedle and Dr. April Moreno-Ward, School of Geosciences,
+        University of Oklahoma, with the <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a>
+        consortium.</p>
+      <p class="lic">Licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+        Free to use, adapt and redistribute, including in teaching, provided the source is credited and
+        anything derived from it carries the same license.</p>
+      <p class="lic">Nothing you do in this module leaves your browser. The only thing recorded is that
+        the page was opened — no cookie, no account, nothing about you.</p>
+      <p class="lic">To cite: H. Bedle and A. Moreno-Ward, <i>How AVO Actually Works</i>, University of
+        Oklahoma. <span class="k">SSRN: [article link to follow]</span></p>
+    </div>
+  </footer>
+</div>
+
+<script src="../assets/count.js"></script>
+<script src="../assets/seismic.js"></script>
+<script src="../assets/rockphysics.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const missing = [];
+  if (typeof SEIS === 'undefined') missing.push('assets/seismic.js');
+  if (typeof ROCK === 'undefined') missing.push('assets/rockphysics.js');
+  if (missing.length) {
+    const el = document.createElement('div');
+    el.setAttribute('style', 'background:#841617;color:#fff;padding:14px 18px;margin:16px 0;' +
+      'font:13px/1.6 ui-monospace,Menlo,monospace');
+    el.textContent = 'This module could not load ' + missing.join(' and ') +
+      '. It expects them one directory up, at ../assets/, and file names are ' +
+      'case-sensitive on GitHub Pages.';
+    const w = document.querySelector('.wrap');
+    (w || document.body).insertBefore(el, w ? w.firstChild : null);
+    return;
+  }
+
+  const $ = (id) => document.getElementById(id);
+  const visible = (id) => { const el = $(id); return el && !el.hidden; };
+  const CRIM = '#841617', TEAL = '#0B7285', SLATE = '#5C6670', INK = '#16191C';
+  const OLIVE = '#6B7A2E', ORANGE = '#B5451B';
+  const DEG = 180 / Math.PI;
+
+  // grad carries hundredths of a per-second gradient
+  const DEF = { depth: 2000, maxoff: 3000, v0: 1600, grad: 50, freq: 30, tab: 'p1' };
+  const S = SEIS.readState(DEF);
+  (function sanitize() {
+    const num = (k, lo, hi, step) => {
+      let v = Number(S[k]);
+      if (!isFinite(v)) v = DEF[k];
+      v = Math.min(hi, Math.max(lo, v));
+      S[k] = step ? Math.round(v / step) * step : v;
+    };
+    num('depth', 1000, 3500, 50); num('maxoff', 1000, 4000, 100);
+    num('v0', 1400, 2200, 25); num('grad', 0, 90, 1); num('freq', 20, 45, 1);
+  })();
+  const saveState = () => SEIS.writeState(S, DEF);
+
+  /* =====================================================================
+     THE MODEL
+
+     A flat reflector under a linear velocity gradient. Every trace gets its
+     own true incidence angle from a ray traced through that gradient, and its
+     own amplitude from exact Zoeppritz at that angle. The moveout correction
+     is applied by resampling, so the stretch in step 4 falls out of the
+     arithmetic rather than being drawn on.
+     ===================================================================== */
+
+  const NTRACE = 24;
+  const NT = 6501, DT = 0.001, TR0 = 0;      // 0 to 6.500 s, fine enough
+                                              // to read a peak accurately
+  const ANG_LIMIT = 60;                       // degrees; beyond this a trace is dropped
+  const STRETCH_MUTE = 1.20;                  // a common processing threshold
+  const PRES = 23, TEMP = 64;
+
+  const SHALE = ROCK.mudrock(2700);
+  const GAS = (function () {
+    const min = ROCK.mineralMix(0);
+    const fr = ROCK.softSand(min, 0.30, { P: PRES });
+    const fl = ROCK.fluidProps({ T: TEMP, P: PRES, S: 0.035 });
+    return ROCK.elastic(ROCK.gassmann(fr.K, min.K, fl.gas.K, 0.30), fr.G,
+      0.70 * min.rho + 0.30 * fl.gas.rho);
+  })();
+
+  const D = {};
+
+  function recompute() {
+    D.k = S.grad / 100;
+    D.ob = ROCK.overburden(S.depth, S.v0, D.k);
+    D.t0 = D.ob.t0;
+    D.vrms = D.ob.vrms;
+    D.wav = SEIS.makeWavelet({ f: S.freq });
+
+    D.tr = [];
+    for (let i = 0; i < NTRACE; i++) {
+      const x = (i / (NTRACE - 1)) * S.maxoff;
+      const thTrue = ROCK.angleFromOffset(x, S.depth, S.v0, D.k) * DEG;
+      const thStr = ROCK.angleStraightRay(x, S.depth) * DEG;
+      const t = Math.sqrt(D.t0 * D.t0 + (x * x) / (D.vrms * D.vrms));
+      const usable = isFinite(thTrue) && thTrue <= ANG_LIMIT;
+      const r = usable ? ROCK.zoeppritz(SHALE, GAS, thTrue) : NaN;
+      D.tr.push({
+        x: x, thTrue: thTrue, thStr: thStr, t: t,
+        moveout: t - D.t0, stretch: t / D.t0,
+        usable: usable && isFinite(r), r: r,
+      });
+    }
+    D.use = D.tr.filter((q) => q.usable);
+    D.nUse = D.use.length;
+    const far = D.tr[NTRACE - 1];
+    D.farStr = far.thStr; D.farTrue = far.thTrue;
+    D.angErr = far.thTrue - far.thStr;
+    D.moveoutFar = far.moveout;
+    D.stretchFar = far.stretch;
+    D.freqFar = S.freq / far.stretch;
+    D.wavLen = 1000 / S.freq;                 // ms, peak to peak, near enough
+
+    // offset that reaches 30 degrees, and where stretch reaches 1.25
+    D.off30 = null; D.off125 = null; D.ang125 = null;
+    for (let i = 1; i < NTRACE; i++) {
+      const a = D.tr[i - 1], b = D.tr[i];
+      if (D.off30 === null && a.thTrue < 30 && b.thTrue >= 30) {
+        const f = (30 - a.thTrue) / (b.thTrue - a.thTrue);
+        D.off30 = a.x + f * (b.x - a.x);
+      }
+      if (D.off125 === null && a.stretch < STRETCH_MUTE && b.stretch >= STRETCH_MUTE) {
+        const f = (STRETCH_MUTE - a.stretch) / (b.stretch - a.stretch);
+        D.off125 = a.x + f * (b.x - a.x);
+        D.ang125 = a.thTrue + f * (b.thTrue - a.thTrue);
+      }
+    }
+    D.mutedBy125 = D.off125 === null ? 0
+      : D.tr.filter((q) => q.x > D.off125).length;
+
+    // the gather, before and after the correction
+    D.raw = []; D.nmo = [];
+    for (const q of D.tr) {
+      const raw = q.usable
+        ? SEIS.traceFromSpikes([{ t: q.t, r: q.r }], TR0, DT, NT, D.wav)
+        : new Float32Array(NT);
+      D.raw.push(raw);
+      /* The correction: the output sample at t0 is read from the input at the
+         moveout time for that t0. Shallow samples come from further down the
+         trace than deep ones, which is exactly what stretches the waveform. */
+      const out = new Float32Array(NT);
+      if (q.usable) {
+        for (let j = 0; j < NT; j++) {
+          const tOut = TR0 + j * DT;
+          const tIn = Math.sqrt(tOut * tOut + (q.x * q.x) / (D.vrms * D.vrms));
+          const u = (tIn - TR0) / DT;
+          const j0 = Math.floor(u);
+          if (j0 >= 0 && j0 < NT - 1) {
+            const f = u - j0;
+            out[j] = raw[j0] * (1 - f) + raw[j0 + 1] * f;
+          }
+        }
+      }
+      D.nmo.push(out);
+    }
+
+    // the measured amplitude on each flattened trace, and the stack
+    D.amp = D.tr.map((q, i) => {
+      if (!q.usable) return NaN;
+      const j = Math.round((D.t0 - TR0) / DT);
+      let peak = 0;
+      for (let m = Math.max(0, j - 40); m <= Math.min(NT - 1, j + 40); m++) {
+        if (Math.abs(D.nmo[i][m]) > Math.abs(peak)) peak = D.nmo[i][m];
+      }
+      return peak;
+    });
+    D.stack = new Float32Array(NT);
+    if (D.nUse) {
+      for (let i = 0; i < NTRACE; i++) {
+        if (!D.tr[i].usable) continue;
+        for (let j = 0; j < NT; j++) D.stack[j] += D.nmo[i][j] / D.nUse;
+      }
+    }
+    const js = Math.round((D.t0 - TR0) / DT);
+    let sp = 0;
+    for (let m = Math.max(0, js - 40); m <= Math.min(NT - 1, js + 40); m++) {
+      if (Math.abs(D.stack[m]) > Math.abs(sp)) sp = D.stack[m];
+    }
+    D.stackAmp = sp;
+    D.ampNear = D.use.length ? D.amp[D.tr.indexOf(D.use[0])] : NaN;
+    D.ampFar = D.use.length ? D.amp[D.tr.indexOf(D.use[D.use.length - 1])] : NaN;
+    D.ampChange = isFinite(D.ampNear) && D.ampNear !== 0
+      ? (D.ampFar - D.ampNear) / Math.abs(D.ampNear) * 100 : NaN;
+    D.angLo = D.use.length ? D.use[0].thTrue : NaN;
+    D.angHi = D.use.length ? D.use[D.use.length - 1].thTrue : NaN;
+  }
+
+  /* =====================================================================
+     DRAWING
+     ===================================================================== */
+
+  const M = { l: 62, r: 16, t: 14, b: 40 };
+
+  function pw(el) {
+    const par = el && el.parentElement;
+    if (!par) return 900;
+    const cs = (typeof window.getComputedStyle === 'function')
+      ? window.getComputedStyle(par) : { paddingLeft: '0', paddingRight: '0' };
+    const inner = par.clientWidth
+      - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    return Math.max(200, Math.floor(inner || 900));
+  }
+  function rowWidth(rowId, n) {
+    const row = $(rowId);
+    const total = row ? pw(row.firstElementChild || row) : 800;
+    const narrow = (window.innerWidth || 1200) <= 700;
+    const w = narrow ? Math.max(240, total)
+                     : Math.max(150, Math.floor((total - 10 * (n - 1)) / n));
+    if (row) {
+      row.querySelectorAll(':scope > .panel-col').forEach((el) => {
+        el.style.width = w + 'px'; el.style.maxWidth = w + 'px';
+      });
+    }
+    return w;
+  }
+
+  const LEG_FONT = '11px "IBM Plex Sans", sans-serif';
+  function fitLabel(ctx, t, maxW) {
+    if (ctx.measureText(t).width <= maxW) return t;
+    let out = t;
+    while (out.length > 4 && ctx.measureText(out + '\u2026').width > maxW) {
+      out = out.slice(0, -1);
+    }
+    return out.replace(/[ ,]+$/, '') + '\u2026';
+  }
+  function legendLines(ctx, items, maxW) {
+    ctx.save(); ctx.font = LEG_FONT;
+    let lines = 1, x = 0;
+    for (const [, t0] of items) {
+      const t = fitLabel(ctx, t0, maxW - 41);
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > 0 && x + iw > maxW) { lines++; x = 0; }
+      x += iw;
+    }
+    ctx.restore();
+    return lines;
+  }
+  function panel(id, W, plotH, items) {
+    const el = $(id);
+    let ctx = SEIS.fitCanvas(el, W, M.t + plotH + M.b);
+    const lines = items && items.length ? legendLines(ctx, items, W - M.l - M.r) : 0;
+    const H = M.t + plotH + M.b + (lines ? 12 + lines * 16 : 0);
+    ctx = SEIS.fitCanvas(el, W, H);
+    ctx.clearRect(0, 0, W, H);
+    return { ctx, R: { x: M.l, y: M.t, w: W - M.l - M.r, h: plotH } };
+  }
+  function legendRow(ctx, R, items) {
+    ctx.save();
+    ctx.font = LEG_FONT; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    let x = R.x, y = R.y + R.h + 46;
+    for (const [c, t0, kind] of items) {
+      const t = fitLabel(ctx, t0, R.w - 41);
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > R.x && x + iw > R.x + R.w) { x = R.x; y += 16; }
+      if (kind === 'dot') {
+        ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x + 9, y, 4, 0, 7); ctx.fill();
+      } else {
+        ctx.strokeStyle = c; ctx.lineWidth = 2;
+        ctx.setLineDash(kind === 'dash' ? [5, 4] : []);
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 18, y); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      ctx.fillStyle = SLATE; ctx.fillText(t, x + 23, y);
+      x += iw;
+    }
+    ctx.restore();
+  }
+  function curve(ctx, R, xs, ys, xr, yr, color, width, dash) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    if (dash) ctx.setLineDash(dash);
+    ctx.strokeStyle = color; ctx.lineWidth = width || 2;
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < xs.length; i++) {
+      if (!isFinite(ys[i]) || !isFinite(xs[i])) { started = false; continue; }
+      const x = R.x + ((xs[i] - xr[0]) / (xr[1] - xr[0])) * R.w;
+      const y = R.y + R.h - ((ys[i] - yr[0]) / (yr[1] - yr[0])) * R.h;
+      started ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      started = true;
+    }
+    ctx.stroke(); ctx.restore();
+  }
+  function dot(ctx, R, xv, yv, xr, yr, color, r) {
+    if (!isFinite(xv) || !isFinite(yv)) return;
+    const x = R.x + ((xv - xr[0]) / (xr[1] - xr[0])) * R.w;
+    const y = R.y + R.h - ((yv - yr[0]) / (yr[1] - yr[0])) * R.h;
+    ctx.save(); ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(x, y, r || 4, 0, 7); ctx.fill(); ctx.restore();
+  }
+
+  /* the gather, drawn as wiggles against a shared time window */
+  function drawGather(ctx, R, traces, tLo, tHi, opts) {
+    const o = opts || {};
+    ctx.save(); ctx.fillStyle = '#FBFAF7';
+    ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    SEIS.axisLeft(ctx, R, tLo * 1000, tHi * 1000, 'two-way time (ms)',
+      (v) => String(Math.round(v)));
+    SEIS.axisBottom(ctx, R, 0, S.maxoff, 'offset (m)', (v) => String(Math.round(v)));
+    const slot = R.w / NTRACE;
+    const exc = slot * (o.exc || 2.6);
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    for (let i = 0; i < NTRACE; i++) {
+      if (!D.tr[i].usable) continue;
+      const x0 = R.x + slot * (i + 0.5);
+      const y = (t) => R.y + ((t - tLo) / (tHi - tLo)) * R.h;
+      ctx.strokeStyle = INK; ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      let started = false;
+      for (let t = tLo; t <= tHi; t += DT) {
+        const j = Math.round((t - TR0) / DT);
+        const v = traces[i][j] || 0;
+        const px = x0 + v * exc / 0.35;
+        started ? ctx.lineTo(px, y(t)) : ctx.moveTo(px, y(t));
+        started = true;
+      }
+      ctx.stroke();
+      // fill the positive lobe so the event reads as a horizon
+      ctx.fillStyle = 'rgba(22,25,28,0.55)';
+      ctx.beginPath(); ctx.moveTo(x0, y(tLo));
+      for (let t = tLo; t <= tHi; t += DT) {
+        const j = Math.round((t - TR0) / DT);
+        const v = traces[i][j] || 0;
+        ctx.lineTo(Math.max(x0, x0 + v * exc / 0.35), y(t));
+      }
+      ctx.lineTo(x0, y(tHi)); ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
+    SEIS.frame(ctx, R);
+  }
+
+  function gatherWindow(useNmo) {
+    if (useNmo) return [Math.max(0, D.t0 - 0.28), D.t0 + 0.28];
+    const far = D.tr[NTRACE - 1].t;
+    return [Math.max(0, D.t0 - 0.20), far + 0.24];
+  }
+
+  /* --------------------------------- header --------------------------- */
+  function drawHeader() {
+    const el = $('cHead'); if (!el) return;
+    const W = pw(el), PH = 206, H = M.t + PH + M.b;
+    const ctx = SEIS.fitCanvas(el, W, H);
+    ctx.clearRect(0, 0, W, H);
+    const gap = 26;
+    const halfW = Math.max(90, Math.floor((W - M.l - M.r - gap) / 2));
+    const RA = { x: M.l, y: M.t, w: halfW, h: PH };
+    const RB = { x: M.l + halfW + gap, y: M.t, w: halfW, h: PH };
+    const wRaw = gatherWindow(false), wNmo = gatherWindow(true);
+    drawGather(ctx, RA, D.raw, wRaw[0], wRaw[1], { exc: 2.2 });
+    drawGather(ctx, RB, D.nmo, wNmo[0], wNmo[1], { exc: 2.2 });
+    ctx.save();
+    ctx.font = '10px "IBM Plex Sans", sans-serif';
+    ctx.fillStyle = SLATE; ctx.textAlign = 'center';
+    ctx.fillText(fitLabel(ctx, 'as recorded', halfW - 4), RA.x + RA.w / 2, RA.y + RA.h + 30);
+    ctx.fillText(fitLabel(ctx, 'moveout removed', halfW - 4), RB.x + RB.w / 2, RB.y + RB.h + 30);
+    ctx.restore();
+  }
+
+  /* --------------------------------- step 1 --------------------------- */
+  function drawStep1() {
+    const W = rowWidth('row1', 2);
+
+    const LEG1 = [[CRIM, 'source'], [ORANGE, 'receiver'], [TEAL, 'ray paths'],
+      [SLATE, 'the shared midpoint', 'dash']];
+    const P1 = panel('c1geom', W, 246, LEG1);
+    const ctx = P1.ctx, R = P1.R;
+    const XAX = S.maxoff * 1.1, ZAX = S.depth * 1.25;
+    const px = (v) => R.x + (v / XAX) * R.w + R.w * 0.5 - (S.maxoff / 2 / XAX) * R.w;
+    const py = (v) => R.y + (v / ZAX) * R.h;
+    ctx.save(); ctx.fillStyle = '#E4E0D6'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const yRef = py(S.depth);
+    ctx.save();
+    ctx.fillStyle = 'rgba(11,114,133,0.22)';
+    ctx.fillRect(R.x, yRef, R.w, R.y + R.h - yRef);
+    ctx.strokeStyle = INK; ctx.lineWidth = 1.8;
+    ctx.beginPath(); ctx.moveTo(R.x, yRef); ctx.lineTo(R.x + R.w, yRef); ctx.stroke();
+    ctx.restore();
+    SEIS.axisLeft(ctx, R, 0, ZAX, 'depth (m)', (v) => String(Math.round(v)));
+    const xm = px(S.maxoff / 2);
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    for (let i = 0; i < NTRACE; i += 3) {
+      const q = D.tr[i];
+      const xs = px(S.maxoff / 2 - q.x / 2), xr = px(S.maxoff / 2 + q.x / 2);
+      ctx.strokeStyle = TEAL; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(xs, R.y); ctx.lineTo(xm, yRef); ctx.lineTo(xr, R.y);
+      ctx.stroke();
+      ctx.fillStyle = CRIM; ctx.fillRect(xs - 2.5, R.y, 5, 8);
+      ctx.fillStyle = ORANGE; ctx.fillRect(xr - 2.5, R.y, 5, 8);
+    }
+    ctx.restore();
+    SEIS.dashedLine(ctx, xm, R.y, xm, yRef, SLATE, [4, 4], 1.4);
+    SEIS.tag(ctx, xm + 6, R.y + 16, 'midpoint', SLATE);
+    SEIS.frame(ctx, R);
+    legendRow(ctx, R, LEG1);
+
+    const LEG1b = [[INK, 'one trace per offset']];
+    const P1b = panel('c1cmp', W, 246, LEG1b);
+    const w = gatherWindow(false);
+    drawGather(P1b.ctx, P1b.R, D.raw, w[0], w[1]);
+    legendRow(P1b.ctx, P1b.R, LEG1b);
+
+    set('s1a', String(NTRACE));
+    set('s1b', '0 to ' + S.maxoff + ' m');
+    set('s1c', Math.round(S.maxoff / (NTRACE - 1)) + ' m');
+    set('s1d', D.t0.toFixed(3) + ' s');
+    set('s1e', D.tr[NTRACE - 1].t.toFixed(3) + ' s');
+    set('s1f', 'the same reflection point, at a different source-receiver distance');
+  }
+
+  /* --------------------------------- step 2 --------------------------- */
+  function drawStep2() {
+    const W = rowWidth('row2', 2);
+
+    const LEG2 = [[SLATE, 'the straight-line shortcut', 'dash'],
+      [CRIM, 'the path a ray actually takes']];
+    const P2 = panel('c2rays', W, 246, LEG2);
+    const ctx = P2.ctx, R = P2.R;
+    const ZAX = S.depth * 1.15, XAX = S.maxoff * 0.62;
+    const px = (v) => R.x + (v / XAX) * R.w;
+    const py = (v) => R.y + (v / ZAX) * R.h;
+    // shade the overburden by its velocity so the gradient is visible
+    ctx.save();
+    for (let j = 0; j < 60; j++) {
+      const z = (j / 60) * ZAX;
+      const v = S.v0 + D.k * z;
+      const f = Math.max(0, Math.min(1, (v - 1400) / 2400));
+      ctx.fillStyle = 'rgb(' + Math.round(232 - f * 92) + ',' +
+        Math.round(228 - f * 88) + ',' + Math.round(214 - f * 92) + ')';
+      ctx.fillRect(R.x, py(z), R.w, R.h / 60 + 1);
+    }
+    ctx.restore();
+    SEIS.axisLeft(ctx, R, 0, ZAX, 'depth (m)', (v) => String(Math.round(v)));
+    SEIS.axisBottom(ctx, R, 0, XAX, 'distance from the source (m)',
+      (v) => String(Math.round(v)));
+    const yRef = py(S.depth);
+    ctx.save();
+    ctx.strokeStyle = INK; ctx.lineWidth = 1.8;
+    ctx.beginPath(); ctx.moveTo(R.x, yRef); ctx.lineTo(R.x + R.w, yRef); ctx.stroke();
+    ctx.restore();
+    const half = S.maxoff / 2;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    // the straight line
+    SEIS.dashedLine(ctx, px(0), R.y, px(half), yRef, SLATE, [5, 4], 2);
+    // the real ray: step down through the gradient at constant ray parameter
+    const thFar = D.tr[NTRACE - 1].thTrue / DEG;
+    const vRef = S.v0 + D.k * S.depth;
+    const p = Math.sin(thFar) / vRef;
+    ctx.strokeStyle = CRIM; ctx.lineWidth = 2.4;
+    ctx.beginPath(); ctx.moveTo(px(0), R.y);
+    let xacc = 0;
+    const nz = 200;
+    for (let j = 1; j <= nz; j++) {
+      const z = (j / nz) * S.depth;
+      const v = S.v0 + D.k * z;
+      const sn = Math.min(0.999999, p * v);
+      const dz = S.depth / nz;
+      xacc += dz * sn / Math.sqrt(1 - sn * sn);
+      ctx.lineTo(px(xacc), py(z));
+    }
+    ctx.stroke(); ctx.restore();
+    SEIS.tag(ctx, px(0) + 6, R.y + 16, 'source', CRIM);
+    SEIS.frame(ctx, R);
+    legendRow(ctx, R, LEG2);
+
+    const LEG2b = [[SLATE, 'straight-ray shortcut', 'dash'], [CRIM, 'true angle'],
+      [ORANGE, 'the gap between them']];
+    const P2b = panel('c2ang', W, 246, LEG2b);
+    const ctx2 = P2b.ctx, R2 = P2b.R;
+    const xs = D.tr.map((q) => q.x);
+    const xr = [0, S.maxoff];
+    const yr = [0, Math.max(60, Math.max(...D.tr.map((q) => q.thTrue || 0)) * 1.15)];
+    ctx2.save(); ctx2.fillStyle = '#FBFAF7';
+    ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
+    SEIS.axisLeft(ctx2, R2, yr[0], yr[1], 'incidence angle (degrees)',
+      (v) => String(Math.round(v)), { flip: true, grid: true });
+    SEIS.axisBottom(ctx2, R2, xr[0], xr[1], 'offset (m)', (v) => String(Math.round(v)));
+    curve(ctx2, R2, xs, D.tr.map((q) => q.thStr), xr, yr, SLATE, 2.4, [5, 4]);
+    curve(ctx2, R2, xs, D.tr.map((q) => q.thTrue), xr, yr, CRIM, 2.8);
+    curve(ctx2, R2, xs, D.tr.map((q) => q.thTrue - q.thStr), xr, yr, ORANGE, 2.2);
+    SEIS.frame(ctx2, R2);
+    legendRow(ctx2, R2, LEG2b);
+
+    set('s2a', D.farStr.toFixed(1) + '\u00b0');
+    set('s2b', D.farTrue.toFixed(1) + '\u00b0');
+    set('s2c', D.angErr.toFixed(1) + '\u00b0 too low');
+    set('s2d', Math.round(D.ob.vint) + ' m/s');
+    set('s2e', D.off30 === null ? 'not reached on this spread'
+      : Math.round(D.off30) + ' m');
+    set('s2f', 'that the velocity does not change with depth');
+  }
+
+  /* --------------------------------- step 3 --------------------------- */
+  function drawStep3() {
+    const W = rowWidth('row3', 2);
+    const w = gatherWindow(false);
+
+    const LEG3 = [[INK, 'the gather'], [ORANGE, 'the hyperbola', 'dash']];
+    const P3 = panel('c3raw', W, 246, LEG3);
+    const ctx = P3.ctx, R = P3.R;
+    drawGather(ctx, R, D.raw, w[0], w[1]);
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    ctx.strokeStyle = ORANGE; ctx.lineWidth = 2; ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    for (let i = 0; i < NTRACE; i++) {
+      const x = R.x + (R.w / NTRACE) * (i + 0.5);
+      const y = R.y + ((D.tr[i].t - w[0]) / (w[1] - w[0])) * R.h;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke(); ctx.restore();
+    legendRow(ctx, R, LEG3);
+
+    const LEG3b = [[CRIM, 'arrival time'], [SLATE, 'zero-offset time', 'dash']];
+    const P3b = panel('c3tx', W, 246, LEG3b);
+    const ctx2 = P3b.ctx, R2 = P3b.R;
+    const xr = [0, S.maxoff];
+    const yr = [D.t0 - 0.05, D.tr[NTRACE - 1].t + 0.08];
+    ctx2.save(); ctx2.fillStyle = '#FBFAF7';
+    ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
+    /* Time runs DOWN here, as it does on every gather beside it. That means
+       this panel cannot use the shared curve() and dot() helpers, which map
+       larger values upward for the value axes elsewhere in the module. */
+    SEIS.axisLeft(ctx2, R2, yr[0], yr[1], 'arrival time (s)', (v) => v.toFixed(2));
+    SEIS.axisBottom(ctx2, R2, xr[0], xr[1], 'offset (m)', (v) => String(Math.round(v)));
+    const yT = (t) => R2.y + ((t - yr[0]) / (yr[1] - yr[0])) * R2.h;
+    const xO = (x) => R2.x + ((x - xr[0]) / (xr[1] - xr[0])) * R2.w;
+    SEIS.dashedLine(ctx2, R2.x, yT(D.t0), R2.x + R2.w, yT(D.t0), SLATE, [5, 4], 1.4);
+    ctx2.save();
+    ctx2.beginPath(); ctx2.rect(R2.x, R2.y, R2.w, R2.h); ctx2.clip();
+    ctx2.strokeStyle = CRIM; ctx2.lineWidth = 2.8;
+    ctx2.beginPath();
+    D.tr.forEach((q, i) => {
+      const px2 = xO(q.x), py2 = yT(q.t);
+      i === 0 ? ctx2.moveTo(px2, py2) : ctx2.lineTo(px2, py2);
+    });
+    ctx2.stroke();
+    ctx2.fillStyle = CRIM;
+    D.tr.forEach((q) => {
+      ctx2.beginPath(); ctx2.arc(xO(q.x), yT(q.t), 3, 0, 7); ctx2.fill();
+    });
+    ctx2.restore();
+    SEIS.frame(ctx2, R2);
+    legendRow(ctx2, R2, LEG3b);
+
+    set('s3a', D.t0.toFixed(3) + ' s');
+    set('s3b', Math.round(D.moveoutFar * 1000) + ' ms');
+    set('s3c', Math.round(D.vrms) + ' m/s');
+    set('s3d', Math.round(D.ob.vavg) + ' m/s');
+    set('s3e', Math.round(D.ob.vint) + ' m/s');
+    set('s3f', (D.moveoutFar * 1000 / D.wavLen).toFixed(1) +
+      ' times the wavelet length');
+  }
+
+  /* --------------------------------- step 4 --------------------------- */
+  function drawStep4() {
+    const W = rowWidth('row4', 2);
+    const wRaw = gatherWindow(false), wNmo = gatherWindow(true);
+
+    const LEG4 = [[INK, 'the gather as recorded']];
+    const P4 = panel('c4before', W, 246, LEG4);
+    drawGather(P4.ctx, P4.R, D.raw, wRaw[0], wRaw[1]);
+    legendRow(P4.ctx, P4.R, LEG4);
+
+    const LEG4b = [[INK, 'after the correction'], [SLATE, 'zero-offset time', 'dash']];
+    const P4b = panel('c4after', W, 246, LEG4b);
+    const ctx = P4b.ctx, R = P4b.R;
+    drawGather(ctx, R, D.nmo, wNmo[0], wNmo[1]);
+    const yFlat = R.y + ((D.t0 - wNmo[0]) / (wNmo[1] - wNmo[0])) * R.h;
+    SEIS.dashedLine(ctx, R.x, yFlat, R.x + R.w, yFlat, SLATE, [5, 4], 1.4);
+    legendRow(ctx, R, LEG4b);
+
+    set('s4a', Math.round(D.moveoutFar * 1000) + ' ms');
+    set('s4b', '\u00d7' + D.stretchFar.toFixed(2));
+    set('s4c', D.freqFar.toFixed(1) + ' Hz, from ' + S.freq);
+    set('s4d', D.off125 === null ? 'not reached on this spread'
+      : Math.round(D.off125) + ' m');
+    set('s4e', D.ang125 === null ? '\u2014' : D.ang125.toFixed(1) + '\u00b0');
+    set('s4f', D.off125 === null ? 'nothing \u2014 no trace here is stretched that far'
+      : D.mutedBy125 + ' of ' + NTRACE + ' traces, the widest angles first');
+  }
+
+  /* --------------------------------- step 5 --------------------------- */
+  function drawStep5() {
+    const W = rowWidth('row5', 2);
+
+    const LEG5 = [[CRIM, 'measured amplitude', 'dot'],
+      [SLATE, 'the stack, one number', 'dash']];
+    const P5 = panel('c5avo', W, 246, LEG5);
+    const ctx = P5.ctx, R = P5.R;
+    const vals = D.amp.filter((v) => isFinite(v));
+    const lo = Math.min(...vals, D.stackAmp), hi = Math.max(...vals, D.stackAmp);
+    const pad = Math.max(0.01, (hi - lo) * 0.35);
+    const yr = [lo - pad, hi + pad];
+    const xr = [0, Math.max(1, D.angHi * 1.08)];
+    ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'measured amplitude',
+      (v) => v.toFixed(2), { flip: true, grid: true });
+    SEIS.axisBottom(ctx, R, xr[0], xr[1], 'incidence angle (degrees)',
+      (v) => String(Math.round(v)));
+    const ys = R.y + R.h - ((D.stackAmp - yr[0]) / (yr[1] - yr[0])) * R.h;
+    SEIS.dashedLine(ctx, R.x, ys, R.x + R.w, ys, SLATE, [5, 4], 1.6);
+    D.tr.forEach((q, i) => {
+      if (!q.usable) return;
+      dot(ctx, R, q.thTrue, D.amp[i], xr, yr, CRIM, 4);
+    });
+    SEIS.frame(ctx, R);
+    legendRow(ctx, R, LEG5);
+
+    const LEG5b = [[INK, 'the stacked trace'],
+      [SLATE, 'zero-offset time', 'dash']];
+    const P5b = panel('c5stack', W, 246, LEG5b);
+    const ctx2 = P5b.ctx, R2 = P5b.R;
+    const w = gatherWindow(true);
+    ctx2.save(); ctx2.fillStyle = '#FBFAF7';
+    ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
+    SEIS.axisLeft(ctx2, R2, w[0] * 1000, w[1] * 1000, 'two-way time (ms)',
+      (v) => String(Math.round(v)));
+    const x0 = R2.x + R2.w / 2;
+    const yT = (t) => R2.y + ((t - w[0]) / (w[1] - w[0])) * R2.h;
+    ctx2.save();
+    ctx2.beginPath(); ctx2.rect(R2.x, R2.y, R2.w, R2.h); ctx2.clip();
+    ctx2.strokeStyle = 'rgba(22,25,28,0.25)'; ctx2.lineWidth = 1;
+    ctx2.beginPath(); ctx2.moveTo(x0, R2.y); ctx2.lineTo(x0, R2.y + R2.h); ctx2.stroke();
+    const X = (v) => x0 + (v / 0.35) * (R2.w / 2) * 0.9;
+    ctx2.fillStyle = 'rgba(22,25,28,0.72)';
+    ctx2.beginPath(); ctx2.moveTo(x0, yT(w[0]));
+    for (let t = w[0]; t <= w[1]; t += DT) {
+      const j = Math.round((t - TR0) / DT);
+      ctx2.lineTo(Math.max(x0, X(D.stack[j] || 0)), yT(t));
+    }
+    ctx2.lineTo(x0, yT(w[1])); ctx2.closePath(); ctx2.fill();
+    ctx2.strokeStyle = INK; ctx2.lineWidth = 1.5;
+    ctx2.beginPath();
+    let started = false;
+    for (let t = w[0]; t <= w[1]; t += DT) {
+      const j = Math.round((t - TR0) / DT);
+      const px2 = X(D.stack[j] || 0), py2 = yT(t);
+      started ? ctx2.lineTo(px2, py2) : ctx2.moveTo(px2, py2); started = true;
+    }
+    ctx2.stroke(); ctx2.restore();
+    SEIS.dashedLine(ctx2, R2.x, yT(D.t0), R2.x + R2.w, yT(D.t0), SLATE, [5, 4], 1.4);
+    SEIS.tag(ctx2, R2.x + R2.w - 4, yT(D.t0) - 12,
+      'amplitude ' + D.stackAmp.toFixed(3), SLATE, 'right');
+    SEIS.frame(ctx2, R2);
+    legendRow(ctx2, R2, LEG5b);
+
+    set('s5a', isFinite(D.ampNear) ? D.ampNear.toFixed(3) : '\u2014');
+    set('s5b', isFinite(D.ampFar) ? D.ampFar.toFixed(3) : '\u2014');
+    set('s5c', isFinite(D.ampChange)
+      ? (D.ampChange >= 0 ? '+' : '') + D.ampChange.toFixed(0) + '%' : '\u2014');
+    set('s5d', D.stackAmp.toFixed(3));
+    set('s5e', isFinite(D.angLo)
+      ? D.angLo.toFixed(0) + '\u00b0 to ' + D.angHi.toFixed(0) + '\u00b0' : '\u2014');
+    set('s5f', 'the average survives, the trend does not');
+  }
+
+  /* =====================================================================
+     LABELS, TABS, EVENTS
+     ===================================================================== */
+
+  function set(id, v) { const el = $(id); if (el) el.textContent = v; }
+
+  function syncLabels() {
+    set('depthV', S.depth + ' m');
+    set('maxoffV', S.maxoff + ' m');
+    set('v0V', S.v0 + ' m/s');
+    set('gradV', (S.grad / 100).toFixed(2) + ' /s');
+    set('freqV', S.freq + ' Hz');
+    ['depth', 'maxoff', 'v0', 'grad', 'freq'].forEach((k) => {
+      const el = $(k); if (el && String(el.value) !== String(S[k])) el.value = S[k];
+    });
+  }
+
+  function drawAll() {
+    syncLabels();
+    if (visible('p1') || visible('p2') || visible('p3') ||
+        visible('p4') || visible('p5')) drawHeader();
+    if (visible('p1')) drawStep1();
+    if (visible('p2')) drawStep2();
+    if (visible('p3')) drawStep3();
+    if (visible('p4')) drawStep4();
+    if (visible('p5')) drawStep5();
+  }
+
+  const PANES = ['p1', 'p2', 'p3', 'p4', 'p5', 'pw', 'pe', 'pk', 'pm'];
+  const STEPNAMES = {
+    p1: 'The gather', p2: 'Not the same', p3: 'Moveout', p4: 'Flattening',
+    p5: 'Stacking', pw: 'Why it matters', pe: 'Exercises',
+    pk: 'Key points', pm: 'Method',
+  };
+
+  function buildStepNav() {
+    PANES.forEach((id, i) => {
+      const pane = $(id);
+      if (!pane || pane.querySelector('.stepnav')) return;
+      const prev = PANES[i - 1], next = PANES[i + 1];
+      const nav = document.createElement('div');
+      nav.className = 'stepnav';
+      const mk = (target, text, ghost) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn' + (ghost ? ' ghost' : '') + ' small';
+        b.textContent = text;
+        b.addEventListener('click', () => {
+          showTab(target);
+          const t = document.querySelector('.tabhint');
+          if (t && t.scrollIntoView) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        return b;
+      };
+      nav.appendChild(prev ? mk(prev, '\u2190 ' + STEPNAMES[prev], true)
+                           : document.createElement('span'));
+      const where = document.createElement('span');
+      where.className = 'where';
+      where.textContent = i < 5 ? 'step ' + (i + 1) + ' of 5' : STEPNAMES[id];
+      nav.appendChild(where);
+      nav.appendChild(next ? mk(next, STEPNAMES[next] + ' \u2192')
+                           : document.createElement('span'));
+      pane.appendChild(nav);
+    });
+  }
+
+  function showTab(id) {
+    PANES.forEach((q) => { const el = $(q); if (el) el.hidden = q !== id; });
+    document.querySelectorAll('#tabs button').forEach((b) => {
+      b.setAttribute('aria-selected', b.dataset.tab === id);
+    });
+    const lab = document.querySelector('.labhead');
+    if (lab) lab.hidden = (id === 'pw' || id === 'pk' || id === 'pm');
+    const last = (id === 'pk' || id === 'pm');
+    if ($('nextup')) $('nextup').hidden = !last;
+    if ($('pager')) $('pager').hidden = !last;
+    S.tab = id;
+    drawAll();
+    saveState();
+  }
+  document.querySelectorAll('#tabs button').forEach((b) => {
+    b.addEventListener('click', () => showTab(b.dataset.tab));
+  });
+
+  document.addEventListener('input', (ev) => {
+    const key = ev.target && ev.target.dataset && ev.target.dataset.key;
+    if (!key) return;
+    S[key] = parseFloat(ev.target.value);
+    recompute(); drawAll(); saveState();
+  });
+
+  const popBtn = $('popEx');
+  if (popBtn) {
+    popBtn.addEventListener('click', () => {
+      const list = $('exList');
+      if (!list) return;
+      const w = window.open('', 'avo-m04-exercises',
+        'width=560,height=760,scrollbars=yes,resizable=yes');
+      if (!w) { popBtn.textContent = 'the browser blocked the pop-up'; return; }
+      w.document.open();
+      w.document.write('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">' +
+        '<title>Exercises \u2014 module 04</title><style>' +
+        'body{font:15px/1.62 "IBM Plex Sans",system-ui,sans-serif;color:#16191C;' +
+        'margin:0;padding:24px 26px;background:#FBFAF7}' +
+        'h1{font:700 17px/1.3 Archivo,sans-serif;margin:0 0 4px}' +
+        'p.src{font-size:12px;color:#5C6670;margin:0 0 18px}' +
+        'ol{padding-left:20px;margin:0} li{margin-bottom:18px}' +
+        'summary{cursor:pointer;color:#841617;font-size:13px;font-weight:600;' +
+        'margin-top:6px} .ans{display:block;margin-top:6px;padding:10px 12px;' +
+        'background:#F4F6F7;border-left:3px solid #841617;font-size:14px}' +
+        '</style></head><body><h1>Module 04 \u2014 Offset, angle and the gather</h1>' +
+        '<p class="src">Exercises. Keep the module window open beside this one; every ' +
+        'answer is a number read off the running page.</p><ol>' +
+        list.innerHTML + '</ol></body></html>');
+      w.document.close();
+      w.focus();
+    });
+  }
+
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 140); });
+
+  recompute();
+  buildStepNav();
+  showTab(PANES.indexOf(S.tab) >= 0 ? S.tab : 'p1');
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+
+  window.__MOD = { S, get D() { return D; }, recompute, drawAll, showTab };
+})();
+</script>
+</body>
+</html>

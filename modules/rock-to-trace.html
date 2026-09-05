@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Build a rock, make a trace | How AVO Actually Works</title>
-<meta name="description" content="Build a three-layer rock model and follow it all the way to a seismic trace: porosity and clay to a dry frame, Gassmann to a saturated rock, impedance, reflectivity, a wavelet, and noise. Every step computed, nothing drawn to look plausible.">
+<title>From a rock to a trace | How AVO Actually Works</title>
+<meta name="description" content="Module 03: a reflection needs two rocks, not one. Velocity and density collapse into impedance, impedance collapses into a contrast, and the shear velocity never arrives at all.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -17,78 +17,57 @@
     <a class="brand" href="../index.html"><span class="dot"></span>How AVO <b>actually</b> works</a>
     <nav>
       <a href="../index.html">All modules</a>
-      <a href="start-here.html">Module 00</a>
+      <a href="#pe">Exercises</a>
       <a href="#pm">Method &amp; references</a>
     </nav>
   </header>
 
   <div class="mod-head">
-    <p class="eyebrow">Module 01 &nbsp;·&nbsp; Rock physics to seismic</p>
-    <h1>Build a rock, make a seismic trace</h1>
-    <p class="sub">Several things have to happen between a rock and a seismic amplitude. Grains and pores set a
-      stiffness, the fluid in the pores changes it, stiffness and density make an impedance, the contrast
-      between two impedances makes a reflection, a wavelet smears that reflection out in time, and noise
-      sits on top of the result. Every one of those steps throws information away. Build the rock at the
-      top of this page and follow what happens to it.</p>
-    <p class="sub" style="font-size:15px;color:#5C6670">If <em>impedance</em>, <em>wavelet</em> or
-      <em>gather</em> are new words, <a href="start-here.html">module 00</a> covers them first, with no
-      equations.</p>
+    <p class="eyebrow">Module 03 &nbsp;·&nbsp; The rock</p>
+    <h1>From a rock to a trace</h1>
+    <p class="sub">Modules 01 and 02 built a rock: grains, pore space, a fluid, and the four properties
+      that come out — Vp, Vs, density and the two moduli behind them. None of that is a seismic
+      measurement yet. This module follows the rock the rest of the way to a trace and keeps track of what
+      is lost at each step, because two of the four properties do not arrive and the two that do arrive
+      together.</p>
   </div>
 
   <div class="labhead">
     <div class="labgrid">
       <div>
-        <p class="cap">Rock to trace <span>&mdash; the same reservoir at each step</span></p>
-        <canvas id="cStages" aria-label="The rock model, its impedance log, its reflectivity, and the resulting seismic trace"></canvas>
+        <p class="cap">The reservoir, the shale around it, and the trace they make
+          <span>&mdash; every panel on the page is computed from these five controls</span></p>
+        <canvas id="cHead" aria-label="A shale-reservoir-shale section beside the normal-incidence trace it produces"></canvas>
       </div>
       <div>
-        <p class="cap">Build the reservoir <span>&mdash; every panel updates as you drag</span></p>
+        <p class="cap">Five controls <span>&mdash; three for the reservoir, one for the shale, one for the
+          seismic</span></p>
         <div class="controls" id="mainControls">
           <div class="ctl-col">
-            <h2>The rock</h2>
+            <h2>The reservoir</h2>
             <div class="ctl">
-              <label for="phi">Porosity <span class="val" id="phiV">20%</span></label>
-              <input type="range" data-key="phi" id="phi" min="5" max="35" step="1" value="20">
+              <label for="phi">Porosity <span class="val" id="phiV">30%</span></label>
+              <input type="range" data-key="phi" id="phi" min="15" max="38" step="1" value="30">
             </div>
             <div class="ctl">
-              <label for="vcl">Clay content <span class="val" id="vclV">0%</span></label>
-              <input type="range" data-key="vcl" id="vcl" min="0" max="30" step="1" value="0">
+              <label for="sg">Gas saturation <span class="val" id="sgV">100%</span></label>
+              <input type="range" data-key="sg" id="sg" min="0" max="100" step="1" value="100">
             </div>
             <div class="ctl">
-              <label for="th">Reservoir thickness <span class="val" id="thV">45 m</span></label>
-              <input type="range" data-key="th" id="th" min="5" max="60" step="1" value="45">
-            </div>
-            <div class="ctl">
-              <label for="shvp">Shale velocity <span class="val" id="shvpV">2700 m/s</span></label>
-              <input type="range" data-key="shvp" id="shvp" min="2300" max="3100" step="25" value="2700">
+              <label for="vcl">Clay fraction <span class="val" id="vclV">0%</span></label>
+              <input type="range" data-key="vcl" id="vcl" min="0" max="40" step="1" value="0">
             </div>
 
-            <h2>What is in the pores</h2>
+            <h2>The shale above and below</h2>
             <div class="ctl">
-              <label>Fluid <span class="val" id="flV">brine</span></label>
-              <div class="seg" id="segFluid">
-                <button type="button" data-fl="brine" aria-pressed="true">Brine</button>
-                <button type="button" data-fl="oil" aria-pressed="false">Oil</button>
-                <button type="button" data-fl="gas" aria-pressed="false">Gas</button>
-              </div>
-            </div>
-            <div class="ctl">
-              <label for="sat">Hydrocarbon saturation <span class="val" id="satV">&mdash;</span></label>
-              <input type="range" data-key="sat" id="sat" min="0" max="100" step="1" value="80" disabled>
+              <label for="shvp">Its P-wave velocity <span class="val" id="shvpV">2700 m/s</span></label>
+              <input type="range" data-key="shvp" id="shvp" min="2000" max="3400" step="25" value="2700">
             </div>
 
             <h2>The seismic</h2>
             <div class="ctl">
-              <label for="fr">Wavelet peak frequency <span class="val" id="frV">30 Hz</span></label>
-              <input type="range" data-key="fr" id="fr" min="20" max="40" step="1" value="30">
-            </div>
-            <div class="ctl">
-              <label>Noise <span class="val" id="nzV">clean</span></label>
-              <div class="seg" id="segNoise">
-                <button type="button" data-nz="0" aria-pressed="true">Clean</button>
-                <button type="button" data-nz="1" aria-pressed="false">Moderate</button>
-                <button type="button" data-nz="2" aria-pressed="false">Noisy</button>
-              </div>
+              <label for="freq">Wavelet peak frequency <span class="val" id="freqV">30 Hz</span></label>
+              <input type="range" data-key="freq" id="freq" min="15" max="60" step="1" value="30">
             </div>
           </div>
         </div>
@@ -96,14 +75,14 @@
     </div>
   </div>
 
-  <p class="tabhint">Work through the five steps in order, <b>then try the exercises</b>.
-    Method and references are there when you want them.</p>
+  <p class="tabhint">Five steps, each one a place where something about the rock stops travelling with
+    the signal. Every number quoted in the text is read off the running page.</p>
   <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
-    <button role="tab" data-tab="p1" aria-selected="false">1 · The rock</button>
-    <button role="tab" data-tab="p2" aria-selected="false">2 · Properties</button>
-    <button role="tab" data-tab="p3" aria-selected="false">3 · Impedance</button>
+    <button role="tab" data-tab="p1" aria-selected="false">1 · Two rocks</button>
+    <button role="tab" data-tab="p2" aria-selected="false">2 · Impedance</button>
+    <button role="tab" data-tab="p3" aria-selected="false">3 · Contrast</button>
     <button role="tab" data-tab="p4" aria-selected="false">4 · The trace</button>
-    <button role="tab" data-tab="p5" aria-selected="false">5 · Noise</button>
+    <button role="tab" data-tab="p5" aria-selected="false">5 · What is gone</button>
     <button role="tab" data-tab="pw" aria-selected="false">Why it matters</button>
     <span class="gap"></span>
     <button role="tab" data-tab="pe" aria-selected="false">Exercises</button>
@@ -114,359 +93,322 @@
   <!-- =============================== STEP 1 =============================== -->
   <section class="tabpane" id="p1" role="tabpanel" hidden>
     <div class="plot-head">
-      <h3><span class="stepno">1</span>Grains, pores, and whatever is in the pores</h3>
-      <span class="hint">Three ingredients, two of which you control</span>
+      <h3><span class="stepno">1</span>A reflection needs two rocks</h3>
+      <span class="hint">The reservoir on its own reflects nothing</span>
     </div>
-    <p class="lede">A clastic reservoir is a pile of mineral grains with space between them. Three numbers
-      describe it for our purposes: what the grains are made of, how much space is left over, and what is
-      sitting in that space. Everything else in this module follows from those three.</p>
-    <p class="lede">Drag <b>porosity</b> and watch the grains separate. Drag <b>clay content</b> and watch
-      the grain color shift as quartz is replaced by something softer. Switch the <b>fluid</b> and watch
-      the pore space change color. At partial saturation the gas is drawn as fine speckle rather than a
-      layer on top, because that is the arrangement the physics further down this page assumes.</p>
+    <p class="lede">Everything in modules 01 and 02 was about a single rock. A reflection is not a
+      property of a rock. It happens where one rock meets a different one, and it depends on both of them
+      equally.</p>
+    <p class="lede">So a reservoir needs a neighbour before there is anything to measure. Here it is a
+      shale, above and below, and the shale has its own velocity, its own density and its own shear
+      velocity — none of which the reservoir knows anything about. Its P-wave velocity is the fourth
+      control on this page, and it will turn out to matter as much as the porosity does.</p>
+    <p class="lede">The two rocks are built differently. The reservoir comes from the grain-pack model of
+      module 01 with a fluid inserted by module 02. The shale comes from an empirical trend, because a
+      contact model between spherical grains does not describe a shale at all. That difference is worth
+      knowing about: the two rocks on this page are not equally well founded.</p>
 
     <div class="sec-row" id="row1">
       <div class="panel-col">
-        <p class="sublabel"><b>1</b> The rock model
+        <p class="sublabel"><b>1</b> The section
           <span class="note">shale, reservoir, shale</span></p>
-        <canvas id="c1rock" aria-label="Cartoon of the three-layer rock model with the reservoir grains and pore fluid drawn"></canvas>
+        <canvas id="c1sec" aria-label="A cross-section showing the reservoir encased in shale, shaded by impedance"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> What the reservoir is made of
-          <span class="note">by volume, then by mass</span></p>
-        <canvas id="c1comp" aria-label="Volume and mass composition of the reservoir rock"></canvas>
+        <p class="sublabel"><b>2</b> The four properties of each rock
+          <span class="note">shale against reservoir</span></p>
+        <canvas id="c1props" aria-label="Bars comparing the P-wave velocity, shear velocity and density of the shale and the reservoir"></canvas>
       </div>
     </div>
 
-    <div class="stats">
-      <div class="stat"><span>Grain volume</span><b id="s1a">—</b></div>
-      <div class="stat"><span>Pore volume</span><b id="s1b">—</b></div>
-      <div class="stat"><span>Grain density</span><b id="s1c">—</b></div>
-      <div class="stat"><span>Pore fluid density</span><b id="s1d">—</b></div>
-      <div class="stat key"><span>Bulk density of the rock</span><b id="s1e">—</b></div>
-      <div class="stat wide"><span>Where the mass actually is</span><b id="s1f">—</b></div>
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Shale Vp, Vs, density</span><b id="s1a">—</b></div>
+      <div class="stat"><span>Reservoir Vp, Vs, density</span><b id="s1b">—</b></div>
+      <div class="stat"><span>Shale Vp/Vs</span><b id="s1c">—</b></div>
+      <div class="stat key"><span>Reservoir Vp/Vs</span><b id="s1d">—</b></div>
+      <div class="stat"><span>Which rock is faster</span><b id="s1e">—</b></div>
+      <div class="stat wide"><span>How many properties describe the pair</span><b id="s1f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>Density is the simple case. The bulk density of the rock is the volume-weighted
-        average of the grains and the fluid, and nothing subtle happens to it.
-        Swap brine for gas and the density drops by an amount you can work out on paper. Stiffness is not
-        like that at all, which is the subject of the next step.</span>
+      <span>Six numbers describe this pair completely: a Vp, a Vs and a density for each rock. The rest
+        of this module is about how few of them reach the trace.</span>
     </div>
   </section>
 
   <!-- =============================== STEP 2 =============================== -->
   <section class="tabpane" id="p2" role="tabpanel" hidden>
     <div class="plot-head">
-      <h3><span class="stepno">2</span>From the rock to Vp, Vs and density</h3>
-      <span class="hint">The fluid changes the stiffness, but not the way you would guess</span>
+      <h3><span class="stepno">2</span>Two numbers become one</h3>
+      <span class="hint">The first loss</span>
     </div>
-    <p class="lede">The rock's stiffness comes in two pieces. The <b>dry frame</b> is what the grain pack
-      would do with nothing in the pores: it stiffens as porosity falls and the grains press harder on each
-      other. That is the left panel, and the fluid has no say in it at all.</p>
-    <p class="lede">Then the pore fluid is put back. It resists being squeezed, so it stiffens the rock
-      against compression — and only against compression. It does nothing whatever against shear, because a
-      fluid cannot support a shear stress. That asymmetry is what makes fluid detection from seismic possible at all. <b>This calculation is called Gassmann's equation</b>, and you have now seen what it does
-      before meeting it as an equation.</p>
-    <p class="lede">Now put gas into a brine-filled rock and drag the saturation up from zero. The curve does not slope. It <b>falls off a cliff in the first few percent
-      and then flattens out</b>, which means a rock with a trace of gas in it looks very nearly like a rock
-      full of gas. Interpreters call the trap that follows from this fizz gas.</p>
+    <p class="lede">A normal-incidence reflection responds to the <b>acoustic impedance</b> of each rock,
+      which is its P-wave velocity multiplied by its density. Two numbers go in and one comes out, and
+      that is a loss, because a product cannot be undone. If two numbers multiply to twelve they might
+      have been three and four, or two and six, or one and a half and eight.</p>
+    <p class="lede">The right-hand panel makes that concrete. It is the plane of all possible velocities
+      and densities, with a curve drawn through every combination that has the same impedance as the
+      reservoir. Every rock on that curve is a different rock, and no normal-incidence measurement
+      distinguishes any of them from any other. A fast light rock and a slow heavy one land on the same
+      point as far as the seismic is concerned.</p>
+    <p class="lede">This is the first of three places where the chain from a rock to an amplitude throws
+      something away. It is worth counting them as they go past, because the count is what makes working
+      backwards from an amplitude hard.</p>
 
     <div class="sec-row" id="row2">
       <div class="panel-col">
-        <p class="sublabel"><b>1</b> Dry frame and saturated rock
-          <span class="note">against porosity; your rock is marked</span></p>
-        <canvas id="c2mod" aria-label="Bulk and shear moduli of the dry frame and saturated rock plotted against porosity"></canvas>
+        <p class="sublabel"><b>1</b> Impedance of the two rocks
+          <span class="note">velocity times density</span></p>
+        <canvas id="c2imp" aria-label="Bars showing the acoustic impedance of the shale and the reservoir"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> Velocity against gas saturation
-          <span class="note">the first few percent do nearly all of it</span></p>
-        <canvas id="c2sat" aria-label="P-wave velocity and acoustic impedance plotted against gas saturation"></canvas>
+        <p class="sublabel"><b>2</b> Every rock with the reservoir's impedance
+          <span class="note">the velocity-density plane</span></p>
+        <canvas id="c2iso" aria-label="Velocity plotted against density, with a curve through every combination sharing the reservoir's impedance"></canvas>
       </div>
-    </div>
-
-    <div class="ctl" id="oilCtl" style="max-width:520px;margin:14px 0 0" hidden>
-      <label for="api">Oil API gravity <span class="val" id="apiV">32°</span></label>
-      <input type="range" data-key="api" id="api" min="12" max="50" step="1" value="32">
-      <label for="gor" style="margin-top:8px">Gas dissolved in the oil (GOR)
-        <span class="val" id="gorV">0 L/L</span></label>
-      <input type="range" data-key="gor" id="gor" min="0" max="200" step="5" value="0">
     </div>
 
     <div class="stats" style="margin-top:14px">
-      <div class="stat"><span>Dry frame K</span><b id="s2a">—</b></div>
-      <div class="stat"><span>Shear modulus G</span><b id="s2b">—</b></div>
-      <div class="stat"><span>Pore fluid K</span><b id="s2c">—</b></div>
-      <div class="stat"><span>Saturated K</span><b id="s2d">—</b></div>
-      <div class="stat key"><span>Vp</span><b id="s2e">—</b></div>
-      <div class="stat"><span>Vs</span><b id="s2f">—</b></div>
-      <div class="stat"><span>Vp/Vs</span><b id="s2g">—</b></div>
-      <div class="stat wide"><span>How much of the full gas effect you already have</span><b id="s2h">—</b></div>
+      <div class="stat"><span>Shale impedance</span><b id="s2a">—</b></div>
+      <div class="stat key"><span>Reservoir impedance</span><b id="s2b">—</b></div>
+      <div class="stat"><span>Reservoir Vp × density</span><b id="s2c">—</b></div>
+      <div class="stat"><span>Same impedance at 1.8 g/cm³</span><b id="s2d">—</b></div>
+      <div class="stat"><span>Same impedance at 2.4 g/cm³</span><b id="s2e">—</b></div>
+      <div class="stat wide"><span>What has been lost at this point</span><b id="s2f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>Watch <b>Vs</b> while you add gas. It goes <em>up</em>. The shear modulus has not moved — Gassmann
-        leaves it alone — but the rock got lighter, and Vs is the square root of stiffness over density, so
-        losing mass with the same shear stiffness speeds the shear wave up. Vp meanwhile falls, because it
-        lost far more stiffness than mass. Vp down and Vs up at the same time is a much stronger fluid
-        signature than either one alone, Vp/Vs and AVO both rest on it.</span>
+      <span>The shear velocity has not been lost yet — it simply has not been used. Nothing in a
+        normal-incidence impedance contains it, which is step 5.</span>
     </div>
   </section>
 
   <!-- =============================== STEP 3 =============================== -->
   <section class="tabpane" id="p3" role="tabpanel" hidden>
     <div class="plot-head">
-      <h3><span class="stepno">3</span>Impedance, and the first thing you lose</h3>
-      <span class="hint">Two numbers into one, then only the contrast survives</span>
+      <h3><span class="stepno">3</span>Only the contrast survives</h3>
+      <span class="hint">The second loss</span>
     </div>
-    <p class="lede">Acoustic impedance is velocity times density. That is the whole definition, and it is
-      also the first place information goes missing, because it is a <b>product</b>. If someone tells you
-      two numbers multiply to 12, you cannot say what they were: 3 and 4, or 2 and 6, or 1.5 and 8. Every
-      sample of an impedance log has done exactly that to a velocity and a density. A fast light rock and
-      a slow heavy rock land on the same impedance. Once you are looking at impedance you can no
-      longer tell them apart, and seismic never sees anything but impedance.</p>
-    <p class="lede">The second loss follows immediately. A reflection coefficient is the <b>contrast</b>
-      between two impedances, normalized: R = (I₂ − I₁) / (I₂ + I₁). Double both layers and R does not
-      move. So the reflection tells you about the step, and nothing at all about the level. A big
-      reflection means the two rocks are different, not that either one is unusual.</p>
-    <p class="lede">This is why there is a <b>shale velocity</b> slider on this page. Leave the reservoir completely alone and change only the shale, and the reflection
-      changes anyway — it can even change sign. The anomaly you are looking at belongs to the pair of
-      rocks, not to the reservoir.</p>
+    <p class="lede">The reflection coefficient at the top of the reservoir is the difference in impedance
+      across the boundary divided by the sum: R = (I₂ − I₁) / (I₂ + I₁). Two impedances go in and one
+      number comes out, and again something is gone. Double both impedances and R does not move at all. A
+      reflection reports the step and says nothing about the level.</p>
+    <p class="lede">The consequence is easy to miss and it matters more than almost anything else on this
+      page. <b>The amplitude belongs to the pair of rocks, not to the reservoir.</b> Leave the reservoir
+      completely alone — same porosity, same fluid, same everything — and change only the shale velocity.
+      The reflection changes anyway, and within the range of this one control it passes through zero and
+      changes sign.</p>
+    <p class="lede">The right-hand panel plots that directly: the reflection coefficient at the top of the
+      reservoir as the shale velocity runs across its range, with the reservoir held fixed. The crossing
+      point is where the two rocks happen to have the same impedance and the reflection vanishes entirely
+      — a real reservoir, in a real shale, invisible.</p>
+    <p class="lede">A bright amplitude therefore means the two rocks are different. It does not mean the
+      reservoir is unusual, and an interpretation that treats the anomaly as a property of the sand alone
+      has already made a mistake that no later processing recovers from.</p>
 
     <div class="sec-row" id="row3">
       <div class="panel-col">
         <p class="sublabel"><b>1</b> Impedance through the section
-          <span class="note">shale, reservoir, shale</span></p>
-        <canvas id="c3imp" aria-label="Acoustic impedance against depth through the three-layer model"></canvas>
+          <span class="note">and the two reflection coefficients</span></p>
+        <canvas id="c3rc" aria-label="The impedance profile through the shale-reservoir-shale section, with the reflection coefficients at the top and base"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> The reflection coefficients
-          <span class="note">one spike per interface</span></p>
-        <canvas id="c3rc" aria-label="Reflection coefficient spikes at the top and base of the reservoir"></canvas>
+        <p class="sublabel"><b>2</b> The same reservoir in different shales
+          <span class="note">only the shale is changing</span></p>
+        <canvas id="c3shale" aria-label="Reflection coefficient at the top of the reservoir plotted against the shale velocity, with the reservoir held fixed"></canvas>
       </div>
     </div>
 
     <div class="stats" style="margin-top:14px">
-      <div class="stat"><span>Shale impedance</span><b id="s3a">—</b></div>
-      <div class="stat"><span>Reservoir impedance</span><b id="s3b">—</b></div>
-      <div class="stat key"><span>R at the top</span><b id="s3c">—</b></div>
-      <div class="stat"><span>R at the base</span><b id="s3d">—</b></div>
-      <div class="stat"><span>Polarity of the top</span><b id="s3e">—</b></div>
-      <div class="stat wide"><span>A rock that would give the same R with no hydrocarbon</span><b id="s3f">—</b></div>
+      <div class="stat key"><span>R at the top of the reservoir</span><b id="s3a">—</b></div>
+      <div class="stat"><span>R at the base</span><b id="s3b">—</b></div>
+      <div class="stat"><span>Polarity at the top</span><b id="s3c">—</b></div>
+      <div class="stat"><span>Shale velocity that would give R = 0</span><b id="s3d">—</b></div>
+      <div class="stat"><span>R with both impedances doubled</span><b id="s3e">—</b></div>
+      <div class="stat wide"><span>What the amplitude is a property of</span><b id="s3f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>The top and base coefficients here are equal and opposite, because the rock above and the rock
-        below the reservoir are the same shale. Real reservoirs rarely do, and when the underlying unit differs the base reflection carries its own separate information. Keeping them
-        symmetric for now makes the wavelet interference in the next step much easier to read.</span>
+      <span>The top and base coefficients are equal and opposite here because the rock above and below
+        the reservoir is the same shale. Real reservoirs rarely sit in a symmetric section, and when the
+        unit below differs the base reflection carries information of its own.</span>
     </div>
   </section>
 
   <!-- =============================== STEP 4 =============================== -->
   <section class="tabpane" id="p4" role="tabpanel" hidden>
     <div class="plot-head">
-      <h3><span class="stepno">4</span>The wavelet, and what it smears out</h3>
-      <span class="hint">Two spikes go in; something less specific comes out</span>
+      <h3><span class="stepno">4</span>The wavelet, and the trace</h3>
+      <span class="hint">The third loss, covered properly elsewhere</span>
     </div>
-    <p class="lede">The earth gives you the two spikes on the left. The seismic experiment does not record
-      spikes — it records a band-limited wavelet, once for each spike, added together. That convolution is
-      the third place information is lost, and unlike the first two it is a loss of <b>resolution in
-      time</b> rather than in rock properties.</p>
-    <p class="lede">Take the reservoir thickness down. Above a certain thickness the top and base arrive as
-      two separate events you can pick. Below it they overlap, they stop being separable, and the amplitude
-      you measure at the top is no longer the top's reflection alone — it has the base's reflection mixed
-      into it. The thickness where the two wavelets line up constructively is called <b>tuning</b>.</p>
-    <p class="lede">The textbook rule puts tuning at a quarter of the wavelength. This page does not quote
-      that rule, it <b>measures</b> the thickness where the amplitude actually peaks, and the two do not
-      agree: the measured value comes out consistently thinner. That is not a bug in either. A quarter
-      wavelength is where a top and base of the <em>same</em> sign tune. Here they have opposite signs,
-      and an opposite-signed pair tunes when the two wavelets are separated by the wavelet's own
-      peak-to-trough time, which for a Ricker is √6/2πf — about 0.39/f rather than 0.5/f. Both numbers are
-      printed below so you can watch the gap.</p>
-    <p class="lede">Then leave the rock completely alone and move the <b>frequency</b> slider. Nothing
-      about the subsurface has changed. The trace changes anyway. That is the cleanest possible statement
-      of what seismic data is: an observation of the model, not the model.</p>
+    <p class="lede">The earth supplies two reflection coefficients, one at each boundary, at two instants
+      in time. A seismic experiment does not record instants. It records a band-limited pulse, once for
+      each reflection, added together — which is the convolution the resolution modules build from
+      scratch.</p>
+    <p class="lede">The step is included here to close the chain rather than to teach it. The frequency
+      control moves the wavelet without touching the rock, and the trace changes anyway. That is the
+      cleanest available statement of what a seismic trace is: an observation of the model rather than the
+      model.</p>
+    <p class="lede">The reservoir is held thick enough that its top and base stay separate at every
+      frequency the control reaches, so nothing on this page tunes. What happens when a bed is too thin
+      for that — and it is a great deal — belongs to
+      <a href="https://hbedle-subsurface.github.io/seismic_resolution/modules/wedge.html">the wedge
+      module</a> in the resolution set.</p>
 
     <div class="sec-row" id="row4">
       <div class="panel-col">
-        <p class="sublabel"><b>1</b> Reflectivity
-          <span class="note">what the earth has</span></p>
-        <canvas id="c4rc" aria-label="Reflection coefficient spikes in time"></canvas>
+        <p class="sublabel"><b>1</b> What the earth has
+          <span class="note">two spikes</span></p>
+        <canvas id="c4rc" aria-label="The reflectivity series: two spikes, one at the top of the reservoir and one at its base"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> The wavelet
-          <span class="note">what the experiment uses</span></p>
-        <canvas id="c4wav" aria-label="The Ricker wavelet and its amplitude spectrum"></canvas>
-      </div>
-      <div class="panel-col">
-        <p class="sublabel"><b>3</b> The trace
-          <span class="note">what you get to look at</span></p>
-        <canvas id="c4tr" aria-label="The synthetic seismic trace produced by convolving the reflectivity with the wavelet"></canvas>
+        <p class="sublabel"><b>2</b> What you get to look at
+          <span class="note">the same two spikes, wearing a wavelet</span></p>
+        <canvas id="c4trace" aria-label="The seismic trace produced by convolving the reflectivity with the wavelet"></canvas>
       </div>
     </div>
 
     <div class="stats" style="margin-top:14px">
-      <div class="stat"><span>Two-way time across the reservoir</span><b id="s4a">—</b></div>
-      <div class="stat"><span>Tuning thickness at this frequency</span><b id="s4b">—</b></div>
-      <div class="stat key"><span>Peak amplitude measured on the trace</span><b id="s4c">—</b></div>
-      <div class="stat"><span>R at the top, for comparison</span><b id="s4d">—</b></div>
-      <div class="stat"><span>Tuning ratio</span><b id="s4e">—</b></div>
-      <div class="stat wide"><span>Is the reservoir resolved</span><b id="s4f">—</b></div>
+      <div class="stat"><span>R at the top</span><b id="s4a">—</b></div>
+      <div class="stat key"><span>Peak amplitude measured on the trace</span><b id="s4b">—</b></div>
+      <div class="stat"><span>Wavelet peak frequency</span><b id="s4c">—</b></div>
+      <div class="stat"><span>Two-way time across the reservoir</span><b id="s4d">—</b></div>
+      <div class="stat"><span>Thinnest bed this wavelet separates</span><b id="s4e">—</b></div>
+      <div class="stat wide"><span>What changed when you moved the frequency</span><b id="s4f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>The measured amplitude and the reflection coefficient are printed side by side so you can compare them.
-        Away
-        from tuning they agree to two decimal places; at tuning the measured amplitude runs about 45% above
-        the reflection coefficient, so a thin dull reservoir can look identical to a thick bright one. This is
-        a resolution question rather than a fluid question, and it is treated properly in the companion
-        <a href="https://hbedle-subsurface.github.io/seismic_resolution/">seismic resolution</a> modules.
-        It appears here only so you know it is one of the things standing between the rock and the
-        amplitude.</span>
+      <span>Away from tuning the measured peak and the reflection coefficient agree closely, which is why
+        this page can quote either. That agreement is exactly what fails in a thin bed.</span>
     </div>
   </section>
 
   <!-- =============================== STEP 5 =============================== -->
   <section class="tabpane" id="p5" role="tabpanel" hidden>
     <div class="plot-head">
-      <h3><span class="stepno">5</span>Noise, and what is left to conclude</h3>
-      <span class="hint">The measurement has an error bar, and things hide inside it</span>
+      <h3><span class="stepno">5</span>What never arrived at all</h3>
+      <span class="hint">The shear velocity is not in the answer</span>
     </div>
-    <p class="lede">Everything so far has been exact. Now add the last link. The panel on the left is the
-      same trace repeated with different noise realizations at the level set in the header — same rock, same wavelet,
-      a different noise realization each time. Turn the noise up and watch how much of the amplitude you would report
-      is actually the noise.</p>
-    <p class="lede">The panel on the right draws two <b>different rocks</b>: an oil sand at 30% porosity, and a brine sand at 35% porosity with no hydrocarbon in it at
-      all. Read the two reflection coefficients. Then read the noise. Then decide whether you could tell
-      these apart from a trace.</p>
-    <p class="lede">That is what every step here does. Grain size
-      and sorting and cement and clay all collapse into one dry frame; the fluid enters only through a
-      single bulk modulus; velocity and density are multiplied into one impedance; two impedances become
-      one contrast; the wavelet blurs the contrast in time; and noise puts an error bar around what is
-      left. <b>Everything you set on this page — the porosity, the clay, the thickness, the shale, the
-      fluid and how much of it — arrives at the far end as a single number.</b> Working backwards from
-      that one number is the job, and it does not have a unique answer.</p>
+    <p class="lede">Modules 01 and 02 spent most of their length on the shear response: where it comes
+      from, why a pore fluid leaves it alone, and why that makes a fluid visible. None of it has been used
+      on this page. A normal-incidence reflection coefficient is built from Vp and density and nothing
+      else. Vs appears nowhere in it.</p>
+    <p class="lede">That is not an approximation. At normal incidence the rock is compressed and nothing
+      slides, so there is no shear deformation for the shear modulus to resist, and the shear velocity
+      cannot enter the answer. Two rocks with the same impedance and completely different Vp/Vs produce
+      identical traces.</p>
+    <p class="lede">The left-hand panel finds those rocks. It searches porosity and gas saturation for
+      every combination that gives the reservoir's impedance, and there are many: the same impedance is
+      reached by a high-porosity rock with a little gas and a lower-porosity rock full of it. The
+      right-hand panel shows what those rocks have that the trace does not — a range of Vp/Vs values, all
+      producing the same amplitude.</p>
+    <p class="lede">At the settings this module opens with the search finds sixteen such rocks, running
+      from 2% gas saturation to 100%. Their reflection coefficients span 0.004 and their Vp/Vs values span
+      1.47 to 1.68 — a difference of about 14% in a rock property, arriving at the measurement as nothing
+      at all.</p>
+    <p class="lede">Two things follow. The saturation ambiguity from module 02 survives into the
+      amplitude, so a normal-incidence bright spot indicates gas without indicating how much. And a
+      property that would separate these rocks exists in them and is not being measured. Getting at it is
+      what the rest of this set does, and it starts with letting the wave arrive at an angle.</p>
 
     <div class="sec-row" id="row5">
       <div class="panel-col">
-        <p class="sublabel"><b>1</b> The same rock, five times
-          <span class="note">different noise, identical geology</span></p>
-        <canvas id="c5cmp" aria-label="Five noise realizations of the same synthetic trace"></canvas>
+        <p class="sublabel"><b>1</b> Rocks with the reservoir's impedance
+          <span class="note">porosity against gas saturation</span></p>
+        <canvas id="c5family" aria-label="The combinations of porosity and gas saturation that give the same impedance as the reservoir"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> Two different rocks
-          <span class="note">oil at 30% and brine at 35%</span></p>
-        <canvas id="c5amb" aria-label="Traces from an oil-filled sand and a brine-filled sand of different porosity"></canvas>
+        <p class="sublabel"><b>2</b> What those rocks differ in
+          <span class="note">Vp/Vs, which the trace never sees</span></p>
+        <canvas id="c5vpvs" aria-label="The Vp over Vs ratio of each equal-impedance rock, none of which affects the normal-incidence trace"></canvas>
       </div>
     </div>
 
     <div class="stats" style="margin-top:14px">
-      <div class="stat"><span>Noise level, RMS</span><b id="s5a">—</b></div>
-      <div class="stat"><span>Spread across the five traces</span><b id="s5b">—</b></div>
-      <div class="stat"><span>Oil sand, 30% porosity</span><b id="s5c">—</b></div>
-      <div class="stat"><span>Brine sand, 35% porosity</span><b id="s5d">—</b></div>
-      <div class="stat key"><span>Difference between those two rocks</span><b id="s5e">—</b></div>
-      <div class="stat wide"><span>Could you tell them apart</span><b id="s5f">—</b></div>
+      <div class="stat"><span>Rocks found with this impedance</span><b id="s5a">—</b></div>
+      <div class="stat"><span>Porosity range they cover</span><b id="s5b">—</b></div>
+      <div class="stat key"><span>Gas saturation range they cover</span><b id="s5c">—</b></div>
+      <div class="stat"><span>Vp/Vs range they cover</span><b id="s5d">—</b></div>
+      <div class="stat"><span>Spread in their reflection coefficients</span><b id="s5e">—</b></div>
+      <div class="stat wide"><span>What separates them, and where it is</span><b id="s5f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>Those two rocks do differ in <b>Vp/Vs</b>, by a wide margin, and that is the thread module 03
-        picks up. A single normal-incidence amplitude cannot see Vp/Vs, because at normal incidence no
-        shear is involved. Tilt the ray and the shear properties start to contribute, and one measurement
-        becomes two. It does not remove the ambiguity, but it does reduce it.</span>
+      <span>This is a narrow version of a search module 07 runs properly, over more variables and with
+        noise included. Here it is only being used to show that Vs is absent.</span>
     </div>
   </section>
 
-  <!-- ============================ WHY IT MATTERS =========================== -->
+  <!-- ============================ WHY IT MATTERS ========================== -->
   <section class="tabpane" id="pw" role="tabpanel" hidden>
     <div class="plot-head">
       <h3><span class="stepno ref">W</span>Why it matters</h3>
-      <span class="hint">Where this calculation is used in real work</span>
+      <span class="hint">Where this chain is used, and where it misleads</span>
     </div>
-    <p class="lede">Running rock properties forward to a synthetic trace is not an academic exercise. It is
-      the routine that sits underneath most quantitative interpretation.</p>
-    <ul class="lede" style="padding-left:20px">
-      <li><b>Well ties.</b> A synthetic built from the sonic and density logs is compared with the seismic
-        at the well. Where they disagree, one of the steps is wrong, and knowing the steps is how you work
-        out which one.</li>
-      <li><b>Feasibility studies.</b> Before anyone shoots or reprocesses anything, the question is whether
-        the fluid you are hoping for would even be visible in this rock at this depth. You answer it by
-        building the rock and looking at the predicted contrast, which is what this page does.</li>
-      <li><b>Fluid substitution on logs.</b> A well found brine. Would the same sand have shown an anomaly
-        if it had held gas? Gassmann answers that, and the answer decides whether a nearby amplitude justifies a well.</li>
-      <li><b>Forward modeling for interpretation.</b> Rather than inverting the seismic, propose several
-        geological models, push each one through the calculation, and see which ones can produce the observed
-        response. More than one model usually survives.</li>
-    </ul>
-
-    <p class="lede">It misleads in two ways. The first is that a forward model can convince you of more
-      than it has shown. You built a gas sand, the synthetic went bright, and the real
-      data is bright, so the reservoir contains gas — except that you never checked what else in your
-      parameter space also goes bright. The model demonstrated that gas is <em>sufficient</em> to explain
-      the amplitude. Sufficiency is not the same as necessity, and it is not evidence for gas until you
-      have shown that the plausible alternatives fail.</p>
-    <p class="lede">There is a second problem. Every number in the calculation has an uncertainty, and some of them are large. The clay bulk modulus used here is a value on which the published literature
-      genuinely disagrees. Effective pressure comes from an assumed overburden. Saturation is barely
-      constrained by amplitude at all, as step 2 showed. A synthetic trace is drawn as a single line, which hides all of that. The line should be a band, and the band is often wide enough to contain
-      several different geological stories.</p>
-
-    <div class="legend prose">
-      <span>Run the calculation more than once. Change the thing you are least
-        sure about — the shale, the porosity, the saturation, the clay — and see whether your conclusion
-        survives. If one run of the model is the whole argument, the argument is weaker than it looks.</span>
-    </div>
+    <p class="lede"><b>Modelling a prospect before drilling.</b> The forward chain on this page is what a
+      synthetic seismogram is. Build the rock, pair it with its neighbour, take the contrast, apply the
+      wavelet, and compare the result with the real data. Every amplitude study starts here.</p>
+    <p class="lede"><b>Knowing what the shale is doing.</b> Step 3 is the reason a mapped amplitude
+      anomaly can follow a change in the overburden rather than a change in the reservoir. Where the
+      sealing shale varies laterally, the amplitude varies with it, and the resulting map looks like a
+      fluid effect.</p>
+    <p class="lede"><b>Reading an impedance inversion.</b> An inversion recovers impedance, which is
+      further along the chain than velocity and density but still short of the rock. The
+      velocity-density ambiguity in step 2 does not go away because the data were inverted.</p>
+    <p class="lede"><b>Knowing when to ask for more.</b> Step 5 is a statement about what a single
+      stacked amplitude can and cannot contain. When a question depends on Vp/Vs — which fluid questions
+      usually do — a normal-incidence amplitude is not capable of answering it, however good the data
+      are.</p>
   </section>
 
   <!-- ============================== EXERCISES ============================= -->
   <section class="tabpane" id="pe" role="tabpanel" hidden>
     <div class="tryit" style="max-width:none">
       <h3>Exercises</h3>
-      <ol>
-        <li><b>Find the porosity where a brine sand disappears.</b> Set the fluid to brine, clay to 0%, shale
-          velocity to 2700 m/s, and walk porosity from 5% up to 35%, reading R at the top in step 3 at each
-          5% stop. Where does the reflection change sign, and what does the trace look like there?
-          <details class="reveal"><summary>Hint</summary><span class="ans">R at the top runs +0.331 at 5%
-            porosity, +0.244 at 10%, +0.170 at 15%, +0.105 at 20%, +0.045 at 25%, then −0.011 at 30% and
-            −0.064 at 35%. It crosses zero at about 29% porosity. At that point the sand and the shale have
-            the same impedance and the trace is flat: there is a reservoir there, and seismic cannot see it.
-            Note also that at 5% porosity the brine sand is a very strong positive reflection. A bright
-            event is not evidence of anything by itself — a tight sand is bright too.</span></details></li>
+      <p class="lede" style="margin-top:-4px">Each answer is a number read off this page at the settings
+        described. <button type="button" class="btn ghost small" id="popEx">Open these in a separate
+        window</button></p>
+      <ol id="exList">
+        <li><b>Change the amplitude without touching the reservoir.</b> Leave the reservoir at 30%
+          porosity, 100% gas and no clay. Move only the shale velocity from 2000 to 3400 m/s and watch the
+          reflection coefficient at the top.
+          <details class="reveal"><summary>Answer</summary><span class="ans">It goes from +0.025 at
+            2000 m/s to −0.298 at 3400 — through zero, changing sign, and ending at a strong negative
+            reflection — with the reservoir identical throughout. The reflection is a property of the
+            pair. An amplitude map that brightens across a survey is as likely to be telling you about
+            the shale as about the sand, and nothing in the amplitude itself says
+            which.</span></details></li>
 
-        <li><b>Make a gas sand invisible.</b> Now set the fluid to gas at 100% saturation and put porosity
-          at 20%. Read R at the top. Then raise porosity to 30% and read it again.
-          <details class="reveal"><summary>Hint</summary><span class="ans">At 20% porosity the gas sand
-            gives R = −0.004, which is nothing at all — the trace is essentially flat over the reservoir.
-            At 30% porosity the same gas gives R = −0.162, an unmistakable bright spot. The gas did not
-            change. What changed is the rock it is sitting in, and therefore how far the gas moves it
-            relative to the shale. "Gas gives a bright spot" is false as stated; it is the combination of
-            gas and a rock soft enough for the gas to matter, against a shale it can get below.</span></details></li>
+        <li><b>Make the reservoir disappear.</b> With the same reservoir, find the shale velocity at
+          which the reflection coefficient reaches zero.
+          <details class="reveal"><summary>Answer</summary><span class="ans">Around 2081 m/s, where the
+            shale happens to have the same impedance as the gas sand. At that point a fully gas-charged
+            reservoir produces no reflection at all. It is still there, it still holds gas, and the seismic
+            has nothing to show. This is not a rare accident: impedance is a product of two numbers that
+            both vary, and the values coincide somewhere.</span></details></li>
 
-        <li><b>Watch the fizz-gas trap happen.</b> Porosity 30%, fluid gas. Move saturation from 0% up in
-          small steps and read Vp and R after each move. How much gas do you need before you have most of
-          the anomaly?
-          <details class="reveal"><summary>Hint</summary><span class="ans">R goes −0.011 at 0% gas, −0.063
-            at 2%, −0.091 at 5%, −0.110 at 10%, −0.125 at 20%, and −0.162 at 100%. Two percent gas has
-            already produced 35% of the entire amplitude change; ten percent has produced 66%; twenty
-            percent has produced 76%. The whole span from 20% to 100% saturation moves the amplitude less
-            than the first two percent does. This is why amplitude alone cannot distinguish a commercial gas column from
-            a residual gas or fizz-gas zone, and why that distinction has been drilled wrong many
-            times.</span></details></li>
+        <li><b>Confirm that only the contrast matters.</b> Compare the reflection coefficient with the one
+          the page reports for both impedances doubled.
+          <details class="reveal"><summary>Answer</summary><span class="ans">They are identical to every
+            digit shown. Doubling both impedances doubles the numerator and the denominator of
+            (I₂ − I₁)/(I₂ + I₁), so nothing changes. The reflection carries the step and discards the
+            level entirely, which is why an amplitude alone cannot tell you whether you are looking at two
+            soft rocks or two hard ones.</span></details></li>
 
-        <li><b>Change nothing about the reservoir and change the answer anyway.</b> Set a gas sand at 30%
-          porosity and note R at the top. Leave every reservoir control alone. Now move the shale velocity
-          from 2300 m/s to 3100 m/s and read R again at each end.
-          <details class="reveal"><summary>Hint</summary><span class="ans">With shale at 2300 m/s the top
-            reflection is −0.0626; at 2700 m/s it is −0.1615; at 3100 m/s it is −0.2442. The reservoir is
-            identical in every respect. The reflection coefficient grew by a factor of 3.9 because R
-            measures the contrast between two rocks, and you changed the other one. Read this together with exercise 2: the same gas sand can
-            be invisible or spectacular depending entirely on what it is sitting under. An amplitude map is
-            as much a map of the seal as of the reservoir.</span></details></li>
+        <li><b>Move the seismic without moving the earth.</b> Fix every rock control and drag the wavelet
+          frequency from 15 to 60 Hz, watching the trace and the measured peak.
+          <details class="reveal"><summary>Answer</summary><span class="ans">The trace changes shape
+            substantially — the events narrow as the frequency rises — while the reflection coefficients
+            underneath are untouched. The measured peak stays close to the reflection coefficient because
+            the reservoir is thick enough to stay resolved at every frequency here. What you are looking at
+            is the earth convolved with the experiment, and separating the two is most of what seismic
+            processing is for.</span></details></li>
 
-        <li><b>Two rocks, one amplitude.</b> Set an oil sand, 30% porosity, 100% saturation, API 32, GOR 0.
-          Record R. Then switch to brine and set porosity to 35%, leaving everything else alone. Compare,
-          and then look at Vp/Vs for each.
-          <details class="reveal"><summary>Hint</summary><span class="ans">The oil sand gives R = −0.0637.
-            The brine sand gives R = −0.0636. They agree to four decimal places, which is far inside any
-            noise level you can set on this page — step 5 draws both traces so you can see that they are
-            the same picture. One has oil in it and one does not. Their Vp/Vs values, however, are 1.71 and
-            1.92, which is a large difference. Normal-incidence amplitude is blind to it because no shear
-            is involved at normal incidence. Module 03 tilts the ray, which is how that difference is
-            recovered.</span></details></li>
+        <li><b>Find the rocks the trace cannot separate.</b> Look at step 5 with the reservoir at 30%
+          porosity and 100% gas, and read the saturation range of the equal-impedance family.
+          <details class="reveal"><summary>Answer</summary><span class="ans">Sixteen rocks are found,
+            running from 2% gas saturation up to 100%, across porosities from 30.0% to 37.5%. Every one of
+            them has the reservoir's impedance to within half a percent, so their reflection coefficients
+            span only 0.004 and their traces are indistinguishable. Their Vp/Vs values are not
+            indistinguishable at all: they run from 1.472 to 1.684, a spread of about 14%. That is a large
+            difference sitting in the rocks and reaching none of the measurement. The fizz-gas ambiguity
+            from module 02 has survived intact all the way to the
+            amplitude.</span></details></li>
       </ol>
     </div>
   </section>
@@ -476,27 +418,24 @@
     <div class="takeaway" style="max-width:none">
       <h3>Key points</h3>
       <ul>
-        <li><b>Density is an average; stiffness is not.</b> Bulk density is the volume-weighted mean of
-          grains and fluid and nothing surprising happens to it. The bulk modulus is governed by Gassmann,
-          where a pore fluid stiffens the rock against compression and does nothing against shear. That
-          asymmetry is the whole basis of fluid detection.</li>
-        <li><b>Gas does not act in proportion to how much of it there is.</b> The pore fluid modulus is a
-          harmonic average, so the softest component dominates. Two percent gas gives about a third of the
-          full amplitude effect and ten percent gives two thirds. Amplitude cannot tell a producible column
-          from a residual one.</li>
-        <li><b>Impedance is a product, so it loses information.</b> Velocity and density go in, one number
-          comes out, and a fast light rock and a slow heavy rock can land on the same value. Seismic never
-          sees anything but impedance.</li>
-        <li><b>A reflection is a contrast, not a level.</b> R depends on both rocks equally. Changing the
-          shale alone can quadruple the reservoir's reflection or flip its sign. An amplitude anomaly is a
-          statement about a boundary, and the reservoir owns only half of it.</li>
-        <li><b>The wavelet blurs the answer in time.</b> Below about a quarter wavelength the top and base
-          reflections interfere and the amplitude you measure includes both. A thin bright reservoir and a
-          thick dull one can produce the same peak.</li>
-        <li><b>Different rocks can produce identical traces.</b> An oil sand at 30% porosity and a plain
-          brine sand at 35% differ in R by 0.0001 in this model. Their Vp/Vs differ by 0.2. A single
-          normal-incidence amplitude cannot separate them, which is the problem the rest of this site is
-          about.</li>
+        <li><b>A reflection is a property of two rocks.</b> A reservoir on its own reflects nothing, and
+          the rock it sits in matters as much as the rock itself.</li>
+        <li><b>Six numbers describe the pair</b> — a Vp, a Vs and a density each — and a normal-incidence
+          amplitude is one number. Most of the description does not survive the trip.</li>
+        <li><b>Impedance is a product</b>, so velocity and density collapse into one number and cannot be
+          separated again. A fast light rock and a slow heavy one are the same rock to the seismic.</li>
+        <li><b>A reflection coefficient is a ratio</b>, so only the contrast survives and the level is
+          discarded. Double both impedances and the reflection is unchanged.</li>
+        <li><b>So changing the shale alone changes the anomaly</b>, and can remove it entirely. There is a
+          shale velocity at which a fully gas-charged reservoir gives no reflection at all.</li>
+        <li><b>The wavelet is the third loss</b>, and it acts in time rather than on the rock properties.
+          Moving the frequency changes the trace while the earth stands still.</li>
+        <li><b>The shear velocity never enters.</b> At normal incidence nothing slides, so Vs cannot
+          appear in the answer, and rocks with the same impedance and different Vp/Vs give identical
+          traces.</li>
+        <li><b>The fizz-gas ambiguity survives to the amplitude.</b> Saturations from 2% to 100% share
+          this reservoir's impedance to within half a percent, so a bright spot indicates gas without
+          indicating how much.</li>
       </ul>
     </div>
   </section>
@@ -505,122 +444,83 @@
   <section class="tabpane" id="pm" role="tabpanel" hidden>
     <div class="plot-head">
       <h3><span class="stepno ref">M</span>Method, simplifications and references</h3>
-      <span class="hint">What is computed, and where it departs from production software</span>
+      <span class="hint">What is computed, and what is fixed</span>
     </div>
 
-    <p class="lede"><b>How it is computed.</b> Every panel is generated live from the controls in the
-      header; there are no stored images and no curves drawn to look plausible. The steps are: mineral mix
-      by Voigt-Reuss-Hill, dry frame by the Dvorkin-Nur soft-sand model, pore fluid by Batzle-Wang, fluid
-      mixing by the Reuss average, saturated bulk modulus by Gassmann, then Vp and Vs from the moduli and
-      density, impedance, reflection coefficients, convolution with a Ricker wavelet, and band-limited
-      additive noise.</p>
+    <p class="lede"><b>The reservoir</b> is the module 01 soft-sand frame with the module 02 fluid put in
+      by Gassmann's relation, at a fixed 23 MPa and 64 °C. Pressure and temperature are not controls here
+      because this module is about what happens after the rock exists; module 02 is where they belong.</p>
 
-    <p class="lede"><b>The dry frame.</b> Hertz-Mindlin contact theory at a critical porosity of 40%,
-      joined to the mineral point by the modified Hashin-Shtrikman lower bound, with a coordination number
-      of 9 and an effective pressure of 23 MPa. This is the friable-sand or soft-sand model, appropriate to
-      young unconsolidated clastics — which is where bright spots and AVO are actually used. It is not
-      appropriate to a cemented or carbonate reservoir, which would need a contact-cement or stiff-sand
-      model and would give considerably faster rocks at the same porosity.</p>
-    <p class="lede">The obvious alternative is Nur's critical-porosity model, K<sub>dry</sub> = K<sub>min</sub>(1 −
-      φ/φ<sub>c</sub>), which is far simpler and is what many courses use. It is an upper bound, and at 20%
-      porosity it gives a brine sand of 4679 m/s against the soft-sand model's 3202 m/s — a reflection
-      coefficient of +0.287 instead of +0.105. That is a larger effect than the fluid has. The choice of dry-frame model changes
-      the answer by more than the fluid does, and any course that presents one model without saying so is
-      hiding the largest uncertainty in the calculation.</p>
+    <p class="lede"><b>The shale</b> is Castagna's mudrock line for Vs and Gardner's relation for density,
+      both driven from the single velocity control. These are empirical trends fitted to data rather than
+      models of a shale, and they are used because a contact model between spherical grains does not
+      describe a shale at all. The two rocks on this page therefore rest on quite different footings, and
+      the shale's Vs in particular should be treated as a plausible value rather than a computed one.</p>
 
-    <p class="lede"><b>Where this departs from production software.</b></p>
+    <p class="lede"><b>The reflection coefficients</b> are the normal-incidence formula,
+      (I₂ − I₁)/(I₂ + I₁), with impedance as Vp times density. This is exact at zero incidence angle and
+      is the only case this module covers. Everything from module 04 onward is about what happens when the
+      angle is not zero.</p>
+
+    <p class="lede"><b>The equal-impedance search in step 5</b> scans porosity from 15% to 38% and gas
+      saturation from 0 to 100%, keeping any rock whose impedance is within 0.5% of the reservoir's. The
+      tolerance is there because the search is on a grid; a finer grid would fill in the curve rather than
+      change it. The family it finds is real, but it is narrow: module 07 runs the same idea across clay
+      content, the shale and the wavelet as well, and finds far more.</p>
+
+    <p class="lede"><b>Fixed rather than controlled:</b></p>
     <ul class="lede" style="padding-left:20px">
-      <li><b>Effective pressure is fixed</b> at 23 MPa, corresponding to a 2000 m burial depth with a
-        hydrostatic pore pressure. Real work varies it with depth and with overpressure, and overpressure
-        softens rocks in a way that mimics gas.</li>
-      <li><b>The overburden traveltime is fixed</b> at 1.500 s regardless of the shale velocity slider, so
-        that the time axis does not slide underneath you when you change the shale. In reality the whole
-        column above would shift.</li>
-      <li><b>Clay is treated as part of the load-bearing frame</b>, mixed into the mineral by
-        Voigt-Reuss-Hill. Dispersed clay sitting in the pores behaves quite differently, and real shaly
-        sands need a model that distinguishes the two. The clay slider here is honest only over the small
-        range it offers.</li>
-      <li><b>The bounding shale is empirical</b>, not modeled: Castagna's mudrock line for Vs and Gardner's
-        relation for density, both driven from the single velocity slider. Shales are not grain packs and a
-        contact model does not apply to them. These are regressions, and an individual shale can sit well
-        off either trend.</li>
-      <li><b>Fluid mixing is uniform</b> (Reuss), which is Gassmann's own assumption. Patchy saturation is
-        stiffer and can give a noticeably weaker anomaly at the same saturation. The gap between the two is
-        a real uncertainty that this module does not yet show.</li>
-      <li><b>Gassmann assumes the shear modulus is unaffected by the fluid</b>, that the rock is
-        homogeneous and isotropic, that the pores are connected, and that the measurement is at low enough
-        frequency for pore pressure to equilibrate. Seismic-frequency data mostly satisfies the last one;
-        log-frequency data often does not, which is why sonic logs and seismic disagree about fluid
-        effects.</li>
-      <li><b>No anisotropy, no attenuation, no multiples, no transmission losses, no geometric
-        spreading, and normal incidence only.</b> Angle-dependence is module 03.</li>
-      <li><b>Noise is band-limited</b>, generated as white reflectivity convolved with the same wavelet,
-        so it looks like seismic. White noise would look like static and would be far too easy to see
-        past. Its amplitude is fixed in reflection-coefficient units rather than scaled to the signal, so
-        that a weak reflector genuinely can be lost in it.</li>
-      <li><b>The two shales are identical</b>, above and below, which makes the base reflection exactly
-        the negative of the top. Real sections seldom are.</li>
+      <li><b>The reservoir is 60 m thick</b> and stays thick enough to be resolved at every frequency the
+        control reaches, so nothing on this page tunes. Tuning is the subject of the resolution modules
+        and it is a large effect that this module deliberately steps around.</li>
+      <li><b>The section is symmetric</b> — the same shale above and below — which makes the two
+        reflections equal and opposite and the trace easy to read. Real sections are rarely symmetric.</li>
+      <li><b>No noise.</b> Every trace here is exact. What noise does to a measured amplitude is
+        module 08.</li>
+      <li><b>Normal incidence only</b>, so no offset, no angle and no shear.</li>
     </ul>
-
-    <p class="lede"><b>Verification.</b> The physics is checked against closed forms rather than against
-      itself: Batzle-Wang water velocity against the published value at 20 °C, Gassmann returning the dry
-      frame when the fluid modulus goes to zero, a brine-to-gas-and-back substitution round trip landing
-      within 10⁻¹⁵ GPa of its start, exact Zoeppritz at zero degrees equalling (I₂−I₁)/(I₂+I₁) to machine
-      precision, and both Zoeppritz and Shuey returning exactly zero across an interface with no contrast.
-      Every number quoted in the exercises above is read out of this running page rather than estimated.</p>
 
     <details class="reveal" style="margin-top:8px">
       <summary>References</summary>
       <ul style="padding-left:18px;margin-top:8px">
-        <li>Batzle, M., and Wang, Z., 1992, Seismic properties of pore fluids: <em>Geophysics</em>, 57,
-          1396–1408.</li>
-        <li>Gassmann, F., 1951, Über die Elastizität poröser Medien: <em>Vierteljahrsschrift der
-          Naturforschenden Gesellschaft in Zürich</em>, 96, 1–23.</li>
-        <li>Dvorkin, J., and Nur, A., 1996, Elasticity of high-porosity sandstones: theory for two North
-          Sea data sets: <em>Geophysics</em>, 61, 1363–1370.</li>
-        <li>Nur, A., Mavko, G., Dvorkin, J., and Galmudi, D., 1998, Critical porosity: a key to relating
-          physical properties to porosity in rocks: <em>The Leading Edge</em>, 17, 357–362.</li>
-        <li>Mavko, G., Mukerji, T., and Dvorkin, J., 2020, <em>The Rock Physics Handbook</em>, 3rd ed.:
-          Cambridge University Press.</li>
         <li>Castagna, J. P., Batzle, M. L., and Eastwood, R. L., 1985, Relationships between
-          compressional-wave and shear-wave velocities in clastic silicate rocks: <em>Geophysics</em>, 50,
-          571–581.</li>
+          compressional-wave and shear-wave velocities in clastic silicate rocks: <em>Geophysics</em>,
+          50, 571–581.</li>
         <li>Gardner, G. H. F., Gardner, L. W., and Gregory, A. R., 1974, Formation velocity and density:
           the diagnostic basics for stratigraphic traps: <em>Geophysics</em>, 39, 770–780.</li>
-        <li>Han, D., Nur, A., and Morgan, D., 1986, Effects of porosity and clay content on wave velocities
-          in sandstones: <em>Geophysics</em>, 51, 2093–2107.</li>
-        <li>Aki, K., and Richards, P. G., 2002, <em>Quantitative Seismology</em>, 2nd ed.: University
-          Science Books.</li>
+        <li>Simm, R., and Bacon, M., 2014, <em>Seismic Amplitude: An Interpreter's Handbook</em>:
+          Cambridge University Press.</li>
+        <li>Bedle, H., and Moreno-Ward, A., 2026, <em>What Can You REALLY See in Seismic?</em>:
+          University of Oklahoma. — where the wavelet and tuning are built properly.</li>
       </ul>
     </details>
   </section>
 
   <section class="nextup" id="nextup" hidden>
     <p class="eyebrow">Next up</p>
-    <h3>02 · Same bright spot, different rock</h3>
-    <p>You have already met one pair of rocks that share an amplitude. Module 02 goes looking for all of
-      them at once: hold the seismic response fixed and count the whole family of geological models that
-      could have produced it. There are 6,795 of them.</p>
-    <a class="btn" href="same-amplitude.html">Go to module 02 →</a>
-    <a class="btn ghost" href="../index.html">All modules</a>
+    <h3>04 · Offset, angle and the gather</h3>
+    <p>Step 5 ended on a property that exists in the rock and does not reach the trace. Reaching it means
+      recording the reflection at more than one angle. Module 04 covers where the angles come from, why
+      offset is not the same thing as angle, and what a gather is.</p>
+    <a class="btn ghost" href="offset-and-the-gather.html">Go to module 04 →</a>
   </section>
 
   <div class="pager" id="pager" hidden>
-    <a class="btn ghost" href="start-here.html">← Module 00: what all of this is for</a>
-    <a class="btn ghost" href="same-amplitude.html">Module 02: same bright spot, different rock →</a>
+    <a class="btn ghost" href="fluid-in-the-pores.html">← 02 · Fluid in the pores</a>
+    <a class="btn ghost" href="offset-and-the-gather.html">04 · Offset, angle and the gather →</a>
   </div>
 
   <footer>
     <div class="foot-grid">
-      <p>Built for teaching by Heather Bedle, School of Geosciences, University of Oklahoma, with the
-        <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a> consortium.</p>
-      <p class="lic">Free to use for teaching, demonstration, and non-commercial study, provided the source
-        is credited. Please do not republish or redistribute it, modified or otherwise, without permission.
-        If you use it in a course or a talk, a credit line and a link back are all that is asked.</p>
+      <p>Built for teaching by Dr. Heather Bedle and Dr. April Moreno-Ward, School of Geosciences,
+        University of Oklahoma, with the <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a>
+        consortium.</p>
+      <p class="lic">Licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+        Free to use, adapt and redistribute, including in teaching, provided the source is credited and
+        anything derived from it carries the same license.</p>
       <p class="lic">Nothing you do in this module leaves your browser. The only thing recorded is that
-        the page was opened, so that I can show the university these are being used — no cookie, no
-        account, nothing about you.</p>
-      <p class="lic">To cite: H. Bedle, <i>How AVO Actually Works</i>, University of
+        the page was opened — no cookie, no account, nothing about you.</p>
+      <p class="lic">To cite: H. Bedle and A. Moreno-Ward, <i>How AVO Actually Works</i>, University of
         Oklahoma. <span class="k">SSRN: [article link to follow]</span></p>
     </div>
   </footer>
@@ -633,14 +533,9 @@
 (function () {
   'use strict';
 
-  /* Loud failure beats a blank page. A module and its libraries fall out of
-     step often enough that it is worth naming exactly what is missing. */
   const missing = [];
   if (typeof SEIS === 'undefined') missing.push('assets/seismic.js');
   if (typeof ROCK === 'undefined') missing.push('assets/rockphysics.js');
-  if (!missing.length && typeof ROCK.rockModel !== 'function') {
-    missing.push('assets/rockphysics.js (present, but too old: no rockModel)');
-  }
   if (missing.length) {
     const el = document.createElement('div');
     el.setAttribute('style', 'background:#841617;color:#fff;padding:14px 18px;margin:16px 0;' +
@@ -656,22 +551,10 @@
   const $ = (id) => document.getElementById(id);
   const visible = (id) => { const el = $(id); return el && !el.hidden; };
   const CRIM = '#841617', TEAL = '#0B7285', SLATE = '#5C6670', INK = '#16191C';
-  const C_BRINE = '#2A7B9B', C_OIL = '#6B7A2E', C_GAS = '#B5451B';
-  const C_QTZ = '#D9CBB2', C_CLAY = '#8C8577';
+  const OLIVE = '#6B7A2E', ORANGE = '#B5451B';
 
-  /* =====================================================================
-     STATE
-     ===================================================================== */
-
-  const DEF = {
-    phi: 20, vcl: 0, th: 45, shvp: 2700,
-    fl: 'brine', sat: 80, api: 32, gor: 0,
-    fr: 30, nz: 0, tab: 'p1',
-  };
+  const DEF = { phi: 30, sg: 100, vcl: 0, shvp: 2700, freq: 30, tab: 'p1' };
   const S = SEIS.readState(DEF);
-  /* State arrives from the query string, which anyone can edit, so it is
-     range-checked before anything downstream trusts it. An out-of-range
-     noise index used to take the page down with it. */
   (function sanitize() {
     const num = (k, lo, hi, step) => {
       let v = Number(S[k]);
@@ -679,127 +562,126 @@
       v = Math.min(hi, Math.max(lo, v));
       S[k] = step ? Math.round(v / step) * step : v;
     };
-    num('phi', 5, 35, 1); num('vcl', 0, 30, 1); num('th', 5, 60, 1);
-    num('shvp', 2300, 3100, 25); num('sat', 0, 100, 1);
-    num('api', 12, 50, 1); num('gor', 0, 200, 5); num('fr', 20, 40, 1);
-    num('nz', 0, 2, 1);
-    if (['brine', 'oil', 'gas'].indexOf(S.fl) < 0) S.fl = DEF.fl;
+    num('phi', 15, 38, 1); num('sg', 0, 100, 1); num('vcl', 0, 40, 1);
+    num('shvp', 2000, 3400, 25); num('freq', 15, 60, 1);
   })();
   const saveState = () => SEIS.writeState(S, DEF);
 
-  /* Burial conditions. Fixed, so that the module has one fewer control; the
-     Method tab says so and module 02 will make depth a variable. */
-  const DEPTH = 2000;          // m
-  const PRES  = 23;            // MPa effective
-  const TEMP  = 64;            // deg C
-  const T_TOP = 1.500;         // s, two-way, held fixed on purpose
-
-  // Trace window. Fixed, because an axis that rescales hides the change.
-  // Wide enough for the longest wavelet tail (1.4/f = 70 ms at 20 Hz) either
-  // side of the deepest base reflection, and no wider, so the reservoir is not
-  // a hairline in a mostly empty panel.
-  const T0 = 1.42, DT = 0.001, NT = 240;
-  const NOISE_RMS = [0, 0.015, 0.040];    // in reflection-coefficient units
-  const NOISE_NAME = ['clean', 'moderate', 'noisy'];
-
   /* =====================================================================
-     ROCK TO TRACE
+     THE MODEL
+
+     The reservoir is module 01's frame with module 02's fluid. The shale is
+     an empirical trend, which is a weaker footing and the Method tab says so.
+     Everything here is normal incidence, so Vs is computed, displayed, and
+     never used in an amplitude — which is step 5's whole point.
      ===================================================================== */
 
-  let D = {};
+  const PRES = 23, TEMP = 64, SALINITY = 0.035;
+  const THICK = 60;             // m, fixed: this module never tunes
+  const T_TOP = 0.40;           // s, where the top reflection sits
+  const TR0 = 0, DT = 0.001, NT = 1001;
+  const SHVP_LO = 2000, SHVP_HI = 3400;
+  const PHI_LO = 0.15, PHI_HI = 0.38;
 
-  function rockAt(over) {
-    return ROCK.rockModel(Object.assign({
-      vClay: S.vcl / 100,
-      phi: S.phi / 100,
-      fluid: S.fl,
-      sHc: S.fl === 'brine' ? 0 : S.sat / 100,
-      api: S.api, gor: S.gor,
-      P: PRES, T: TEMP,
-    }, over || {}));
-  }
+  const FL = ROCK.fluidProps({ T: TEMP, P: PRES, S: SALINITY });
 
-  function stagesFor(res, shale) {
-    const rTop = ROCK.rcNormal(shale, res);
-    const rBase = ROCK.rcNormal(res, shale);
-    const tBase = T_TOP + 2 * (S.th / res.vp);
-    return { res, shale, rTop, rBase, tTop: T_TOP, tBase };
+  function reservoir(phi, sg, vClay) {
+    const min = ROCK.mineralMix(vClay);
+    const fr = ROCK.softSand(min, phi, { P: PRES });
+    const m = ROCK.mixReuss([
+      { K: FL.brine.K, rho: FL.brine.rho, s: 1 - sg },
+      { K: FL.gas.K, rho: FL.gas.rho, s: sg, isGas: true },
+    ]);
+    const Ksat = ROCK.gassmann(fr.K, min.K, m.K, phi);
+    return ROCK.elastic(Ksat, fr.G, (1 - phi) * min.rho + phi * m.rho);
   }
+  const rcNorm = (a, b) => (b.ip - a.ip) / (b.ip + a.ip);
+
+  const D = {};
 
   function recompute() {
-    const shale = ROCK.mudrock(S.shvp);
-    const res = rockAt();
-    D = stagesFor(res, shale);
-    D.wav = SEIS.makeWavelet({ type: 'ricker', f: S.fr });
-    D.spikes = [{ t: D.tTop, r: D.rTop }, { t: D.tBase, r: D.rBase }];
-    D.trace = SEIS.traceFromSpikes(D.spikes, T0, DT, NT, D.wav);
+    D.phi = S.phi / 100;
+    D.sg = S.sg / 100;
+    D.vcl = S.vcl / 100;
 
-    // The two rocks of the closing exercise, computed live so they follow the
-    // shale slider rather than being frozen numbers in the prose.
-    D.oil = ROCK.rockModel({ vClay: S.vcl / 100, phi: 0.30, fluid: 'oil', sHc: 1,
-                             api: 32, gor: 0, P: PRES, T: TEMP });
-    D.brn = ROCK.rockModel({ vClay: S.vcl / 100, phi: 0.35, fluid: 'brine', sHc: 0,
-                             P: PRES, T: TEMP });
-    D.rOil = ROCK.rcNormal(shale, D.oil);
-    D.rBrn = ROCK.rcNormal(shale, D.brn);
+    D.sh = ROCK.mudrock(S.shvp);
+    D.res = reservoir(D.phi, D.sg, D.vcl);
 
-    // Reference end members for the saturation readout.
-    D.sat0 = ROCK.rcNormal(shale, rockAt({ sHc: 0 }));
-    D.sat1 = ROCK.rcNormal(shale, rockAt({ sHc: 1 }));
-  }
+    D.rTop = rcNorm(D.sh, D.res);
+    D.rBase = rcNorm(D.res, D.sh);
+    // doubling both impedances must leave R alone; computed rather than asserted
+    D.rDoubled = (2 * D.res.ip - 2 * D.sh.ip) / (2 * D.res.ip + 2 * D.sh.ip);
 
-  function noiseTrace(seed) {
-    const rms = NOISE_RMS[S.nz];
-    if (rms <= 0) return D.trace;
-    const n = SEIS.bandLimitedNoise(1, NT, DT, D.wav, seed, 0);
-    const out = new Float32Array(NT);
-    for (let i = 0; i < NT; i++) out[i] = D.trace[i] + n[i] * rms;
-    return out;
-  }
-
-  /* Amplitude actually measured at the top reflection: the extremum of the
-     trace inside half a wavelet period of the top, signed. This is a
-     measurement off the drawn trace, not the reflection coefficient. */
-  function peakNear(tr, t, sign) {
-    const half = Math.max(3, Math.round(0.6 / S.fr / DT));
-    const c = Math.round((t - T0) / DT);
-    let best = 0, bi = c;
-    for (let i = Math.max(0, c - half); i <= Math.min(NT - 1, c + half); i++) {
-      // Restricted to the polarity the interface actually has. Below tuning the
-      // largest excursion near the top can be the opposite-signed sidelobe, and
-      // reporting that as "the amplitude of the top" would be wrong: nobody
-      // picks a trough as the top of a hard reservoir.
-      if (sign && tr[i] * sign < 0) continue;
-      if (Math.abs(tr[i]) > Math.abs(best)) { best = tr[i]; bi = i; }
+    // step 3: the reservoir held fixed, the shale swept
+    D.shAx = []; D.rVsShale = [];
+    for (let i = 0; i <= 120; i++) {
+      const v = SHVP_LO + (SHVP_HI - SHVP_LO) * (i / 120);
+      const sh = ROCK.mudrock(v);
+      D.shAx.push(v);
+      D.rVsShale.push(rcNorm(sh, D.res));
     }
-    return { a: best, t: T0 + bi * DT };
-  }
-
-  /* The thickness at which the top amplitude actually maximizes, found by
-     scanning rather than by quoting a rule. It does NOT come out at a quarter
-     wavelength: for a Ricker the peak-to-trough separation is sqrt(6)/(2*pi*f),
-     so an equal-and-opposite pair tunes a little thinner than lambda/4. */
-  function measureTuning() {
-    const sign = D.rTop >= 0 ? 1 : -1;
-    let bestA = 0, bestH = 0;
-    for (let h = 2; h <= 60; h += 0.5) {
-      const tB = T_TOP + 2 * (h / D.res.vp);
-      const tr = SEIS.traceFromSpikes(
-        [{ t: T_TOP, r: D.rTop }, { t: tB, r: D.rBase }], T0, DT, NT, D.wav);
-      const a = Math.abs(peakNear(tr, T_TOP, sign).a);
-      if (a > bestA) { bestA = a; bestH = h; }
+    // the shale velocity at which the reflection vanishes
+    D.shZero = null;
+    for (let i = 1; i < D.shAx.length; i++) {
+      const a = D.rVsShale[i - 1], b = D.rVsShale[i];
+      if ((a <= 0 && b >= 0) || (a >= 0 && b <= 0)) {
+        const t = Math.abs(a) / (Math.abs(a) + Math.abs(b) || 1);
+        D.shZero = D.shAx[i - 1] + t * (D.shAx[i] - D.shAx[i - 1]);
+        break;
+      }
     }
-    return { h: bestH, a: bestA };
+
+    // step 4: the trace
+    D.dtRes = 2 * THICK / D.res.vp;
+    D.wav = SEIS.makeWavelet({ f: S.freq });
+    D.trace = SEIS.traceFromSpikes(
+      [{ t: T_TOP, r: D.rTop }, { t: T_TOP + D.dtRes, r: D.rBase }], TR0, DT, NT, D.wav);
+    // the peak the top event actually reaches, measured rather than assumed
+    const i0 = Math.max(0, Math.round((T_TOP - 0.05) / DT));
+    const i1 = Math.min(NT - 1, Math.round((T_TOP + D.dtRes / 2) / DT));
+    let peak = 0;
+    for (let i = i0; i <= i1; i++) {
+      if (Math.abs(D.trace[i]) > Math.abs(peak)) peak = D.trace[i];
+    }
+    D.peak = peak;
+    D.sep = Math.sqrt(6) / (2 * Math.PI * S.freq);
+    D.thinnest = D.sep * D.res.vp / 2;
+
+    // step 5: every (porosity, saturation) with this impedance
+    const tol = 0.005 * D.res.ip;
+    D.fam = [];
+    for (let p = PHI_LO; p <= PHI_HI + 1e-9; p += 0.005) {
+      let best = null;
+      for (let j = 0; j <= 200; j++) {
+        const sg = j / 200;
+        const e = reservoir(p, sg, D.vcl);
+        const err = Math.abs(e.ip - D.res.ip);
+        if (!best || err < best.err) best = { err: err, phi: p, sg: sg, e: e };
+      }
+      if (best && best.err <= tol) D.fam.push(best);
+    }
+    D.famN = D.fam.length;
+    if (D.famN) {
+      D.phiRange = [Math.min(...D.fam.map((f) => f.phi)) * 100,
+        Math.max(...D.fam.map((f) => f.phi)) * 100];
+      D.sgRange = [Math.min(...D.fam.map((f) => f.sg)) * 100,
+        Math.max(...D.fam.map((f) => f.sg)) * 100];
+      D.vpvsRange = [Math.min(...D.fam.map((f) => f.e.vpvs)),
+        Math.max(...D.fam.map((f) => f.e.vpvs))];
+      const rs = D.fam.map((f) => rcNorm(D.sh, f.e));
+      D.rSpread = Math.max(...rs) - Math.min(...rs);
+    } else {
+      D.phiRange = [0, 0]; D.sgRange = [0, 0];
+      D.vpvsRange = [0, 0]; D.rSpread = 0;
+    }
   }
 
   /* =====================================================================
-     DRAWING HELPERS
+     DRAWING
      ===================================================================== */
 
-  const M = { l: 54, r: 14, t: 14, b: 34 };
+  const M = { l: 62, r: 16, t: 14, b: 40 };
 
-  /* Parent CONTENT box, not clientWidth: a tab pane carries 26 px of padding
-     and a canvas sized off clientWidth overruns it by 52. */
   function pw(el) {
     const par = el && el.parentElement;
     if (!par) return 900;
@@ -823,665 +705,455 @@
     return w;
   }
 
-  function fluidColor(fl) {
-    return fl === 'gas' ? C_GAS : fl === 'oil' ? C_OIL : C_BRINE;
-  }
-  function grainColor() {
-    const f = S.vcl / 100;
-    const mix = (a, b) => Math.round(a + (b - a) * (f / 0.30));
-    const q = [217, 203, 178], c = [140, 133, 119];
-    return 'rgb(' + mix(q[0], c[0]) + ',' + mix(q[1], c[1]) + ',' + mix(q[2], c[2]) + ')';
-  }
-
-  /* A vertical wiggle trace with variable-area fill, drawn into rect R with
-     time increasing downward. Amplitude scale is passed in, never derived
-     from the data, so the display does not rescale when a slider moves. */
-  function wiggle(ctx, R, tr, scale, opts) {
-    const o = opts || {};
-    const x0 = R.x + R.w / 2;
-    const X = (a) => x0 + (a / scale) * (R.w / 2) * 0.92;
-    const Y = (i) => R.y + (i / (NT - 1)) * R.h;
-    ctx.save();
-    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
-    if (o.fill !== false) {
-      ctx.fillStyle = o.fillColor || 'rgba(22,25,28,0.78)';
-      ctx.beginPath(); ctx.moveTo(x0, Y(0));
-      for (let i = 0; i < NT; i++) ctx.lineTo(Math.max(x0, X(tr[i])), Y(i));
-      ctx.lineTo(x0, Y(NT - 1)); ctx.closePath(); ctx.fill();
-    }
-    ctx.strokeStyle = o.stroke || INK;
-    ctx.lineWidth = o.lineWidth || 1.1;
-    ctx.beginPath();
-    for (let i = 0; i < NT; i++) {
-      const x = X(tr[i]), y = Y(i);
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-    ctx.restore();
-    SEIS.dashedLine(ctx, x0, R.y, x0, R.y + R.h, 'rgba(92,102,112,0.45)', [3, 3], 1);
-  }
-
-  function timeAxis(ctx, R) {
-    SEIS.axisLeft(ctx, R, T0, T0 + (NT - 1) * DT, 'two-way time (s)',
-      (v) => v.toFixed(2), { ticks: 5, grid: true });
-  }
-
-  function markHorizon(ctx, R, t, color, label, side) {
-    const y = yOf(t, R);
-    if (y < R.y - 2 || y > R.y + R.h + 2) return;
-    SEIS.dashedLine(ctx, R.x, y, R.x + R.w, y, color, [4, 3], 1.2);
-    if (label) SEIS.tag(ctx, side === 'right' ? R.x + R.w - 2 : R.x + 3, y - 9,
-                        label, color, side === 'right' ? 'right' : 'left');
-  }
-
-  function curve(ctx, R, xs, ys, xr, yr, color, width, dash) {
-    ctx.save();
-    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
-    if (dash) ctx.setLineDash(dash);
-    ctx.strokeStyle = color; ctx.lineWidth = width || 1.8;
-    ctx.beginPath();
-    for (let i = 0; i < xs.length; i++) {
-      const x = R.x + ((xs[i] - xr[0]) / (xr[1] - xr[0])) * R.w;
-      const y = R.y + R.h - ((ys[i] - yr[0]) / (yr[1] - yr[0])) * R.h;
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    }
-    ctx.stroke(); ctx.restore();
-  }
-
-  function dot(ctx, R, xv, yv, xr, yr, color) {
-    const x = R.x + ((xv - xr[0]) / (xr[1] - xr[0])) * R.w;
-    const y = R.y + R.h - ((yv - yr[0]) / (yr[1] - yr[0])) * R.h;
-    ctx.save();
-    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x, y, 5.5, 0, 7); ctx.fill();
-    ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, 3.8, 0, 7); ctx.fill();
-    ctx.restore();
-  }
-
-  /* =====================================================================
-     HEADER: rock to trace, in one strip
-     ===================================================================== */
-
-  function drawStages() {
-    const el = $('cStages');
-    const w = pw(el), h = 208;
-    const ctx = SEIS.fitCanvas(el, w, h);
-    ctx.clearRect(0, 0, w, h);
-
-    const top = 20, bot = h - 20, hh = bot - top;
-    const gap = 9;
-    const usable = w - 8 - 8 - gap * 3;
-    const wRock = Math.round(usable * 0.20);
-    const wImp  = Math.round(usable * 0.27);
-    const wRc   = Math.round(usable * 0.21);
-    const wTr   = usable - wRock - wImp - wRc;
-    let x = 8;
-
-    const cap = (cx, text, color) => {
-      ctx.save();
-      ctx.font = '9.5px "IBM Plex Mono", monospace';
-      ctx.fillStyle = color || SLATE; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-      ctx.fillText(text, cx, 4);
-      ctx.restore();
-    };
-    const arrow = (ax) => {
-      ctx.save();
-      ctx.strokeStyle = 'rgba(92,102,112,0.55)'; ctx.lineWidth = 1.2;
-      const y = top + hh / 2;
-      ctx.beginPath(); ctx.moveTo(ax + 1, y); ctx.lineTo(ax + gap - 2, y); ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(ax + gap - 2, y); ctx.lineTo(ax + gap - 5.5, y - 3);
-      ctx.lineTo(ax + gap - 5.5, y + 3); ctx.closePath();
-      ctx.fillStyle = 'rgba(92,102,112,0.55)'; ctx.fill();
-      ctx.restore();
-    };
-
-    // 1. rock column
-    let R = { x: x, y: top, w: wRock, h: hh };
-    drawRockColumn(ctx, R);
-    cap(R.x + R.w / 2, 'rock');
-    arrow(x + wRock); x += wRock + gap;
-
-    // 2. impedance
-    R = { x: x, y: top, w: wImp, h: hh };
-    drawImpedanceStrip(ctx, R);
-    cap(R.x + R.w / 2, 'impedance');
-    arrow(x + wImp); x += wImp + gap;
-
-    // 3. reflectivity
-    R = { x: x, y: top, w: wRc, h: hh };
-    drawRcStrip(ctx, R);
-    cap(R.x + R.w / 2, 'reflectivity');
-    arrow(x + wRc); x += wRc + gap;
-
-    // 4. trace
-    R = { x: x, y: top, w: wTr, h: hh };
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    wiggle(ctx, R, S.nz ? noiseTrace(7) : D.trace, TRACE_SCALE);
-    markHorizon(ctx, R, D.tTop, CRIM, null);
-    markHorizon(ctx, R, D.tBase, TEAL, null);
-    SEIS.frame(ctx, R);
-    cap(R.x + R.w / 2, S.nz ? 'trace + noise' : 'trace', S.nz ? CRIM : SLATE);
-  }
-
-  const TRACE_SCALE = 0.32;      // fixed amplitude scale, never data-derived
-  const IMP_RANGE = [3000, 12500];
-
-  /* Vertical position of a two-way time inside a panel. Every panel in the
-     strip uses this, including the rock column, so the reservoir band lines up
-     across all four. It used to have its own thickness formula and therefore
-     disagreed with the three panels next to it. */
-  function yOf(t, R) {
-    return R.y + ((t - T0) / ((NT - 1) * DT)) * R.h;
-  }
-
-  /* Grains drawn at a radius that puts the right area fraction into solid,
-     with the pore space colored by fluid. Speckle for partial saturation,
-     because the mixing law assumed downstream is the uniform one. */
-  function drawRockColumn(ctx, R) {
-    const rnd = SEIS.mulberry32(20260828);
-    const yRes = yOf(D.tTop, R);
-    const hRes = Math.max(1.5, yOf(D.tBase, R) - yRes);
-
-    ctx.save();
-    // shale above and below
-    ctx.fillStyle = '#B9B2A6';
-    ctx.fillRect(R.x, R.y, R.w, yRes - R.y);
-    ctx.fillRect(R.x, yRes + hRes, R.w, R.y + R.h - (yRes + hRes));
-    ctx.strokeStyle = 'rgba(22,25,28,0.20)'; ctx.lineWidth = 1;
-    for (let y = R.y + 5; y < R.y + R.h; y += 7) {
-      if (y > yRes - 2 && y < yRes + hRes + 2) continue;
-      ctx.beginPath(); ctx.moveTo(R.x + 2, y); ctx.lineTo(R.x + R.w - 2, y); ctx.stroke();
-    }
-
-    // reservoir: pore background, then grains on top
-    ctx.beginPath(); ctx.rect(R.x, yRes, R.w, hRes); ctx.save(); ctx.clip();
-    ctx.fillStyle = S.fl === 'brine' ? C_BRINE : C_BRINE;
-    ctx.fillRect(R.x, yRes, R.w, hRes);
-    const sHc = S.fl === 'brine' ? 0 : S.sat / 100;
-    if (sHc > 0) {
-      ctx.fillStyle = fluidColor(S.fl);
-      const nBlob = Math.round(R.w * hRes / 26);
-      for (let i = 0; i < nBlob; i++) {
-        if (rnd() > sHc) continue;
-        const bx = R.x + rnd() * R.w, by = yRes + rnd() * hRes;
-        ctx.beginPath(); ctx.arc(bx, by, 2.6, 0, 7); ctx.fill();
-      }
-    }
-    // grain pack
-    const phi = S.phi / 100;
-    const pitch = Math.max(3.5, Math.min(R.w / 9, hRes / 2.6));
-    const rMax = pitch / 2;
-    const rad = rMax * Math.sqrt((1 - phi) / 0.95);
-    ctx.fillStyle = grainColor();
-    ctx.strokeStyle = 'rgba(22,25,28,0.28)'; ctx.lineWidth = 0.7;
-    let row = 0;
-    for (let gy = yRes + pitch * 0.35; gy < yRes + hRes + pitch; gy += pitch * 0.86, row++) {
-      const off = (row % 2) ? pitch / 2 : 0;
-      for (let gx = R.x + off - pitch * 0.2; gx < R.x + R.w + pitch; gx += pitch) {
-        ctx.beginPath(); ctx.arc(gx, gy, rad, 0, 7); ctx.fill(); ctx.stroke();
-      }
-    }
-    ctx.restore();
-
-    ctx.strokeStyle = 'rgba(22,25,28,0.7)'; ctx.lineWidth = 1.3;
-    ctx.beginPath(); ctx.moveTo(R.x, yRes); ctx.lineTo(R.x + R.w, yRes); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(R.x, yRes + hRes); ctx.lineTo(R.x + R.w, yRes + hRes); ctx.stroke();
-    ctx.restore();
-    SEIS.frame(ctx, R);
-    return { yRes, hRes };
-  }
-
-  function drawImpedanceStrip(ctx, R) {
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    const X = (I) => R.x + ((I - IMP_RANGE[0]) / (IMP_RANGE[1] - IMP_RANGE[0])) * R.w;
-    const yT = yOf(D.tTop, R), yB = yOf(D.tBase, R);
-    ctx.save();
-    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
-    ctx.strokeStyle = CRIM; ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(X(D.shale.ip), R.y);
-    ctx.lineTo(X(D.shale.ip), yT);
-    ctx.lineTo(X(D.res.ip), yT);
-    ctx.lineTo(X(D.res.ip), yB);
-    ctx.lineTo(X(D.shale.ip), yB);
-    ctx.lineTo(X(D.shale.ip), R.y + R.h);
-    ctx.stroke();
-    ctx.restore();
-    SEIS.frame(ctx, R);
-  }
-
-  function drawRcStrip(ctx, R) {
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    const x0 = R.x + R.w / 2;
-    SEIS.dashedLine(ctx, x0, R.y, x0, R.y + R.h, 'rgba(92,102,112,0.45)', [3, 3], 1);
-    const drawSpike = (t, r, color) => {
-      const y = yOf(t, R);
-      if (y < R.y || y > R.y + R.h) return;
-      ctx.save();
-      ctx.strokeStyle = color; ctx.lineWidth = 2.4; ctx.lineCap = 'butt';
-      ctx.beginPath(); ctx.moveTo(x0, y);
-      ctx.lineTo(x0 + (r / TRACE_SCALE) * (R.w / 2) * 0.92, y);
-      ctx.stroke(); ctx.restore();
-    };
-    drawSpike(D.tTop, D.rTop, CRIM);
-    drawSpike(D.tBase, D.rBase, TEAL);
-    SEIS.frame(ctx, R);
-  }
-
-  /* =====================================================================
-     STEP 1
-     ===================================================================== */
-
-  function drawStep1() {
-    const w = rowWidth('row1', 2);
-    // rock cartoon
-    let ctx = SEIS.fitCanvas($('c1rock'), w, 300);
-    ctx.clearRect(0, 0, w, 300);
-    const R = { x: 8, y: 16, w: w - 90, h: 268 };
-    const geom = drawRockColumn(ctx, R);
-    SEIS.tag(ctx, R.x + R.w + 6, R.y + 16, 'shale', SLATE, 'left');
-    SEIS.tag(ctx, R.x + R.w + 6, geom.yRes + geom.hRes / 2, 'reservoir', CRIM, 'left');
-    SEIS.tag(ctx, R.x + R.w + 6, R.y + R.h - 16, 'shale', SLATE, 'left');
-
-    // composition bars
-    ctx = SEIS.fitCanvas($('c1comp'), w, 300);
-    ctx.clearRect(0, 0, w, 300);
-    const phi = S.phi / 100;
-    const fl = D.res.fluid;
-    const sHc = S.fl === 'brine' ? 0 : S.sat / 100;
-
-    const barW = w - 100, barX = 70;
-    const bar = (y, label, parts) => {
-      ctx.save();
-      ctx.font = '11px "IBM Plex Sans", sans-serif';
-      ctx.fillStyle = SLATE; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-      ctx.fillText(label, barX - 8, y + 16);
-      let cx = barX;
-      for (const p of parts) {
-        const pw2 = barW * p.f;
-        ctx.fillStyle = p.c; ctx.fillRect(cx, y, pw2, 32);
-        if (pw2 > 34) {
-          ctx.fillStyle = '#fff'; ctx.font = '10px "IBM Plex Mono", monospace';
-          ctx.textAlign = 'center';
-          ctx.fillText((p.f * 100).toFixed(0) + '%', cx + pw2 / 2, y + 16);
-        }
-        cx += pw2;
-      }
-      ctx.strokeStyle = 'rgba(22,25,28,0.4)'; ctx.lineWidth = 1;
-      ctx.strokeRect(barX + 0.5, y + 0.5, barW, 32);
-      ctx.restore();
-    };
-
-    const mineralFrac = 1 - phi;
-    bar(40, 'by volume', [
-      { f: mineralFrac * (1 - S.vcl / 100), c: C_QTZ === '#D9CBB2' ? '#C9B896' : C_QTZ },
-      { f: mineralFrac * (S.vcl / 100), c: C_CLAY },
-      { f: phi * (1 - sHc), c: C_BRINE },
-      { f: phi * sHc, c: fluidColor(S.fl) },
-    ]);
-
-    const mGrain = (1 - phi) * D.res.min.rho;
-    const mBrine = phi * (1 - sHc) * (D.res.fluid.parts.brine.rho);
-    const mHc = phi * sHc * (S.fl === 'gas' ? D.res.fluid.parts.gas.rho
-                            : S.fl === 'oil' ? D.res.fluid.parts.oil.rho : 0);
-    const mTot = mGrain + mBrine + mHc;
-    bar(110, 'by mass', [
-      { f: mGrain * (1 - S.vcl / 100) / mTot, c: '#C9B896' },
-      { f: mGrain * (S.vcl / 100) / mTot, c: C_CLAY },
-      { f: mBrine / mTot, c: C_BRINE },
-      { f: mHc / mTot, c: fluidColor(S.fl) },
-    ]);
-
-    ctx.save();
-    ctx.font = '11.5px "IBM Plex Sans", sans-serif'; ctx.fillStyle = SLATE;
-    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-    const key = [
-      ['#C9B896', 'quartz'], [C_CLAY, 'clay'], [C_BRINE, 'brine'],
-    ];
-    if (sHc > 0) key.push([fluidColor(S.fl), S.fl]);
-    let kx = barX;
-    key.forEach(([c, t]) => {
-      ctx.fillStyle = c; ctx.fillRect(kx, 162, 11, 11);
-      ctx.fillStyle = SLATE; ctx.fillText(t, kx + 16, 162);
-      kx += 24 + ctx.measureText(t).width;
-    });
-    ctx.font = '12px "IBM Plex Sans", sans-serif';
-    ctx.fillStyle = INK;
-    const pct = (100 * (mBrine + mHc) / mTot).toFixed(1);
-    wrapText(ctx, 'The pore fluid is ' + (phi * 100).toFixed(0) +
-      '% of the volume but only ' + pct + '% of the mass. That is why swapping ' +
-      'the fluid barely moves the density, and yet moves the velocity a great deal.',
-      barX, 198, barW, 17);
-    ctx.restore();
-
-    set('s1a', ((1 - phi) * 100).toFixed(0) + '% of volume');
-    set('s1b', (phi * 100).toFixed(0) + '% of volume');
-    set('s1c', D.res.min.rho.toFixed(3) + ' g/cm³');
-    set('s1d', D.res.fluid.rho.toFixed(3) + ' g/cm³');
-    set('s1e', D.res.rho.toFixed(3) + ' g/cm³');
-    set('s1f', (100 * mGrain / mTot).toFixed(1) + '% of the mass is grains, ' +
-               pct + '% is fluid');
-  }
-
-  function wrapText(ctx, text, x, y, maxW, lh) {
-    const words = text.split(' ');
-    let line = '', yy = y;
-    for (const wd of words) {
-      const test = line ? line + ' ' + wd : wd;
-      if (ctx.measureText(test).width > maxW && line) {
-        ctx.fillText(line, x, yy); line = wd; yy += lh;
-      } else line = test;
-    }
-    if (line) ctx.fillText(line, x, yy);
-  }
-
-  /* =====================================================================
-     STEP 2
-     ===================================================================== */
-
-  const MOD_RANGE = [0, 40];       // GPa, fixed
-  const VP_RANGE = [1800, 3600];   // m/s, fixed
-
-  function drawStep2() {
-    const w = rowWidth('row2', 2);
-
-    // --- moduli against porosity
-    const modItems = [[CRIM, 'K saturated', false], [CRIM, 'K dry frame', true],
-                      [TEAL, 'G, shear modulus', false]];
-    let ctx = SEIS.fitCanvas($('c2mod'), w, 290);
-    const modH = 290 + (legendLines(ctx, modItems, w - M.l - M.r) - 1) * 16;
-    ctx = SEIS.fitCanvas($('c2mod'), w, modH);
-    ctx.clearRect(0, 0, w, modH);
-    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: modH - M.t - M.b - 22 - (modH - 290) };
-    const xs = [], kd = [], gd = [], ks = [];
-    for (let p = 0.02; p <= 0.40001; p += 0.005) {
-      const r = ROCK.rockModel({ vClay: S.vcl / 100, phi: p, fluid: S.fl,
-        sHc: S.fl === 'brine' ? 0 : S.sat / 100, api: S.api, gor: S.gor,
-        P: PRES, T: TEMP });
-      xs.push(p * 100); kd.push(r.dry.K); gd.push(r.G); ks.push(r.K);
-    }
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    curve(ctx, R, xs, ks, [0, 40], MOD_RANGE, CRIM, 2.2);
-    curve(ctx, R, xs, kd, [0, 40], MOD_RANGE, CRIM, 1.6, [5, 4]);
-    curve(ctx, R, xs, gd, [0, 40], MOD_RANGE, TEAL, 2.0);
-    dot(ctx, R, S.phi, D.res.K, [0, 40], MOD_RANGE, CRIM);
-    dot(ctx, R, S.phi, D.res.G, [0, 40], MOD_RANGE, TEAL);
-    SEIS.frame(ctx, R);
-    SEIS.axisBottom(ctx, R, 0, 40, 'porosity (%)', (v) => v.toFixed(0), { ticks: 5 });
-    SEIS.axisLeft(ctx, R, MOD_RANGE[0], MOD_RANGE[1], 'modulus (GPa)',
-      (v) => v.toFixed(0), { ticks: 5, grid: true, flip: true });
-    legendRow(ctx, R, modItems);
-
-    // --- velocity against gas saturation
-    const satItems = [[CRIM, 'Vp', false], [TEAL, 'Vs', false]];
-    ctx = SEIS.fitCanvas($('c2sat'), w, 290);
-    const satH = 290 + (legendLines(ctx, satItems, w - M.l - M.r) - 1) * 16;
-    ctx = SEIS.fitCanvas($('c2sat'), w, satH);
-    ctx.clearRect(0, 0, w, satH);
-    R = { x: M.l, y: M.t, w: w - M.l - M.r, h: satH - M.t - M.b - 22 - (satH - 290) };
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    const hcFl = S.fl === 'brine' ? 'gas' : S.fl;
-    const ss = [], vps = [], vss = [];
-    for (let s = 0; s <= 1.0001; s += 0.01) {
-      const r = ROCK.rockModel({ vClay: S.vcl / 100, phi: S.phi / 100, fluid: hcFl,
-        sHc: s, api: S.api, gor: S.gor, P: PRES, T: TEMP });
-      ss.push(s * 100); vps.push(r.vp); vss.push(r.vs);
-    }
-    curve(ctx, R, ss, vps, [0, 100], VP_RANGE, CRIM, 2.2);
-    curve(ctx, R, ss, vss, [0, 100], VP_RANGE, TEAL, 2.0);
-    const curSat = S.fl === 'brine' ? 0 : S.sat;
-    dot(ctx, R, curSat, D.res.vp, [0, 100], VP_RANGE, CRIM);
-    dot(ctx, R, curSat, D.res.vs, [0, 100], VP_RANGE, TEAL);
-    SEIS.frame(ctx, R);
-    SEIS.axisBottom(ctx, R, 0, 100,
-      (hcFl === 'gas' ? 'gas' : 'oil') + ' saturation (%)', (v) => v.toFixed(0), { ticks: 5 });
-    SEIS.axisLeft(ctx, R, VP_RANGE[0], VP_RANGE[1], 'velocity (m/s)',
-      (v) => v.toFixed(0), { ticks: 5, grid: true, flip: true });
-    legendRow(ctx, R, satItems);
-    if (S.fl === 'brine') {
-      SEIS.tag(ctx, R.x + R.w - 4, R.y + 12, 'curve shows what gas WOULD do', SLATE, 'right');
-    }
-
-    // --- readouts
-    const swing = D.sat1 - D.sat0;
-    const done = Math.abs(swing) < 1e-9 ? 0 : (D.rTop - D.sat0) / swing;
-    set('s2a', D.res.dry.K.toFixed(2) + ' GPa');
-    set('s2b', D.res.G.toFixed(2) + ' GPa');
-    set('s2c', D.res.fluid.K.toFixed(3) + ' GPa');
-    set('s2d', D.res.K.toFixed(2) + ' GPa');
-    set('s2e', Math.round(D.res.vp) + ' m/s');
-    set('s2f', Math.round(D.res.vs) + ' m/s');
-    set('s2g', D.res.vpvs.toFixed(2));
-    set('s2h', S.fl === 'brine' ? 'no hydrocarbon in the pores'
-      : (done * 100).toFixed(0) + '% of the full ' + S.fl + ' effect, at ' +
-        S.sat + '% saturation');
-    $('oilCtl').hidden = S.fl !== 'oil';
-  }
+  const yOf = (t, R) => R.y + ((t - TR0) / ((NT - 1) * DT)) * R.h;
 
   const LEG_FONT = '11px "IBM Plex Sans", sans-serif';
-  const legItemW = (ctx, t) => 23 + ctx.measureText(t).width + 18;
-
-  /* How many lines the legend will need, so the plot box can be sized before
-     anything is drawn. Measured, not guessed: at 900 px and below a
-     three-item legend ran 78 px off the right edge of its canvas. */
+  function fitLabel(ctx, t, maxW) {
+    if (ctx.measureText(t).width <= maxW) return t;
+    let out = t;
+    while (out.length > 4 && ctx.measureText(out + '\u2026').width > maxW) {
+      out = out.slice(0, -1);
+    }
+    return out.replace(/[ ,]+$/, '') + '\u2026';
+  }
   function legendLines(ctx, items, maxW) {
     ctx.save(); ctx.font = LEG_FONT;
     let lines = 1, x = 0;
-    for (const [, t] of items) {
-      const iw = legItemW(ctx, t);
+    for (const [, t0] of items) {
+      const t = fitLabel(ctx, t0, maxW - 41);
+      const iw = 23 + ctx.measureText(t).width + 18;
       if (x > 0 && x + iw > maxW) { lines++; x = 0; }
       x += iw;
     }
     ctx.restore();
     return lines;
   }
-
+  function panel(id, W, plotH, items) {
+    const el = $(id);
+    let ctx = SEIS.fitCanvas(el, W, M.t + plotH + M.b);
+    const lines = items && items.length ? legendLines(ctx, items, W - M.l - M.r) : 0;
+    const H = M.t + plotH + M.b + (lines ? 12 + lines * 16 : 0);
+    ctx = SEIS.fitCanvas(el, W, H);
+    ctx.clearRect(0, 0, W, H);
+    return { ctx, R: { x: M.l, y: M.t, w: W - M.l - M.r, h: plotH } };
+  }
   function legendRow(ctx, R, items) {
     ctx.save();
-    ctx.font = LEG_FONT;
-    ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
-    // +46 clears the axis label, which SEIS.axisBottom draws at +22 and which
-    // is about 11 px tall. At +26 the two sat exactly on top of each other.
+    ctx.font = LEG_FONT; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
     let x = R.x, y = R.y + R.h + 46;
-    for (const [c, t, dash] of items) {
-      const iw = legItemW(ctx, t);
+    for (const [c, t0, kind] of items) {
+      const t = fitLabel(ctx, t0, R.w - 41);
+      const iw = 23 + ctx.measureText(t).width + 18;
       if (x > R.x && x + iw > R.x + R.w) { x = R.x; y += 16; }
-      ctx.strokeStyle = c; ctx.lineWidth = 2;
-      ctx.setLineDash(dash ? [5, 4] : []);
-      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 18, y); ctx.stroke();
-      ctx.setLineDash([]);
+      if (kind === 'dot') {
+        ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x + 9, y, 4, 0, 7); ctx.fill();
+      } else {
+        ctx.strokeStyle = c; ctx.lineWidth = 2;
+        ctx.setLineDash(kind === 'dash' ? [5, 4] : []);
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 18, y); ctx.stroke();
+        ctx.setLineDash([]);
+      }
       ctx.fillStyle = SLATE; ctx.fillText(t, x + 23, y);
       x += iw;
     }
     ctx.restore();
   }
-
-  /* =====================================================================
-     STEP 3
-     ===================================================================== */
-
-  function drawStep3() {
-    const w = rowWidth('row3', 2);
-
-    let ctx = SEIS.fitCanvas($('c3imp'), w, 300);
-    ctx.clearRect(0, 0, w, 300);
-    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 300 - M.t - M.b };
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    drawImpedanceStrip(ctx, R);
-    markHorizon(ctx, R, D.tTop, CRIM, 'top', 'left');
-    markHorizon(ctx, R, D.tBase, TEAL, 'base', 'left');
-    SEIS.axisBottom(ctx, R, IMP_RANGE[0], IMP_RANGE[1],
-      'acoustic impedance (m/s · g/cm³)', (v) => (v / 1000).toFixed(0) + 'k', { ticks: 5 });
-    timeAxis(ctx, R);
-
-    ctx = SEIS.fitCanvas($('c3rc'), w, 300);
-    ctx.clearRect(0, 0, w, 300);
-    R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 300 - M.t - M.b };
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    drawRcStrip(ctx, R);
-    SEIS.axisBottom(ctx, R, -TRACE_SCALE, TRACE_SCALE, 'reflection coefficient',
-      (v) => v.toFixed(2), { ticks: 5 });
-    timeAxis(ctx, R);
-
-    set('s3a', Math.round(D.shale.ip).toLocaleString());
-    set('s3b', Math.round(D.res.ip).toLocaleString());
-    set('s3c', (D.rTop >= 0 ? '+' : '') + D.rTop.toFixed(4));
-    set('s3d', (D.rBase >= 0 ? '+' : '') + D.rBase.toFixed(4));
-    set('s3e', Math.abs(D.rTop) < 0.008 ? 'no useful reflection'
-      : D.rTop > 0 ? 'peak — a hard reservoir' : 'trough — a soft reservoir');
-
-    // Find a brine-filled porosity that would give the same top reflection.
-    let match = null;
-    for (let p = 0.05; p <= 0.40001; p += 0.002) {
-      const r = ROCK.rockModel({ vClay: S.vcl / 100, phi: p, fluid: 'brine',
-        sHc: 0, P: PRES, T: TEMP });
-      const rr = ROCK.rcNormal(D.shale, r);
-      if (match === null || Math.abs(rr - D.rTop) < match.d) {
-        match = { p, d: Math.abs(rr - D.rTop), r: rr };
-      }
+  function curve(ctx, R, xs, ys, xr, yr, color, width, dash) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    if (dash) ctx.setLineDash(dash);
+    ctx.strokeStyle = color; ctx.lineWidth = width || 2;
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < xs.length; i++) {
+      if (!isFinite(ys[i]) || !isFinite(xs[i])) { started = false; continue; }
+      const x = R.x + ((xs[i] - xr[0]) / (xr[1] - xr[0])) * R.w;
+      const y = R.y + R.h - ((ys[i] - yr[0]) / (yr[1] - yr[0])) * R.h;
+      started ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      started = true;
     }
-    const noHc = S.fl === 'brine' || S.sat === 0;
-    set('s3f', noHc
-      ? 'the reservoir already has none — switch to oil or gas to make this ask something'
-      : match && match.d < 0.004
-        ? 'a brine sand at ' + (match.p * 100).toFixed(0) + '% porosity, R = ' +
-          (match.r >= 0 ? '+' : '') + match.r.toFixed(4)
-        : 'none within this porosity range');
+    ctx.stroke(); ctx.restore();
+  }
+  function dot(ctx, R, xv, yv, xr, yr, color, r) {
+    if (!isFinite(xv) || !isFinite(yv)) return;
+    const x = R.x + ((xv - xr[0]) / (xr[1] - xr[0])) * R.w;
+    const y = R.y + R.h - ((yv - yr[0]) / (yr[1] - yr[0])) * R.h;
+    ctx.save(); ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(x, y, r || 4.5, 0, 7); ctx.fill(); ctx.restore();
+  }
+  function barChart(ctx, R, items, top, fmt, axisTitle) {
+    ctx.save(); ctx.fillStyle = '#FBFAF7';
+    ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    SEIS.axisLeft(ctx, R, 0, top, axisTitle, fmt, { flip: true, grid: true });
+    const slot = R.w / items.length;
+    const bw = Math.min(52, slot * 0.44);
+    items.forEach(([name, v, col], k) => {
+      const x = R.x + slot * k + (slot - bw) / 2;
+      const h = Math.max(0, (v / top) * R.h);
+      ctx.save(); ctx.fillStyle = col;
+      ctx.fillRect(x, R.y + R.h - h, bw, h); ctx.restore();
+      ctx.save(); ctx.font = '10px "IBM Plex Mono", monospace';
+      const vLab = fitLabel(ctx, fmt(v), slot - 6);
+      const nLab = fitLabel(ctx, name, slot - 6);
+      const vW = ctx.measureText(vLab).width + 8;
+      const nW = ctx.measureText(nLab).width + 8;
+      ctx.restore();
+      const vy = Math.min(R.y + R.h - h - 11, R.y + R.h - 34);
+      SEIS.tag(ctx, x + bw / 2 - vW / 2, vy, vLab, col);
+      SEIS.tag(ctx, x + bw / 2 - nW / 2, R.y + R.h - 10, nLab, SLATE);
+    });
+    SEIS.frame(ctx, R);
   }
 
-  /* =====================================================================
-     STEP 4
-     ===================================================================== */
-
-  function drawStep4() {
-    const w = rowWidth('row4', 3);
-    const H = 320;
-
-    let ctx = SEIS.fitCanvas($('c4rc'), w, H);
-    ctx.clearRect(0, 0, w, H);
-    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: H - M.t - M.b };
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    drawRcStrip(ctx, R);
-    SEIS.axisBottom(ctx, R, -TRACE_SCALE, TRACE_SCALE, 'RC', (v) => v.toFixed(2), { ticks: 3 });
-    timeAxis(ctx, R);
-
-    // wavelet
-    ctx = SEIS.fitCanvas($('c4wav'), w, H);
-    ctx.clearRect(0, 0, w, H);
-    R = { x: M.l, y: M.t, w: w - M.l - M.r, h: H - M.t - M.b };
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    const half = 0.08;
-    const wx = [], wy = [];
-    for (let t = -half; t <= half; t += 0.0005) { wx.push(t * 1000); wy.push(D.wav.fn(t)); }
-    curve(ctx, R, wx, wy, [-80, 80], [-0.6, 1.05], CRIM, 2);
-    SEIS.dashedLine(ctx, R.x, R.y + R.h - (0.6 / 1.65) * R.h,
-      R.x + R.w, R.y + R.h - (0.6 / 1.65) * R.h, 'rgba(92,102,112,0.45)', [3, 3], 1);
-    SEIS.frame(ctx, R);
-    SEIS.axisBottom(ctx, R, -80, 80, 'time (ms)', (v) => v.toFixed(0), { ticks: 5 });
-    SEIS.axisLeft(ctx, R, -0.6, 1.05, 'amplitude', (v) => v.toFixed(1), { ticks: 4, flip: true });
-    SEIS.tag(ctx, R.x + R.w - 4, R.y + 12, S.fr + ' Hz Ricker', CRIM, 'right');
-
-    // trace
-    ctx = SEIS.fitCanvas($('c4tr'), w, H);
-    ctx.clearRect(0, 0, w, H);
-    R = { x: M.l, y: M.t, w: w - M.l - M.r, h: H - M.t - M.b };
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    wiggle(ctx, R, D.trace, TRACE_SCALE);
-    markHorizon(ctx, R, D.tTop, CRIM, 'top', 'left');
-    markHorizon(ctx, R, D.tBase, TEAL, 'base', 'left');
-    SEIS.frame(ctx, R);
-    SEIS.axisBottom(ctx, R, -TRACE_SCALE, TRACE_SCALE, 'amplitude',
-      (v) => v.toFixed(2), { ticks: 3 });
-    timeAxis(ctx, R);
-
-    const dtRes = D.tBase - D.tTop;
-    const quarter = D.res.vp / (4 * S.fr);
-    const tune = measureTuning();
-    const pk = peakNear(D.trace, D.tTop, D.rTop >= 0 ? 1 : -1);
-    set('s4a', (dtRes * 1000).toFixed(1) + ' ms');
-    set('s4b', tune.h.toFixed(1) + ' m measured;  λ/4 rule says ' + quarter.toFixed(1) + ' m');
-    set('s4c', (pk.a >= 0 ? '+' : '') + pk.a.toFixed(4));
-    set('s4d', (D.rTop >= 0 ? '+' : '') + D.rTop.toFixed(4));
-    const ratio = Math.abs(D.rTop) > 1e-6 ? Math.abs(pk.a / D.rTop) : NaN;
-    set('s4e', isFinite(ratio) ? ratio.toFixed(2) + '× the reflection coefficient'
-      : 'no reflection to compare');
-    set('s4f', S.th > tune.h * 1.5
-      ? 'yes — top and base are separate events'
-      : S.th > tune.h * 0.7
-        ? 'at or near tuning — the two wavelets are adding'
-        : 'no — below tuning, one event carrying both interfaces');
-  }
-
-  /* =====================================================================
-     STEP 5
-     ===================================================================== */
-
-  function drawStep5() {
-    const w = rowWidth('row5', 2);
-    const H = 330;
-
-    let ctx = SEIS.fitCanvas($('c5cmp'), w, H);
-    ctx.clearRect(0, 0, w, H);
-    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: H - M.t - M.b };
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    const n = 5, sub = R.w / n;
-    const amps = [];
-    for (let i = 0; i < n; i++) {
-      const tr = noiseTrace(1001 + i * 37);
-      const sR = { x: R.x + i * sub, y: R.y, w: sub, h: R.h };
-      wiggle(ctx, sR, tr, TRACE_SCALE);
-      amps.push(peakNear(tr, D.tTop, D.rTop >= 0 ? 1 : -1).a);
-    }
-    markHorizon(ctx, R, D.tTop, CRIM, 'top', 'left');
-    markHorizon(ctx, R, D.tBase, TEAL, 'base', 'left');
-    SEIS.frame(ctx, R);
-    timeAxis(ctx, R);
-    SEIS.axisBottom(ctx, R, 1, n, 'realization', (v) => v.toFixed(0), { ticks: 5 });
-
-    // two rocks
-    ctx = SEIS.fitCanvas($('c5amb'), w, H);
-    ctx.clearRect(0, 0, w, H);
-    R = { x: M.l, y: M.t, w: w - M.l - M.r, h: H - M.t - M.b };
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    const mk = (rock, rTop) => {
-      const tB = T_TOP + 2 * (S.th / rock.vp);
-      const sp = [{ t: T_TOP, r: rTop }, { t: tB, r: -rTop }];
-      return SEIS.traceFromSpikes(sp, T0, DT, NT, D.wav);
+  /* the section, shaded by impedance */
+  function drawSection(ctx, R) {
+    const yT = R.y + R.h * 0.32, yB = R.y + R.h * 0.62;
+    const shade = (ip, warm) => {
+      const f = Math.max(0, Math.min(1, (ip - 3800) / 4200));
+      return warm
+        ? 'rgb(' + Math.round(233 - f * 67) + ',' + Math.round(216 - f * 92) +
+          ',' + Math.round(182 - f * 120) + ')'
+        : 'rgb(' + Math.round(209 - f * 105) + ',' + Math.round(213 - f * 100) +
+          ',' + Math.round(199 - f * 103) + ')';
     };
-    const trOil = mk(D.oil, D.rOil), trBrn = mk(D.brn, D.rBrn);
-    const halfW = R.w / 2;
-    wiggle(ctx, { x: R.x, y: R.y, w: halfW, h: R.h },
-           S.nz ? addNoise(trOil, 55) : trOil, TRACE_SCALE);
-    wiggle(ctx, { x: R.x + halfW, y: R.y, w: halfW, h: R.h },
-           S.nz ? addNoise(trBrn, 91) : trBrn, TRACE_SCALE);
-    SEIS.dashedLine(ctx, R.x + halfW, R.y, R.x + halfW, R.y + R.h, 'rgba(22,25,28,.3)', [4, 4], 1);
-    markHorizon(ctx, R, D.tTop, CRIM, null, 'left');
-    SEIS.tag(ctx, R.x + halfW / 2 - 34, R.y + 12, 'oil, 30% φ', C_OIL, 'left');
-    SEIS.tag(ctx, R.x + halfW + halfW / 2 - 40, R.y + 12, 'brine, 35% φ', C_BRINE, 'left');
+    ctx.save();
+    ctx.fillStyle = shade(D.sh.ip, false);
+    ctx.fillRect(R.x, R.y, R.w, R.h);
+    ctx.fillStyle = shade(D.res.ip, true);
+    ctx.fillRect(R.x, yT, R.w, yB - yT);
+    ctx.strokeStyle = INK; ctx.lineWidth = 1.8;
+    ctx.beginPath(); ctx.moveTo(R.x, yT); ctx.lineTo(R.x + R.w, yT); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(R.x, yB); ctx.lineTo(R.x + R.w, yB); ctx.stroke();
+    ctx.restore();
+    SEIS.tag(ctx, R.x + 6, R.y + 16, 'shale', SLATE);
+    SEIS.tag(ctx, R.x + 6, (yT + yB) / 2, 'reservoir', CRIM);
     SEIS.frame(ctx, R);
-    timeAxis(ctx, R);
-
-    const spread = Math.max.apply(null, amps) - Math.min.apply(null, amps);
-    const diff = Math.abs(D.rOil - D.rBrn);
-    set('s5a', NOISE_RMS[S.nz] === 0 ? 'none' : NOISE_RMS[S.nz].toFixed(3) + ' RC');
-    set('s5b', spread.toFixed(4) + ' in amplitude');
-    set('s5c', 'R = ' + D.rOil.toFixed(4) + ',  Vp/Vs ' + D.oil.vpvs.toFixed(2));
-    set('s5d', 'R = ' + D.rBrn.toFixed(4) + ',  Vp/Vs ' + D.brn.vpvs.toFixed(2));
-    set('s5e', diff.toFixed(4) + ' in R');
-    set('s5f', NOISE_RMS[S.nz] === 0
-      ? 'not from amplitude — they differ by ' + diff.toFixed(4) + ', and even a clean trace is drawn ' +
-        'to a thicker line than that'
-      : 'no — the difference is ' + diff.toFixed(4) + ' and the noise alone moves the ' +
-        'amplitude by ' + spread.toFixed(4));
+    return { yT, yB };
   }
 
-  function addNoise(tr, seed) {
-    const rms = NOISE_RMS[S.nz];
-    if (rms <= 0) return tr;
-    const nz = SEIS.bandLimitedNoise(1, NT, DT, D.wav, seed, 0);
-    const out = new Float32Array(NT);
-    for (let i = 0; i < NT; i++) out[i] = tr[i] + nz[i] * rms;
-    return out;
+  function wiggle(ctx, R, tr, amp) {
+    const x0 = R.x + R.w / 2;
+    const a = amp || 0.35;
+    const X = (v) => x0 + (v / a) * (R.w / 2) * 0.9;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    ctx.strokeStyle = 'rgba(22,25,28,0.25)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x0, R.y); ctx.lineTo(x0, R.y + R.h); ctx.stroke();
+    ctx.fillStyle = 'rgba(22,25,28,0.72)';
+    ctx.beginPath(); ctx.moveTo(x0, R.y);
+    for (let i = 0; i < NT; i++) ctx.lineTo(Math.max(x0, X(tr[i])), yOf(TR0 + i * DT, R));
+    ctx.lineTo(x0, R.y + R.h); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = INK; ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    for (let i = 0; i < NT; i++) {
+      const x = X(tr[i]), y = yOf(TR0 + i * DT, R);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke(); ctx.restore();
+  }
+
+  /* --------------------------------- header --------------------------- */
+  function drawHeader() {
+    const el = $('cHead'); if (!el) return;
+    const W = pw(el), PH = 206, H = M.t + PH + M.b;
+    const ctx = SEIS.fitCanvas(el, W, H);
+    ctx.clearRect(0, 0, W, H);
+    const gap = 26;
+    const halfW = Math.max(90, Math.floor((W - M.l - M.r - gap) / 2));
+    const RA = { x: M.l, y: M.t, w: halfW, h: PH };
+    const RB = { x: M.l + halfW + gap, y: M.t, w: halfW, h: PH };
+
+    drawSection(ctx, RA);
+    wiggle(ctx, RB, D.trace);
+    SEIS.frame(ctx, RB);
+    SEIS.axisLeft(ctx, RB, 0, (NT - 1) * DT, 'two-way time (s)', (v) => v.toFixed(1));
+    SEIS.dashedLine(ctx, RB.x, yOf(T_TOP, RB), RB.x + RB.w, yOf(T_TOP, RB),
+      CRIM, [4, 4], 1.1);
+
+    ctx.save();
+    ctx.font = '10px "IBM Plex Sans", sans-serif';
+    ctx.fillStyle = SLATE; ctx.textAlign = 'center';
+    ctx.fillText(fitLabel(ctx, 'the two rocks, shaded by impedance', halfW - 4),
+      RA.x + RA.w / 2, RA.y + RA.h + 30);
+    ctx.fillText(fitLabel(ctx, 'R at the top = ' + D.rTop.toFixed(3), halfW - 4),
+      RB.x + RB.w / 2, RB.y + RB.h + 30);
+    ctx.restore();
+  }
+
+  /* --------------------------------- step 1 --------------------------- */
+  function drawStep1() {
+    const W = rowWidth('row1', 2);
+
+    const LEG1 = [[SLATE, 'shale', 'dot'], [CRIM, 'reservoir', 'dot']];
+    const P1 = panel('c1sec', W, 246, LEG1);
+    drawSection(P1.ctx, P1.R);
+    legendRow(P1.ctx, P1.R, LEG1);
+
+    const P1b = panel('c1props', W, 246, LEG1);
+    const ctx = P1b.ctx, R = P1b.R;
+    ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const top = Math.max(D.sh.vp, D.res.vp) * 1.30;
+    SEIS.axisLeft(ctx, R, 0, top, 'velocity (m/s), density \u00d71000',
+      (v) => String(Math.round(v)), { flip: true, grid: true });
+    const groups = [['Vp', 'vp', 1], ['Vs', 'vs', 1], ['density', 'rho', 1000]];
+    const gW = R.w / 3, bw = Math.min(30, gW / 3.2);
+    groups.forEach(([gname, key, mult], g) => {
+      [[D.sh, SLATE], [D.res, CRIM]].forEach(([e, col], k) => {
+        const x = R.x + gW * g + gW * 0.20 + k * (bw + 6);
+        const h = (e[key] * mult / top) * R.h;
+        ctx.save(); ctx.fillStyle = col;
+        ctx.fillRect(x, R.y + R.h - h, bw, h); ctx.restore();
+      });
+      SEIS.tag(ctx, R.x + gW * g + gW * 0.20, R.y + R.h - 10, gname, INK);
+    });
+    SEIS.frame(ctx, R);
+    legendRow(ctx, R, LEG1);
+
+    const fmt = (e) => Math.round(e.vp) + ' / ' + Math.round(e.vs) + ' / ' +
+      e.rho.toFixed(2);
+    set('s1a', fmt(D.sh));
+    set('s1b', fmt(D.res));
+    set('s1c', D.sh.vpvs.toFixed(3));
+    set('s1d', D.res.vpvs.toFixed(3));
+    set('s1e', D.res.vp > D.sh.vp ? 'the reservoir' : 'the shale');
+    set('s1f', 'six \u2014 a Vp, a Vs and a density for each');
+  }
+
+  /* --------------------------------- step 2 --------------------------- */
+  function drawStep2() {
+    const W = rowWidth('row2', 2);
+
+    const LEG2 = [[SLATE, 'shale', 'dot'], [CRIM, 'reservoir', 'dot']];
+    const P2 = panel('c2imp', W, 246, LEG2);
+    barChart(P2.ctx, P2.R, [['shale', D.sh.ip, SLATE], ['reservoir', D.res.ip, CRIM]],
+      Math.max(D.sh.ip, D.res.ip) * 1.28, (v) => String(Math.round(v)),
+      'impedance (m/s \u00b7 g/cm\u00b3)');
+    legendRow(P2.ctx, P2.R, LEG2);
+
+    const LEG2b = [[ORANGE, 'every rock with the reservoir\u2019s impedance'],
+      [CRIM, 'the reservoir', 'dot'], [SLATE, 'the shale', 'dot']];
+    const P2b = panel('c2iso', W, 246, LEG2b);
+    const ctx = P2b.ctx, R = P2b.R;
+    const xr = [1.6, 2.6];                 // density, g/cm3
+    const yr = [1500, 4500];               // Vp, m/s
+    ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'P-wave velocity (m/s)',
+      (v) => String(Math.round(v)), { flip: true, grid: true });
+    SEIS.axisBottom(ctx, R, xr[0], xr[1], 'density (g/cm\u00b3)', (v) => v.toFixed(1));
+    const rhos = [], vps = [];
+    for (let i = 0; i <= 80; i++) {
+      const rho = xr[0] + (xr[1] - xr[0]) * (i / 80);
+      rhos.push(rho); vps.push(D.res.ip / rho);
+    }
+    curve(ctx, R, rhos, vps, xr, yr, ORANGE, 2.8);
+    dot(ctx, R, D.res.rho, D.res.vp, xr, yr, CRIM, 5);
+    dot(ctx, R, D.sh.rho, D.sh.vp, xr, yr, SLATE, 5);
+    SEIS.frame(ctx, R);
+    legendRow(ctx, R, LEG2b);
+
+    set('s2a', Math.round(D.sh.ip) + ' m/s \u00b7 g/cm\u00b3');
+    set('s2b', Math.round(D.res.ip) + ' m/s \u00b7 g/cm\u00b3');
+    set('s2c', Math.round(D.res.vp) + ' \u00d7 ' + D.res.rho.toFixed(3));
+    set('s2d', Math.round(D.res.ip / 1.8) + ' m/s at 1.8 g/cm\u00b3');
+    set('s2e', Math.round(D.res.ip / 2.4) + ' m/s at 2.4 g/cm\u00b3');
+    set('s2f', 'which of velocity and density produced the number');
+  }
+
+  /* --------------------------------- step 3 --------------------------- */
+  function drawStep3() {
+    const W = rowWidth('row3', 2);
+
+    const LEG3 = [[TEAL, 'impedance'], [CRIM, 'reflection coefficient']];
+    const P3 = panel('c3rc', W, 246, LEG3);
+    const ctx = P3.ctx, R = P3.R;
+    ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const ipLo = Math.min(D.sh.ip, D.res.ip) * 0.86;
+    const ipHi = Math.max(D.sh.ip, D.res.ip) * 1.10;
+    SEIS.axisLeft(ctx, R, ipLo, ipHi, 'impedance', (v) => String(Math.round(v)),
+      { flip: true, grid: true });
+    // a blocky impedance profile across the panel
+    const xIp = (v) => R.x + R.w * 0.06 +
+      ((v - ipLo) / (ipHi - ipLo)) * (R.w * 0.44);
+    const yT = R.y + R.h * 0.32, yB = R.y + R.h * 0.62;
+    ctx.save();
+    ctx.strokeStyle = TEAL; ctx.lineWidth = 2.6;
+    ctx.beginPath();
+    ctx.moveTo(xIp(D.sh.ip), R.y); ctx.lineTo(xIp(D.sh.ip), yT);
+    ctx.lineTo(xIp(D.res.ip), yT); ctx.lineTo(xIp(D.res.ip), yB);
+    ctx.lineTo(xIp(D.sh.ip), yB); ctx.lineTo(xIp(D.sh.ip), R.y + R.h);
+    ctx.stroke(); ctx.restore();
+    // the two spikes, on their own half
+    const x0 = R.x + R.w * 0.76;
+    const spike = (y, r, col) => {
+      ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(x0, y);
+      ctx.lineTo(x0 + r * R.w * 0.55, y); ctx.stroke(); ctx.restore();
+    };
+    ctx.save();
+    ctx.strokeStyle = 'rgba(22,25,28,0.30)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x0, R.y); ctx.lineTo(x0, R.y + R.h); ctx.stroke();
+    ctx.restore();
+    spike(yT, D.rTop, CRIM);
+    spike(yB, D.rBase, CRIM);
+    /* Anchored to the right edge, because SEIS.tag runs rightward from the x
+       it is given and these sit close to the edge already. */
+    SEIS.tag(ctx, R.x + R.w - 4, yT - 12, 'R top ' + D.rTop.toFixed(3), CRIM, 'right');
+    SEIS.tag(ctx, R.x + R.w - 4, yB + 13, 'R base ' + D.rBase.toFixed(3), CRIM, 'right');
+    SEIS.frame(ctx, R);
+    legendRow(ctx, R, LEG3);
+
+    const LEG3b = [[CRIM, 'R at the top of the reservoir'],
+      [SLATE, 'your shale', 'dash'], [ORANGE, 'where it vanishes', 'dash']];
+    const P3b = panel('c3shale', W, 246, LEG3b);
+    const ctx2 = P3b.ctx, R2 = P3b.R;
+    const xr = [SHVP_LO, SHVP_HI];
+    const lo = Math.min(...D.rVsShale), hi = Math.max(...D.rVsShale);
+    const pad = Math.max(0.02, (hi - lo) * 0.16);
+    const yr = [lo - pad, hi + pad];
+    ctx2.save(); ctx2.fillStyle = '#FBFAF7';
+    ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
+    SEIS.axisLeft(ctx2, R2, yr[0], yr[1], 'reflection coefficient',
+      (v) => v.toFixed(2), { flip: true, grid: true });
+    SEIS.axisBottom(ctx2, R2, xr[0], xr[1], 'shale P-wave velocity (m/s)',
+      (v) => String(Math.round(v)));
+    if (yr[0] < 0 && yr[1] > 0) {
+      const y0 = R2.y + R2.h - ((0 - yr[0]) / (yr[1] - yr[0])) * R2.h;
+      SEIS.dashedLine(ctx2, R2.x, y0, R2.x + R2.w, y0, 'rgba(22,25,28,0.35)', [3, 3], 1);
+    }
+    curve(ctx2, R2, D.shAx, D.rVsShale, xr, yr, CRIM, 2.8);
+    const xS = R2.x + ((S.shvp - xr[0]) / (xr[1] - xr[0])) * R2.w;
+    SEIS.dashedLine(ctx2, xS, R2.y, xS, R2.y + R2.h, SLATE, [5, 4], 1.3);
+    if (D.shZero !== null) {
+      const xZ = R2.x + ((D.shZero - xr[0]) / (xr[1] - xr[0])) * R2.w;
+      SEIS.dashedLine(ctx2, xZ, R2.y, xZ, R2.y + R2.h, ORANGE, [5, 4], 1.4);
+    }
+    dot(ctx2, R2, S.shvp, D.rTop, xr, yr, CRIM);
+    SEIS.frame(ctx2, R2);
+    legendRow(ctx2, R2, LEG3b);
+
+    set('s3a', D.rTop.toFixed(4));
+    set('s3b', D.rBase.toFixed(4));
+    set('s3c', Math.abs(D.rTop) < 0.002 ? 'no reflection to have one'
+      : (D.rTop > 0 ? 'positive \u2014 into a higher impedance'
+                    : 'negative \u2014 into a lower impedance'));
+    set('s3d', D.shZero === null ? 'outside the slider range'
+      : Math.round(D.shZero) + ' m/s');
+    set('s3e', D.rDoubled.toFixed(4));
+    set('s3f', 'the pair of rocks, not the reservoir on its own');
+  }
+
+  /* --------------------------------- step 4 --------------------------- */
+  function drawStep4() {
+    const W = rowWidth('row4', 2);
+    const tLo = T_TOP - 0.14, tHi = T_TOP + D.dtRes + 0.14;
+
+    function timePanel(id, legend) {
+      const P = panel(id, W, 246, legend);
+      const ctx = P.ctx, R = P.R;
+      ctx.save(); ctx.fillStyle = '#FBFAF7';
+      ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+      SEIS.axisLeft(ctx, R, tLo * 1000, tHi * 1000, 'two-way time (ms)',
+        (v) => String(Math.round(v)));
+      return { ctx, R, y: (t) => R.y + ((t - tLo) / (tHi - tLo)) * R.h };
+    }
+
+    const LEG4 = [[CRIM, 'reflection coefficient']];
+    const A = timePanel('c4rc', LEG4);
+    const xa = A.R.x + A.R.w / 2;
+    A.ctx.save();
+    A.ctx.strokeStyle = 'rgba(22,25,28,0.30)'; A.ctx.lineWidth = 1;
+    A.ctx.beginPath(); A.ctx.moveTo(xa, A.R.y); A.ctx.lineTo(xa, A.R.y + A.R.h);
+    A.ctx.stroke();
+    A.ctx.strokeStyle = CRIM; A.ctx.lineWidth = 3;
+    [[T_TOP, D.rTop], [T_TOP + D.dtRes, D.rBase]].forEach(([t, r]) => {
+      const y = A.y(t);
+      A.ctx.beginPath(); A.ctx.moveTo(xa, y);
+      A.ctx.lineTo(xa + (r / 0.35) * (A.R.w / 2) * 0.9, y); A.ctx.stroke();
+    });
+    A.ctx.restore();
+    SEIS.frame(A.ctx, A.R);
+    legendRow(A.ctx, A.R, LEG4);
+
+    const LEG4b = [[INK, 'the trace'], [CRIM, 'the top reflection', 'dash']];
+    const B = timePanel('c4trace', LEG4b);
+    const xb = B.R.x + B.R.w / 2;
+    B.ctx.save();
+    B.ctx.beginPath(); B.ctx.rect(B.R.x, B.R.y, B.R.w, B.R.h); B.ctx.clip();
+    B.ctx.strokeStyle = 'rgba(22,25,28,0.25)'; B.ctx.lineWidth = 1;
+    B.ctx.beginPath(); B.ctx.moveTo(xb, B.R.y); B.ctx.lineTo(xb, B.R.y + B.R.h);
+    B.ctx.stroke();
+    const X = (v) => xb + (v / 0.35) * (B.R.w / 2) * 0.9;
+    B.ctx.fillStyle = 'rgba(22,25,28,0.72)';
+    B.ctx.beginPath(); B.ctx.moveTo(xb, B.R.y);
+    for (let t = tLo; t <= tHi; t += DT) {
+      const i = Math.round((t - TR0) / DT);
+      B.ctx.lineTo(Math.max(xb, X(D.trace[i] || 0)), B.y(t));
+    }
+    B.ctx.lineTo(xb, B.R.y + B.R.h); B.ctx.closePath(); B.ctx.fill();
+    B.ctx.strokeStyle = INK; B.ctx.lineWidth = 1.4;
+    B.ctx.beginPath();
+    let started = false;
+    for (let t = tLo; t <= tHi; t += DT) {
+      const i = Math.round((t - TR0) / DT);
+      const x = X(D.trace[i] || 0), y = B.y(t);
+      started ? B.ctx.lineTo(x, y) : B.ctx.moveTo(x, y); started = true;
+    }
+    B.ctx.stroke(); B.ctx.restore();
+    SEIS.dashedLine(B.ctx, B.R.x, B.y(T_TOP), B.R.x + B.R.w, B.y(T_TOP),
+      CRIM, [4, 4], 1.2);
+    SEIS.frame(B.ctx, B.R);
+    legendRow(B.ctx, B.R, LEG4b);
+
+    set('s4a', D.rTop.toFixed(4));
+    set('s4b', D.peak.toFixed(4));
+    set('s4c', S.freq + ' Hz');
+    set('s4d', (D.dtRes * 1000).toFixed(1) + ' ms');
+    set('s4e', D.thinnest.toFixed(0) + ' m, against a ' + THICK + ' m reservoir');
+    set('s4f', 'the trace, while the earth stayed exactly where it was');
+  }
+
+  /* --------------------------------- step 5 --------------------------- */
+  function drawStep5() {
+    const W = rowWidth('row5', 2);
+
+    const LEG5 = [[ORANGE, 'rocks with the reservoir\u2019s impedance', 'dot'],
+      [CRIM, 'the reservoir you set', 'dot']];
+    const P5 = panel('c5family', W, 246, LEG5);
+    const ctx = P5.ctx, R = P5.R;
+    const xr = [PHI_LO * 100, PHI_HI * 100], yr = [0, 100];
+    ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'gas saturation (%)',
+      (v) => String(Math.round(v)), { flip: true, grid: true });
+    SEIS.axisBottom(ctx, R, xr[0], xr[1], 'porosity (%)', (v) => String(Math.round(v)));
+    D.fam.forEach((f) => dot(ctx, R, f.phi * 100, f.sg * 100, xr, yr, ORANGE, 4));
+    dot(ctx, R, S.phi, S.sg, xr, yr, CRIM, 5.5);
+    SEIS.frame(ctx, R);
+    legendRow(ctx, R, LEG5);
+
+    const LEG5b = [[ORANGE, 'Vp/Vs of each of those rocks', 'dot'],
+      [SLATE, 'the shale, for comparison', 'dash']];
+    const P5b = panel('c5vpvs', W, 246, LEG5b);
+    const ctx2 = P5b.ctx, R2 = P5b.R;
+    const vLo = Math.min(D.vpvsRange[0], D.sh.vpvs) * 0.96;
+    const vHi = Math.max(D.vpvsRange[1], D.sh.vpvs) * 1.04;
+    const yr2 = [vLo, vHi];
+    ctx2.save(); ctx2.fillStyle = '#FBFAF7';
+    ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
+    SEIS.axisLeft(ctx2, R2, yr2[0], yr2[1], 'Vp / Vs',
+      (v) => v.toFixed(2), { flip: true, grid: true });
+    SEIS.axisBottom(ctx2, R2, xr[0], xr[1], 'porosity (%)', (v) => String(Math.round(v)));
+    const ySh = R2.y + R2.h - ((D.sh.vpvs - yr2[0]) / (yr2[1] - yr2[0])) * R2.h;
+    SEIS.dashedLine(ctx2, R2.x, ySh, R2.x + R2.w, ySh, SLATE, [5, 4], 1.3);
+    D.fam.forEach((f) => dot(ctx2, R2, f.phi * 100, f.e.vpvs, xr, yr2, ORANGE, 4));
+    SEIS.frame(ctx2, R2);
+    legendRow(ctx2, R2, LEG5b);
+
+    set('s5a', String(D.famN));
+    set('s5b', D.phiRange[0].toFixed(1) + '% to ' + D.phiRange[1].toFixed(1) + '%');
+    set('s5c', D.sgRange[0].toFixed(0) + '% to ' + D.sgRange[1].toFixed(0) + '%');
+    set('s5d', D.vpvsRange[0].toFixed(3) + ' to ' + D.vpvsRange[1].toFixed(3));
+    set('s5e', D.rSpread.toFixed(4));
+    set('s5f', 'Vp/Vs \u2014 present in the rocks, absent from the trace');
   }
 
   /* =====================================================================
@@ -1492,33 +1164,19 @@
 
   function syncLabels() {
     set('phiV', S.phi + '%');
+    set('sgV', S.sg + '%');
     set('vclV', S.vcl + '%');
-    set('thV', S.th + ' m');
     set('shvpV', S.shvp + ' m/s');
-    set('flV', S.fl);
-    set('satV', S.fl === 'brine' ? '—' : S.sat + '%');
-    set('apiV', S.api + '°');
-    set('gorV', S.gor + ' L/L');
-    set('frV', S.fr + ' Hz');
-    set('nzV', NOISE_NAME[S.nz]);
-    const sat = $('sat');
-    if (sat) { sat.disabled = S.fl === 'brine'; sat.value = S.sat; }
-    document.querySelectorAll('#segFluid button').forEach((b) => {
-      b.setAttribute('aria-pressed', b.dataset.fl === S.fl);
-    });
-    document.querySelectorAll('#segNoise button').forEach((b) => {
-      b.setAttribute('aria-pressed', String(+b.dataset.nz) === String(S.nz));
-    });
-    ['phi', 'vcl', 'th', 'shvp', 'fr', 'api', 'gor'].forEach((k) => {
+    set('freqV', S.freq + ' Hz');
+    ['phi', 'sg', 'vcl', 'shvp', 'freq'].forEach((k) => {
       const el = $(k); if (el && String(el.value) !== String(S[k])) el.value = S[k];
     });
   }
 
   function drawAll() {
     syncLabels();
-    if (visible('p1') || visible('p2') || visible('p3') || visible('p4') || visible('p5')) {
-      drawStages();
-    }
+    if (visible('p1') || visible('p2') || visible('p3') ||
+        visible('p4') || visible('p5')) drawHeader();
     if (visible('p1')) drawStep1();
     if (visible('p2')) drawStep2();
     if (visible('p3')) drawStep3();
@@ -1528,8 +1186,9 @@
 
   const PANES = ['p1', 'p2', 'p3', 'p4', 'p5', 'pw', 'pe', 'pk', 'pm'];
   const STEPNAMES = {
-    p1: 'The rock', p2: 'Properties', p3: 'Impedance', p4: 'The trace',
-    p5: 'Noise', pw: 'Why it matters', pe: 'Exercises', pk: 'Key points', pm: 'Method',
+    p1: 'Two rocks', p2: 'Impedance', p3: 'Contrast', p4: 'The trace',
+    p5: 'What is gone', pw: 'Why it matters', pe: 'Exercises',
+    pk: 'Key points', pm: 'Method',
   };
 
   function buildStepNav() {
@@ -1569,7 +1228,7 @@
       b.setAttribute('aria-selected', b.dataset.tab === id);
     });
     const lab = document.querySelector('.labhead');
-    if (lab) lab.hidden = (id === 'pw' || id === 'pe' || id === 'pk' || id === 'pm');
+    if (lab) lab.hidden = (id === 'pw' || id === 'pk' || id === 'pm');
     const last = (id === 'pk' || id === 'pm');
     if ($('nextup')) $('nextup').hidden = !last;
     if ($('pager')) $('pager').hidden = !last;
@@ -1588,18 +1247,33 @@
     recompute(); drawAll(); saveState();
   });
 
-  document.querySelectorAll('#segFluid button').forEach((b) => {
-    b.addEventListener('click', () => {
-      S.fl = b.dataset.fl;
-      recompute(); drawAll(); saveState();
+  const popBtn = $('popEx');
+  if (popBtn) {
+    popBtn.addEventListener('click', () => {
+      const list = $('exList');
+      if (!list) return;
+      const w = window.open('', 'avo-m03-exercises',
+        'width=560,height=760,scrollbars=yes,resizable=yes');
+      if (!w) { popBtn.textContent = 'the browser blocked the pop-up'; return; }
+      w.document.open();
+      w.document.write('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">' +
+        '<title>Exercises \u2014 module 03</title><style>' +
+        'body{font:15px/1.62 "IBM Plex Sans",system-ui,sans-serif;color:#16191C;' +
+        'margin:0;padding:24px 26px;background:#FBFAF7}' +
+        'h1{font:700 17px/1.3 Archivo,sans-serif;margin:0 0 4px}' +
+        'p.src{font-size:12px;color:#5C6670;margin:0 0 18px}' +
+        'ol{padding-left:20px;margin:0} li{margin-bottom:18px}' +
+        'summary{cursor:pointer;color:#841617;font-size:13px;font-weight:600;' +
+        'margin-top:6px} .ans{display:block;margin-top:6px;padding:10px 12px;' +
+        'background:#F4F6F7;border-left:3px solid #841617;font-size:14px}' +
+        '</style></head><body><h1>Module 03 \u2014 From a rock to a trace</h1>' +
+        '<p class="src">Exercises. Keep the module window open beside this one; every ' +
+        'answer is a number read off the running page.</p><ol>' +
+        list.innerHTML + '</ol></body></html>');
+      w.document.close();
+      w.focus();
     });
-  });
-  document.querySelectorAll('#segNoise button').forEach((b) => {
-    b.addEventListener('click', () => {
-      S.nz = +b.dataset.nz;
-      recompute(); drawAll(); saveState();
-    });
-  });
+  }
 
   let rt;
   window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 140); });
@@ -1609,8 +1283,7 @@
   showTab(PANES.indexOf(S.tab) >= 0 ? S.tab : 'p1');
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
 
-  // Exposed for the headless test harness only.
-  window.__MOD = { S, get D() { return D; }, recompute, drawAll, showTab, peakNear, NOISE_RMS };
+  window.__MOD = { S, get D() { return D; }, recompute, drawAll, showTab };
 })();
 </script>
 </body>

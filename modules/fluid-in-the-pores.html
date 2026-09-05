@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fluid in the pores | How AVO Actually Works</title>
+<meta name="description" content="Module 02: what brine, oil and gas are elastically, how Gassmann's relation puts a fluid into a dry frame, what that does to Vp, Vs and density, and why the first few percent of gas does almost all of the work.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <a class="brand" href="../index.html"><span class="dot"></span>How AVO <b>actually</b> works</a>
+    <nav>
+      <a href="../index.html">All modules</a>
+      <a href="#pe">Exercises</a>
+      <a href="#pm">Method &amp; references</a>
+    </nav>
+  </header>
+
+  <div class="mod-head">
+    <p class="eyebrow">Module 02 &nbsp;·&nbsp; The rock</p>
+    <h1>Fluid in the pores</h1>
+    <p class="sub">Module 01 left the pore space empty and ended on a result: anything that changes the
+      bulk modulus K without changing the shear modulus G moves Vp and leaves Vs exactly where it was. A
+      pore fluid is such a thing. It resists being squeezed and offers nothing at all against being
+      sheared. This module puts brine, oil and gas into the frame built in module 01, works out what each
+      does, and shows why the first few percent of gas does almost all of the work.</p>
+  </div>
+
+  <div class="labhead">
+    <div class="labgrid">
+      <div>
+        <p class="cap">The same rock with four different things in its pores
+          <span>&mdash; empty, brine, oil, gas: what each does to Vp and to Vs</span></p>
+        <canvas id="cHead" aria-label="Bars comparing P-wave and shear velocity for the same rock frame with empty pores and with brine, oil and gas in them"></canvas>
+      </div>
+      <div>
+        <p class="cap">Five controls <span>&mdash; the last one acts in steps 4 and 5</span></p>
+        <div class="controls" id="mainControls">
+          <div class="ctl-col">
+            <h2>The rock, from module 01</h2>
+            <div class="ctl">
+              <label for="phi">Porosity <span class="val" id="phiV">30%</span></label>
+              <input type="range" data-key="phi" id="phi" min="15" max="35" step="1" value="30">
+            </div>
+            <div class="ctl">
+              <label for="vcl">Clay fraction of the solid <span class="val" id="vclV">0%</span></label>
+              <input type="range" data-key="vcl" id="vcl" min="0" max="40" step="1" value="0">
+            </div>
+
+            <h2>Where it is buried</h2>
+            <div class="ctl">
+              <label for="pres">Pressure <span class="val" id="presV">23 MPa</span></label>
+              <input type="range" data-key="pres" id="pres" min="5" max="50" step="1" value="23">
+            </div>
+            <div class="ctl">
+              <label for="temp">Temperature <span class="val" id="tempV">64 °C</span></label>
+              <input type="range" data-key="temp" id="temp" min="20" max="120" step="1" value="64">
+            </div>
+
+            <h2>Steps 4 and 5</h2>
+            <div class="ctl">
+              <label for="sg">Gas saturation <span class="val" id="sgV">100%</span></label>
+              <input type="range" data-key="sg" id="sg" min="0" max="100" step="1" value="100">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="tabhint">Five steps, from what a fluid is elastically to where its effect stops being large
+    enough to see. Every number quoted in the text is read off the running page.</p>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
+    <button role="tab" data-tab="p1" aria-selected="false">1 · The fluids</button>
+    <button role="tab" data-tab="p2" aria-selected="false">2 · Gassmann</button>
+    <button role="tab" data-tab="p3" aria-selected="false">3 · Velocities</button>
+    <button role="tab" data-tab="p4" aria-selected="false">4 · A little gas</button>
+    <button role="tab" data-tab="p5" aria-selected="false">5 · When it fades</button>
+    <button role="tab" data-tab="pw" aria-selected="false">Why it matters</button>
+    <span class="gap"></span>
+    <button role="tab" data-tab="pe" aria-selected="false">Exercises</button>
+    <button role="tab" data-tab="pk" aria-selected="false">Key points</button>
+    <button role="tab" data-tab="pm" aria-selected="false">Method</button>
+  </nav>
+
+  <!-- =============================== STEP 1 =============================== -->
+  <section class="tabpane" id="p1" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">1</span>What a fluid is, elastically</h3>
+      <span class="hint">One modulus, not two</span>
+    </div>
+    <p class="lede">A fluid has a bulk modulus and no shear modulus. Squeeze water in a sealed container
+      and it resists, weakly but measurably. Push sideways on the top of a body of water and it simply
+      flows: there is no restoring force, so G is zero. That is the definition of a fluid rather than a
+      property some fluids happen to have.</p>
+    <p class="lede">The three pore fluids that matter are brine, oil and gas, and their bulk moduli are
+      not close to one another. At the pressure and temperature set here, brine is roughly 2.7 GPa, oil is
+      about half that, and gas is around 0.05 — <b>some fifty times softer than brine</b>. On a linear
+      axis the gas bar is invisible, which is the honest picture and the reason the left-hand panel is
+      drawn that way rather than on a compressed scale.</p>
+    <p class="lede">Density separates them too, though far less dramatically: brine near 1.0 g/cm³, oil
+      near 0.8, gas near 0.18. Both properties will matter, because a fluid changes the rock's density as
+      well as its stiffness.</p>
+    <p class="lede">None of these is a constant. Gas in particular is not one number at all: its bulk
+      modulus rises steeply with pressure, so gas at 5 MPa and gas at 50 MPa are different materials as
+      far as a seismic wave is concerned. The right-hand panel follows all three with pressure.</p>
+
+    <div class="sec-row" id="row1">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Bulk modulus of the three fluids
+          <span class="note">and of the mineral, for scale</span></p>
+        <canvas id="c1k" aria-label="Bar chart of the bulk modulus of brine, oil and gas, with the mineral grain modulus alongside for scale"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> How they change with pressure
+          <span class="note">gas is the one that moves</span></p>
+        <canvas id="c1p" aria-label="Bulk modulus of brine, oil and gas plotted against pressure"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Bulk modulus of brine</span><b id="s1a">—</b></div>
+      <div class="stat"><span>Bulk modulus of oil</span><b id="s1b">—</b></div>
+      <div class="stat key"><span>Bulk modulus of gas</span><b id="s1c">—</b></div>
+      <div class="stat"><span>How many times softer gas is than brine</span><b id="s1d">—</b></div>
+      <div class="stat"><span>Densities, brine / oil / gas</span><b id="s1e">—</b></div>
+      <div class="stat wide"><span>Shear modulus of all three</span><b id="s1f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The mineral grains, for comparison, have a bulk modulus of 37 GPa. A pore fluid is softer
+        than the grains by two to three orders of magnitude, and softer than the dry frame as well.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 2 =============================== -->
+  <section class="tabpane" id="p2" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">2</span>Putting the fluid into the frame</h3>
+      <span class="hint">One modulus rises, the other does not move</span>
+    </div>
+    <p class="lede">Squeezing a saturated rock squeezes the pore space, and the fluid in the pores resists
+      that. The rock is therefore harder to compress with a fluid in it than without, and its bulk modulus
+      rises. How much it rises is given by <b>Gassmann's relation</b>, which takes the dry frame's bulk
+      modulus, the mineral's, the fluid's and the porosity, and returns the saturated bulk modulus.</p>
+    <p class="lede">Shearing a saturated rock is a different matter. A shear deformation changes the
+      shape of the pore space without changing its volume, so the fluid is not compressed and has nothing
+      to push back with. Gassmann's relation says the shear modulus of the saturated rock equals the shear
+      modulus of the dry frame, exactly. The right-hand panel is four identical bars, and that is the
+      point of it.</p>
+    <p class="lede">A stiffer fluid raises K more, so brine raises it most and gas raises it least. Notice
+      how much of the rise comes from a fluid that is itself far softer than the frame: brine at 2.7 GPa
+      lifts the frame's bulk modulus by more than that, because the fluid is not acting in parallel with
+      the frame but resisting the collapse of the pore space the frame would otherwise allow.</p>
+
+    <div class="sec-row" id="row2">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Bulk modulus, dry then saturated
+          <span class="note">a stiffer fluid lifts it further</span></p>
+        <canvas id="c2k" aria-label="Bar chart of the bulk modulus of the rock when dry and when saturated with brine, oil and gas"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Shear modulus, the same four cases
+          <span class="note">four identical bars</span></p>
+        <canvas id="c2g" aria-label="Bar chart of the shear modulus for the same four cases, all identical"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Bulk modulus of the dry frame</span><b id="s2a">—</b></div>
+      <div class="stat key"><span>With brine in the pores</span><b id="s2b">—</b></div>
+      <div class="stat"><span>With oil</span><b id="s2c">—</b></div>
+      <div class="stat"><span>With gas</span><b id="s2d">—</b></div>
+      <div class="stat"><span>Shear modulus, all four cases</span><b id="s2e">—</b></div>
+      <div class="stat wide"><span>What the fluid is resisting</span><b id="s2f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>That the shear modulus is untouched is an assumption, not an observation. It holds well for
+        clean sandstones and less well for shaly or reactive rocks, where a fluid can weaken the grain
+        contacts themselves. The Method tab says more.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 3 =============================== -->
+  <section class="tabpane" id="p3" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">3</span>What the velocities do</h3>
+      <span class="hint">The result module 00 showed without deriving</span>
+    </div>
+    <p class="lede">Both velocities come from the moduli and the density, as in module 01: Vp from
+      K + 4G/3 over density, Vs from G over density. The fluid moved K and it moved the density, so both
+      velocities change, but for different reasons and by different amounts.</p>
+    <p class="lede"><b>Vp responds to the fluid directly.</b> Brine gives the stiffest rock and the
+      highest Vp; gas gives the softest and the lowest. The spread between them is the whole basis of
+      using amplitudes to say something about fluids.</p>
+    <p class="lede"><b>Vs responds only through the density.</b> G is identical in all four cases, so
+      any change in Vs is the square root of a density ratio and nothing else. Gas is the lightest fluid,
+      so a gas-filled rock has the <em>highest</em> Vs of the three saturated cases — the shear wave is
+      not detecting the gas, it is detecting that there is less mass to move.</p>
+    <p class="lede">That difference in behavior is what makes the pair useful. Vp falling while Vs holds
+      steady or rises slightly is a signature a fluid change produces and a porosity change does not,
+      because a porosity change moves K and G together.</p>
+
+    <div class="sec-row" id="row3">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Vp and Vs for the four cases
+          <span class="note">empty, brine, oil, gas</span></p>
+        <canvas id="c3vel" aria-label="Bar chart of P-wave and shear velocity for the dry rock and for the same rock saturated with brine, oil and gas"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Density and Vp/Vs for the same four
+          <span class="note">where the shear change comes from</span></p>
+        <canvas id="c3rho" aria-label="Bar chart of bulk density and the Vp over Vs ratio for the same four cases"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Vp, brine → gas</span><b id="s3a">—</b></div>
+      <div class="stat"><span>Vs, brine → gas</span><b id="s3b">—</b></div>
+      <div class="stat"><span>Density, brine → gas</span><b id="s3c">—</b></div>
+      <div class="stat key"><span>Vp/Vs, brine → gas</span><b id="s3d">—</b></div>
+      <div class="stat"><span>Vs change predicted by density alone</span><b id="s3e">—</b></div>
+      <div class="stat wide"><span>Why the shear velocity moved at all</span><b id="s3f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>These are the two rocks module 00 used in its third step. Everything there rested on this
+        calculation.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 4 =============================== -->
+  <section class="tabpane" id="p4" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">4</span>A little gas does almost everything</h3>
+      <span class="hint">The most consequential curve in the set</span>
+    </div>
+    <p class="lede">A pore space is rarely all gas or all brine. The gas saturation is the fraction of
+      the pore volume the gas occupies, and the question is how the rock behaves in between.</p>
+    <p class="lede">Density behaves as expected: it falls in a straight line as heavy brine is replaced
+      by light gas. The bulk modulus does not. When gas and brine share a pore, a squeeze compresses the
+      gas first, because the gas is fifty times easier to compress. The mixture is therefore about as soft
+      as the gas almost as soon as any gas is present, and the fluid modulus collapses within the first
+      few percent of saturation.</p>
+    <p class="lede">The consequence is on the right. Vp falls off a cliff at low gas saturation and then
+      almost flattens. At the settings this module opens with, taking the gas saturation from zero to five
+      percent delivers about <b>87% of the entire velocity drop</b> that going all the way to 100% gas
+      would produce.</p>
+    <p class="lede">A seismic amplitude therefore cannot distinguish a commercial gas column from a few
+      percent of gas dissolved out of solution. That ambiguity has a name in the industry — <b>fizz
+      gas</b> — and it has been responsible for a great many dry holes drilled on convincing bright
+      spots. Nothing later in this set removes it.</p>
+    <p class="lede">One further detail is visible if the curve is followed all the way across. Vp reaches
+      a minimum partway along — near 32% gas at the settings this module opens with — and then rises
+      slightly toward full gas saturation, because the fluid modulus has stopped falling while the density
+      keeps falling.</p>
+
+    <div class="sec-row" id="row4">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Fluid modulus against gas saturation
+          <span class="note">with the straight-line density for comparison</span></p>
+        <canvas id="c4kf" aria-label="Bulk modulus of the brine and gas mixture plotted against gas saturation, alongside the mixture density"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Vp against gas saturation
+          <span class="note">and where it stops falling</span></p>
+        <canvas id="c4vp" aria-label="P-wave velocity plotted against gas saturation, showing a steep initial drop and a minimum"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Vp with no gas at all</span><b id="s4a">—</b></div>
+      <div class="stat"><span>Vp at 5% gas</span><b id="s4b">—</b></div>
+      <div class="stat"><span>Vp at 100% gas</span><b id="s4c">—</b></div>
+      <div class="stat key"><span>Share of the drop delivered by the first 5%</span><b id="s4d">—</b></div>
+      <div class="stat"><span>Saturation at which Vp is lowest</span><b id="s4e">—</b></div>
+      <div class="stat wide"><span>Vp at the saturation you set</span><b id="s4f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>This assumes the gas and brine are mixed evenly at a scale much smaller than the seismic
+        wavelength. Gas concentrated in patches behaves quite differently, and the Method tab covers
+        the difference.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 5 =============================== -->
+  <section class="tabpane" id="p5" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">5</span>Where the effect fades out</h3>
+      <span class="hint">Two conditions that shrink it</span>
+    </div>
+    <p class="lede">The size of the fluid effect is not a constant. Two things reduce it, and both are
+      ordinary conditions rather than edge cases.</p>
+    <p class="lede">Both panels plot the brine-minus-gas separation as a percentage of the brine
+      velocity rather than in metres per second, and the reason is worth stating. In absolute terms the
+      separation hardly changes with porosity at all — around 410 m/s in a 15% sand and 460 in a 35% one.
+      What changes is how large that is <em>compared with how fast the rock already is</em>, and a
+      reflection responds to a relative contrast rather than to an absolute velocity shift. A 400 m/s
+      difference on a 3500 m/s rock is a much weaker signal than the same 400 on a 2500 m/s rock.</p>
+    <p class="lede"><b>Low porosity.</b> A tight rock has little fluid to act through and a stiff frame
+      that dominates what fluid there is, while also being fast. The separation falls from about 18% of
+      the brine velocity at 35% porosity to about 11% at 15%.</p>
+    <p class="lede"><b>Depth.</b> Gas stiffens under pressure. At 5 MPa its bulk modulus is under a
+      hundredth of a gigapascal; by 50 MPa it is around twenty times that. A deep gas sand is elastically
+      less different from a brine sand than a shallow one, because the gas in it is less different from
+      brine. Here the separation falls from about 25% to about 13% across that pressure range, and this
+      trend is the stronger of the two.</p>
+    <p class="lede">Both point the same way. The rocks in which a fluid is easiest to detect are shallow,
+      young, porous and poorly consolidated — which is also where the frame is softest, so the fluid
+      carries a larger share of the rock's stiffness.</p>
+
+    <div class="sec-row" id="row5">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Brine minus gas, against porosity
+          <span class="note">at the pressure and temperature you set</span></p>
+        <canvas id="c5phi" aria-label="The difference in P-wave velocity between the brine-filled and gas-filled rock, plotted against porosity"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Brine minus gas, against pressure
+          <span class="note">at the porosity you set</span></p>
+        <canvas id="c5pres" aria-label="The difference in P-wave velocity between the brine-filled and gas-filled rock, plotted against pressure"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat key"><span>Vp difference, brine minus gas</span><b id="s5a">—</b></div>
+      <div class="stat"><span>As a fraction of the brine velocity</span><b id="s5b">—</b></div>
+      <div class="stat"><span>At 15% porosity</span><b id="s5c">—</b></div>
+      <div class="stat"><span>At 35% porosity</span><b id="s5d">—</b></div>
+      <div class="stat"><span>At 5 MPa → 50 MPa</span><b id="s5e">—</b></div>
+      <div class="stat wide"><span>Where a fluid is easiest to see</span><b id="s5f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The pressure axis here changes the gas and the frame together, which is what burial actually
+        does. Both effects push in the same direction.</span>
+    </div>
+  </section>
+
+  <!-- ============================ WHY IT MATTERS ========================== -->
+  <section class="tabpane" id="pw" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">W</span>Why it matters</h3>
+      <span class="hint">Where this calculation is used</span>
+    </div>
+    <p class="lede"><b>Fluid substitution.</b> A well is logged in whatever fluid it happened to
+      encounter. Gassmann's relation run in reverse strips that fluid out to recover the dry frame, and
+      run forwards puts a different one in. That is how a brine well is used to predict what the same
+      sand would look like with gas, and it is the standard first step of any amplitude study.</p>
+    <p class="lede"><b>Deciding whether a prospect is worth shooting for.</b> The panels in step 5 are, in
+      effect, a feasibility test. If the brine and gas cases differ by only a few tens of metres per
+      second, no amount of processing or analysis will separate them, and that is worth knowing before
+      the money is spent rather than after.</p>
+    <p class="lede"><b>Interpreting a bright spot.</b> Step 4 is the reason a bright amplitude is not a
+      volume. The saturation curve is nearly flat above a few percent gas, so amplitude alone constrains
+      the presence of gas far better than it constrains how much.</p>
+    <p class="lede"><b>Knowing which rocks to be careful with.</b> The assumption that a fluid leaves the
+      shear modulus alone is what the whole calculation rests on. In shales, in carbonates with complex
+      pore shapes, and where a fluid reacts chemically with the grains, it holds less well, and results
+      built on it deserve more doubt.</p>
+  </section>
+
+  <!-- ============================== EXERCISES ============================= -->
+  <section class="tabpane" id="pe" role="tabpanel" hidden>
+    <div class="tryit" style="max-width:none">
+      <h3>Exercises</h3>
+      <p class="lede" style="margin-top:-4px">Each answer is a number read off this page at the settings
+        described. <button type="button" class="btn ghost small" id="popEx">Open these in a separate
+        window</button></p>
+      <ol id="exList">
+        <li><b>Confirm that the fluid cannot touch the shear modulus.</b> At 30% porosity, no clay,
+          23 MPa and 64 °C, read the shear modulus in step 2 for all four cases, then read the shear
+          velocities in step 3.
+          <details class="reveal"><summary>Answer</summary><span class="ans">G is 4.579 GPa in every
+            case — dry, brine, oil and gas — because Gassmann's relation leaves it untouched by
+            construction. Vs is nevertheless different in each: 1571 m/s dry, 1456 with brine, 1477 with
+            oil, 1549 with gas. Every one of those differences is density. A shear wave in a gas sand is
+            faster than in a brine sand not because it noticed the gas but because there is less mass in
+            the pores to carry along.</span></details></li>
+
+        <li><b>Check that the shear change is density and nothing else.</b> Compare the ratio of the brine
+          and gas shear velocities with the square root of the inverse ratio of their densities.
+          <details class="reveal"><summary>Answer</summary><span class="ans">Vs goes from 1456 to
+            1549 m/s, a ratio of 1.064. The densities go from 2.160 to 1.908 g/cm³, and the square root of
+            2.160 divided by 1.908 is also 1.064. They agree to every digit the page displays, because Vs
+            is the square root of G over density and G did not move. This is the cleanest test in the set
+            of whether a change is a fluid effect or a frame effect.</span></details></li>
+
+        <li><b>Find out how little gas it takes.</b> With the standard settings, read Vp at zero gas
+          saturation, at 5%, and at 100%.
+          <details class="reveal"><summary>Answer</summary><span class="ans">About 2732, 2337 and
+            2280 m/s. Going from no gas to five percent gas covers roughly 87% of the drop that going to
+            a fully gas-filled rock produces. A seismic amplitude responds to that first five percent
+            almost as strongly as to a full column, and cannot tell the two apart. This is what makes a
+            bright spot a poor guide to how much gas is present, and it is not something a better
+            processing sequence fixes.</span></details></li>
+
+        <li><b>Follow the curve past its minimum.</b> Take the gas saturation slowly from 0 to 100% and
+          watch where Vp is lowest.
+          <details class="reveal"><summary>Answer</summary><span class="ans">Vp bottoms out near 32%
+            gas saturation at about 2214 m/s, then rises slightly to 2280 m/s at full gas. Two effects are
+            competing: the fluid modulus has essentially stopped falling by then, while the density keeps
+            falling as more brine is replaced. Below the minimum the modulus wins and Vp falls; above it
+            the density wins and Vp rises. A single Vp value in that range therefore corresponds to two
+            different saturations.</span></details></li>
+
+        <li><b>Find the conditions that weaken the fluid effect.</b> Read the separation at 15%
+          porosity and again at 35%, then take the pressure from 5 MPa to 50 MPa and read it again.
+          <details class="reveal"><summary>Answer</summary><span class="ans">Porosity moves it from about
+            11.5% of the brine velocity to about 18%. Pressure moves it further, from about 25% down to
+            about 13%. Note what the absolute numbers do while that happens: in metres per second the
+            porosity trend barely exists, running 408 to 462 m/s, because a tight rock is also a fast
+            rock. The relative separation is the one that matters, because a reflection is set by a
+            contrast in impedance rather than by a difference in velocity. A tight, deep sand can hold a
+            full gas column and still produce a weak enough contrast to be missed, which is worth knowing
+            before a survey is designed rather than after a well is drilled.</span></details></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================== KEY POINTS ============================ -->
+  <section class="tabpane" id="pk" role="tabpanel" hidden>
+    <div class="takeaway" style="max-width:none">
+      <h3>Key points</h3>
+      <ul>
+        <li><b>A fluid has a bulk modulus and no shear modulus.</b> That is what a fluid is, and it is the
+          entire reason a pore fluid is visible to seismic data.</li>
+        <li><b>The three pore fluids are very far apart in stiffness.</b> Brine is around 2.7 GPa, oil
+          about half of that, and gas around 0.05 — roughly fifty times softer than brine.</li>
+        <li><b>Gassmann's relation puts a fluid into a dry frame.</b> The saturated bulk modulus rises;
+          the shear modulus is left exactly unchanged.</li>
+        <li><b>So Vp responds to the fluid and Vs responds only to its mass.</b> A gas sand has a higher
+          Vs than a brine sand because gas is lighter, not because the shear wave detects gas.</li>
+        <li><b>The saturation curve is not a straight line.</b> The first few percent of gas softens the
+          pore fluid almost as much as filling it entirely, so about 87% of the velocity drop arrives in
+          the first 5% of saturation.</li>
+        <li><b>That is the fizz-gas problem.</b> A seismic amplitude cannot separate a commercial gas
+          column from a trace of gas, and nothing later in this set removes the ambiguity.</li>
+        <li><b>Vp has a minimum partway along the saturation curve</b>, because the fluid modulus stops
+          falling while the density carries on falling. Two saturations can give the same Vp.</li>
+        <li><b>The effect shrinks in tight rock and at depth.</b> Relative to how fast the rock already
+          is, the brine-gas separation falls from about 18% at 35% porosity to 11% at 15%, and from about
+          25% at 5 MPa to 13% at 50 MPa. What counts is the relative contrast, not the shift in metres per
+          second, which barely moves with porosity at all.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================ METHOD ============================== -->
+  <section class="tabpane" id="pm" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">M</span>Method, simplifications and references</h3>
+      <span class="hint">What is computed, and what it assumes</span>
+    </div>
+
+    <p class="lede"><b>Fluid properties</b> are the Batzle-Wang equations rather than three constants,
+      because the whole subject of this module is that fluid properties move. Brine is at 35 000 ppm
+      salinity, oil is 32° API with no dissolved gas, and gas has a specific gravity of 0.65. Each is
+      evaluated at the pressure and temperature on screen.</p>
+
+    <p class="lede"><b>The dry frame</b> is the module 01 soft-sand model: Hertz-Mindlin at a critical
+      porosity of 40% with nine contacts per grain, then a modified Hashin-Shtrikman lower bound. The
+      pressure control moves the frame and the fluids together, which is what burial does.</p>
+
+    <p class="lede"><b>Gassmann's relation</b> is used exactly as published, with the shear modulus of the
+      saturated rock set equal to that of the dry frame. Everything in this module rests on that
+      equality, so it is worth knowing what it assumes: the pore space is fully connected, the rock is
+      isotropic and homogeneous at the scale of the measurement, the fluid does not react with the grains,
+      and — most importantly — the wave is slow enough that pore pressure equalizes throughout the rock
+      during each cycle. Seismic frequencies generally satisfy that last condition; laboratory ultrasonic
+      measurements and sonic logs often do not, which is why a log-derived velocity and a
+      Gassmann-predicted one need not agree.</p>
+
+    <p class="lede"><b>The mixture in step 4</b> is a Reuss average of brine and gas, which assumes the
+      two are mixed evenly at a scale far smaller than the wavelength. That is the standard assumption and
+      it produces the steep curve shown. Gas concentrated in patches larger than the diffusion length
+      behaves closer to a Voigt average, which is nearly a straight line, and real rocks fall somewhere
+      between. Brie's equation is the usual empirical way of expressing that middle ground. The choice
+      matters: the patchy case would make a bright amplitude a much better guide to saturation than the
+      uniform case allows.</p>
+
+    <p class="lede"><b>Deferred or absent:</b></p>
+    <ul class="lede" style="padding-left:20px">
+      <li><b>Oil is dead oil.</b> A live oil with dissolved gas is markedly softer and sits closer to the
+        gas case than the panels here suggest.</li>
+      <li><b>Attenuation and dispersion</b> are absent. Both are real consequences of pore fluid
+        movement and neither is modeled.</li>
+      <li><b>Patchy saturation, anisotropy and pressure-dependent fluid effects on the frame itself</b>
+        are all left out.</li>
+      <li><b>Nothing here is a reflection yet.</b> These are rock properties; turning two of them into an
+        amplitude is module 03 onward.</li>
+    </ul>
+
+    <details class="reveal" style="margin-top:8px">
+      <summary>References</summary>
+      <ul style="padding-left:18px;margin-top:8px">
+        <li>Gassmann, F., 1951, Über die Elastizität poröser Medien: <em>Vierteljahrsschrift der
+          Naturforschenden Gesellschaft in Zürich</em>, 96, 1–23.</li>
+        <li>Batzle, M., and Wang, Z., 1992, Seismic properties of pore fluids: <em>Geophysics</em>, 57,
+          1396–1408. — the fluid equations used here.</li>
+        <li>Mavko, G., Mukerji, T., and Dvorkin, J., 2020, <em>The Rock Physics Handbook</em>, 3rd ed.:
+          Cambridge University Press.</li>
+        <li>Smith, T. M., Sondergeld, C. H., and Rai, C. S., 2003, Gassmann fluid substitution: a
+          tutorial: <em>Geophysics</em>, 68, 430–440.</li>
+        <li>Han, D., and Batzle, M. L., 2004, Gassmann's equation and fluid-saturation effects on seismic
+          velocities: <em>Geophysics</em>, 69, 398–405.</li>
+        <li>Brie, A., Pampuri, F., Marsala, A. F., and Meazza, O., 1995, Shear sonic interpretation in
+          gas-bearing sands: SPE 30595. — the patchy-to-uniform mixing curve.</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="nextup" id="nextup" hidden>
+    <p class="eyebrow">Next up</p>
+    <h3>03 · From a rock to a trace</h3>
+    <p>Modules 01 and 02 built a rock and put a fluid in it. Module 03 follows it the rest of the way:
+      two rocks meeting at a boundary, a reflection coefficient, a wavelet, and the trace that comes out.</p>
+    <a class="btn ghost" href="rock-to-trace.html">Go to module 03 →</a>
+  </section>
+
+  <div class="pager" id="pager" hidden>
+    <a class="btn ghost" href="rocks-and-stiffness.html">← 01 · Rocks, pores and stiffness</a>
+    <a class="btn ghost" href="rock-to-trace.html">03 · From a rock to a trace →</a>
+  </div>
+
+  <footer>
+    <div class="foot-grid">
+      <p>Built for teaching by Dr. Heather Bedle and Dr. April Moreno-Ward, School of Geosciences,
+        University of Oklahoma, with the <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a>
+        consortium.</p>
+      <p class="lic">Licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+        Free to use, adapt and redistribute, including in teaching, provided the source is credited and
+        anything derived from it carries the same license.</p>
+      <p class="lic">Nothing you do in this module leaves your browser. The only thing recorded is that
+        the page was opened — no cookie, no account, nothing about you.</p>
+      <p class="lic">To cite: H. Bedle and A. Moreno-Ward, <i>How AVO Actually Works</i>, University of
+        Oklahoma. <span class="k">SSRN: [article link to follow]</span></p>
+    </div>
+  </footer>
+</div>
+
+<script src="../assets/count.js"></script>
+<script src="../assets/seismic.js"></script>
+<script src="../assets/rockphysics.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const missing = [];
+  if (typeof SEIS === 'undefined') missing.push('assets/seismic.js');
+  if (typeof ROCK === 'undefined') missing.push('assets/rockphysics.js');
+  if (missing.length) {
+    const el = document.createElement('div');
+    el.setAttribute('style', 'background:#841617;color:#fff;padding:14px 18px;margin:16px 0;' +
+      'font:13px/1.6 ui-monospace,Menlo,monospace');
+    el.textContent = 'This module could not load ' + missing.join(' and ') +
+      '. It expects them one directory up, at ../assets/, and file names are ' +
+      'case-sensitive on GitHub Pages.';
+    const w = document.querySelector('.wrap');
+    (w || document.body).insertBefore(el, w ? w.firstChild : null);
+    return;
+  }
+
+  const $ = (id) => document.getElementById(id);
+  const visible = (id) => { const el = $(id); return el && !el.hidden; };
+  const CRIM = '#841617', TEAL = '#0B7285', SLATE = '#5C6670', INK = '#16191C';
+  const OLIVE = '#6B7A2E', ORANGE = '#B5451B';
+
+  const DEF = { phi: 30, vcl: 0, pres: 23, temp: 64, sg: 100, tab: 'p1' };
+  const S = SEIS.readState(DEF);
+  (function sanitize() {
+    const num = (k, lo, hi, step) => {
+      let v = Number(S[k]);
+      if (!isFinite(v)) v = DEF[k];
+      v = Math.min(hi, Math.max(lo, v));
+      S[k] = step ? Math.round(v / step) * step : v;
+    };
+    num('phi', 15, 35, 1); num('vcl', 0, 40, 1);
+    num('pres', 5, 50, 1); num('temp', 20, 120, 1); num('sg', 0, 100, 1);
+  })();
+  const saveState = () => SEIS.writeState(S, DEF);
+
+  /* =====================================================================
+     THE MODEL
+
+     The dry frame is module 01's. The fluids are Batzle-Wang at the pressure
+     and temperature on screen. Gassmann joins the two, and leaves the shear
+     modulus alone — which is the assumption the whole module rests on and
+     the thing step 2 is built to show.
+     ===================================================================== */
+
+  const SALINITY = 0.035, API = 32, GOR = 0, GAS_GRAV = 0.65;
+  const PHI_LO = 0.15, PHI_HI = 0.35;
+  const P_LO = 5, P_HI = 50;
+
+  function fluidsAt(P, T) {
+    return ROCK.fluidProps({ T: T, P: P, S: SALINITY, api: API, gor: GOR,
+      gasGrav: GAS_GRAV });
+  }
+  function frameAt(phi, vClay, P) {
+    const min = ROCK.mineralMix(vClay);
+    const fr = ROCK.softSand(min, phi, { P: P });
+    return { min: min, K: fr.K, G: fr.G, rhoSolid: (1 - phi) * min.rho };
+  }
+  /* Saturate a frame with a fluid of bulk modulus Kfl and density rhoFl. */
+  function saturate(fr, phi, Kfl, rhoFl) {
+    const Ksat = ROCK.gassmann(fr.K, fr.min.K, Kfl, phi);
+    const rho = fr.rhoSolid + phi * rhoFl;
+    return ROCK.elastic(Ksat, fr.G, rho);
+  }
+  function mixKfl(fl, sg) {
+    return ROCK.mixReuss([
+      { K: fl.brine.K, rho: fl.brine.rho, s: 1 - sg },
+      { K: fl.gas.K, rho: fl.gas.rho, s: sg, isGas: true },
+    ]);
+  }
+
+  const D = {};
+
+  function recompute() {
+    D.phi = S.phi / 100;
+    D.vcl = S.vcl / 100;
+    D.sg = S.sg / 100;
+
+    D.fl = fluidsAt(S.pres, S.temp);
+    D.fr = frameAt(D.phi, D.vcl, S.pres);
+
+    // the four cases: empty pores, then each fluid on its own
+    D.dry = ROCK.elastic(D.fr.K, D.fr.G, D.fr.rhoSolid);
+    D.brine = saturate(D.fr, D.phi, D.fl.brine.K, D.fl.brine.rho);
+    D.oil = saturate(D.fr, D.phi, D.fl.oil.K, D.fl.oil.rho);
+    D.gas = saturate(D.fr, D.phi, D.fl.gas.K, D.fl.gas.rho);
+
+    D.softerBy = D.fl.brine.K / D.fl.gas.K;
+    // the shear change that the density alone accounts for
+    D.vsFromRho = Math.sqrt(D.brine.rho / D.gas.rho);
+    D.vsRatio = D.gas.vs / D.brine.vs;
+
+    // step 1 panel 2: the fluids against pressure
+    D.pAx = []; D.KbrineP = []; D.KoilP = []; D.KgasP = [];
+    for (let i = 0; i <= 60; i++) {
+      const P = P_LO + (P_HI - P_LO) * (i / 60);
+      const f = fluidsAt(P, S.temp);
+      D.pAx.push(P);
+      D.KbrineP.push(f.brine.K); D.KoilP.push(f.oil.K); D.KgasP.push(f.gas.K);
+    }
+
+    // step 4: the saturation curves
+    D.sgAx = []; D.KflSg = []; D.rhoFlSg = []; D.VpSg = [];
+    let lowest = Infinity, lowestAt = 0;
+    for (let i = 0; i <= 200; i++) {
+      const sg = i / 200;
+      const m = mixKfl(D.fl, sg);
+      const e = saturate(D.fr, D.phi, m.K, m.rho);
+      D.sgAx.push(sg * 100);
+      D.KflSg.push(m.K); D.rhoFlSg.push(m.rho); D.VpSg.push(e.vp);
+      if (e.vp < lowest) { lowest = e.vp; lowestAt = sg * 100; }
+    }
+    D.vpMin = lowest; D.vpMinAt = lowestAt;
+    const m0 = mixKfl(D.fl, 0), m5 = mixKfl(D.fl, 0.05), m100 = mixKfl(D.fl, 1);
+    D.vp0 = saturate(D.fr, D.phi, m0.K, m0.rho).vp;
+    D.vp5 = saturate(D.fr, D.phi, m5.K, m5.rho).vp;
+    D.vp100 = saturate(D.fr, D.phi, m100.K, m100.rho).vp;
+    D.share5 = (D.vp0 - D.vp100) !== 0
+      ? (D.vp0 - D.vp5) / (D.vp0 - D.vp100) * 100 : 0;
+    const mNow = mixKfl(D.fl, D.sg);
+    D.now = saturate(D.fr, D.phi, mNow.K, mNow.rho);
+
+    // step 5: how the brine-gas separation varies
+    D.dVp = D.brine.vp - D.gas.vp;
+    /* Plotted as a fraction of the brine velocity rather than in m/s. In
+       absolute terms the separation hardly moves with porosity at all; what
+       falls in a tight rock is the separation relative to how fast the rock
+       already is, and a reflection responds to a relative contrast. */
+    const dAt = (phi, P) => {
+      const f = fluidsAt(P, S.temp), fr = frameAt(phi, D.vcl, P);
+      const b = saturate(fr, phi, f.brine.K, f.brine.rho).vp;
+      const g = saturate(fr, phi, f.gas.K, f.gas.rho).vp;
+      return { abs: b - g, pct: (b - g) / b * 100 };
+    };
+    D.pct = D.dVp / D.brine.vp * 100;
+    D.phiAx = []; D.dPctPhi = []; D.dAbsPhi = [];
+    for (let i = 0; i <= 60; i++) {
+      const p = PHI_LO + (PHI_HI - PHI_LO) * (i / 60);
+      const r = dAt(p, S.pres);
+      D.phiAx.push(p * 100); D.dPctPhi.push(r.pct); D.dAbsPhi.push(r.abs);
+    }
+    D.dPctPres = []; D.dAbsPres = [];
+    for (let i = 0; i <= 60; i++) {
+      const P = P_LO + (P_HI - P_LO) * (i / 60);
+      const r = dAt(D.phi, P);
+      D.dPctPres.push(r.pct); D.dAbsPres.push(r.abs);
+    }
+    D.loPhi = dAt(PHI_LO, S.pres);
+    D.hiPhi = dAt(PHI_HI, S.pres);
+    D.loP = dAt(D.phi, P_LO);
+    D.hiP = dAt(D.phi, P_HI);
+  }
+
+  /* =====================================================================
+     DRAWING
+     ===================================================================== */
+
+  const M = { l: 62, r: 16, t: 14, b: 40 };
+
+  function pw(el) {
+    const par = el && el.parentElement;
+    if (!par) return 900;
+    const cs = (typeof window.getComputedStyle === 'function')
+      ? window.getComputedStyle(par) : { paddingLeft: '0', paddingRight: '0' };
+    const inner = par.clientWidth
+      - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    return Math.max(200, Math.floor(inner || 900));
+  }
+  function rowWidth(rowId, n) {
+    const row = $(rowId);
+    const total = row ? pw(row.firstElementChild || row) : 800;
+    const narrow = (window.innerWidth || 1200) <= 700;
+    const w = narrow ? Math.max(240, total)
+                     : Math.max(150, Math.floor((total - 10 * (n - 1)) / n));
+    if (row) {
+      row.querySelectorAll(':scope > .panel-col').forEach((el) => {
+        el.style.width = w + 'px'; el.style.maxWidth = w + 'px';
+      });
+    }
+    return w;
+  }
+
+  const LEG_FONT = '11px "IBM Plex Sans", sans-serif';
+  function fitLabel(ctx, t, maxW) {
+    if (ctx.measureText(t).width <= maxW) return t;
+    let out = t;
+    while (out.length > 4 && ctx.measureText(out + '\u2026').width > maxW) {
+      out = out.slice(0, -1);
+    }
+    return out.replace(/[ ,]+$/, '') + '\u2026';
+  }
+  function legendLines(ctx, items, maxW) {
+    ctx.save(); ctx.font = LEG_FONT;
+    let lines = 1, x = 0;
+    for (const [, t0] of items) {
+      const t = fitLabel(ctx, t0, maxW - 41);
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > 0 && x + iw > maxW) { lines++; x = 0; }
+      x += iw;
+    }
+    ctx.restore();
+    return lines;
+  }
+  function panel(id, W, plotH, items) {
+    const el = $(id);
+    let ctx = SEIS.fitCanvas(el, W, M.t + plotH + M.b);
+    const lines = items && items.length ? legendLines(ctx, items, W - M.l - M.r) : 0;
+    const H = M.t + plotH + M.b + (lines ? 12 + lines * 16 : 0);
+    ctx = SEIS.fitCanvas(el, W, H);
+    ctx.clearRect(0, 0, W, H);
+    return { ctx, R: { x: M.l, y: M.t, w: W - M.l - M.r, h: plotH } };
+  }
+  function legendRow(ctx, R, items) {
+    ctx.save();
+    ctx.font = LEG_FONT; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    let x = R.x, y = R.y + R.h + 46;
+    for (const [c, t0, kind] of items) {
+      const t = fitLabel(ctx, t0, R.w - 41);
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > R.x && x + iw > R.x + R.w) { x = R.x; y += 16; }
+      if (kind === 'dot') {
+        ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x + 9, y, 4, 0, 7); ctx.fill();
+      } else {
+        ctx.strokeStyle = c; ctx.lineWidth = 2;
+        ctx.setLineDash(kind === 'dash' ? [5, 4] : []);
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 18, y); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      ctx.fillStyle = SLATE; ctx.fillText(t, x + 23, y);
+      x += iw;
+    }
+    ctx.restore();
+  }
+  function curve(ctx, R, xs, ys, xr, yr, color, width, dash) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    if (dash) ctx.setLineDash(dash);
+    ctx.strokeStyle = color; ctx.lineWidth = width || 2;
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < xs.length; i++) {
+      if (!isFinite(ys[i]) || !isFinite(xs[i])) { started = false; continue; }
+      const x = R.x + ((xs[i] - xr[0]) / (xr[1] - xr[0])) * R.w;
+      const y = R.y + R.h - ((ys[i] - yr[0]) / (yr[1] - yr[0])) * R.h;
+      started ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      started = true;
+    }
+    ctx.stroke(); ctx.restore();
+  }
+  function dot(ctx, R, xv, yv, xr, yr, color) {
+    if (!isFinite(xv) || !isFinite(yv)) return;
+    const x = R.x + ((xv - xr[0]) / (xr[1] - xr[0])) * R.w;
+    const y = R.y + R.h - ((yv - yr[0]) / (yr[1] - yr[0])) * R.h;
+    ctx.save(); ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(x, y, 4.5, 0, 7); ctx.fill(); ctx.restore();
+  }
+
+  /* A labeled group of bars sharing one axis. Values are written above each
+     bar because several of these charts have a bar too short to read. */
+  function barChart(ctx, R, items, top, fmt, axisTitle) {
+    ctx.save(); ctx.fillStyle = '#FBFAF7';
+    ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    SEIS.axisLeft(ctx, R, 0, top, axisTitle, fmt, { flip: true, grid: true });
+    const slot = R.w / items.length;
+    const bw = Math.min(46, slot * 0.46);
+    items.forEach(([name, v, col], k) => {
+      const x = R.x + slot * k + (slot - bw) / 2;
+      const h = Math.max(0, (v / top) * R.h);
+      ctx.save(); ctx.fillStyle = col;
+      ctx.fillRect(x, R.y + R.h - h, bw, h); ctx.restore();
+      ctx.save(); ctx.font = '10px "IBM Plex Mono", monospace';
+      const vLab = fitLabel(ctx, fmt(v), slot - 6);
+      const nLab = fitLabel(ctx, name, slot - 6);
+      const vW = ctx.measureText(vLab).width + 8;
+      const nW = ctx.measureText(nLab).width + 8;
+      ctx.restore();
+      /* The gas bar is close to zero height on purpose, so its value label
+         would land on top of its name label. Hold the value clear of the name
+         row: the number floating above an invisible bar is the honest reading
+         of that case. */
+      const vy = Math.min(R.y + R.h - h - 11, R.y + R.h - 34);
+      SEIS.tag(ctx, x + bw / 2 - vW / 2, vy, vLab, col);
+      SEIS.tag(ctx, x + bw / 2 - nW / 2, R.y + R.h - 10, nLab, SLATE);
+    });
+    SEIS.frame(ctx, R);
+  }
+
+  /* --------------------------------- header --------------------------- */
+  function drawHeader() {
+    const el = $('cHead'); if (!el) return;
+    const W = pw(el), PH = 206;
+    const LEGH = [[SLATE, 'empty pores', 'dot'], [TEAL, 'brine', 'dot'],
+      [OLIVE, 'oil', 'dot'], [CRIM, 'gas', 'dot']];
+    let ctx = SEIS.fitCanvas(el, W, M.t + PH + M.b);
+    const lines = legendLines(ctx, LEGH, W - M.l - M.r);
+    const H = M.t + PH + M.b + 12 + lines * 16;
+    ctx = SEIS.fitCanvas(el, W, H);
+    ctx.clearRect(0, 0, W, H);
+
+    const gap = 26;
+    const halfW = Math.max(90, Math.floor((W - M.l - M.r - gap) / 2));
+    const RA = { x: M.l, y: M.t, w: halfW, h: PH };
+    const RB = { x: M.l + halfW + gap, y: M.t, w: halfW, h: PH };
+
+    const vpTop = Math.max(D.dry.vp, D.brine.vp, D.oil.vp, D.gas.vp) * 1.22;
+    barChart(ctx, RA, [['dry', D.dry.vp, SLATE], ['brine', D.brine.vp, TEAL],
+      ['oil', D.oil.vp, OLIVE], ['gas', D.gas.vp, CRIM]],
+      vpTop, (v) => String(Math.round(v)), 'Vp (m/s)');
+    const vsTop = Math.max(D.dry.vs, D.brine.vs, D.oil.vs, D.gas.vs) * 1.22;
+    barChart(ctx, RB, [['dry', D.dry.vs, SLATE], ['brine', D.brine.vs, TEAL],
+      ['oil', D.oil.vs, OLIVE], ['gas', D.gas.vs, CRIM]],
+      vsTop, (v) => String(Math.round(v)), 'Vs (m/s)');
+
+    ctx.save();
+    ctx.font = '10px "IBM Plex Sans", sans-serif';
+    ctx.fillStyle = SLATE; ctx.textAlign = 'center';
+    ctx.fillText(fitLabel(ctx, 'the fluid moves Vp a long way', halfW - 4),
+      RA.x + RA.w / 2, RA.y + RA.h + 30);
+    ctx.fillText(fitLabel(ctx, 'and moves Vs only through density', halfW - 4),
+      RB.x + RB.w / 2, RB.y + RB.h + 30);
+    ctx.restore();
+    legendRow(ctx, { x: M.l, y: M.t, w: W - M.l - M.r, h: PH }, LEGH);
+  }
+
+  /* --------------------------------- step 1 --------------------------- */
+  function drawStep1() {
+    const W = rowWidth('row1', 2);
+
+    const LEG1 = [[TEAL, 'brine', 'dot'], [OLIVE, 'oil', 'dot'], [CRIM, 'gas', 'dot'],
+      [SLATE, 'the mineral grains', 'dot']];
+    const P1 = panel('c1k', W, 246, LEG1);
+    const ctx = P1.ctx, R = P1.R;
+    barChart(ctx, R, [['brine', D.fl.brine.K, TEAL], ['oil', D.fl.oil.K, OLIVE],
+      ['gas', D.fl.gas.K, CRIM], ['grains', D.fr.min.K, SLATE]],
+      D.fr.min.K * 1.24, (v) => v.toFixed(2), 'bulk modulus (GPa)');
+    legendRow(ctx, R, LEG1);
+
+    const LEG1b = [[TEAL, 'brine'], [OLIVE, 'oil'], [CRIM, 'gas'],
+      [SLATE, 'your pressure', 'dash']];
+    const P1b = panel('c1p', W, 246, LEG1b);
+    const ctx2 = P1b.ctx, R2 = P1b.R;
+    const xr = [P_LO, P_HI];
+    const yr = [0, Math.max(...D.KbrineP) * 1.15];
+    ctx2.save(); ctx2.fillStyle = '#FBFAF7';
+    ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
+    SEIS.axisLeft(ctx2, R2, yr[0], yr[1], 'bulk modulus (GPa)',
+      (v) => v.toFixed(1), { flip: true, grid: true });
+    SEIS.axisBottom(ctx2, R2, xr[0], xr[1], 'pressure (MPa)',
+      (v) => String(Math.round(v)));
+    curve(ctx2, R2, D.pAx, D.KbrineP, xr, yr, TEAL, 2.6);
+    curve(ctx2, R2, D.pAx, D.KoilP, xr, yr, OLIVE, 2.6);
+    curve(ctx2, R2, D.pAx, D.KgasP, xr, yr, CRIM, 2.6);
+    const xP = R2.x + ((S.pres - xr[0]) / (xr[1] - xr[0])) * R2.w;
+    SEIS.dashedLine(ctx2, xP, R2.y, xP, R2.y + R2.h, SLATE, [5, 4], 1.3);
+    SEIS.frame(ctx2, R2);
+    legendRow(ctx2, R2, LEG1b);
+
+    set('s1a', D.fl.brine.K.toFixed(3) + ' GPa');
+    set('s1b', D.fl.oil.K.toFixed(3) + ' GPa');
+    set('s1c', D.fl.gas.K.toFixed(4) + ' GPa');
+    set('s1d', D.softerBy.toFixed(0) + '\u00d7');
+    set('s1e', D.fl.brine.rho.toFixed(3) + ' / ' + D.fl.oil.rho.toFixed(3) +
+      ' / ' + D.fl.gas.rho.toFixed(3) + ' g/cm\u00b3');
+    set('s1f', 'zero \u2014 a fluid offers no resistance to a change in shape');
+  }
+
+  /* --------------------------------- step 2 --------------------------- */
+  function drawStep2() {
+    const W = rowWidth('row2', 2);
+    const LEG2 = [[SLATE, 'empty pores', 'dot'], [TEAL, 'brine', 'dot'],
+      [OLIVE, 'oil', 'dot'], [CRIM, 'gas', 'dot']];
+
+    const P2 = panel('c2k', W, 246, LEG2);
+    const kTop = Math.max(D.dry.K, D.brine.K, D.oil.K, D.gas.K) * 1.26;
+    barChart(P2.ctx, P2.R, [['dry', D.dry.K, SLATE], ['brine', D.brine.K, TEAL],
+      ['oil', D.oil.K, OLIVE], ['gas', D.gas.K, CRIM]],
+      kTop, (v) => v.toFixed(2), 'bulk modulus K (GPa)');
+    legendRow(P2.ctx, P2.R, LEG2);
+
+    const P2b = panel('c2g', W, 246, LEG2);
+    barChart(P2b.ctx, P2b.R, [['dry', D.dry.G, SLATE], ['brine', D.brine.G, TEAL],
+      ['oil', D.oil.G, OLIVE], ['gas', D.gas.G, CRIM]],
+      D.fr.G * 1.5, (v) => v.toFixed(3), 'shear modulus G (GPa)');
+    legendRow(P2b.ctx, P2b.R, LEG2);
+
+    set('s2a', D.dry.K.toFixed(3) + ' GPa');
+    set('s2b', D.brine.K.toFixed(3) + ' GPa');
+    set('s2c', D.oil.K.toFixed(3) + ' GPa');
+    set('s2d', D.gas.K.toFixed(3) + ' GPa');
+    set('s2e', D.fr.G.toFixed(3) + ' GPa in every case');
+    set('s2f', 'the collapse of the pore space, which a shear does not cause');
+  }
+
+  /* --------------------------------- step 3 --------------------------- */
+  function drawStep3() {
+    const W = rowWidth('row3', 2);
+    const LEG3 = [[SLATE, 'empty pores', 'dot'], [TEAL, 'brine', 'dot'],
+      [OLIVE, 'oil', 'dot'], [CRIM, 'gas', 'dot']];
+
+    const P3 = panel('c3vel', W, 246, LEG3);
+    const ctx = P3.ctx, R = P3.R;
+    // Vp and Vs share m/s, so they share one axis and sit as two groups
+    const top = Math.max(D.dry.vp, D.brine.vp, D.oil.vp, D.gas.vp) * 1.24;
+    ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    SEIS.axisLeft(ctx, R, 0, top, 'velocity (m/s)',
+      (v) => String(Math.round(v)), { flip: true, grid: true });
+    const cases = [['dry', D.dry, SLATE], ['brine', D.brine, TEAL],
+      ['oil', D.oil, OLIVE], ['gas', D.gas, CRIM]];
+    const groupW = R.w / 2, bw = Math.min(24, groupW / 5.4);
+    [['Vp', 'vp'], ['Vs', 'vs']].forEach(([gname, key], g) => {
+      cases.forEach(([, e, col], k) => {
+        const x = R.x + groupW * g + groupW * 0.12 + k * (bw + 5);
+        const h = (e[key] / top) * R.h;
+        ctx.save(); ctx.fillStyle = col;
+        ctx.fillRect(x, R.y + R.h - h, bw, h); ctx.restore();
+      });
+      const gx = R.x + groupW * g + groupW * 0.12;
+      SEIS.tag(ctx, gx, R.y + R.h - 10, gname, INK);
+    });
+    SEIS.frame(ctx, R);
+    legendRow(ctx, R, LEG3);
+
+    const P3b = panel('c3rho', W, 246, LEG3);
+    const ctx2 = P3b.ctx, R2 = P3b.R;
+    const rhoTop = Math.max(D.dry.rho, D.brine.rho) * 1.30;
+    ctx2.save(); ctx2.fillStyle = '#FBFAF7';
+    ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
+    SEIS.axisLeft(ctx2, R2, 0, rhoTop, 'density (g/cm\u00b3) and Vp/Vs',
+      (v) => v.toFixed(1), { flip: true, grid: true });
+    const gW = R2.w / 2, bw2 = Math.min(24, gW / 5.4);
+    [['density', 'rho'], ['Vp/Vs', 'vpvs']].forEach(([gname, key], g) => {
+      cases.forEach(([, e, col], k) => {
+        const x = R2.x + gW * g + gW * 0.12 + k * (bw2 + 5);
+        const h = (e[key] / rhoTop) * R2.h;
+        ctx2.save(); ctx2.fillStyle = col;
+        ctx2.fillRect(x, R2.y + R2.h - h, bw2, h); ctx2.restore();
+      });
+      SEIS.tag(ctx2, R2.x + gW * g + gW * 0.12, R2.y + R2.h - 10, gname, INK);
+    });
+    SEIS.frame(ctx2, R2);
+    legendRow(ctx2, R2, LEG3);
+
+    set('s3a', Math.round(D.brine.vp) + ' \u2192 ' + Math.round(D.gas.vp) + ' m/s');
+    set('s3b', Math.round(D.brine.vs) + ' \u2192 ' + Math.round(D.gas.vs) + ' m/s');
+    set('s3c', D.brine.rho.toFixed(3) + ' \u2192 ' + D.gas.rho.toFixed(3) + ' g/cm\u00b3');
+    set('s3d', D.brine.vpvs.toFixed(3) + ' \u2192 ' + D.gas.vpvs.toFixed(3));
+    set('s3e', '\u00d7' + D.vsFromRho.toFixed(4) + ', against \u00d7' +
+      D.vsRatio.toFixed(4) + ' observed');
+    set('s3f', 'less mass in the pores, with the shear stiffness unchanged');
+  }
+
+  /* --------------------------------- step 4 --------------------------- */
+  function drawStep4() {
+    const W = rowWidth('row4', 2);
+    const xr = [0, 100];
+
+    const LEG4 = [[CRIM, 'fluid bulk modulus'], [TEAL, 'fluid density'],
+      [SLATE, 'your saturation', 'dash']];
+    const P4 = panel('c4kf', W, 246, LEG4);
+    const ctx = P4.ctx, R = P4.R;
+    const yr = [0, Math.max(...D.KflSg) * 1.15];
+    ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'fluid bulk modulus (GPa)',
+      (v) => v.toFixed(1), { flip: true, grid: true });
+    SEIS.axisBottom(ctx, R, xr[0], xr[1], 'gas saturation (%)',
+      (v) => String(Math.round(v)));
+    // density on the same panel, rescaled onto the same axis for shape only
+    const rhoScaled = D.rhoFlSg.map((r) => r / D.rhoFlSg[0] * yr[1] * 0.86);
+    curve(ctx, R, D.sgAx, rhoScaled, xr, yr, TEAL, 2.2, [6, 4]);
+    curve(ctx, R, D.sgAx, D.KflSg, xr, yr, CRIM, 2.8);
+    const xS = R.x + (S.sg / 100) * R.w;
+    SEIS.dashedLine(ctx, xS, R.y, xS, R.y + R.h, SLATE, [5, 4], 1.3);
+    SEIS.frame(ctx, R);
+    legendRow(ctx, R, LEG4);
+
+    const LEG4b = [[TEAL, 'Vp'], [ORANGE, 'where Vp is lowest', 'dash'],
+      [SLATE, 'your saturation', 'dash']];
+    const P4b = panel('c4vp', W, 246, LEG4b);
+    const ctx2 = P4b.ctx, R2 = P4b.R;
+    const lo = Math.min(...D.VpSg), hi = Math.max(...D.VpSg);
+    const pad = Math.max(20, (hi - lo) * 0.18);
+    const yr2 = [lo - pad, hi + pad];
+    ctx2.save(); ctx2.fillStyle = '#FBFAF7';
+    ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
+    SEIS.axisLeft(ctx2, R2, yr2[0], yr2[1], 'Vp (m/s)',
+      (v) => String(Math.round(v)), { flip: true, grid: true });
+    SEIS.axisBottom(ctx2, R2, xr[0], xr[1], 'gas saturation (%)',
+      (v) => String(Math.round(v)));
+    curve(ctx2, R2, D.sgAx, D.VpSg, xr, yr2, TEAL, 2.8);
+    const xMin = R2.x + (D.vpMinAt / 100) * R2.w;
+    SEIS.dashedLine(ctx2, xMin, R2.y, xMin, R2.y + R2.h, ORANGE, [5, 4], 1.4);
+    const xS2 = R2.x + (S.sg / 100) * R2.w;
+    SEIS.dashedLine(ctx2, xS2, R2.y, xS2, R2.y + R2.h, SLATE, [5, 4], 1.3);
+    dot(ctx2, R2, S.sg, D.now.vp, xr, yr2, CRIM);
+    SEIS.frame(ctx2, R2);
+    legendRow(ctx2, R2, LEG4b);
+
+    set('s4a', Math.round(D.vp0) + ' m/s');
+    set('s4b', Math.round(D.vp5) + ' m/s');
+    set('s4c', Math.round(D.vp100) + ' m/s');
+    set('s4d', D.share5.toFixed(0) + '% of it');
+    set('s4e', D.vpMinAt.toFixed(0) + '%, at ' + Math.round(D.vpMin) + ' m/s');
+    set('s4f', S.sg + '% gas gives ' + Math.round(D.now.vp) + ' m/s');
+  }
+
+  /* --------------------------------- step 5 --------------------------- */
+  function drawStep5() {
+    const W = rowWidth('row5', 2);
+
+    const LEG5 = [[CRIM, 'brine minus gas, as a % of the brine Vp'],
+      [SLATE, 'your rock', 'dot']];
+    const P5 = panel('c5phi', W, 246, LEG5);
+    const ctx = P5.ctx, R = P5.R;
+    const xr = [PHI_LO * 100, PHI_HI * 100];
+    const yr = [0, Math.max(...D.dPctPhi, ...D.dPctPres) * 1.18];
+    ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'Vp separation (% of brine Vp)',
+      (v) => v.toFixed(0), { flip: true, grid: true });
+    SEIS.axisBottom(ctx, R, xr[0], xr[1], 'porosity (%)', (v) => String(Math.round(v)));
+    curve(ctx, R, D.phiAx, D.dPctPhi, xr, yr, CRIM, 2.8);
+    dot(ctx, R, S.phi, D.pct, xr, yr, SLATE);
+    SEIS.frame(ctx, R);
+    legendRow(ctx, R, LEG5);
+
+    const P5b = panel('c5pres', W, 246, LEG5);
+    const ctx2 = P5b.ctx, R2 = P5b.R;
+    const xr2 = [P_LO, P_HI];
+    const yr2 = yr;
+    ctx2.save(); ctx2.fillStyle = '#FBFAF7';
+    ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
+    SEIS.axisLeft(ctx2, R2, yr2[0], yr2[1], 'Vp separation (% of brine Vp)',
+      (v) => v.toFixed(0), { flip: true, grid: true });
+    SEIS.axisBottom(ctx2, R2, xr2[0], xr2[1], 'pressure (MPa)',
+      (v) => String(Math.round(v)));
+    curve(ctx2, R2, D.pAx, D.dPctPres, xr2, yr2, CRIM, 2.8);
+    dot(ctx2, R2, S.pres, D.pct, xr2, yr2, SLATE);
+    SEIS.frame(ctx2, R2);
+    legendRow(ctx2, R2, LEG5);
+
+    set('s5a', Math.round(D.dVp) + ' m/s');
+    set('s5b', D.pct.toFixed(1) + '% of the brine velocity');
+    set('s5c', D.loPhi.pct.toFixed(1) + '%  (' + Math.round(D.loPhi.abs) + ' m/s)');
+    set('s5d', D.hiPhi.pct.toFixed(1) + '%  (' + Math.round(D.hiPhi.abs) + ' m/s)');
+    set('s5e', D.loP.pct.toFixed(1) + '% \u2192 ' + D.hiP.pct.toFixed(1) + '%');
+    set('s5f', 'shallow, young, porous rock \u2014 where the frame is softest');
+  }
+
+  /* =====================================================================
+     LABELS, TABS, EVENTS
+     ===================================================================== */
+
+  function set(id, v) { const el = $(id); if (el) el.textContent = v; }
+
+  function syncLabels() {
+    set('phiV', S.phi + '%');
+    set('vclV', S.vcl + '%');
+    set('presV', S.pres + ' MPa');
+    set('tempV', S.temp + ' \u00b0C');
+    set('sgV', S.sg + '%');
+    ['phi', 'vcl', 'pres', 'temp', 'sg'].forEach((k) => {
+      const el = $(k); if (el && String(el.value) !== String(S[k])) el.value = S[k];
+    });
+  }
+
+  function drawAll() {
+    syncLabels();
+    if (visible('p1') || visible('p2') || visible('p3') ||
+        visible('p4') || visible('p5')) drawHeader();
+    if (visible('p1')) drawStep1();
+    if (visible('p2')) drawStep2();
+    if (visible('p3')) drawStep3();
+    if (visible('p4')) drawStep4();
+    if (visible('p5')) drawStep5();
+  }
+
+  const PANES = ['p1', 'p2', 'p3', 'p4', 'p5', 'pw', 'pe', 'pk', 'pm'];
+  const STEPNAMES = {
+    p1: 'The fluids', p2: 'Gassmann', p3: 'Velocities', p4: 'A little gas',
+    p5: 'When it fades', pw: 'Why it matters', pe: 'Exercises',
+    pk: 'Key points', pm: 'Method',
+  };
+
+  function buildStepNav() {
+    PANES.forEach((id, i) => {
+      const pane = $(id);
+      if (!pane || pane.querySelector('.stepnav')) return;
+      const prev = PANES[i - 1], next = PANES[i + 1];
+      const nav = document.createElement('div');
+      nav.className = 'stepnav';
+      const mk = (target, text, ghost) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn' + (ghost ? ' ghost' : '') + ' small';
+        b.textContent = text;
+        b.addEventListener('click', () => {
+          showTab(target);
+          const t = document.querySelector('.tabhint');
+          if (t && t.scrollIntoView) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        return b;
+      };
+      nav.appendChild(prev ? mk(prev, '\u2190 ' + STEPNAMES[prev], true)
+                           : document.createElement('span'));
+      const where = document.createElement('span');
+      where.className = 'where';
+      where.textContent = i < 5 ? 'step ' + (i + 1) + ' of 5' : STEPNAMES[id];
+      nav.appendChild(where);
+      nav.appendChild(next ? mk(next, STEPNAMES[next] + ' \u2192')
+                           : document.createElement('span'));
+      pane.appendChild(nav);
+    });
+  }
+
+  function showTab(id) {
+    PANES.forEach((q) => { const el = $(q); if (el) el.hidden = q !== id; });
+    document.querySelectorAll('#tabs button').forEach((b) => {
+      b.setAttribute('aria-selected', b.dataset.tab === id);
+    });
+    const lab = document.querySelector('.labhead');
+    if (lab) lab.hidden = (id === 'pw' || id === 'pk' || id === 'pm');
+    const last = (id === 'pk' || id === 'pm');
+    if ($('nextup')) $('nextup').hidden = !last;
+    if ($('pager')) $('pager').hidden = !last;
+    S.tab = id;
+    drawAll();
+    saveState();
+  }
+  document.querySelectorAll('#tabs button').forEach((b) => {
+    b.addEventListener('click', () => showTab(b.dataset.tab));
+  });
+
+  document.addEventListener('input', (ev) => {
+    const key = ev.target && ev.target.dataset && ev.target.dataset.key;
+    if (!key) return;
+    S[key] = parseFloat(ev.target.value);
+    recompute(); drawAll(); saveState();
+  });
+
+  const popBtn = $('popEx');
+  if (popBtn) {
+    popBtn.addEventListener('click', () => {
+      const list = $('exList');
+      if (!list) return;
+      const w = window.open('', 'avo-m02-exercises',
+        'width=560,height=760,scrollbars=yes,resizable=yes');
+      if (!w) { popBtn.textContent = 'the browser blocked the pop-up'; return; }
+      w.document.open();
+      w.document.write('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">' +
+        '<title>Exercises \u2014 module 02</title><style>' +
+        'body{font:15px/1.62 "IBM Plex Sans",system-ui,sans-serif;color:#16191C;' +
+        'margin:0;padding:24px 26px;background:#FBFAF7}' +
+        'h1{font:700 17px/1.3 Archivo,sans-serif;margin:0 0 4px}' +
+        'p.src{font-size:12px;color:#5C6670;margin:0 0 18px}' +
+        'ol{padding-left:20px;margin:0} li{margin-bottom:18px}' +
+        'summary{cursor:pointer;color:#841617;font-size:13px;font-weight:600;' +
+        'margin-top:6px} .ans{display:block;margin-top:6px;padding:10px 12px;' +
+        'background:#F4F6F7;border-left:3px solid #841617;font-size:14px}' +
+        '</style></head><body><h1>Module 02 \u2014 Fluid in the pores</h1>' +
+        '<p class="src">Exercises. Keep the module window open beside this one; every ' +
+        'answer is a number read off the running page.</p><ol>' +
+        list.innerHTML + '</ol></body></html>');
+      w.document.close();
+      w.focus();
+    });
+  }
+
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 140); });
+
+  recompute();
+  buildStepNav();
+  showTab(PANES.indexOf(S.tab) >= 0 ? S.tab : 'p1');
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+
+  window.__MOD = { S, get D() { return D; }, recompute, drawAll, showTab };
+})();
+</script>
+</body>
+</html>

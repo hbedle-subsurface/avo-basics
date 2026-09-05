@@ -204,10 +204,10 @@ const CARDS = [
           'and the observation this set begins from: a reflection coefficient is not one number.',
     q: 'What does this set assume I already know?', thumb: thumb00() },
 
-  { no: '01', flag: 'To build', ready: false, level: 'rock',
+  { no: '01', href: 'modules/rocks-and-stiffness.html', flag: 'New', ready: true, level: 'rock',
     title: 'Rocks, pores and stiffness',
-    body: 'Grains and pore space, where bulk density comes from, and the two separate ways a rock ' +
-          'resists deformation \u2014 against compression, and against shearing.',
+    body: 'Grains and pore space, where bulk density comes from, the two separate ways a rock resists ' +
+          'deformation, and why a change in one of them moves Vp and leaves Vs exactly where it was.',
     q: 'What makes one rock faster than another?', thumb: thumb01() },
   { no: '02', flag: 'To build', ready: false, level: 'rock',
     title: 'Fluid in the pores',

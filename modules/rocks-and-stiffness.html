@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rocks, pores and stiffness | How AVO Actually Works</title>
+<meta name="description" content="Module 01: what a rock is made of, the two separate ways it resists being deformed, why the grain frame is far softer than the grains themselves, and how the two moduli and the density set Vp and Vs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <a class="brand" href="../index.html"><span class="dot"></span>How AVO <b>actually</b> works</a>
+    <nav>
+      <a href="../index.html">All modules</a>
+      <a href="#pe">Exercises</a>
+      <a href="#pm">Method &amp; references</a>
+    </nav>
+  </header>
+
+  <div class="mod-head">
+    <p class="eyebrow">Module 01 &nbsp;·&nbsp; The rock</p>
+    <h1>Rocks, pores and stiffness</h1>
+    <p class="sub">Module 00 ended on a property that impedance does not carry: how a rock resists being
+      sheared. This module builds it. A rock is grains with space between them; the grains have their own
+      stiffness, the arrangement of grains has a much smaller one, and the two together with the density
+      set both velocities. The pores are left empty throughout — putting something in them is module 02.</p>
+  </div>
+
+  <div class="labhead">
+    <div class="labgrid">
+      <div>
+        <p class="cap">The rock, and how stiff it is
+          <span>&mdash; the grain pack, and its two moduli against the grains' own</span></p>
+        <canvas id="cHead" aria-label="A drawing of the grain pack at the chosen porosity and clay content, beside bars comparing the frame's bulk and shear moduli with those of the mineral grains"></canvas>
+      </div>
+      <div>
+        <p class="cap">Five controls <span>&mdash; the last two act only in step 5</span></p>
+        <div class="controls" id="mainControls">
+          <div class="ctl-col">
+            <h2>The rock</h2>
+            <div class="ctl">
+              <label for="phi">Porosity <span class="val" id="phiV">25%</span></label>
+              <input type="range" data-key="phi" id="phi" min="5" max="38" step="1" value="25">
+            </div>
+            <div class="ctl">
+              <label for="vcl">Clay fraction of the solid <span class="val" id="vclV">0%</span></label>
+              <input type="range" data-key="vcl" id="vcl" min="0" max="60" step="1" value="0">
+            </div>
+            <div class="ctl">
+              <label for="pres">Pressure on the grain contacts <span class="val" id="presV">20 MPa</span></label>
+              <input type="range" data-key="pres" id="pres" min="5" max="50" step="1" value="20">
+            </div>
+
+            <h2>Step 5 only</h2>
+            <div class="ctl">
+              <label for="ks">Multiply the bulk modulus by <span class="val" id="ksV">1.00×</span></label>
+              <input type="range" data-key="ks" id="ks" min="50" max="200" step="5" value="100">
+            </div>
+            <div class="ctl">
+              <label for="gs">Multiply the shear modulus by <span class="val" id="gsV">1.00×</span></label>
+              <input type="range" data-key="gs" id="gs" min="50" max="200" step="5" value="100">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="tabhint">Five steps, from what a rock is made of to the two velocities that come out of it.
+    Every number quoted in the text is read off the running page.</p>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
+    <button role="tab" data-tab="p1" aria-selected="false">1 · Grains</button>
+    <button role="tab" data-tab="p2" aria-selected="false">2 · Squeeze, shear</button>
+    <button role="tab" data-tab="p3" aria-selected="false">3 · The frame</button>
+    <button role="tab" data-tab="p4" aria-selected="false">4 · Velocities</button>
+    <button role="tab" data-tab="p5" aria-selected="false">5 · One at a time</button>
+    <button role="tab" data-tab="pw" aria-selected="false">Why it matters</button>
+    <span class="gap"></span>
+    <button role="tab" data-tab="pe" aria-selected="false">Exercises</button>
+    <button role="tab" data-tab="pk" aria-selected="false">Key points</button>
+    <button role="tab" data-tab="pm" aria-selected="false">Method</button>
+  </nav>
+
+  <!-- =============================== STEP 1 =============================== -->
+  <section class="tabpane" id="p1" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">1</span>Grains, and the space between them</h3>
+      <span class="hint">Volume fractions, and the density that follows from them</span>
+    </div>
+    <p class="lede">A clastic rock is a pack of mineral grains with space between them. The fraction of
+      the total volume that is space is the <b>porosity</b>. The rest is solid, and in a sandstone that
+      solid is mostly quartz with some clay.</p>
+    <p class="lede">Volume fractions are the simplest thing about a rock and they do more work than they
+      look like they should. Density is a straight volume-weighted average: each component contributes its
+      own density in proportion to how much of the rock it occupies. With the pore space empty, the bulk
+      density of the rock is the mineral density multiplied by the solid fraction.</p>
+    <p class="lede">Quartz and clay have different densities — 2.65 and 2.58 g/cm³ — so the clay fraction
+      moves the mineral density, but only slightly. Porosity moves the bulk density far more, because it
+      replaces solid with nothing.</p>
+
+    <div class="sec-row" id="row1">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> What occupies the volume
+          <span class="note">quartz, clay and empty space</span></p>
+        <canvas id="c1frac" aria-label="A stacked bar showing the volume fractions of quartz, clay and pore space in the rock"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Bulk density against porosity
+          <span class="note">a straight line, because it is an average</span></p>
+        <canvas id="c1dens" aria-label="Dry bulk density plotted against porosity, with the current rock marked"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Porosity</span><b id="s1a">—</b></div>
+      <div class="stat"><span>Solid fraction</span><b id="s1b">—</b></div>
+      <div class="stat"><span>Density of the mineral mix</span><b id="s1c">—</b></div>
+      <div class="stat key"><span>Dry bulk density of the rock</span><b id="s1d">—</b></div>
+      <div class="stat"><span>Same rock at 5% porosity</span><b id="s1e">—</b></div>
+      <div class="stat wide"><span>What is in the pore space here</span><b id="s1f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>Density is the one rock property that mixes this simply. Neither of the two stiffnesses does,
+        which is the subject of step 3.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 2 =============================== -->
+  <section class="tabpane" id="p2" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">2</span>Two separate ways to deform a rock</h3>
+      <span class="hint">Squeezing it, and sliding it</span>
+    </div>
+    <p class="lede">A rock can be deformed in two independent ways, and it resists them separately.</p>
+    <p class="lede"><b>Squeezing.</b> Press on a block of rock equally from every side and it gets
+      smaller without changing shape. The property that resists this is the <b>bulk modulus</b>, written
+      K: the pressure applied divided by the fractional change in volume it produces. A large K means a
+      large pressure is needed for a small change in volume.</p>
+    <p class="lede"><b>Shearing.</b> Push the top of the block sideways while holding the bottom still and
+      it changes shape without changing volume. The property that resists this is the <b>shear
+      modulus</b>, written G. A large G means the block barely tilts.</p>
+    <p class="lede">Both are stresses divided by strains, so both have the units of a pressure. Rock
+      moduli are quoted in gigapascals. The two panels below deform a block of the current rock under the
+      same applied stress, so the more it moves, the softer that rock is in that mode. Nothing forces the
+      two to move together: a rock can be much harder to squeeze than to shear, or the reverse.</p>
+
+    <div class="sec-row" id="row2">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Squeezed from every side
+          <span class="note">volume changes, shape does not</span></p>
+        <canvas id="c2bulk" aria-label="A block of rock shown at rest and compressed uniformly, with the fractional volume change labeled"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Sheared sideways
+          <span class="note">shape changes, volume does not</span></p>
+        <canvas id="c2shear" aria-label="A block of rock shown at rest and sheared sideways, with the shear strain labeled"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat key"><span>Bulk modulus of this rock, K</span><b id="s2a">—</b></div>
+      <div class="stat"><span>Shear modulus of this rock, G</span><b id="s2b">—</b></div>
+      <div class="stat"><span>Volume change under the test stress</span><b id="s2c">—</b></div>
+      <div class="stat"><span>Shear strain under the same stress</span><b id="s2d">—</b></div>
+      <div class="stat"><span>G ÷ K for this rock</span><b id="s2e">—</b></div>
+      <div class="stat wide"><span>What each one resists</span><b id="s2f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>A fluid has a bulk modulus and no shear modulus at all. That is the whole of what makes a
+        pore fluid visible to seismic data, and it is module 02.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 3 =============================== -->
+  <section class="tabpane" id="p3" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">3</span>The pack is far softer than the grains</h3>
+      <span class="hint">Where the rock's stiffness actually comes from</span>
+    </div>
+    <p class="lede">Quartz is stiff. A single quartz grain has a bulk modulus of 37 GPa and a shear
+      modulus of 44. A sandstone made of quartz grains has moduli several times smaller, and the reason is
+      that the rock is not a solid block of quartz. It is grains touching each other at small contacts,
+      and the load passes through those contacts.</p>
+    <p class="lede">Deforming the rock does not mean deforming the grains. It means moving the contacts:
+      flattening them, sliding them past one another, rearranging the pack. That is much easier than
+      compressing quartz, so the stiffness of the arrangement — the <b>dry frame</b> — is what the rock's
+      moduli actually measure.</p>
+    <p class="lede">Two consequences follow, and both are visible in the panels. Porosity matters
+      enormously, because a looser pack has fewer and smaller contacts. And the frame is
+      <em>pressure-dependent</em>: pressing the grains together harder flattens the contacts and stiffens
+      the rock, which is why the same sand is faster when it is buried deeper.</p>
+    <p class="lede">The dashed lines mark the mineral values, which the frame would only reach at zero
+      porosity. The gap between the two curves and those lines is the difference between a rock and the
+      material it is made of.</p>
+
+    <div class="sec-row" id="row3">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Both moduli against porosity
+          <span class="note">with the mineral values marked</span></p>
+        <canvas id="c3phi" aria-label="Frame bulk and shear moduli plotted against porosity, with the mineral values shown as dashed ceilings"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Both moduli against pressure
+          <span class="note">at the porosity you set</span></p>
+        <canvas id="c3pres" aria-label="Frame bulk and shear moduli plotted against the pressure on the grain contacts"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Bulk modulus of the mineral</span><b id="s3a">—</b></div>
+      <div class="stat"><span>Bulk modulus of the frame</span><b id="s3b">—</b></div>
+      <div class="stat key"><span>Frame as a fraction of the mineral, K</span><b id="s3c">—</b></div>
+      <div class="stat"><span>Shear modulus, mineral → frame</span><b id="s3d">—</b></div>
+      <div class="stat"><span>Frame K at 5 MPa → at 50 MPa</span><b id="s3e">—</b></div>
+      <div class="stat wide"><span>Why the two differ so much</span><b id="s3f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The pressure here is the pressure carried by the grain contacts, which is the weight of the
+        overburden less whatever the pore fluid is holding up. Separating those two is a subject of its
+        own and is not taken up in this set.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 4 =============================== -->
+  <section class="tabpane" id="p4" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">4</span>From two moduli to two velocities</h3>
+      <span class="hint">And which modulus goes into which</span>
+    </div>
+    <p class="lede">A seismic wave is a deformation travelling through rock, so how fast it travels
+      depends on how hard the rock resists that deformation and on how much mass has to be moved. Stiffer
+      is faster, denser is slower, and each velocity takes a square root of stiffness over density.</p>
+    <p class="lede">A P-wave moves the rock along the direction it travels. That compresses the rock, and
+      it also distorts it, because the material either side of the moving front is not free to spread
+      out. So a P-wave feels both moduli, in the combination K + 4G/3, and its velocity is the square root
+      of that over the density.</p>
+    <p class="lede">An S-wave moves the rock across the direction it travels. It changes shape and not
+      volume, so it feels the shear modulus alone, and its velocity is the square root of G over the
+      density.</p>
+    <p class="lede">That asymmetry is the single most useful fact in this set. <b>Vp responds to both
+      moduli; Vs responds to only one.</b> Anything that changes K without changing G will move Vp and
+      leave Vs where it was.</p>
+
+    <div class="sec-row" id="row4">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Both velocities against porosity
+          <span class="note">the same rock, opened up</span></p>
+        <canvas id="c4vel" aria-label="P-wave and shear velocity plotted against porosity for the dry rock, with the current rock marked"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> What goes into each velocity
+          <span class="note">the stiffness term above the line in each case</span></p>
+        <canvas id="c4arith" aria-label="Bars showing the stiffness combination that enters the P-wave velocity and the one that enters the shear velocity"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>K and G of this rock</span><b id="s4a">—</b></div>
+      <div class="stat"><span>K + 4G/3, the P-wave stiffness</span><b id="s4b">—</b></div>
+      <div class="stat"><span>Dry bulk density</span><b id="s4c">—</b></div>
+      <div class="stat key"><span>Vp and Vs that give</span><b id="s4d">—</b></div>
+      <div class="stat"><span>Vp/Vs for this dry rock</span><b id="s4e">—</b></div>
+      <div class="stat wide"><span>Which modulus each velocity feels</span><b id="s4f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>A dry rock has a Vp/Vs near 1.5 everywhere these controls reach — between about 1.43 and
+        1.63 — which is well below any real water-bearing sandstone. Putting brine in the pores is what
+        raises it, and that is module 02.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 5 =============================== -->
+  <section class="tabpane" id="p5" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">5</span>Change one modulus at a time</h3>
+      <span class="hint">The result module 02 is built on</span>
+    </div>
+    <p class="lede">The two multipliers under <em>step 5 only</em> scale the frame's moduli directly,
+      holding the density fixed. They are not a physical process; they are a way of asking what each
+      velocity is sensitive to, by moving one input and watching both outputs.</p>
+    <p class="lede">The left-hand panel scales the bulk modulus. Vp rises and <b>Vs does not move at
+      all</b> — its line is exactly flat, because G is unchanged and G is the only stiffness a shear wave
+      feels. The right-hand panel scales the shear modulus, and both velocities respond, because G appears
+      in the P-wave stiffness as well.</p>
+    <p class="lede">A flat line is easy to skip past, so it is worth stating what it means. Any process
+      that acts on a rock's resistance to compression without touching its resistance to shear will show
+      up in Vp and be invisible in Vs. A pore fluid is exactly such a process: a fluid resists being
+      compressed and offers nothing at all against shearing.</p>
+    <p class="lede">That is the whole basis of using seismic amplitudes to say something about pore
+      fluids, and module 02 builds it properly.</p>
+
+    <div class="sec-row" id="row5">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Scaling the bulk modulus
+          <span class="note">shear velocity does not respond</span></p>
+        <canvas id="c5k" aria-label="P-wave and shear velocity plotted against a multiplier applied to the bulk modulus, showing the shear velocity flat"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Scaling the shear modulus
+          <span class="note">both velocities respond</span></p>
+        <canvas id="c5g" aria-label="P-wave and shear velocity plotted against a multiplier applied to the shear modulus, showing both responding"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Vp, unscaled → scaled</span><b id="s5a">—</b></div>
+      <div class="stat"><span>Vs, unscaled → scaled</span><b id="s5b">—</b></div>
+      <div class="stat key"><span>Change in Vs from the K multiplier alone</span><b id="s5c">—</b></div>
+      <div class="stat"><span>Change in Vp from the K multiplier alone</span><b id="s5d">—</b></div>
+      <div class="stat"><span>Vp/Vs, unscaled → scaled</span><b id="s5e">—</b></div>
+      <div class="stat wide"><span>What this rules out and what it allows</span><b id="s5f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>Density is held fixed while the moduli move, which no real process does. A pore fluid changes
+        the density as well as the bulk modulus, and module 02 puts both back.</span>
+    </div>
+  </section>
+
+  <!-- ============================ WHY IT MATTERS ========================== -->
+  <section class="tabpane" id="pw" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">W</span>Why it matters</h3>
+      <span class="hint">Where these ideas are used</span>
+    </div>
+    <p class="lede"><b>Reading a velocity log.</b> A sonic log records how fast the rock is, and the two
+      largest controls on that number are porosity and how well the grains are cemented. A slow interval
+      is usually a porous or poorly consolidated one rather than a different mineral.</p>
+    <p class="lede"><b>Depth trends.</b> The same sand is faster deeper, because the grain contacts carry
+      more load and the frame is stiffer. That is a property of the frame rather than of the mineral, and
+      it is why a velocity measured in one well does not transfer directly to a target at another
+      depth.</p>
+    <p class="lede"><b>Overpressure.</b> Where pore fluid carries part of the overburden, the grain
+      contacts carry less, the frame stays soft, and the rock is slower than its depth would suggest.
+      That reversal is one of the few things seismic velocities detect directly, and it is a drilling
+      safety issue.</p>
+    <p class="lede"><b>Why a shear measurement is worth having.</b> Vs responds to the frame and the
+      density and to nothing else. Anything that changes the pore fluid moves Vp and leaves Vs
+      almost alone, so comparing the two separates a fluid change from a rock change. Getting at Vs from
+      P-wave seismic data is what the rest of this set is about.</p>
+  </section>
+
+  <!-- ============================== EXERCISES ============================= -->
+  <section class="tabpane" id="pe" role="tabpanel" hidden>
+    <div class="tryit" style="max-width:none">
+      <h3>Exercises</h3>
+      <p class="lede" style="margin-top:-4px">Each answer is a number read off this page at the settings
+        described. <button type="button" class="btn ghost small" id="popEx">Open these in a separate
+        window</button></p>
+      <ol id="exList">
+        <li><b>Compare how density and stiffness respond to porosity.</b> With no clay and 20 MPa on the
+          contacts, take porosity from 5% to 38% and note the dry bulk density and the frame's bulk
+          modulus at each end.
+          <details class="reveal"><summary>Answer</summary><span class="ans">Density falls from about
+            2.52 to 1.64 g/cm³, a drop of roughly a third. The bulk modulus falls from about 19.4 to
+            2.2 GPa, a drop of nearly ninety percent. Both respond to the same porosity, and they respond
+            on completely different scales, because density is a volume average of what is present while
+            stiffness depends on how the solid is connected. Adding pore space removes a little mass and
+            destroys a great deal of structure.</span></details></li>
+
+        <li><b>Find out how much of the mineral's stiffness survives.</b> At 25% porosity with no clay,
+          compare the frame's bulk modulus with quartz's own.
+          <details class="reveal"><summary>Answer</summary><span class="ans">About 4.7 GPa against 37,
+            so the rock keeps roughly an eighth of the stiffness of the material it is made of. The
+            missing stiffness is not lost in the grains, which are unchanged; it is in the contacts, which
+            are small and easy to move. A rock is a structure, and this is the number that says
+            so.</span></details></li>
+
+        <li><b>Bury the rock deeper.</b> At 25% porosity, take the pressure on the contacts from 5 MPa to
+          50 MPa and watch both moduli and both velocities.
+          <details class="reveal"><summary>Answer</summary><span class="ans">The bulk modulus roughly
+            doubles, from about 3.1 to 6.1 GPa, and Vp rises from about 1994 to 2817 m/s. Nothing about
+            the rock's composition changed — same grains, same porosity, same density. Pressing the
+            contacts together harder makes them stiffer. This is why a velocity measured on one interval
+            does not carry to a target at a different depth, and it is the mechanism behind the
+            velocity reversal in an overpressured zone.</span></details></li>
+
+        <li><b>Establish that Vs cannot see the bulk modulus.</b> Leave the shear multiplier at 1.00 and
+          take the bulk multiplier from 0.50 to 2.00, watching both readouts in step 5.
+          <details class="reveal"><summary>Answer</summary><span class="ans">Vp rises by about 31%
+            across that range and Vs does not change by any amount at all — the readout stays at 0.0%,
+            and the line in the left-hand panel is exactly horizontal. This is not an approximation or a
+            small effect being neglected. Vs is the square root of G over density, and K does not appear
+            in it. Any process acting on K alone is invisible to a shear
+            wave.</span></details></li>
+
+        <li><b>Check the ratio for a dry rock.</b> Read Vp/Vs at several porosities with no clay, then add
+          clay and read it again.
+          <details class="reveal"><summary>Answer</summary><span class="ans">It stays near 1.5 across the
+            whole set of controls — 1.50 at 10% porosity, 1.48 at 25%, 1.47 at 30%. Clay pushes it up a
+            little, to 1.51 at 25% porosity and 60% clay, and further at low porosity, because clay is
+            much weaker in shear than quartz relative to its bulk modulus. The extremes the sliders can
+            reach are about 1.43 and 1.63. Real water-bearing sandstones run nearer 1.8 to 2.0 and shales
+            higher still, so every one of these numbers is too low. The whole of the difference is the
+            pore fluid, which this module leaves out, and closing that gap is what module 02
+            does.</span></details></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================== KEY POINTS ============================ -->
+  <section class="tabpane" id="pk" role="tabpanel" hidden>
+    <div class="takeaway" style="max-width:none">
+      <h3>Key points</h3>
+      <ul>
+        <li><b>A rock is grains plus space.</b> Porosity is the fraction that is space, and density is a
+          straight volume-weighted average of what occupies the volume.</li>
+        <li><b>There are two independent stiffnesses.</b> The bulk modulus K resists a change in volume;
+          the shear modulus G resists a change in shape. Both are stresses over strains and both are
+          quoted in gigapascals.</li>
+        <li><b>The rock is far softer than its grains.</b> Load passes through small grain contacts, so
+          the moduli of the dry frame are several times smaller than the mineral's — about an eighth at
+          25% porosity — and porosity controls how much smaller.</li>
+        <li><b>The frame stiffens under pressure.</b> Pressing the contacts together harder makes the rock
+          faster, with no change in composition, which is why the same sand is faster when buried
+          deeper.</li>
+        <li><b>Vp feels both moduli</b> in the combination K + 4G/3, divided by density, under a square
+          root.</li>
+        <li><b>Vs feels only G</b>, divided by density, under a square root. K does not appear in it at
+          all.</li>
+        <li><b>So anything that changes K alone moves Vp and leaves Vs exactly where it was.</b> A pore
+          fluid is such a thing, which is why a fluid can be seen at all — and module 02 takes it
+          up.</li>
+        <li><b>A dry rock has Vp/Vs near 1.5</b> across every setting here, well below the 1.8 to 2.0 of
+          a real water-bearing sandstone. The difference is the fluid this module left out.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================ METHOD ============================== -->
+  <section class="tabpane" id="pm" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">M</span>Method, simplifications and references</h3>
+      <span class="hint">What is computed, and what is deferred</span>
+    </div>
+
+    <p class="lede"><b>The mineral mix</b> is quartz and clay combined by a Voigt-Reuss-Hill average, with
+      quartz at K = 37 GPa, G = 44 GPa, ρ = 2.65 g/cm³ and clay at K = 21, G = 7, ρ = 2.58. Clay is not a
+      single mineral and its published moduli vary widely; these are middle-of-the-road values and a
+      different choice would move the numbers here without changing anything about their behavior.</p>
+
+    <p class="lede"><b>The dry frame</b> uses the soft-sand, or friable-sand, model: Hertz-Mindlin contact
+      theory at a critical porosity of 40% with nine contacts per grain, then a modified Hashin-Shtrikman
+      lower bound down to zero porosity. It is pressure-dependent and it reproduces the low velocities of
+      young clastic sections, which is where amplitude work is usually done. It is a lower bound, so it
+      describes an uncemented pack; a well-cemented sandstone is stiffer than this model at the same
+      porosity, and a contact-cement or constant-cement model would be the right choice there.</p>
+
+    <p class="lede"><b>The blocks in step 2</b> are drawn at true strain for an applied stress of 0.5 GPa.
+      That stress is far larger than anything a rock experiences in the ground, and it is used so that the
+      deformation is large enough to see. The comparison between the two panels, and between one rock and
+      another, is faithful; the absolute size of the movement is not.</p>
+
+    <p class="lede"><b>Deferred rather than simplified:</b></p>
+    <ul class="lede" style="padding-left:20px">
+      <li><b>The pore space is empty.</b> Every number on this page is a dry-rock number. Nothing here
+        describes a rock below the water table, and module 02 is where the fluid goes in.</li>
+      <li><b>The multipliers in step 5 are not a process.</b> They move a modulus with the density held
+        fixed, which is a sensitivity test rather than a physical change. A real pore fluid moves K and
+        density together.</li>
+      <li><b>Pressure is the pressure on the grain contacts</b>, sometimes called the effective pressure.
+        How it relates to burial depth and to the pore pressure is a separate subject and is not covered
+        in this set.</li>
+      <li><b>Anisotropy, cracks, cementation and grain-scale texture</b> are all absent. The pack is
+        treated as an isotropic assembly of identical spheres, which is a long way from a real
+        sandstone.</li>
+    </ul>
+
+    <details class="reveal" style="margin-top:8px">
+      <summary>References</summary>
+      <ul style="padding-left:18px;margin-top:8px">
+        <li>Mavko, G., Mukerji, T., and Dvorkin, J., 2020, <em>The Rock Physics Handbook</em>, 3rd ed.:
+          Cambridge University Press. — the standard reference for everything on this page.</li>
+        <li>Dvorkin, J., and Nur, A., 1996, Elasticity of high-porosity sandstones: theory for two North
+          Sea data sets: <em>Geophysics</em>, 61, 1363–1370. — the soft-sand model.</li>
+        <li>Mindlin, R. D., 1949, Compliance of elastic bodies in contact: <em>Journal of Applied
+          Mechanics</em>, 16, 259–268.</li>
+        <li>Nur, A., Mavko, G., Dvorkin, J., and Galmudi, D., 1998, Critical porosity: a key to relating
+          physical properties to porosity in rocks: <em>The Leading Edge</em>, 17, 357–362.</li>
+        <li>Hill, R., 1952, The elastic behaviour of a crystalline aggregate: <em>Proceedings of the
+          Physical Society A</em>, 65, 349–354. — the averaging used for the mineral mix.</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="nextup" id="nextup" hidden>
+    <p class="eyebrow">Next up</p>
+    <h3>02 · Fluid in the pores</h3>
+    <p>Step 5 showed that a change in K alone moves Vp and leaves Vs untouched. A pore fluid is that
+      change. Module 02 puts brine, oil and gas into the pore space, works out what each does to K and to
+      density, and shows where the effect stops being large enough to matter.</p>
+    <a class="btn ghost" href="../index.html">All modules</a>
+  </section>
+
+  <div class="pager" id="pager" hidden>
+    <a class="btn ghost" href="beyond-normal-incidence.html">← 00 · Beyond normal incidence</a>
+    <a class="btn ghost" href="../index.html">All modules</a>
+  </div>
+
+  <footer>
+    <div class="foot-grid">
+      <p>Built for teaching by Dr. Heather Bedle and Dr. April Moreno-Ward, School of Geosciences,
+        University of Oklahoma, with the <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a>
+        consortium.</p>
+      <p class="lic">Licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+        Free to use, adapt and redistribute, including in teaching, provided the source is credited and
+        anything derived from it carries the same license.</p>
+      <p class="lic">Nothing you do in this module leaves your browser. The only thing recorded is that
+        the page was opened — no cookie, no account, nothing about you.</p>
+      <p class="lic">To cite: H. Bedle and A. Moreno-Ward, <i>How AVO Actually Works</i>, University of
+        Oklahoma. <span class="k">SSRN: [article link to follow]</span></p>
+    </div>
+  </footer>
+</div>
+
+<script src="../assets/count.js"></script>
+<script src="../assets/seismic.js"></script>
+<script src="../assets/rockphysics.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const missing = [];
+  if (typeof SEIS === 'undefined') missing.push('assets/seismic.js');
+  if (typeof ROCK === 'undefined') missing.push('assets/rockphysics.js');
+  if (missing.length) {
+    const el = document.createElement('div');
+    el.setAttribute('style', 'background:#841617;color:#fff;padding:14px 18px;margin:16px 0;' +
+      'font:13px/1.6 ui-monospace,Menlo,monospace');
+    el.textContent = 'This module could not load ' + missing.join(' and ') +
+      '. It expects them one directory up, at ../assets/, and file names are ' +
+      'case-sensitive on GitHub Pages.';
+    const w = document.querySelector('.wrap');
+    (w || document.body).insertBefore(el, w ? w.firstChild : null);
+    return;
+  }
+
+  const $ = (id) => document.getElementById(id);
+  const visible = (id) => { const el = $(id); return el && !el.hidden; };
+  const CRIM = '#841617', TEAL = '#0B7285', SLATE = '#5C6670', INK = '#16191C';
+  const OLIVE = '#6B7A2E', ORANGE = '#B5451B';
+
+  // phi and vcl carry whole percent; ks and gs carry percent of a multiplier
+  const DEF = { phi: 25, vcl: 0, pres: 20, ks: 100, gs: 100, tab: 'p1' };
+  const S = SEIS.readState(DEF);
+  (function sanitize() {
+    const num = (k, lo, hi, step) => {
+      let v = Number(S[k]);
+      if (!isFinite(v)) v = DEF[k];
+      v = Math.min(hi, Math.max(lo, v));
+      S[k] = step ? Math.round(v / step) * step : v;
+    };
+    num('phi', 5, 38, 1); num('vcl', 0, 60, 1); num('pres', 5, 50, 1);
+    num('ks', 50, 200, 5); num('gs', 50, 200, 5);
+  })();
+  const saveState = () => SEIS.writeState(S, DEF);
+
+  /* =====================================================================
+     THE MODEL
+
+     The pore space is empty throughout. A dry rock is the mineral mix, a
+     frame stiffness that comes from the grain contacts, and a bulk density
+     that is the mineral density times the solid fraction. Module 02 is where
+     anything goes into the pores.
+     ===================================================================== */
+
+  const TEST_STRESS = 0.5;      // GPa, for the step 2 blocks. Method says why.
+  const PHI_LO = 0.05, PHI_HI = 0.38;
+  const P_LO = 5, P_HI = 50;
+  const SC_LO = 0.5, SC_HI = 2.0;
+
+  /* One dry rock, from porosity, clay fraction and contact pressure. */
+  function dryRock(phi, vClay, P) {
+    const min = ROCK.mineralMix(vClay);
+    const frame = ROCK.softSand(min, phi, { P: P });
+    const rho = (1 - phi) * min.rho;
+    return {
+      min: min, K: frame.K, G: frame.G, rho: rho,
+      e: ROCK.elastic(frame.K, frame.G, rho),
+    };
+  }
+
+  const D = {};
+
+  function recompute() {
+    D.phi = S.phi / 100;
+    D.vcl = S.vcl / 100;
+    D.kf = S.ks / 100;
+    D.gf = S.gs / 100;
+
+    D.r = dryRock(D.phi, D.vcl, S.pres);
+    D.solid = 1 - D.phi;
+    D.fQuartz = D.solid * (1 - D.vcl);
+    D.fClay = D.solid * D.vcl;
+
+    // step 2: strain under a common test stress
+    D.volStrain = TEST_STRESS / D.r.K;
+    D.shearStrain = TEST_STRESS / D.r.G;
+
+    // step 3 and 4 curves, across porosity at the current clay and pressure
+    D.phis = []; D.Kphi = []; D.Gphi = []; D.VpPhi = []; D.VsPhi = [];
+    for (let i = 0; i <= 60; i++) {
+      const p = PHI_LO + (PHI_HI - PHI_LO) * (i / 60);
+      const rk = dryRock(p, D.vcl, S.pres);
+      D.phis.push(p * 100);
+      D.Kphi.push(rk.K); D.Gphi.push(rk.G);
+      D.VpPhi.push(rk.e.vp); D.VsPhi.push(rk.e.vs);
+    }
+    // step 3 panel 2: across pressure at the current porosity
+    D.press = []; D.Kpres = []; D.Gpres = [];
+    for (let i = 0; i <= 60; i++) {
+      const P = P_LO + (P_HI - P_LO) * (i / 60);
+      const rk = dryRock(D.phi, D.vcl, P);
+      D.press.push(P); D.Kpres.push(rk.K); D.Gpres.push(rk.G);
+    }
+    D.K5 = dryRock(D.phi, D.vcl, P_LO).K;
+    D.K50 = dryRock(D.phi, D.vcl, P_HI).K;
+
+    // step 5: scaling one modulus at a time, density held fixed
+    D.scale = []; D.VpK = []; D.VsK = []; D.VpG = []; D.VsG = [];
+    for (let i = 0; i <= 60; i++) {
+      const f = SC_LO + (SC_HI - SC_LO) * (i / 60);
+      D.scale.push(f);
+      D.VpK.push(ROCK.vp(D.r.K * f, D.r.G, D.r.rho));
+      D.VsK.push(ROCK.vs(D.r.G, D.r.rho));
+      D.VpG.push(ROCK.vp(D.r.K, D.r.G * f, D.r.rho));
+      D.VsG.push(ROCK.vs(D.r.G * f, D.r.rho));
+    }
+    D.scaled = ROCK.elastic(D.r.K * D.kf, D.r.G * D.gf, D.r.rho);
+    // what the K multiplier alone would do
+    D.kOnly = ROCK.elastic(D.r.K * D.kf, D.r.G, D.r.rho);
+  }
+
+  /* =====================================================================
+     DRAWING
+     ===================================================================== */
+
+  const M = { l: 62, r: 16, t: 14, b: 40 };
+
+  function pw(el) {
+    const par = el && el.parentElement;
+    if (!par) return 900;
+    const cs = (typeof window.getComputedStyle === 'function')
+      ? window.getComputedStyle(par) : { paddingLeft: '0', paddingRight: '0' };
+    const inner = par.clientWidth
+      - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    return Math.max(200, Math.floor(inner || 900));
+  }
+  function rowWidth(rowId, n) {
+    const row = $(rowId);
+    const total = row ? pw(row.firstElementChild || row) : 800;
+    const narrow = (window.innerWidth || 1200) <= 700;
+    const w = narrow ? Math.max(240, total)
+                     : Math.max(150, Math.floor((total - 10 * (n - 1)) / n));
+    if (row) {
+      row.querySelectorAll(':scope > .panel-col').forEach((el) => {
+        el.style.width = w + 'px'; el.style.maxWidth = w + 'px';
+      });
+    }
+    return w;
+  }
+
+  const LEG_FONT = '11px "IBM Plex Sans", sans-serif';
+  function fitLabel(ctx, t, maxW) {
+    if (ctx.measureText(t).width <= maxW) return t;
+    let out = t;
+    while (out.length > 4 && ctx.measureText(out + '\u2026').width > maxW) {
+      out = out.slice(0, -1);
+    }
+    return out.replace(/[ ,]+$/, '') + '\u2026';
+  }
+  function legendLines(ctx, items, maxW) {
+    ctx.save(); ctx.font = LEG_FONT;
+    let lines = 1, x = 0;
+    for (const [, t0] of items) {
+      const t = fitLabel(ctx, t0, maxW - 41);
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > 0 && x + iw > maxW) { lines++; x = 0; }
+      x += iw;
+    }
+    ctx.restore();
+    return lines;
+  }
+  function panel(id, W, plotH, items) {
+    const el = $(id);
+    let ctx = SEIS.fitCanvas(el, W, M.t + plotH + M.b);
+    const lines = items && items.length ? legendLines(ctx, items, W - M.l - M.r) : 0;
+    const H = M.t + plotH + M.b + (lines ? 12 + lines * 16 : 0);
+    ctx = SEIS.fitCanvas(el, W, H);
+    ctx.clearRect(0, 0, W, H);
+    return { ctx, R: { x: M.l, y: M.t, w: W - M.l - M.r, h: plotH } };
+  }
+  function legendRow(ctx, R, items) {
+    ctx.save();
+    ctx.font = LEG_FONT; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    let x = R.x, y = R.y + R.h + 46;
+    for (const [c, t0, kind] of items) {
+      const t = fitLabel(ctx, t0, R.w - 41);
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > R.x && x + iw > R.x + R.w) { x = R.x; y += 16; }
+      if (kind === 'dot') {
+        ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x + 9, y, 4, 0, 7); ctx.fill();
+      } else {
+        ctx.strokeStyle = c; ctx.lineWidth = 2;
+        ctx.setLineDash(kind === 'dash' ? [5, 4] : []);
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 18, y); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      ctx.fillStyle = SLATE; ctx.fillText(t, x + 23, y);
+      x += iw;
+    }
+    ctx.restore();
+  }
+
+  function curve(ctx, R, xs, ys, xr, yr, color, width, dash) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    if (dash) ctx.setLineDash(dash);
+    ctx.strokeStyle = color; ctx.lineWidth = width || 2;
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < xs.length; i++) {
+      if (!isFinite(ys[i]) || !isFinite(xs[i])) { started = false; continue; }
+      const x = R.x + ((xs[i] - xr[0]) / (xr[1] - xr[0])) * R.w;
+      const y = R.y + R.h - ((ys[i] - yr[0]) / (yr[1] - yr[0])) * R.h;
+      started ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      started = true;
+    }
+    ctx.stroke(); ctx.restore();
+  }
+  function dot(ctx, R, xv, yv, xr, yr, color) {
+    if (!isFinite(xv) || !isFinite(yv)) return;
+    const x = R.x + ((xv - xr[0]) / (xr[1] - xr[0])) * R.w;
+    const y = R.y + R.h - ((yv - yr[0]) / (yr[1] - yr[0])) * R.h;
+    ctx.save(); ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(x, y, 4.5, 0, 7); ctx.fill(); ctx.restore();
+  }
+
+  /* ----------------------------- the grain pack -----------------------
+     Drawn rather than computed: grain centers on a jittered lattice, radii
+     shrinking as porosity rises so the pore space opens up. It is a picture
+     of the idea, not of the model, and the Method tab says so. Positions
+     come from a hash so the pack does not reshuffle on every redraw. */
+  function hash2(a, b) {
+    let h = (a * 374761393 + b * 668265263) | 0;
+    h = (h ^ (h >> 13)) * 1274126177 | 0;
+    return ((h ^ (h >> 16)) >>> 0) / 4294967296;
+  }
+  function drawPack(ctx, R) {
+    ctx.save();
+    ctx.fillStyle = '#F2EEE4'; ctx.fillRect(R.x, R.y, R.w, R.h);
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    const step = 26;
+    const cols = Math.ceil(R.w / step) + 1, rows = Math.ceil(R.h / step) + 1;
+    // radius falls as porosity rises; at 5% the grains nearly touch
+    const rBase = step * 0.52 * (1 - 0.62 * (D.phi - PHI_LO) / (PHI_HI - PHI_LO));
+    for (let j = 0; j < rows; j++) {
+      for (let i = 0; i < cols; i++) {
+        const jitterX = (hash2(i, j) - 0.5) * step * 0.30;
+        const jitterY = (hash2(j, i) - 0.5) * step * 0.30;
+        const x = R.x + i * step + (j % 2 ? step / 2 : 0) + jitterX;
+        const y = R.y + j * step + jitterY;
+        const rr = rBase * (0.82 + 0.36 * hash2(i + 31, j + 17));
+        const isClay = hash2(i + 7, j + 3) < D.vcl;
+        ctx.fillStyle = isClay ? '#8A8574' : '#D8C9A4';
+        ctx.strokeStyle = isClay ? '#5F5B4E' : '#A08C5E';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(x, y, rr, 0, 7); ctx.fill(); ctx.stroke();
+      }
+    }
+    ctx.restore();
+    SEIS.frame(ctx, R);
+  }
+
+  /* --------------------------------- header --------------------------- */
+  function drawHeader() {
+    const el = $('cHead'); if (!el) return;
+    const W = pw(el), PH = 206, H = M.t + PH + M.b;
+    const ctx = SEIS.fitCanvas(el, W, H);
+    ctx.clearRect(0, 0, W, H);
+    const gap = 26;
+    const halfW = Math.max(90, Math.floor((W - M.l - M.r - gap) / 2));
+    const RA = { x: M.l, y: M.t, w: halfW, h: PH };
+    const RB = { x: M.l + halfW + gap, y: M.t, w: halfW, h: PH };
+
+    drawPack(ctx, RA);
+
+    const maxM = Math.max(D.r.min.K, D.r.min.G) * 1.12;
+    ctx.save(); ctx.fillStyle = '#FBFAF7';
+    ctx.fillRect(RB.x, RB.y, RB.w, RB.h); ctx.restore();
+    SEIS.axisLeft(ctx, RB, 0, maxM, 'modulus (GPa)',
+      (v) => String(Math.round(v)), { flip: true, grid: true });
+    const slot = RB.w / 2, bw = Math.min(34, slot * 0.30);
+    [['K', D.r.min.K, D.r.K, TEAL], ['G', D.r.min.G, D.r.G, CRIM]]
+      .forEach(([name, mv, fv, col], k) => {
+        const x0 = RB.x + slot * k + slot * 0.20;
+        const hM = (mv / maxM) * RB.h, hF = (fv / maxM) * RB.h;
+        ctx.save();
+        ctx.globalAlpha = 0.30; ctx.fillStyle = col;
+        ctx.fillRect(x0, RB.y + RB.h - hM, bw, hM);
+        ctx.globalAlpha = 1; ctx.fillStyle = col;
+        ctx.fillRect(x0 + bw + 4, RB.y + RB.h - hF, bw, hF);
+        ctx.restore();
+        SEIS.tag(ctx, x0 + bw, RB.y + RB.h - hM - 12, name, col);
+      });
+    SEIS.frame(ctx, RB);
+    ctx.save();
+    ctx.font = '10px "IBM Plex Sans", sans-serif';
+    ctx.fillStyle = SLATE; ctx.textAlign = 'center';
+    const capA = ['the grain pack at ' + S.phi + '% porosity', S.phi + '% porosity']
+      .find((t) => ctx.measureText(t).width <= halfW - 4) || 'the pack';
+    ctx.fillText(capA, RA.x + RA.w / 2, RA.y + RA.h + 30);
+    const capB = ['pale = the mineral,  solid = this rock', 'mineral vs rock']
+      .find((t) => ctx.measureText(t).width <= halfW - 4) || 'mineral vs rock';
+    ctx.fillText(capB, RB.x + RB.w / 2, RB.y + RB.h + 30);
+    ctx.restore();
+  }
+
+  /* --------------------------------- step 1 --------------------------- */
+  function drawStep1() {
+    const W = rowWidth('row1', 2);
+
+    const LEG1 = [['#D8C9A4', 'quartz', 'dot'], ['#8A8574', 'clay', 'dot'],
+      ['#F2EEE4', 'pore space', 'dot']];
+    const P1 = panel('c1frac', W, 246, LEG1);
+    const ctx = P1.ctx, R = P1.R;
+    ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    SEIS.axisLeft(ctx, R, 0, 100, 'fraction of the volume (%)',
+      (v) => String(Math.round(v)), { flip: true, grid: true });
+    const bx = R.x + R.w * 0.06, bw = Math.min(96, R.w * 0.28);
+    const labMax = (R.x + R.w) - (bx + bw + 8) - 4;
+    let acc = 0;
+    [[D.fQuartz, '#D8C9A4', '#A08C5E', 'quartz'],
+     [D.fClay, '#8A8574', '#5F5B4E', 'clay'],
+     [D.phi, '#F2EEE4', '#C9CDD2', 'pore space']].forEach(([f, fill, edge, name]) => {
+      if (f <= 0.0005) { return; }
+      const h = f * R.h;
+      const y = R.y + R.h - (acc + f) * R.h;
+      ctx.save();
+      ctx.fillStyle = fill; ctx.fillRect(bx, y, bw, h);
+      ctx.strokeStyle = edge; ctx.lineWidth = 1; ctx.strokeRect(bx, y, bw, h);
+      ctx.restore();
+      if (h > 16) {
+        ctx.save(); ctx.font = LEG_FONT;
+        const lab = fitLabel(ctx, name + '  ' + (f * 100).toFixed(0) + '%', labMax);
+        ctx.restore();
+        SEIS.tag(ctx, bx + bw + 8, y + h / 2, lab, SLATE);
+      }
+      acc += f;
+    });
+    SEIS.frame(ctx, R);
+    legendRow(ctx, R, LEG1);
+
+    const LEG1b = [[TEAL, 'dry bulk density'], [CRIM, 'this rock', 'dot']];
+    const P1b = panel('c1dens', W, 246, LEG1b);
+    const ctx2 = P1b.ctx, R2 = P1b.R;
+    const xr = [PHI_LO * 100, PHI_HI * 100];
+    const dens = D.phis.map((p) => (1 - p / 100) * D.r.min.rho);
+    const yr = [Math.min(...dens) * 0.96, Math.max(...dens) * 1.02];
+    ctx2.save(); ctx2.fillStyle = '#FBFAF7';
+    ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
+    SEIS.axisLeft(ctx2, R2, yr[0], yr[1], 'dry bulk density (g/cm\u00b3)',
+      (v) => v.toFixed(2), { flip: true, grid: true });
+    SEIS.axisBottom(ctx2, R2, xr[0], xr[1], 'porosity (%)',
+      (v) => String(Math.round(v)));
+    curve(ctx2, R2, D.phis, dens, xr, yr, TEAL, 2.6);
+    dot(ctx2, R2, S.phi, D.r.rho, xr, yr, CRIM);
+    SEIS.frame(ctx2, R2);
+    legendRow(ctx2, R2, LEG1b);
+
+    set('s1a', S.phi + '%');
+    set('s1b', (D.solid * 100).toFixed(0) + '%');
+    set('s1c', D.r.min.rho.toFixed(3) + ' g/cm\u00b3');
+    set('s1d', D.r.rho.toFixed(3) + ' g/cm\u00b3');
+    set('s1e', (0.95 * D.r.min.rho).toFixed(3) + ' g/cm\u00b3');
+    set('s1f', 'nothing \u2014 the pores are empty until module 02');
+  }
+
+  /* --------------------------------- step 2 --------------------------- */
+  function drawStep2() {
+    const W = rowWidth('row2', 2);
+
+    function block(id, legend, mode, strain, label) {
+      const P = panel(id, W, 246, legend);
+      const ctx = P.ctx, R = P.R;
+      ctx.save(); ctx.fillStyle = '#FBFAF7';
+      ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+      const side = Math.min(R.w, R.h) * 0.52;
+      const cx = R.x + R.w / 2, cy = R.y + R.h * 0.52;
+      const half = side / 2;
+      const e = Math.min(0.42, strain);   // keep the drawing inside the panel
+
+      // the undeformed block, as a reference
+      ctx.save();
+      ctx.strokeStyle = 'rgba(92,102,112,0.55)'; ctx.lineWidth = 1.2;
+      ctx.setLineDash([4, 4]);
+      ctx.strokeRect(cx - half, cy - half, side, side);
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      // the deformed block
+      ctx.save();
+      ctx.fillStyle = 'rgba(11,114,133,0.20)';
+      ctx.strokeStyle = TEAL; ctx.lineWidth = 2;
+      ctx.beginPath();
+      if (mode === 'bulk') {
+        const f = Math.pow(1 - e, 1 / 3);   // linear shrink from a volume strain
+        const h2 = half * f;
+        ctx.rect(cx - h2, cy - h2, h2 * 2, h2 * 2);
+      } else {
+        const dx = half * 2 * e;
+        ctx.moveTo(cx - half + dx, cy - half);
+        ctx.lineTo(cx + half + dx, cy - half);
+        ctx.lineTo(cx + half, cy + half);
+        ctx.lineTo(cx - half, cy + half);
+        ctx.closePath();
+      }
+      ctx.fill(); ctx.stroke();
+      ctx.restore();
+
+      // the arrows that describe the applied stress
+      ctx.save();
+      ctx.strokeStyle = CRIM; ctx.lineWidth = 2; ctx.fillStyle = CRIM;
+      const arrow = (x1, y1, x2, y2) => {
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+        const a = Math.atan2(y2 - y1, x2 - x1);
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - 8 * Math.cos(a - 0.4), y2 - 8 * Math.sin(a - 0.4));
+        ctx.lineTo(x2 - 8 * Math.cos(a + 0.4), y2 - 8 * Math.sin(a + 0.4));
+        ctx.closePath(); ctx.fill();
+      };
+      if (mode === 'bulk') {
+        const d = half + 30;
+        arrow(cx, cy - d, cx, cy - half - 6);
+        arrow(cx, cy + d, cx, cy + half + 6);
+        arrow(cx - d, cy, cx - half - 6, cy);
+        arrow(cx + d, cy, cx + half + 6, cy);
+      } else {
+        arrow(cx - half - 26, cy - half - 10, cx + half - 10, cy - half - 10);
+        arrow(cx + half + 26, cy + half + 10, cx - half + 10, cy + half + 10);
+      }
+      ctx.restore();
+
+      SEIS.tag(ctx, cx, R.y + 16, label, INK);
+      SEIS.frame(ctx, R);
+      legendRow(ctx, R, legend);
+    }
+
+    block('c2bulk', [[TEAL, 'the block, compressed'],
+      [SLATE, 'where it started', 'dash'], [CRIM, 'applied stress']],
+      'bulk', D.volStrain,
+      'volume down ' + (D.volStrain * 100).toFixed(1) + '%');
+    block('c2shear', [[TEAL, 'the block, sheared'],
+      [SLATE, 'where it started', 'dash'], [CRIM, 'applied stress']],
+      'shear', D.shearStrain,
+      'shear strain ' + (D.shearStrain * 100).toFixed(1) + '%');
+
+    set('s2a', D.r.K.toFixed(2) + ' GPa');
+    set('s2b', D.r.G.toFixed(2) + ' GPa');
+    set('s2c', (D.volStrain * 100).toFixed(1) + '%');
+    set('s2d', (D.shearStrain * 100).toFixed(1) + '%');
+    set('s2e', (D.r.G / D.r.K).toFixed(2));
+    set('s2f', 'K resists a change in volume, G resists a change in shape');
+  }
+
+  /* --------------------------------- step 3 --------------------------- */
+  function drawStep3() {
+    const W = rowWidth('row3', 2);
+
+    const LEG3 = [[TEAL, 'frame K'], [CRIM, 'frame G'],
+      [SLATE, 'the mineral values', 'dash']];
+    const P3 = panel('c3phi', W, 246, LEG3);
+    const ctx = P3.ctx, R = P3.R;
+    const xr = [PHI_LO * 100, PHI_HI * 100];
+    const yr = [0, Math.max(D.r.min.K, D.r.min.G) * 1.10];
+    ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'modulus (GPa)',
+      (v) => String(Math.round(v)), { flip: true, grid: true });
+    SEIS.axisBottom(ctx, R, xr[0], xr[1], 'porosity (%)', (v) => String(Math.round(v)));
+    const yAt = (v) => R.y + R.h - ((v - yr[0]) / (yr[1] - yr[0])) * R.h;
+    SEIS.dashedLine(ctx, R.x, yAt(D.r.min.K), R.x + R.w, yAt(D.r.min.K), TEAL, [5, 4], 1.3);
+    SEIS.dashedLine(ctx, R.x, yAt(D.r.min.G), R.x + R.w, yAt(D.r.min.G), CRIM, [5, 4], 1.3);
+    SEIS.tag(ctx, R.x + R.w - 4, yAt(D.r.min.K) - 11,
+      'quartz-clay mix, K = ' + D.r.min.K.toFixed(0), TEAL, 'right');
+    SEIS.tag(ctx, R.x + R.w - 4, yAt(D.r.min.G) + 12,
+      'G = ' + D.r.min.G.toFixed(0), CRIM, 'right');
+    curve(ctx, R, D.phis, D.Kphi, xr, yr, TEAL, 2.6);
+    curve(ctx, R, D.phis, D.Gphi, xr, yr, CRIM, 2.6);
+    dot(ctx, R, S.phi, D.r.K, xr, yr, TEAL);
+    dot(ctx, R, S.phi, D.r.G, xr, yr, CRIM);
+    SEIS.frame(ctx, R);
+    legendRow(ctx, R, LEG3);
+
+    const LEG3b = [[TEAL, 'frame K'], [CRIM, 'frame G'], [SLATE, 'your pressure', 'dash']];
+    const P3b = panel('c3pres', W, 246, LEG3b);
+    const ctx2 = P3b.ctx, R2 = P3b.R;
+    const xr2 = [P_LO, P_HI];
+    const yr2 = [0, Math.max(...D.Kpres, ...D.Gpres) * 1.15];
+    ctx2.save(); ctx2.fillStyle = '#FBFAF7';
+    ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
+    SEIS.axisLeft(ctx2, R2, yr2[0], yr2[1], 'modulus (GPa)',
+      (v) => v.toFixed(1), { flip: true, grid: true });
+    SEIS.axisBottom(ctx2, R2, xr2[0], xr2[1], 'pressure on the grain contacts (MPa)',
+      (v) => String(Math.round(v)));
+    curve(ctx2, R2, D.press, D.Kpres, xr2, yr2, TEAL, 2.6);
+    curve(ctx2, R2, D.press, D.Gpres, xr2, yr2, CRIM, 2.6);
+    const xP = R2.x + ((S.pres - xr2[0]) / (xr2[1] - xr2[0])) * R2.w;
+    SEIS.dashedLine(ctx2, xP, R2.y, xP, R2.y + R2.h, SLATE, [5, 4], 1.3);
+    dot(ctx2, R2, S.pres, D.r.K, xr2, yr2, TEAL);
+    dot(ctx2, R2, S.pres, D.r.G, xr2, yr2, CRIM);
+    SEIS.frame(ctx2, R2);
+    legendRow(ctx2, R2, LEG3b);
+
+    set('s3a', D.r.min.K.toFixed(1) + ' GPa');
+    set('s3b', D.r.K.toFixed(2) + ' GPa');
+    set('s3c', (D.r.K / D.r.min.K * 100).toFixed(1) + '% of it');
+    set('s3d', D.r.min.G.toFixed(1) + ' \u2192 ' + D.r.G.toFixed(2) + ' GPa');
+    set('s3e', D.K5.toFixed(2) + ' \u2192 ' + D.K50.toFixed(2) + ' GPa');
+    set('s3f', 'the load passes through small grain contacts, not through solid mineral');
+  }
+
+  /* --------------------------------- step 4 --------------------------- */
+  function drawStep4() {
+    const W = rowWidth('row4', 2);
+
+    const LEG4 = [[TEAL, 'Vp'], [CRIM, 'Vs'], [SLATE, 'this rock', 'dot']];
+    const P4 = panel('c4vel', W, 246, LEG4);
+    const ctx = P4.ctx, R = P4.R;
+    const xr = [PHI_LO * 100, PHI_HI * 100];
+    const yr = [0, Math.max(...D.VpPhi) * 1.12];
+    ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'velocity (m/s)',
+      (v) => String(Math.round(v)), { flip: true, grid: true });
+    SEIS.axisBottom(ctx, R, xr[0], xr[1], 'porosity (%)', (v) => String(Math.round(v)));
+    curve(ctx, R, D.phis, D.VpPhi, xr, yr, TEAL, 2.6);
+    curve(ctx, R, D.phis, D.VsPhi, xr, yr, CRIM, 2.6);
+    dot(ctx, R, S.phi, D.r.e.vp, xr, yr, SLATE);
+    dot(ctx, R, S.phi, D.r.e.vs, xr, yr, SLATE);
+    SEIS.frame(ctx, R);
+    legendRow(ctx, R, LEG4);
+
+    const LEG4b = [[TEAL, 'bulk modulus, K'], [CRIM, 'shear modulus, G']];
+    const P4b = panel('c4arith', W, 246, LEG4b);
+    const ctx2 = P4b.ctx, R2 = P4b.R;
+    const pStiff = D.r.K + (4 / 3) * D.r.G;
+    const top = pStiff * 1.20;
+    ctx2.save(); ctx2.fillStyle = '#FBFAF7';
+    ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
+    SEIS.axisLeft(ctx2, R2, 0, top, 'stiffness in the velocity (GPa)',
+      (v) => v.toFixed(1), { flip: true, grid: true });
+    const slot = R2.w / 2, bw2 = Math.min(58, slot * 0.42);
+    // the P-wave stiffness, as its two contributions stacked
+    const xP = R2.x + slot * 0.5 - bw2 / 2;
+    const hK = (D.r.K / top) * R2.h, hG = ((4 / 3) * D.r.G / top) * R2.h;
+    ctx2.save();
+    ctx2.fillStyle = TEAL; ctx2.fillRect(xP, R2.y + R2.h - hK, bw2, hK);
+    ctx2.fillStyle = CRIM; ctx2.fillRect(xP, R2.y + R2.h - hK - hG, bw2, hG);
+    ctx2.restore();
+    SEIS.tag(ctx2, xP + bw2 / 2, R2.y + R2.h - hK - hG - 13,
+      'K + 4G/3 = ' + pStiff.toFixed(2), INK);
+    SEIS.tag(ctx2, xP + bw2 / 2, R2.y + R2.h - 9, 'into Vp', SLATE);
+    // the shear stiffness
+    const xS = R2.x + slot * 1.5 - bw2 / 2;
+    const hS = (D.r.G / top) * R2.h;
+    ctx2.save();
+    ctx2.fillStyle = CRIM; ctx2.fillRect(xS, R2.y + R2.h - hS, bw2, hS);
+    ctx2.restore();
+    SEIS.tag(ctx2, xS + bw2 / 2, R2.y + R2.h - hS - 13, 'G = ' + D.r.G.toFixed(2), INK);
+    SEIS.tag(ctx2, xS + bw2 / 2, R2.y + R2.h - 9, 'into Vs', SLATE);
+    SEIS.frame(ctx2, R2);
+    legendRow(ctx2, R2, LEG4b);
+
+    set('s4a', D.r.K.toFixed(2) + ' and ' + D.r.G.toFixed(2) + ' GPa');
+    set('s4b', pStiff.toFixed(2) + ' GPa');
+    set('s4c', D.r.rho.toFixed(3) + ' g/cm\u00b3');
+    set('s4d', Math.round(D.r.e.vp) + ' and ' + Math.round(D.r.e.vs) + ' m/s');
+    set('s4e', D.r.e.vpvs.toFixed(3));
+    set('s4f', 'Vp feels K and G together, Vs feels G alone');
+  }
+
+  /* --------------------------------- step 5 --------------------------- */
+  function drawStep5() {
+    const W = rowWidth('row5', 2);
+    const xr = [SC_LO, SC_HI];
+    const yr = [0, Math.max(...D.VpK, ...D.VpG) * 1.14];
+
+    function sens(id, legend, vps, vss, mult, title) {
+      const P = panel(id, W, 246, legend);
+      const ctx = P.ctx, R = P.R;
+      ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+      SEIS.axisLeft(ctx, R, yr[0], yr[1], 'velocity (m/s)',
+        (v) => String(Math.round(v)), { flip: true, grid: true });
+      SEIS.axisBottom(ctx, R, xr[0], xr[1], title, (v) => v.toFixed(1) + '\u00d7');
+      curve(ctx, R, D.scale, vps, xr, yr, TEAL, 2.6);
+      curve(ctx, R, D.scale, vss, xr, yr, CRIM, 2.6);
+      const xm = R.x + ((mult - xr[0]) / (xr[1] - xr[0])) * R.w;
+      SEIS.dashedLine(ctx, xm, R.y, xm, R.y + R.h, SLATE, [5, 4], 1.3);
+      SEIS.frame(ctx, R);
+      legendRow(ctx, R, legend);
+    }
+
+    sens('c5k', [[TEAL, 'Vp'], [CRIM, 'Vs \u2014 flat'], [SLATE, 'your setting', 'dash']],
+      D.VpK, D.VsK, D.kf, 'multiplier applied to K');
+    sens('c5g', [[TEAL, 'Vp'], [CRIM, 'Vs'], [SLATE, 'your setting', 'dash']],
+      D.VpG, D.VsG, D.gf, 'multiplier applied to G');
+
+    const dVsK = (D.kOnly.vs - D.r.e.vs) / D.r.e.vs * 100;
+    const dVpK = (D.kOnly.vp - D.r.e.vp) / D.r.e.vp * 100;
+    set('s5a', Math.round(D.r.e.vp) + ' \u2192 ' + Math.round(D.scaled.vp) + ' m/s');
+    set('s5b', Math.round(D.r.e.vs) + ' \u2192 ' + Math.round(D.scaled.vs) + ' m/s');
+    set('s5c', dVsK.toFixed(1) + '%');
+    set('s5d', (dVpK >= 0 ? '+' : '') + dVpK.toFixed(1) + '%');
+    set('s5e', D.r.e.vpvs.toFixed(3) + ' \u2192 ' + D.scaled.vpvs.toFixed(3));
+    set('s5f', 'a Vs change needs G or density to move; K alone cannot produce one');
+  }
+
+  /* =====================================================================
+     LABELS, TABS, EVENTS
+     ===================================================================== */
+
+  function set(id, v) { const el = $(id); if (el) el.textContent = v; }
+
+  function syncLabels() {
+    set('phiV', S.phi + '%');
+    set('vclV', S.vcl + '%');
+    set('presV', S.pres + ' MPa');
+    set('ksV', (S.ks / 100).toFixed(2) + '\u00d7');
+    set('gsV', (S.gs / 100).toFixed(2) + '\u00d7');
+    ['phi', 'vcl', 'pres', 'ks', 'gs'].forEach((k) => {
+      const el = $(k); if (el && String(el.value) !== String(S[k])) el.value = S[k];
+    });
+  }
+
+  function drawAll() {
+    syncLabels();
+    if (visible('p1') || visible('p2') || visible('p3') ||
+        visible('p4') || visible('p5')) drawHeader();
+    if (visible('p1')) drawStep1();
+    if (visible('p2')) drawStep2();
+    if (visible('p3')) drawStep3();
+    if (visible('p4')) drawStep4();
+    if (visible('p5')) drawStep5();
+  }
+
+  const PANES = ['p1', 'p2', 'p3', 'p4', 'p5', 'pw', 'pe', 'pk', 'pm'];
+  const STEPNAMES = {
+    p1: 'Grains', p2: 'Squeeze, shear', p3: 'The frame', p4: 'Velocities',
+    p5: 'One at a time', pw: 'Why it matters', pe: 'Exercises',
+    pk: 'Key points', pm: 'Method',
+  };
+
+  function buildStepNav() {
+    PANES.forEach((id, i) => {
+      const pane = $(id);
+      if (!pane || pane.querySelector('.stepnav')) return;
+      const prev = PANES[i - 1], next = PANES[i + 1];
+      const nav = document.createElement('div');
+      nav.className = 'stepnav';
+      const mk = (target, text, ghost) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn' + (ghost ? ' ghost' : '') + ' small';
+        b.textContent = text;
+        b.addEventListener('click', () => {
+          showTab(target);
+          const t = document.querySelector('.tabhint');
+          if (t && t.scrollIntoView) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        return b;
+      };
+      nav.appendChild(prev ? mk(prev, '\u2190 ' + STEPNAMES[prev], true)
+                           : document.createElement('span'));
+      const where = document.createElement('span');
+      where.className = 'where';
+      where.textContent = i < 5 ? 'step ' + (i + 1) + ' of 5' : STEPNAMES[id];
+      nav.appendChild(where);
+      nav.appendChild(next ? mk(next, STEPNAMES[next] + ' \u2192')
+                           : document.createElement('span'));
+      pane.appendChild(nav);
+    });
+  }
+
+  function showTab(id) {
+    PANES.forEach((q) => { const el = $(q); if (el) el.hidden = q !== id; });
+    document.querySelectorAll('#tabs button').forEach((b) => {
+      b.setAttribute('aria-selected', b.dataset.tab === id);
+    });
+    const lab = document.querySelector('.labhead');
+    if (lab) lab.hidden = (id === 'pw' || id === 'pk' || id === 'pm');
+    const last = (id === 'pk' || id === 'pm');
+    if ($('nextup')) $('nextup').hidden = !last;
+    if ($('pager')) $('pager').hidden = !last;
+    S.tab = id;
+    drawAll();
+    saveState();
+  }
+  document.querySelectorAll('#tabs button').forEach((b) => {
+    b.addEventListener('click', () => showTab(b.dataset.tab));
+  });
+
+  document.addEventListener('input', (ev) => {
+    const key = ev.target && ev.target.dataset && ev.target.dataset.key;
+    if (!key) return;
+    S[key] = parseFloat(ev.target.value);
+    recompute(); drawAll(); saveState();
+  });
+
+  const popBtn = $('popEx');
+  if (popBtn) {
+    popBtn.addEventListener('click', () => {
+      const list = $('exList');
+      if (!list) return;
+      const w = window.open('', 'avo-m01-exercises',
+        'width=560,height=760,scrollbars=yes,resizable=yes');
+      if (!w) { popBtn.textContent = 'the browser blocked the pop-up'; return; }
+      w.document.open();
+      w.document.write('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">' +
+        '<title>Exercises \u2014 module 01</title><style>' +
+        'body{font:15px/1.62 "IBM Plex Sans",system-ui,sans-serif;color:#16191C;' +
+        'margin:0;padding:24px 26px;background:#FBFAF7}' +
+        'h1{font:700 17px/1.3 Archivo,sans-serif;margin:0 0 4px}' +
+        'p.src{font-size:12px;color:#5C6670;margin:0 0 18px}' +
+        'ol{padding-left:20px;margin:0} li{margin-bottom:18px}' +
+        'summary{cursor:pointer;color:#841617;font-size:13px;font-weight:600;' +
+        'margin-top:6px} .ans{display:block;margin-top:6px;padding:10px 12px;' +
+        'background:#F4F6F7;border-left:3px solid #841617;font-size:14px}' +
+        '</style></head><body><h1>Module 01 \u2014 Rocks, pores and stiffness</h1>' +
+        '<p class="src">Exercises. Keep the module window open beside this one; every ' +
+        'answer is a number read off the running page.</p><ol>' +
+        list.innerHTML + '</ol></body></html>');
+      w.document.close();
+      w.focus();
+    });
+  }
+
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 140); });
+
+  recompute();
+  buildStepNav();
+  showTab(PANES.indexOf(S.tab) >= 0 ? S.tab : 'p1');
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+
+  window.__MOD = { S, get D() { return D; }, recompute, drawAll, showTab };
+})();
+</script>
+</body>
+</html>

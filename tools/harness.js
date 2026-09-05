@@ -279,7 +279,11 @@ function structural() {
   const rest = html.replace(NAMED, '');
   const inlineMaps = (rest.match(/\(\(\w+ - TR?0\) \/ \(\(NT - 1\) \* DT\)\)/g) || []).length;
   const maps = inlineMaps + namedMaps;
-  say(maps === 1, 'one shared time-to-y mapping (' + maps + ')');
+  /* Zero is correct for a module with no time axis at all — module 01 plots
+     moduli and velocities and never draws a trace. What must not happen is
+     two of them in the same module. */
+  say(maps <= 1, maps === 0 ? 'no time axis in this module, so nothing to share'
+    : 'one shared time-to-y mapping (' + maps + ')');
 
   return bad;
 }

@@ -31,7 +31,7 @@ function check(claim, got, want, tol) {
     (ok ? '' : '\n         prose says ' + want + ', the page computes ' + got));
 }
 
-console.log('\nMODULE 01 — PROSE AGAINST THE RUNNING PAGE\n');
+console.log('\nTHE-ECHO — PROSE AGAINST THE RUNNING PAGE\n');
 
 const DEFAULTS = { ztop: 1200, thk: 60, v2: 3200, v1: 2400 };
 const d = readAt(DEFAULTS);
@@ -85,5 +85,5 @@ check('exercise 5: raising the layer velocity to 4500 m/s widens the merged zone
   fastLayer.D.merged > d.D.merged ? 1 : 0, 1, 0);
 
 console.log('\n' + (bad ? bad + ' PROSE CLAIMS NO LONGER HOLD' :
-  'every number in module 01 matches the running page') + '\n');
+  'every number in the-echo matches the running page') + '\n');
 process.exit(bad ? 1 : 0);

@@ -74,6 +74,33 @@ const vsFromRho = d.D.brine.vs * Math.sqrt(d.D.brine.rho / d.D.gas.rho);
 check('method: the rise in Vs is entirely the density drop',
   d.D.gas.vs, vsFromRho, 1);
 
+/* ---- step 2 panel 3: the spread, and the range one shot records ---- */
+const NODE_DX = 300, NODES = 10;
+const spread = (zb) => {
+  const a = (x) => Math.atan2(x / 2, zb) * 180 / Math.PI;
+  return [a(NODE_DX), a(NODES * NODE_DX)];
+};
+const sh2000 = spread(2000), sh3000 = spread(3000);
+check('step 2: at 2000 m the spread records from 4.3 degrees', sh2000[0], 4.3, 0.05);
+check('step 2: out to 36.9 degrees', sh2000[1], 36.9, 0.05);
+check('exercise 1: at 3000 m that narrows to 2.9 degrees', sh3000[0], 2.9, 0.05);
+check('exercise 1: and 26.6 degrees', sh3000[1], 26.6, 0.05);
+
+/* ---- step 3 panel 3: what the fluid swap does to each property ---- */
+const pct = (b, g) => (g - b) / b * 100;
+const dVp = pct(d.D.brine.vp, d.D.gas.vp);
+const dVs = pct(d.D.brine.vs, d.D.gas.vs);
+const dRho = pct(d.D.brine.rho, d.D.gas.rho);
+const dRat = pct(d.D.brine.vpvs, d.D.gas.vpvs);
+check('step 3: gas takes Vp down 16.5%', dVp, -16.5, 0.1);
+check('step 3: puts Vs up 6.4%', dVs, 6.4, 0.1);
+check('step 3: takes density down 11.7%', dRho, -11.7, 0.1);
+check('step 3: and takes Vp/Vs down 21.5%', dRat, -21.5, 0.1);
+assertTrue('step 3: Vp/Vs moves further than either velocity did',
+  Math.abs(dRat) > Math.abs(dVp) && Math.abs(dRat) > Math.abs(dVs));
+assertTrue('step 3: the shale sits above both sands in Vp/Vs, so there is a contrast to reflect',
+  d.D.shale.vpvs > d.D.brine.vpvs && d.D.brine.vpvs > d.D.gas.vpvs);
+
 /* ---- exercise 5: the porosity trend, over the slider's range only ---- */
 const lo0 = readAt({ off: 0, zb: 2000, phi: 18 });
 const hi0 = readAt({ off: 0, zb: 2000, phi: 35 });

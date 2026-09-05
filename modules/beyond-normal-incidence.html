@@ -174,10 +174,16 @@
       the two short sides of a right triangle, so the angle is the arctangent of one divided by the other.
       Offset and angle are related but not the same number: the same offset gives a wide angle at a
       shallow boundary and a narrow one at a deep boundary.</p>
-    <p class="lede">How the traces recorded at different offsets are organized, and what happens once
-      velocity increases with depth and the ray stops travelling in a straight line, is the subject of
-      module 04. What matters here is that a range of angles exists and that the resolution modules
-      covered one end of it.</p>
+    <p class="lede">One shot does not produce one ray. The source releases energy as a wave that spreads
+      outward in all directions at once, so it meets the boundary everywhere beneath the spread, not at a
+      single point. A line of receivers — <b>geophones</b> on land, often called <b>nodes</b> when each one
+      records independently — is laid out along the ground, and each of them picks up energy that reflected
+      at its own point and arrived at its own angle. The third panel draws the whole spread at once. One
+      shot into that line yields a set of recordings covering a range of angles, and every one of them is
+      a measurement of the same boundary.</p>
+    <p class="lede">How those recordings are organized, and what happens once velocity increases with
+      depth and the rays stop travelling in straight lines, is the subject of module 04. What matters here
+      is that the range of angles exists and that the resolution modules covered one end of it.</p>
 
     <div class="sec-row" id="row2">
       <div class="panel-col">
@@ -192,13 +198,21 @@
       </div>
     </div>
 
+    <div class="sec-row" id="row2b">
+      <div class="panel-col">
+        <p class="sublabel"><b>3</b> One shot, one line of receivers
+          <span class="note">the wave spreads, and every node records a different angle</span></p>
+        <canvas id="c2spread" aria-label="A to-scale section showing a source, expanding wavefronts, a line of receiver nodes along the surface, and the ray path to each node with its own incidence angle"></canvas>
+      </div>
+    </div>
+
     <div class="stats" style="margin-top:14px">
       <div class="stat"><span>Offset, source to receiver</span><b id="s2a">—</b></div>
       <div class="stat"><span>Depth to the boundary</span><b id="s2b">—</b></div>
       <div class="stat"><span>Half-offset ÷ depth</span><b id="s2c">—</b></div>
       <div class="stat key"><span>Incidence angle that gives</span><b id="s2d">—</b></div>
-      <div class="stat"><span>Same offset at 3000 m depth</span><b id="s2e">—</b></div>
-      <div class="stat wide"><span>What the impedance result covers</span><b id="s2f">—</b></div>
+      <div class="stat"><span>Receivers in the spread</span><b id="s2e">—</b></div>
+      <div class="stat wide"><span>Angle range one shot into that line records</span><b id="s2f">—</b></div>
     </div>
     <div class="legend prose">
       <span>The rays are straight here. Velocity generally increases with depth, which bends a real ray
@@ -225,24 +239,18 @@
       measurement made only at normal incidence sees the difference at the left-hand edge of that plot; a
       measurement that uses the whole range sees the difference grow. That is the observation the rest of
       this set examines.</p>
-    <p class="lede">The reason the curves have shapes at all is worth setting out. A wave arriving
-      perpendicular to a boundary moves the rock particles along the direction it travels, straight into
-      the boundary and back out. The rock is compressed and nothing slides, so the reflection depends only
-      on how the two rocks resist compression, and impedance is a complete description of that.</p>
-    <p class="lede">A wave arriving at an angle moves the particles along a direction that is no longer
-      perpendicular to the boundary. Part of that motion is parallel to the boundary, so the rock either
-      side is also sheared. Resistance to shearing is a separate property from resistance to compression,
-      and it has its own velocity: the <b>shear velocity</b>, or Vs, alongside the P-wave velocity Vp that
-      the earlier modules used. The wider the angle, the more of the motion is parallel to the boundary
-      and the more the shear velocities matter. That is why one number becomes a curve.</p>
-    <p class="lede">The third panel shows why the two fluids give differently shaped curves. Filling the
-      pores with gas instead of brine lowers Vp, because a gas resists compression far less than a brine
-      does. It leaves Vs almost alone, because a fluid of either kind offers no resistance to shearing at
-      all — and Vs even rises slightly, because the gas is lighter and the same shear resistance is now
-      carried by less mass. Vp falls while Vs holds, so the ratio Vp/Vs falls sharply, and it is the
-      contrast in Vp/Vs across the boundary that sets how steeply a curve falls away.</p>
-    <p class="lede">Where Vp and Vs come from in the first place, and why a pore fluid acts on one and
-      not the other, is module 01.</p>
+    <p class="lede">A wave arriving perpendicular to a boundary moves the rock particles straight into it
+      and straight back out. The rock is compressed and nothing slides, so the reflection depends only on
+      resistance to compression, which impedance describes completely. A wave arriving at an angle moves
+      the particles along a direction that is no longer perpendicular, so part of the motion is parallel
+      to the boundary and the rock either side is also sheared. Resistance to shearing is a separate
+      property with its own velocity — the <b>shear velocity</b>, Vs, alongside the Vp the earlier modules
+      used. The wider the angle, the more of the motion is parallel and the more Vs matters, which is why
+      one number becomes a curve.</p>
+    <p class="lede">The third panel is the one to carry forward. It shows what swapping the pore fluid
+      does to each property of the sand, and the pattern in it is the reason the two curves have different
+      shapes: <b>Vp drops a long way, Vs barely moves, and Vp/Vs falls further than either.</b> Where Vp
+      and Vs come from, and why a fluid acts on one and not the other, is module 01.</p>
 
     <div class="sec-row" id="row3">
       <div class="panel-col">
@@ -259,9 +267,9 @@
 
     <div class="sec-row" id="row3b">
       <div class="panel-col">
-        <p class="sublabel"><b>3</b> Where the two shapes come from
-          <span class="note">Vp and Vs for all three rocks, and the ratio between them</span></p>
-        <canvas id="c3props" aria-label="Bar chart of P-wave and shear velocity for the shale, the brine sand and the gas sand, with the Vp over Vs ratio labeled for each"></canvas>
+        <p class="sublabel"><b>3</b> What the fluid changes, property by property
+          <span class="note">the same sand with brine, then with gas</span></p>
+        <canvas id="c3props" aria-label="For each of Vp, Vs, density and Vp over Vs, paired bars comparing the brine-filled and gas-filled sand, with the percentage change and the shale value marked"></canvas>
       </div>
     </div>
 
@@ -274,9 +282,11 @@
       <div class="stat wide"><span>What the extra angles added</span><b id="s3f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>The two rocks in this step are computed from a rock physics model rather than set by the
-        sliders, because their behavior with angle depends on the shear velocity and the sliders carry only
-        Vp and density. Building that model is what modules 01 and 02 do.</span>
+      <span>At 30% porosity the swap from brine to gas takes Vp down 16.5%, takes density down 11.7%,
+        and puts Vs <em>up</em> 6.4% — the only fluid property Vs responds to is the mass it has to move.
+        Vp/Vs falls 21.5%, further than any single velocity moved. The two rocks here are computed from a
+        rock physics model rather than set by the sliders, because their behavior with angle needs the
+        shear velocity and the sliders carry only Vp and density.</span>
     </div>
   </section>
 
@@ -311,11 +321,12 @@
         <li><b>Separate offset from angle.</b> Set the offset to 2400 m and the depth to 2000 m and read
           the incidence angle. Then leave the offset alone and take the depth to 3000 m.
           <details class="reveal"><summary>Answer</summary><span class="ans">The angle falls from about
-            31° to about 21.8°, on an unchanged offset. The angle is set by the half-offset divided by
-            the depth, so the same receiver spread reaches a wide angle on a shallow target and a narrow
-            one on a deep target. A statement about which offsets to include in an analysis is not
-            transferable between targets at different depths, and a deep target may not reach a usable
-            angle range at all.</span></details></li>
+            31° to about 21.8°, on an unchanged offset. Watch the third panel while you do it: every ray
+            in the spread flattens together, and the whole range the shot records narrows from 4.3°–36.9°
+            to 2.9°–26.6°. The angle is set by the half-offset divided by the depth, so one receiver line
+            reaches wide angles on a shallow target and narrow ones on a deep target. A statement about
+            which offsets to include in an analysis does not transfer between targets at different depths,
+            and a deep enough target may not reach a usable angle range at all.</span></details></li>
 
         <li><b>Confirm that the impedance result still holds.</b> Set the rock below to 2280 m/s and
           1.91 g/cm³ with the rock above at 2700 m/s and 2.23 g/cm³, then find a different pair of
@@ -370,8 +381,9 @@
           re-derivation.</li>
         <li><b>Every one of those results assumed normal incidence</b> — a wave meeting the boundary
           perpendicularly. It is the simplest case and the only one they covered.</li>
-        <li><b>A survey records a range of incidence angles</b>, because the receivers are spread out
-          from the source and most returning energy took a slanted path.</li>
+        <li><b>The source releases a wave, not a ray.</b> Energy spreads out in every direction, meets
+          the boundary everywhere beneath the spread, and is picked up by a line of receivers — so one
+          shot yields a set of recordings covering a range of angles, all of the same boundary.</li>
         <li><b>The reflection coefficient changes with angle</b>, and two interfaces with different pore
           fluids change differently. That is the observation this set examines.</li>
         <li><b>The variation supplies a second measurement</b> from the same recording, which is what
@@ -472,11 +484,12 @@
     <p>Step 3 needed a property that impedance does not carry. Module 01 builds it: grains and pore
       space, where a rock's density comes from, and the two separate ways a rock resists being
       deformed.</p>
-    <a class="btn ghost" href="../index.html">All modules</a>
+    <a class="btn ghost" href="rocks-and-stiffness.html">Go to module 01 →</a>
   </section>
 
   <div class="pager" id="pager" hidden>
     <a class="btn ghost" href="../index.html">← All modules</a>
+    <a class="btn ghost" href="rocks-and-stiffness.html">01 · Rocks, pores and stiffness →</a>
   </div>
 
   <footer>
@@ -942,13 +955,89 @@
       SEIS.tag(g2.ctx, g2.xm + 10, (g2.R.y + g2.yMid) / 2, '0\u00b0', CRIM);
     }
 
-    const deep = Math.atan2(D.halfOff, 3000) * 180 / Math.PI;
+    /* ---- panel 3: the whole spread, from one shot ----------------------
+       The wave leaves the source in every direction at once. Drawing the
+       wavefronts alongside the rays is what keeps a ray from being read as a
+       beam that was aimed somewhere: the rays are just the paths that happen
+       to end at a receiver. */
+    const LEG3s = [[SLATE, 'wavefronts, spreading from the shot', 'dash'],
+      [TEAL, 'a narrow-angle path'], [CRIM, 'a wide-angle path'],
+      [ORANGE, 'the offset you set']];
+    const Ws = rowWidth('row2b', 1);
+    const Ps = panel('c2spread', Ws, 260, LEG3s);
+    const c = Ps.ctx, Rs = Ps.R;
+    const sx = (xm) => Rs.x + (xm / XAX) * Rs.w;
+    const sy = (zm) => Rs.y + (zm / ZAX) * Rs.h;
+    const yB = sy(S.zb);
+    drawInterface(c, Rs, yB);
+    SEIS.axisLeft(c, Rs, 0, ZAX, 'depth (m)', (v) => String(Math.round(v)));
+    SEIS.axisBottom(c, Rs, 0, XAX, 'distance along the surface (m)',
+      (v) => String(Math.round(v)));
+
+    c.save();
+    c.beginPath(); c.rect(Rs.x, Rs.y, Rs.w, Rs.h); c.clip();
+
+    // wavefronts: circles of constant travel distance from the source
+    c.strokeStyle = 'rgba(92,102,112,0.45)';
+    c.lineWidth = 1; c.setLineDash([3, 4]);
+    const kx = Rs.w / XAX, kz = Rs.h / ZAX;
+    for (let rm = 700; rm <= 3400; rm += 700) {
+      c.save();
+      c.translate(sx(0), Rs.y);
+      c.scale(kx, kz);          // metres are not square on the canvas
+      c.beginPath(); c.arc(0, 0, rm, 0, Math.PI);
+      c.restore();
+      c.stroke();
+    }
+    c.setLineDash([]);
+
+    // one ray per node, colored by the angle it reaches
+    const NODE_DX = 300, NODES = 10;
+    let aMin = Infinity, aMax = 0;
+    for (let n = 1; n <= NODES; n++) {
+      const xo = n * NODE_DX;
+      if (xo > XAX) break;
+      const th = Math.atan2(xo / 2, S.zb) * 180 / Math.PI;
+      aMin = Math.min(aMin, th); aMax = Math.max(aMax, th);
+      const f = Math.min(1, th / ANGMAX);
+      const near = Math.abs(xo - S.off) <= NODE_DX / 2 && S.off > 0;
+      c.strokeStyle = near ? ORANGE
+        : 'rgb(' + Math.round(11 + f * 121) + ',' + Math.round(114 - f * 92) +
+          ',' + Math.round(133 - f * 110) + ')';
+      c.lineWidth = near ? 3 : 1.5;
+      c.beginPath();
+      c.moveTo(sx(0), Rs.y); c.lineTo(sx(xo / 2), yB); c.lineTo(sx(xo), Rs.y);
+      c.stroke();
+    }
+    c.restore();
+
+    // the receiver line
+    for (let n = 1; n <= NODES; n++) {
+      const xo = n * NODE_DX;
+      if (xo > XAX) break;
+      const near = Math.abs(xo - S.off) <= NODE_DX / 2 && S.off > 0;
+      c.save();
+      c.fillStyle = near ? ORANGE : SLATE;
+      c.fillRect(sx(xo) - 2.5, Rs.y + 1, 5, near ? 11 : 8);
+      c.restore();
+    }
+    c.save();
+    c.fillStyle = CRIM;
+    c.beginPath(); c.moveTo(sx(0), Rs.y + 1); c.lineTo(sx(0) - 6, Rs.y + 12);
+    c.lineTo(sx(0) + 6, Rs.y + 12); c.closePath(); c.fill();
+    c.restore();
+    SEIS.tag(c, sx(0) + 8, Rs.y + 22, 'shot', CRIM);
+    SEIS.tag(c, sx(NODES * NODE_DX) - 6, Rs.y + 22, 'nodes', SLATE, 'right');
+    SEIS.frame(c, Rs);
+    legendRow(c, Rs, LEG3s);
+
     set('s2a', S.off + ' m');
     set('s2b', S.zb + ' m');
     set('s2c', D.tanTheta.toFixed(3));
     set('s2d', D.angle.toFixed(1) + '\u00b0');
-    set('s2e', deep.toFixed(1) + '\u00b0');
-    set('s2f', 'the leftmost point of a curve, treated until now as the whole of it');
+    set('s2e', NODES + ', every ' + NODE_DX + ' m');
+    set('s2f', aMin.toFixed(1) + '\u00b0 to ' + aMax.toFixed(1) +
+      '\u00b0 — every one of them the same boundary');
   }
 
   /* --------------------------------- step 3 --------------------------- */
@@ -1002,46 +1091,83 @@
     SEIS.frame(ctx2, R2);
     legendRow(ctx2, R2, LEG3b);
 
-    /* Panel 3: the velocities behind the two shapes. Vp and Vs share the same
-       units, so they go on one axis; the ratio is written above each pair
-       because that is the quantity the curve shape responds to. */
-    const LEG3c = [[SLATE, 'shale', 'dot'], [TEAL, 'brine sand', 'dot'],
-      [CRIM, 'gas sand', 'dot']];
+    /* Panel 3: what the fluid swap does, property by property.
+       Paired horizontal bars rather than a velocity chart, because the message
+       is a comparison between two states of the same rock and not a set of
+       absolute values. Each row is scaled to its own property, so the bar
+       lengths are only comparable within a row — the percentage at the right
+       is what carries across rows. The shale is marked as a tick so the
+       contrast across the boundary stays visible. */
+    const LEG3c = [[TEAL, 'sand filled with brine'], [CRIM, 'sand filled with gas'],
+      [SLATE, 'the shale above', 'dash']];
     const Wc = rowWidth('row3b', 1);
-    const P3c = panel('c3props', Wc, 250, LEG3c);
+    const ROWS = [
+      { name: 'Vp', unit: ' m/s', dp: 0, b: D.brine.vp, g: D.gas.vp, sh: D.shale.vp },
+      { name: 'Vs', unit: ' m/s', dp: 0, b: D.brine.vs, g: D.gas.vs, sh: D.shale.vs },
+      { name: 'density', unit: ' g/cm\u00b3', dp: 2, b: D.brine.rho, g: D.gas.rho,
+        sh: D.shale.rho },
+      { name: 'Vp / Vs', unit: '', dp: 2, b: D.brine.vpvs, g: D.gas.vpvs,
+        sh: D.shale.vpvs },
+    ];
+    const rowH = 58;
+    const P3c = panel('c3props', Wc, ROWS.length * rowH + 10, LEG3c);
     const ctx3 = P3c.ctx, R3 = P3c.R;
-    const rocks = [['shale', D.shale, SLATE], ['brine', D.brine, TEAL], ['gas', D.gas, CRIM]];
-    let vMax = 0;
-    for (const [, r] of rocks) vMax = Math.max(vMax, r.vp);
-    vMax *= 1.30;
-    ctx3.save(); ctx3.fillStyle = '#FBFAF7'; ctx3.fillRect(R3.x, R3.y, R3.w, R3.h); ctx3.restore();
-    SEIS.axisLeft(ctx3, R3, 0, vMax, 'velocity (m/s)',
-      (v) => String(Math.round(v)), { flip: true, grid: true });
-    const slot = R3.w / 3;
-    const bw = Math.min(52, slot * 0.26);
-    rocks.forEach(([name, r, c], k) => {
-      const x0 = R3.x + slot * k + slot * 0.14;
-      const bars = [[r.vp, c, 1.0], [r.vs, c, 0.42]];
-      bars.forEach(([v, col, alpha], b) => {
-        const h = (v / vMax) * R3.h;
-        const x = x0 + b * (bw + 5);
+    ctx3.save(); ctx3.fillStyle = '#FBFAF7';
+    ctx3.fillRect(R3.x, R3.y, R3.w, R3.h); ctx3.restore();
+
+    ctx3.save();
+    ctx3.font = '11px "IBM Plex Sans", sans-serif';
+    const numW = Math.max(...ROWS.map((r) => ctx3.measureText(
+      r.b.toFixed(r.dp) + ' \u2192 ' + r.g.toFixed(r.dp) + r.unit).width));
+    const pctW = ctx3.measureText('-00.0%').width + 10;
+    const labW = Math.max(52, ctx3.measureText('density').width + 10);
+    ctx3.restore();
+    const barX = R3.x + labW + 6;
+    const barW = Math.max(40, R3.w - labW - numW - pctW - 26);
+
+    ROWS.forEach((r, k) => {
+      const y0 = R3.y + 8 + k * rowH;
+      const span = Math.max(r.b, r.g, r.sh) * 1.06;
+      const len = (v) => (v / span) * barW;
+      ctx3.save();
+      ctx3.font = '600 12px "IBM Plex Sans", sans-serif';
+      ctx3.fillStyle = INK; ctx3.textBaseline = 'middle'; ctx3.textAlign = 'left';
+      ctx3.fillText(r.name, R3.x + 4, y0 + 17);
+      ctx3.restore();
+
+      [[r.b, TEAL, 0], [r.g, CRIM, 1]].forEach(([v, col, b]) => {
+        const y = y0 + b * 17;
         ctx3.save();
-        ctx3.globalAlpha = alpha; ctx3.fillStyle = col;
-        ctx3.fillRect(x, R3.y + R3.h - h, bw, h);
+        ctx3.fillStyle = col;
+        ctx3.fillRect(barX, y, len(v), 13);
         ctx3.restore();
       });
-      const topY = R3.y + R3.h - (r.vp / vMax) * R3.h;
-      SEIS.tag(ctx3, x0 + bw * 0.5, topY - 24,
-        'Vp/Vs ' + r.vpvs.toFixed(2), c);
-      SEIS.tag(ctx3, x0 + bw * 0.5, R3.y + R3.h - 8, name, c);
+
+      // the shale, as a tick across both bars
+      const xs = barX + len(r.sh);
+      SEIS.dashedLine(ctx3, xs, y0 - 3, xs, y0 + 33, SLATE, [3, 3], 1.4);
+
+      const pct = (r.g - r.b) / r.b * 100;
+      ctx3.save();
+      ctx3.textBaseline = 'middle';
+      ctx3.font = '11px "IBM Plex Mono", ui-monospace, monospace';
+      ctx3.fillStyle = SLATE; ctx3.textAlign = 'right';
+      ctx3.fillText(r.b.toFixed(r.dp) + ' \u2192 ' + r.g.toFixed(r.dp) + r.unit,
+        R3.x + R3.w - pctW - 6, y0 + 17);
+      ctx3.fillStyle = pct < 0 ? CRIM : OLIVE;
+      ctx3.textAlign = 'right';
+      ctx3.fillText((pct > 0 ? '+' : '') + pct.toFixed(1) + '%',
+        R3.x + R3.w - 4, y0 + 17);
+      ctx3.restore();
+
+      if (k < ROWS.length - 1) {
+        ctx3.save();
+        ctx3.strokeStyle = 'rgba(201,205,210,0.9)'; ctx3.lineWidth = 1;
+        ctx3.beginPath();
+        ctx3.moveTo(R3.x + 4, y0 + rowH - 12); ctx3.lineTo(R3.x + R3.w - 4, y0 + rowH - 12);
+        ctx3.stroke(); ctx3.restore();
+      }
     });
-    ctx3.save();
-    ctx3.font = '10px "IBM Plex Sans", sans-serif';
-    ctx3.fillStyle = SLATE; ctx3.textAlign = 'center';
-    const capC = ['solid bar = Vp,  pale bar = Vs', 'solid = Vp,  pale = Vs', 'Vp / Vs']
-      .find((t) => ctx3.measureText(t).width <= R3.w - 8) || 'Vp / Vs';
-    ctx3.fillText(capC, R3.x + R3.w / 2, R3.y + R3.h + 30);
-    ctx3.restore();
     SEIS.frame(ctx3, R3);
     legendRow(ctx3, R3, LEG3c);
 

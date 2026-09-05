@@ -490,6 +490,81 @@ if (mode === 'geometry') {
   process.exit(bad ? 1 : 0);
 }
 
+if (mode === 'scales') {
+  /* Does any axis rescale itself when a control moves?
+
+     An auto-scaled axis is the quietest way a panel can lie. The bars keep
+     their proportions, the curve keeps its shape, and the only thing that
+     moved is a set of tick labels nobody reads — so a quantity can double
+     while the picture says nothing happened.
+
+     A window that PANS is fine: a target at 1000 m and one at 3500 m cannot
+     share a time axis. A window whose SPAN changes is not, because that is
+     what rescales the picture. So this records the span of every axis call
+     and reports the ones that vary. */
+  const M = win.__MOD;
+  const SEIS = win.SEIS;
+  const realLeft = SEIS.axisLeft, realBottom = SEIS.axisBottom;
+  let capture = null;
+  SEIS.axisLeft = function (ctx, rect, min, max, label) {
+    if (capture) capture.push({ side: 'left', label: label || '', span: max - min });
+    return realLeft.apply(this, arguments);
+  };
+  SEIS.axisBottom = function (ctx, rect, min, max, label) {
+    if (capture) capture.push({ side: 'bottom', label: label || '', span: max - min });
+    return realBottom.apply(this, arguments);
+  };
+
+  const ranges = {};
+  for (const m2 of html.matchAll(/data-key="(\w+)"[^>]*min="([-\d.]+)"[^>]*max="([-\d.]+)"/g)) {
+    ranges[m2[1]] = [parseFloat(m2[2]), parseFloat(m2[3])];
+  }
+  const dflt = JSON.parse(JSON.stringify(M.S));
+
+  const snap = (pane) => {
+    capture = [];
+    M.showTab(pane);
+    M.drawAll();
+    const out = capture; capture = null;
+    return out;
+  };
+
+  let bad = 0;
+  console.log('\n pane   axis                                    span varies');
+  for (const pane of PANE_IDS) {
+    const seen = new Map();          // index -> {label, lo, hi}
+    for (const [k, [lo, hi]] of Object.entries(ranges)) {
+      for (const v of [lo, (lo + hi) / 2, hi]) {
+        Object.assign(M.S, dflt); M.S[k] = v;
+        M.recompute();
+        const list = snap(pane);
+        list.forEach((a, i) => {
+          const key = i + '|' + a.side + '|' + a.label;
+          const e = seen.get(key) || { label: a.label, side: a.side,
+            lo: Infinity, hi: -Infinity };
+          e.lo = Math.min(e.lo, a.span); e.hi = Math.max(e.hi, a.span);
+          seen.set(key, e);
+        });
+      }
+    }
+    for (const e of seen.values()) {
+      if (e.lo <= 0 || !isFinite(e.lo)) continue;
+      const drift = (e.hi - e.lo) / e.lo;
+      if (drift > 0.01) {
+        bad++;
+        console.log('  ' + pane.padEnd(6) + ' ' +
+          (e.side + ' "' + e.label + '"').padEnd(40) +
+          ' ' + e.lo.toPrecision(4) + ' .. ' + e.hi.toPrecision(4));
+      }
+    }
+  }
+  Object.assign(M.S, dflt); M.recompute(); M.drawAll();
+  console.log('  ' + (bad ? bad + ' axes rescale themselves as controls move'
+    : 'ok   every axis span is fixed; windows may pan but do not rescale'));
+  console.log('');
+  process.exit(bad ? 1 : 0);
+}
+
 if (mode === 'axes') {
   /* Read the tick labels off the RENDERED page and check that the larger value
      sits higher up. The source-level lint checks that flip:true is present;

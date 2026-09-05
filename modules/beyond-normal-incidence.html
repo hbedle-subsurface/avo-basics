@@ -569,6 +569,11 @@
   const ANGMAX = 45;      // the widest angle the sliders can reach
   const NANG = 91;
   const ZAX = 3200;       // depth axis for the step 2 geometry panels, metres
+  /* Fixed limits so a curve that flattens is seen to flatten, rather than
+     being rescaled back to the same apparent shape. */
+  const AX_R = [-0.42, 0.30];   // reflection coefficient, both fluid cases
+  const AX_GAP = 0.30;          // the difference between the two curves
+  const AX_IMP = 12000;         // m/s g/cm3, the widest the four sliders reach
   const XAX = 3200;       // distance axis, metres
   const WAV = SEIS.makeWavelet({ f: FREQ });
 
@@ -619,6 +624,10 @@
      ===================================================================== */
 
   const M = { l: 62, r: 16, t: 14, b: 40 };
+  /* Where the header has a bottom axis, its caption has to clear the axis
+     label SEIS.axisBottom puts 22 px under the plot. Where it has a legend
+     instead, legendRow already occupies +46 and the caption goes above it. */
+  const CAP_DY = 30, CAP_ROOM = 0;
 
   function pw(el) {
     const par = el && el.parentElement;
@@ -815,10 +824,14 @@
   /* --------------------------------- header --------------------------- */
   function drawHeader() {
     const el = $('cHead'); if (!el) return;
-    const W = pw(el), PH = 206, H = M.t + PH + M.b;
+    const W = pw(el), PH = 206, H = M.t + PH + M.b + CAP_ROOM;
     const ctx = SEIS.fitCanvas(el, W, H);
     ctx.clearRect(0, 0, W, H);
-    const gap = 26;
+    /* The right-hand panel draws its own y-axis, and SEIS.axisLeft puts tick
+       labels 6 px and the rotated title 42 px to the LEFT of the plot. A 26 px
+       gap put all of that inside the left-hand panel. The gutter has to be as
+       wide as the one the left panel gets. */
+    const gap = M.l;
     const halfW = Math.max(90, Math.floor((W - M.l - M.r - gap) / 2));
     const RA = { x: M.l, y: M.t, w: halfW, h: PH };
     const RB = { x: M.l + halfW + gap, y: M.t, w: halfW, h: PH };
@@ -845,8 +858,8 @@
     const capB = ['R = ' + D.rc.toFixed(3) + ', at normal incidence',
       'R = ' + D.rc.toFixed(3) + ' at 0\u00b0', 'R = ' + D.rc.toFixed(3)]
       .find(fits) || D.rc.toFixed(3);
-    ctx.fillText(capA, RA.x + RA.w / 2, RA.y + RA.h + 30);
-    ctx.fillText(capB, RB.x + RB.w / 2, RB.y + RB.h + 30);
+    ctx.fillText(capA, RA.x + RA.w / 2, RA.y + RA.h + CAP_DY);
+    ctx.fillText(capB, RB.x + RB.w / 2, RB.y + RB.h + CAP_DY);
     ctx.restore();
   }
 
@@ -857,7 +870,7 @@
     const LEG1 = [[TEAL, 'the rock above', 'dot'], [ORANGE, 'the rock below', 'dot']];
     const P1 = panel('c1imp', W, 246, LEG1);
     const ctx = P1.ctx, R = P1.R;
-    const maxI = Math.max(D.i1, D.i2) * 1.25;
+    const maxI = AX_IMP;
     SEIS.axisLeft(ctx, R, 0, maxI, 'impedance (m/s · g/cm³)',
       (v) => String(Math.round(v)), { flip: true, grid: true });
     const bw = R.w / 5;
@@ -1052,13 +1065,7 @@
       [SLATE, 'your angle', 'dash']];
     const P3 = panel('c3curve', W, PH, LEG3);
     const ctx = P3.ctx, R = P3.R;
-    let lo = 0, hi = 0;
-    for (let i = 0; i < NANG; i++) {
-      lo = Math.min(lo, D.rB[i], D.rG[i]);
-      hi = Math.max(hi, D.rB[i], D.rG[i]);
-    }
-    const pad = Math.max(0.02, (hi - lo) * 0.15);
-    const yr = [lo - pad, hi + pad];
+    const yr = AX_R;
     ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
     SEIS.axisLeft(ctx, R, yr[0], yr[1], 'reflection coefficient',
       (v) => v.toFixed(2), { flip: true, grid: true });
@@ -1078,9 +1085,7 @@
     const LEG3b = [[ORANGE, 'gap between the two curves'], [SLATE, 'your angle', 'dash']];
     const P3b = panel('c3gap', W, PH, LEG3b);
     const ctx2 = P3b.ctx, R2 = P3b.R;
-    let gHi = 0;
-    for (let i = 0; i < NANG; i++) gHi = Math.max(gHi, D.gap[i]);
-    const yr2 = [0, Math.max(0.05, gHi * 1.2)];
+    const yr2 = [0, AX_GAP];
     ctx2.save(); ctx2.fillStyle = '#FBFAF7'; ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
     SEIS.axisLeft(ctx2, R2, yr2[0], yr2[1],
       W > 340 ? 'difference in reflection coefficient' : 'difference in R',

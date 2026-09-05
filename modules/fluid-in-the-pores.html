@@ -594,6 +594,20 @@
 
   const SALINITY = 0.035, API = 32, GOR = 0, GAS_GRAV = 0.65;
   const PHI_LO = 0.15, PHI_HI = 0.35;
+
+  /* Fixed axis limits. Every one of these was auto-scaled at first, which
+     meant a bar could stay the same length while the number under it moved by
+     a factor of two — the axis quietly rescaled instead. The values come from
+     sweeping all five controls to their extremes and adding headroom, so
+     nothing clips and nothing rescales. Vp and Vs share one limit so the two
+     panels can be compared directly. */
+  const AX_VEL = 4200;        // m/s, covers Vp and Vs everywhere
+  const AX_MOD = 20;          // GPa, covers K dry and saturated, and G
+  const AX_FLUID_K = 3.2;     // GPa, covers brine at 50 MPa
+  const AX_RHO = 2.8;         // g/cm3
+  const AX_MINK = 46;         // GPa, quartz-clay mineral bulk modulus
+  const AX_PCT = 40;          // %, the brine-gas separation
+  const AX_VP_SAT = [1100, 4000];   // m/s, Vp across the saturation curve
   const P_LO = 5, P_HI = 50;
 
   function fluidsAt(P, T) {
@@ -705,6 +719,10 @@
      ===================================================================== */
 
   const M = { l: 62, r: 16, t: 14, b: 40 };
+  /* Where the header has a bottom axis, its caption has to clear the axis
+     label SEIS.axisBottom puts 22 px under the plot. Where it has a legend
+     instead, legendRow already occupies +46 and the caption goes above it. */
+  const CAP_DY = 30, CAP_ROOM = 0;
 
   function pw(el) {
     const par = el && el.parentElement;
@@ -840,22 +858,26 @@
     const W = pw(el), PH = 206;
     const LEGH = [[SLATE, 'empty pores', 'dot'], [TEAL, 'brine', 'dot'],
       [OLIVE, 'oil', 'dot'], [CRIM, 'gas', 'dot']];
-    let ctx = SEIS.fitCanvas(el, W, M.t + PH + M.b);
+    let ctx = SEIS.fitCanvas(el, W, M.t + PH + M.b + CAP_ROOM);
     const lines = legendLines(ctx, LEGH, W - M.l - M.r);
-    const H = M.t + PH + M.b + 12 + lines * 16;
+    const H = M.t + PH + M.b + CAP_ROOM + 12 + lines * 16;
     ctx = SEIS.fitCanvas(el, W, H);
     ctx.clearRect(0, 0, W, H);
 
-    const gap = 26;
+    /* The right-hand panel draws its own y-axis, and SEIS.axisLeft puts tick
+       labels 6 px and the rotated title 42 px to the LEFT of the plot. A 26 px
+       gap put all of that inside the left-hand panel. The gutter has to be as
+       wide as the one the left panel gets. */
+    const gap = M.l;
     const halfW = Math.max(90, Math.floor((W - M.l - M.r - gap) / 2));
     const RA = { x: M.l, y: M.t, w: halfW, h: PH };
     const RB = { x: M.l + halfW + gap, y: M.t, w: halfW, h: PH };
 
-    const vpTop = Math.max(D.dry.vp, D.brine.vp, D.oil.vp, D.gas.vp) * 1.22;
+    const vpTop = AX_VEL;
     barChart(ctx, RA, [['dry', D.dry.vp, SLATE], ['brine', D.brine.vp, TEAL],
       ['oil', D.oil.vp, OLIVE], ['gas', D.gas.vp, CRIM]],
       vpTop, (v) => String(Math.round(v)), 'Vp (m/s)');
-    const vsTop = Math.max(D.dry.vs, D.brine.vs, D.oil.vs, D.gas.vs) * 1.22;
+    const vsTop = AX_VEL;      // the same limit, so the two panels compare
     barChart(ctx, RB, [['dry', D.dry.vs, SLATE], ['brine', D.brine.vs, TEAL],
       ['oil', D.oil.vs, OLIVE], ['gas', D.gas.vs, CRIM]],
       vsTop, (v) => String(Math.round(v)), 'Vs (m/s)');
@@ -864,9 +886,9 @@
     ctx.font = '10px "IBM Plex Sans", sans-serif';
     ctx.fillStyle = SLATE; ctx.textAlign = 'center';
     ctx.fillText(fitLabel(ctx, 'the fluid moves Vp a long way', halfW - 4),
-      RA.x + RA.w / 2, RA.y + RA.h + 30);
+      RA.x + RA.w / 2, RA.y + RA.h + CAP_DY);
     ctx.fillText(fitLabel(ctx, 'and moves Vs only through density', halfW - 4),
-      RB.x + RB.w / 2, RB.y + RB.h + 30);
+      RB.x + RB.w / 2, RB.y + RB.h + CAP_DY);
     ctx.restore();
     legendRow(ctx, { x: M.l, y: M.t, w: W - M.l - M.r, h: PH }, LEGH);
   }
@@ -881,7 +903,7 @@
     const ctx = P1.ctx, R = P1.R;
     barChart(ctx, R, [['brine', D.fl.brine.K, TEAL], ['oil', D.fl.oil.K, OLIVE],
       ['gas', D.fl.gas.K, CRIM], ['grains', D.fr.min.K, SLATE]],
-      D.fr.min.K * 1.24, (v) => v.toFixed(2), 'bulk modulus (GPa)');
+      AX_MINK, (v) => v.toFixed(2), 'bulk modulus (GPa)');
     legendRow(ctx, R, LEG1);
 
     const LEG1b = [[TEAL, 'brine'], [OLIVE, 'oil'], [CRIM, 'gas'],
@@ -889,7 +911,7 @@
     const P1b = panel('c1p', W, 246, LEG1b);
     const ctx2 = P1b.ctx, R2 = P1b.R;
     const xr = [P_LO, P_HI];
-    const yr = [0, Math.max(...D.KbrineP) * 1.15];
+    const yr = [0, AX_FLUID_K];
     ctx2.save(); ctx2.fillStyle = '#FBFAF7';
     ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
     SEIS.axisLeft(ctx2, R2, yr[0], yr[1], 'bulk modulus (GPa)',
@@ -920,16 +942,16 @@
       [OLIVE, 'oil', 'dot'], [CRIM, 'gas', 'dot']];
 
     const P2 = panel('c2k', W, 246, LEG2);
-    const kTop = Math.max(D.dry.K, D.brine.K, D.oil.K, D.gas.K) * 1.26;
+    const kTop = AX_MOD;
     barChart(P2.ctx, P2.R, [['dry', D.dry.K, SLATE], ['brine', D.brine.K, TEAL],
       ['oil', D.oil.K, OLIVE], ['gas', D.gas.K, CRIM]],
-      kTop, (v) => v.toFixed(2), 'bulk modulus K (GPa)');
+      kTop, (v) => v.toFixed(1), 'bulk modulus K (GPa)');
     legendRow(P2.ctx, P2.R, LEG2);
 
     const P2b = panel('c2g', W, 246, LEG2);
     barChart(P2b.ctx, P2b.R, [['dry', D.dry.G, SLATE], ['brine', D.brine.G, TEAL],
       ['oil', D.oil.G, OLIVE], ['gas', D.gas.G, CRIM]],
-      D.fr.G * 1.5, (v) => v.toFixed(3), 'shear modulus G (GPa)');
+      AX_MOD, (v) => v.toFixed(1), 'shear modulus G (GPa)');
     legendRow(P2b.ctx, P2b.R, LEG2);
 
     set('s2a', D.dry.K.toFixed(3) + ' GPa');
@@ -949,7 +971,7 @@
     const P3 = panel('c3vel', W, 246, LEG3);
     const ctx = P3.ctx, R = P3.R;
     // Vp and Vs share m/s, so they share one axis and sit as two groups
-    const top = Math.max(D.dry.vp, D.brine.vp, D.oil.vp, D.gas.vp) * 1.24;
+    const top = AX_VEL;
     ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
     SEIS.axisLeft(ctx, R, 0, top, 'velocity (m/s)',
       (v) => String(Math.round(v)), { flip: true, grid: true });
@@ -971,7 +993,7 @@
 
     const P3b = panel('c3rho', W, 246, LEG3);
     const ctx2 = P3b.ctx, R2 = P3b.R;
-    const rhoTop = Math.max(D.dry.rho, D.brine.rho) * 1.30;
+    const rhoTop = AX_RHO;
     ctx2.save(); ctx2.fillStyle = '#FBFAF7';
     ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
     SEIS.axisLeft(ctx2, R2, 0, rhoTop, 'density (g/cm\u00b3) and Vp/Vs',
@@ -1007,14 +1029,14 @@
       [SLATE, 'your saturation', 'dash']];
     const P4 = panel('c4kf', W, 246, LEG4);
     const ctx = P4.ctx, R = P4.R;
-    const yr = [0, Math.max(...D.KflSg) * 1.15];
+    const yr = [0, AX_FLUID_K];
     ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
     SEIS.axisLeft(ctx, R, yr[0], yr[1], 'fluid bulk modulus (GPa)',
       (v) => v.toFixed(1), { flip: true, grid: true });
     SEIS.axisBottom(ctx, R, xr[0], xr[1], 'gas saturation (%)',
       (v) => String(Math.round(v)));
     // density on the same panel, rescaled onto the same axis for shape only
-    const rhoScaled = D.rhoFlSg.map((r) => r / D.rhoFlSg[0] * yr[1] * 0.86);
+    const rhoScaled = D.rhoFlSg.map((r) => r / D.rhoFlSg[0] * AX_FLUID_K * 0.86);
     curve(ctx, R, D.sgAx, rhoScaled, xr, yr, TEAL, 2.2, [6, 4]);
     curve(ctx, R, D.sgAx, D.KflSg, xr, yr, CRIM, 2.8);
     const xS = R.x + (S.sg / 100) * R.w;
@@ -1026,9 +1048,7 @@
       [SLATE, 'your saturation', 'dash']];
     const P4b = panel('c4vp', W, 246, LEG4b);
     const ctx2 = P4b.ctx, R2 = P4b.R;
-    const lo = Math.min(...D.VpSg), hi = Math.max(...D.VpSg);
-    const pad = Math.max(20, (hi - lo) * 0.18);
-    const yr2 = [lo - pad, hi + pad];
+    const yr2 = AX_VP_SAT;
     ctx2.save(); ctx2.fillStyle = '#FBFAF7';
     ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
     SEIS.axisLeft(ctx2, R2, yr2[0], yr2[1], 'Vp (m/s)',
@@ -1061,7 +1081,7 @@
     const P5 = panel('c5phi', W, 246, LEG5);
     const ctx = P5.ctx, R = P5.R;
     const xr = [PHI_LO * 100, PHI_HI * 100];
-    const yr = [0, Math.max(...D.dPctPhi, ...D.dPctPres) * 1.18];
+    const yr = [0, AX_PCT];
     ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
     SEIS.axisLeft(ctx, R, yr[0], yr[1], 'Vp separation (% of brine Vp)',
       (v) => v.toFixed(0), { flip: true, grid: true });

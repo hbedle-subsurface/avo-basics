@@ -577,6 +577,16 @@
   const P_LO = 5, P_HI = 50;
   const SC_LO = 0.5, SC_HI = 2.0;
 
+  /* Fixed axis limits, from a sweep of all three rock controls with headroom.
+     An auto-scaled axis hides the very thing these panels are for: a bar or a
+     curve that keeps its shape while the number under it moves. */
+  const AX_MOD = 48;          // GPa, above quartz G at 44
+  const AX_FRAME = 26;        // GPa, the frame moduli
+  const AX_RHO = [1.5, 2.7];  // g/cm3
+  const AX_VEL = 5000;        // m/s, covers Vp and Vs
+  const AX_PSTIFF = 58;       // GPa, K + 4G/3
+  const AX_VEL_SCALED = 6200; // m/s, the step 5 multipliers reach further
+
   /* One dry rock, from porosity, clay fraction and contact pressure. */
   function dryRock(phi, vClay, P) {
     const min = ROCK.mineralMix(vClay);
@@ -644,6 +654,10 @@
      ===================================================================== */
 
   const M = { l: 62, r: 16, t: 14, b: 40 };
+  /* Where the header has a bottom axis, its caption has to clear the axis
+     label SEIS.axisBottom puts 22 px under the plot. Where it has a legend
+     instead, legendRow already occupies +46 and the caption goes above it. */
+  const CAP_DY = 30, CAP_ROOM = 0;
 
   function pw(el) {
     const par = el && el.parentElement;
@@ -796,20 +810,24 @@
       ['rgba(92,102,112,0.35)', 'pale bar: the solid mineral on its own', 'dot'],
       [SLATE, 'solid bar: this rock, grains and pores together', 'dot'],
     ];
-    let ctx = SEIS.fitCanvas(el, W, M.t + PH + M.b);
+    let ctx = SEIS.fitCanvas(el, W, M.t + PH + M.b + CAP_ROOM);
     const lines = legendLines(ctx, LEGH, W - M.l - M.r);
-    const H = M.t + PH + M.b + 12 + lines * 16;
+    const H = M.t + PH + M.b + CAP_ROOM + 12 + lines * 16;
     ctx = SEIS.fitCanvas(el, W, H);
     ctx.clearRect(0, 0, W, H);
 
-    const gap = 26;
+    /* The right-hand panel draws its own y-axis, and SEIS.axisLeft puts tick
+       labels 6 px and the rotated title 42 px to the LEFT of the plot. A 26 px
+       gap put all of that inside the left-hand panel. The gutter has to be as
+       wide as the one the left panel gets. */
+    const gap = M.l;
     const halfW = Math.max(90, Math.floor((W - M.l - M.r - gap) / 2));
     const RA = { x: M.l, y: M.t, w: halfW, h: PH };
     const RB = { x: M.l + halfW + gap, y: M.t, w: halfW, h: PH };
 
     drawPack(ctx, RA);
 
-    const maxM = Math.max(D.r.min.K, D.r.min.G) * 1.20;
+    const maxM = AX_MOD;
     ctx.save(); ctx.fillStyle = '#FBFAF7';
     ctx.fillRect(RB.x, RB.y, RB.w, RB.h); ctx.restore();
     SEIS.axisLeft(ctx, RB, 0, maxM, 'stiffness (GPa)',
@@ -852,11 +870,11 @@
     const capA = ['the grain pack at ' + S.phi + '% porosity, ' + S.vcl + '% clay',
       S.phi + '% porosity, ' + S.vcl + '% clay', S.phi + '% porosity']
       .find((t) => ctx.measureText(t).width <= halfW - 4) || 'the pack';
-    ctx.fillText(capA, RA.x + RA.w / 2, RA.y + RA.h + 30);
+    ctx.fillText(capA, RA.x + RA.w / 2, RA.y + RA.h + CAP_DY);
     const capB = ['the rock is far softer than the mineral in both',
       'the rock is softer than the mineral', 'rock vs mineral']
       .find((t) => ctx.measureText(t).width <= halfW - 4) || 'rock vs mineral';
-    ctx.fillText(capB, RB.x + RB.w / 2, RB.y + RB.h + 30);
+    ctx.fillText(capB, RB.x + RB.w / 2, RB.y + RB.h + CAP_DY);
     ctx.restore();
 
     legendRow(ctx, { x: M.l, y: M.t, w: W - M.l - M.r, h: PH }, LEGH);
@@ -902,7 +920,7 @@
     const ctx2 = P1b.ctx, R2 = P1b.R;
     const xr = [PHI_LO * 100, PHI_HI * 100];
     const dens = D.phis.map((p) => (1 - p / 100) * D.r.min.rho);
-    const yr = [Math.min(...dens) * 0.96, Math.max(...dens) * 1.02];
+    const yr = AX_RHO;
     ctx2.save(); ctx2.fillStyle = '#FBFAF7';
     ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
     SEIS.axisLeft(ctx2, R2, yr[0], yr[1], 'dry bulk density (g/cm\u00b3)',
@@ -1019,7 +1037,7 @@
     const P3 = panel('c3phi', W, 246, LEG3);
     const ctx = P3.ctx, R = P3.R;
     const xr = [PHI_LO * 100, PHI_HI * 100];
-    const yr = [0, Math.max(D.r.min.K, D.r.min.G) * 1.10];
+    const yr = [0, AX_MOD];
     ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
     SEIS.axisLeft(ctx, R, yr[0], yr[1], 'modulus (GPa)',
       (v) => String(Math.round(v)), { flip: true, grid: true });
@@ -1042,7 +1060,7 @@
     const P3b = panel('c3pres', W, 246, LEG3b);
     const ctx2 = P3b.ctx, R2 = P3b.R;
     const xr2 = [P_LO, P_HI];
-    const yr2 = [0, Math.max(...D.Kpres, ...D.Gpres) * 1.15];
+    const yr2 = [0, AX_FRAME];
     ctx2.save(); ctx2.fillStyle = '#FBFAF7';
     ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
     SEIS.axisLeft(ctx2, R2, yr2[0], yr2[1], 'modulus (GPa)',
@@ -1074,7 +1092,7 @@
     const P4 = panel('c4vel', W, 246, LEG4);
     const ctx = P4.ctx, R = P4.R;
     const xr = [PHI_LO * 100, PHI_HI * 100];
-    const yr = [0, Math.max(...D.VpPhi) * 1.12];
+    const yr = [0, AX_VEL];
     ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
     SEIS.axisLeft(ctx, R, yr[0], yr[1], 'velocity (m/s)',
       (v) => String(Math.round(v)), { flip: true, grid: true });
@@ -1090,7 +1108,7 @@
     const P4b = panel('c4arith', W, 246, LEG4b);
     const ctx2 = P4b.ctx, R2 = P4b.R;
     const pStiff = D.r.K + (4 / 3) * D.r.G;
-    const top = pStiff * 1.20;
+    const top = AX_PSTIFF;
     ctx2.save(); ctx2.fillStyle = '#FBFAF7';
     ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
     SEIS.axisLeft(ctx2, R2, 0, top, 'stiffness in the velocity (GPa)',
@@ -1129,7 +1147,7 @@
   function drawStep5() {
     const W = rowWidth('row5', 2);
     const xr = [SC_LO, SC_HI];
-    const yr = [0, Math.max(...D.VpK, ...D.VpG) * 1.14];
+    const yr = [0, AX_VEL_SCALED];
 
     function sens(id, legend, vps, vss, mult, title) {
       const P = panel(id, W, 246, legend);

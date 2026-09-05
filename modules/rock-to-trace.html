@@ -583,6 +583,14 @@
   const SHVP_LO = 2000, SHVP_HI = 3400;
   const PHI_LO = 0.15, PHI_HI = 0.38;
 
+  /* Fixed axis limits, from a sweep of all five controls with headroom. */
+  const AX_VEL = 4000;            // m/s, covers Vp, Vs and density x1000
+  const AX_IP = [2600, 9000];     // impedance, for the profile panel
+  const AX_IP_BAR = 9200;         // impedance, for the bar panel
+  const AX_R = [-0.52, 0.40];     // reflection coefficient
+  const AX_VPVS = [1.35, 3.75];   // Vp/Vs
+  const WIN_SPAN = 0.26, WIN_PAD = 0.09;   // s, the shared section/trace window
+
   const FL = ROCK.fluidProps({ T: TEMP, P: PRES, S: SALINITY });
 
   function reservoir(phi, sg, vClay) {
@@ -681,6 +689,10 @@
      ===================================================================== */
 
   const M = { l: 62, r: 16, t: 14, b: 40 };
+  /* Where the header has a bottom axis, its caption has to clear the axis
+     label SEIS.axisBottom puts 22 px under the plot. Where it has a legend
+     instead, legendRow already occupies +46 and the caption goes above it. */
+  const CAP_DY = 30, CAP_ROOM = 0;
 
   function pw(el) {
     const par = el && el.parentElement;
@@ -805,9 +817,25 @@
     SEIS.frame(ctx, R);
   }
 
-  /* the section, shaded by impedance */
-  function drawSection(ctx, R) {
-    const yT = R.y + R.h * 0.32, yB = R.y + R.h * 0.62;
+  /* The window both the section and the trace are drawn in. Tight enough that
+     a 60 m reservoir is a visible band rather than a sliver. */
+  function headWindow() {
+    /* A fixed span. Hanging it off the reservoir's own two-way time made the
+       window breathe as the velocity changed, which is the rescaling this set
+       is trying not to do. The span holds the thickest, slowest case. */
+    return [T_TOP - WIN_PAD, T_TOP - WIN_PAD + WIN_SPAN];
+  }
+
+  /* The section, shaded by impedance. When a time window is supplied the
+     boundaries are placed at the times the reflections actually occur, so the
+     section and the trace beside it line up sample for sample. Without one it
+     falls back to fixed fractions, which is only used where no trace is
+     drawn alongside. */
+  function drawSection(ctx, R, win) {
+    const yT = win ? R.y + ((T_TOP - win[0]) / (win[1] - win[0])) * R.h
+                   : R.y + R.h * 0.32;
+    const yB = win ? R.y + ((T_TOP + D.dtRes - win[0]) / (win[1] - win[0])) * R.h
+                   : R.y + R.h * 0.62;
     const shade = (ip, warm) => {
       const f = Math.max(0, Math.min(1, (ip - 3800) / 4200));
       return warm
@@ -829,6 +857,35 @@
     SEIS.tag(ctx, R.x + 6, (yT + yB) / 2, 'reservoir', CRIM);
     SEIS.frame(ctx, R);
     return { yT, yB };
+  }
+
+  /* The same wiggle, but over a supplied time window so it can be aligned
+     with a section drawn beside it. */
+  function wiggleIn(ctx, R, tr, win, amp) {
+    const x0 = R.x + R.w / 2;
+    const a = amp || 0.35;
+    const X = (v) => x0 + (v / a) * (R.w / 2) * 0.9;
+    const y = (t) => R.y + ((t - win[0]) / (win[1] - win[0])) * R.h;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    ctx.strokeStyle = 'rgba(22,25,28,0.25)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x0, R.y); ctx.lineTo(x0, R.y + R.h); ctx.stroke();
+    ctx.fillStyle = 'rgba(22,25,28,0.72)';
+    ctx.beginPath(); ctx.moveTo(x0, R.y);
+    for (let t = win[0]; t <= win[1]; t += DT) {
+      const i = Math.round((t - TR0) / DT);
+      ctx.lineTo(Math.max(x0, X(tr[i] || 0)), y(t));
+    }
+    ctx.lineTo(x0, R.y + R.h); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = INK; ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    let started = false;
+    for (let t = win[0]; t <= win[1]; t += DT) {
+      const i = Math.round((t - TR0) / DT);
+      const px = X(tr[i] || 0), py = y(t);
+      started ? ctx.lineTo(px, py) : ctx.moveTo(px, py); started = true;
+    }
+    ctx.stroke(); ctx.restore();
   }
 
   function wiggle(ctx, R, tr, amp) {
@@ -855,28 +912,38 @@
   /* --------------------------------- header --------------------------- */
   function drawHeader() {
     const el = $('cHead'); if (!el) return;
-    const W = pw(el), PH = 206, H = M.t + PH + M.b;
+    const W = pw(el), PH = 206, H = M.t + PH + M.b + CAP_ROOM;
     const ctx = SEIS.fitCanvas(el, W, H);
     ctx.clearRect(0, 0, W, H);
-    const gap = 26;
+    /* The right-hand panel draws its own y-axis, and SEIS.axisLeft puts tick
+       labels 6 px and the rotated title 42 px to the LEFT of the plot. A 26 px
+       gap put all of that inside the left-hand panel. The gutter has to be as
+       wide as the one the left panel gets. */
+    const gap = M.l;
     const halfW = Math.max(90, Math.floor((W - M.l - M.r - gap) / 2));
     const RA = { x: M.l, y: M.t, w: halfW, h: PH };
     const RB = { x: M.l + halfW + gap, y: M.t, w: halfW, h: PH };
 
-    drawSection(ctx, RA);
-    wiggle(ctx, RB, D.trace);
+    const win = headWindow();
+    drawSection(ctx, RA, win);
+    SEIS.axisLeft(ctx, RA, win[0] * 1000, win[1] * 1000, 'two-way time (ms)',
+      (v) => String(Math.round(v)));
+    wiggleIn(ctx, RB, D.trace, win);
     SEIS.frame(ctx, RB);
-    SEIS.axisLeft(ctx, RB, 0, (NT - 1) * DT, 'two-way time (s)', (v) => v.toFixed(1));
-    SEIS.dashedLine(ctx, RB.x, yOf(T_TOP, RB), RB.x + RB.w, yOf(T_TOP, RB),
-      CRIM, [4, 4], 1.1);
+    SEIS.axisLeft(ctx, RB, win[0] * 1000, win[1] * 1000, 'two-way time (ms)',
+      (v) => String(Math.round(v)));
+    const yTop = RB.y + ((T_TOP - win[0]) / (win[1] - win[0])) * RB.h;
+    const yBase = RB.y + ((T_TOP + D.dtRes - win[0]) / (win[1] - win[0])) * RB.h;
+    SEIS.dashedLine(ctx, RB.x, yTop, RB.x + RB.w, yTop, CRIM, [4, 4], 1.2);
+    SEIS.dashedLine(ctx, RB.x, yBase, RB.x + RB.w, yBase, TEAL, [4, 4], 1.2);
 
     ctx.save();
     ctx.font = '10px "IBM Plex Sans", sans-serif';
     ctx.fillStyle = SLATE; ctx.textAlign = 'center';
     ctx.fillText(fitLabel(ctx, 'the two rocks, shaded by impedance', halfW - 4),
-      RA.x + RA.w / 2, RA.y + RA.h + 30);
+      RA.x + RA.w / 2, RA.y + RA.h + CAP_DY);
     ctx.fillText(fitLabel(ctx, 'R at the top = ' + D.rTop.toFixed(3), halfW - 4),
-      RB.x + RB.w / 2, RB.y + RB.h + 30);
+      RB.x + RB.w / 2, RB.y + RB.h + CAP_DY);
     ctx.restore();
   }
 
@@ -886,13 +953,16 @@
 
     const LEG1 = [[SLATE, 'shale', 'dot'], [CRIM, 'reservoir', 'dot']];
     const P1 = panel('c1sec', W, 246, LEG1);
-    drawSection(P1.ctx, P1.R);
+    const win1 = headWindow();
+    drawSection(P1.ctx, P1.R, win1);
+    SEIS.axisLeft(P1.ctx, P1.R, win1[0] * 1000, win1[1] * 1000, 'two-way time (ms)',
+      (v) => String(Math.round(v)));
     legendRow(P1.ctx, P1.R, LEG1);
 
     const P1b = panel('c1props', W, 246, LEG1);
     const ctx = P1b.ctx, R = P1b.R;
     ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    const top = Math.max(D.sh.vp, D.res.vp) * 1.30;
+    const top = AX_VEL;
     SEIS.axisLeft(ctx, R, 0, top, 'velocity (m/s), density \u00d71000',
       (v) => String(Math.round(v)), { flip: true, grid: true });
     const groups = [['Vp', 'vp', 1], ['Vs', 'vs', 1], ['density', 'rho', 1000]];
@@ -926,7 +996,7 @@
     const LEG2 = [[SLATE, 'shale', 'dot'], [CRIM, 'reservoir', 'dot']];
     const P2 = panel('c2imp', W, 246, LEG2);
     barChart(P2.ctx, P2.R, [['shale', D.sh.ip, SLATE], ['reservoir', D.res.ip, CRIM]],
-      Math.max(D.sh.ip, D.res.ip) * 1.28, (v) => String(Math.round(v)),
+      AX_IP_BAR, (v) => String(Math.round(v)),
       'impedance (m/s \u00b7 g/cm\u00b3)');
     legendRow(P2.ctx, P2.R, LEG2);
 
@@ -967,8 +1037,7 @@
     const P3 = panel('c3rc', W, 246, LEG3);
     const ctx = P3.ctx, R = P3.R;
     ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
-    const ipLo = Math.min(D.sh.ip, D.res.ip) * 0.86;
-    const ipHi = Math.max(D.sh.ip, D.res.ip) * 1.10;
+    const ipLo = AX_IP[0], ipHi = AX_IP[1];
     SEIS.axisLeft(ctx, R, ipLo, ipHi, 'impedance', (v) => String(Math.round(v)),
       { flip: true, grid: true });
     // a blocky impedance profile across the panel
@@ -1007,9 +1076,7 @@
     const P3b = panel('c3shale', W, 246, LEG3b);
     const ctx2 = P3b.ctx, R2 = P3b.R;
     const xr = [SHVP_LO, SHVP_HI];
-    const lo = Math.min(...D.rVsShale), hi = Math.max(...D.rVsShale);
-    const pad = Math.max(0.02, (hi - lo) * 0.16);
-    const yr = [lo - pad, hi + pad];
+    const yr = AX_R;
     ctx2.save(); ctx2.fillStyle = '#FBFAF7';
     ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
     SEIS.axisLeft(ctx2, R2, yr[0], yr[1], 'reflection coefficient',
@@ -1045,7 +1112,7 @@
   /* --------------------------------- step 4 --------------------------- */
   function drawStep4() {
     const W = rowWidth('row4', 2);
-    const tLo = T_TOP - 0.14, tHi = T_TOP + D.dtRes + 0.14;
+    const tLo = T_TOP - WIN_PAD, tHi = T_TOP - WIN_PAD + WIN_SPAN;
 
     function timePanel(id, legend) {
       const P = panel(id, W, 246, legend);
@@ -1134,9 +1201,7 @@
       [SLATE, 'the shale, for comparison', 'dash']];
     const P5b = panel('c5vpvs', W, 246, LEG5b);
     const ctx2 = P5b.ctx, R2 = P5b.R;
-    const vLo = Math.min(D.vpvsRange[0], D.sh.vpvs) * 0.96;
-    const vHi = Math.max(D.vpvsRange[1], D.sh.vpvs) * 1.04;
-    const yr2 = [vLo, vHi];
+    const yr2 = AX_VPVS;
     ctx2.save(); ctx2.fillStyle = '#FBFAF7';
     ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
     SEIS.axisLeft(ctx2, R2, yr2[0], yr2[1], 'Vp / Vs',

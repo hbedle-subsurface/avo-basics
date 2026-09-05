@@ -14,6 +14,7 @@ for m in $MODULES; do
   MOD=$m.html node tools/harness.js geometry | tail -2 | head -1
   MOD=$m.html node tools/harness.js labels   | tail -2 | head -1
   MOD=$m.html node tools/harness.js axes     | tail -2 | head -1
+  MOD=$m.html node tools/harness.js scales   | tail -2 | head -1
 done
 echo "== measured tuning vs the Ricker closed form =="
 MOD=rock-to-trace-old.html node tools/harness.js tuning | tail -2 | head -1

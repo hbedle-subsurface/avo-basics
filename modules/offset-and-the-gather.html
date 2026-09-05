@@ -583,6 +583,18 @@
                                               // to read a peak accurately
   const ANG_LIMIT = 60;                       // degrees; beyond this a trace is dropped
   const STRETCH_MUTE = 1.20;                  // a common processing threshold
+
+  /* Fixed limits. The time WINDOWS still follow the event, because a target at
+     1000 m and one at 3500 m cannot share one, but their SPANS are fixed so
+     that a larger moveout looks larger instead of being rescaled away. */
+  const AX_ANG = 70;                // degrees
+  const AX_OFFSET = 4000;           // m, the longest the spread control reaches
+  const AX_DEPTH = 4025;            // m, above the deepest target
+  const AX_XSECT = 2480;            // m, lateral extent of the step 2 section
+  const AX_TX = 1.0;                // s, span of the arrival-time panel
+  const AX_AMP = [-0.42, 0.06];     // measured amplitude
+  const WIN_RAW = 1.25;             // s, span of the uncorrected gather window
+  const WIN_NMO = 0.56;             // s, span of the corrected one
   const PRES = 23, TEMP = 64;
 
   const SHALE = ROCK.mudrock(2700);
@@ -706,6 +718,10 @@
      ===================================================================== */
 
   const M = { l: 62, r: 16, t: 14, b: 40 };
+  /* Where the header has a bottom axis, its caption has to clear the axis
+     label SEIS.axisBottom puts 22 px under the plot. Where it has a legend
+     instead, legendRow already occupies +46 and the caption goes above it. */
+  const CAP_DY = 44, CAP_ROOM = 16;
 
   function pw(el) {
     const par = el && el.parentElement;
@@ -812,8 +828,13 @@
     ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
     SEIS.axisLeft(ctx, R, tLo * 1000, tHi * 1000, 'two-way time (ms)',
       (v) => String(Math.round(v)));
-    SEIS.axisBottom(ctx, R, 0, S.maxoff, 'offset (m)', (v) => String(Math.round(v)));
-    const slot = R.w / NTRACE;
+    /* Fixed at the longest the control reaches, so a short spread occupies a
+       short part of the panel instead of being stretched to fill it. Tick count
+       follows the width: six 4-digit labels do not fit a half-width header. */
+    SEIS.axisBottom(ctx, R, 0, AX_OFFSET, 'offset (m)',
+      (v) => String(Math.round(v)), { ticks: R.w < 400 ? 3 : 5 });
+    const usedW = R.w * (S.maxoff / AX_OFFSET);
+    const slot = usedW / NTRACE;
     const exc = slot * (o.exc || 2.6);
     ctx.save();
     ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
@@ -847,18 +868,23 @@
   }
 
   function gatherWindow(useNmo) {
-    if (useNmo) return [Math.max(0, D.t0 - 0.28), D.t0 + 0.28];
-    const far = D.tr[NTRACE - 1].t;
-    return [Math.max(0, D.t0 - 0.20), far + 0.24];
+    /* The window tracks t0 but keeps a constant span, so more moveout reaches
+       further down the panel instead of the panel stretching to hold it. */
+    const top = Math.max(0, D.t0 - (useNmo ? WIN_NMO : WIN_RAW) * 0.22);
+    return [top, top + (useNmo ? WIN_NMO : WIN_RAW)];
   }
 
   /* --------------------------------- header --------------------------- */
   function drawHeader() {
     const el = $('cHead'); if (!el) return;
-    const W = pw(el), PH = 206, H = M.t + PH + M.b;
+    const W = pw(el), PH = 206, H = M.t + PH + M.b + CAP_ROOM;
     const ctx = SEIS.fitCanvas(el, W, H);
     ctx.clearRect(0, 0, W, H);
-    const gap = 26;
+    /* The right-hand panel draws its own y-axis, and SEIS.axisLeft puts tick
+       labels 6 px and the rotated title 42 px to the LEFT of the plot. A 26 px
+       gap put all of that inside the left-hand panel. The gutter has to be as
+       wide as the one the left panel gets. */
+    const gap = M.l;
     const halfW = Math.max(90, Math.floor((W - M.l - M.r - gap) / 2));
     const RA = { x: M.l, y: M.t, w: halfW, h: PH };
     const RB = { x: M.l + halfW + gap, y: M.t, w: halfW, h: PH };
@@ -868,8 +894,8 @@
     ctx.save();
     ctx.font = '10px "IBM Plex Sans", sans-serif';
     ctx.fillStyle = SLATE; ctx.textAlign = 'center';
-    ctx.fillText(fitLabel(ctx, 'as recorded', halfW - 4), RA.x + RA.w / 2, RA.y + RA.h + 30);
-    ctx.fillText(fitLabel(ctx, 'moveout removed', halfW - 4), RB.x + RB.w / 2, RB.y + RB.h + 30);
+    ctx.fillText(fitLabel(ctx, 'as recorded', halfW - 4), RA.x + RA.w / 2, RA.y + RA.h + CAP_DY);
+    ctx.fillText(fitLabel(ctx, 'moveout removed', halfW - 4), RB.x + RB.w / 2, RB.y + RB.h + CAP_DY);
     ctx.restore();
   }
 
@@ -881,7 +907,7 @@
       [SLATE, 'the shared midpoint', 'dash']];
     const P1 = panel('c1geom', W, 246, LEG1);
     const ctx = P1.ctx, R = P1.R;
-    const XAX = S.maxoff * 1.1, ZAX = S.depth * 1.25;
+    const XAX = AX_OFFSET * 1.1, ZAX = AX_DEPTH;
     const px = (v) => R.x + (v / XAX) * R.w + R.w * 0.5 - (S.maxoff / 2 / XAX) * R.w;
     const py = (v) => R.y + (v / ZAX) * R.h;
     ctx.save(); ctx.fillStyle = '#E4E0D6'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
@@ -933,7 +959,7 @@
       [CRIM, 'the path a ray actually takes']];
     const P2 = panel('c2rays', W, 246, LEG2);
     const ctx = P2.ctx, R = P2.R;
-    const ZAX = S.depth * 1.15, XAX = S.maxoff * 0.62;
+    const ZAX = AX_DEPTH, XAX = AX_XSECT;
     const px = (v) => R.x + (v / XAX) * R.w;
     const py = (v) => R.y + (v / ZAX) * R.h;
     // shade the overburden by its velocity so the gradient is visible
@@ -986,8 +1012,8 @@
     const P2b = panel('c2ang', W, 246, LEG2b);
     const ctx2 = P2b.ctx, R2 = P2b.R;
     const xs = D.tr.map((q) => q.x);
-    const xr = [0, S.maxoff];
-    const yr = [0, Math.max(60, Math.max(...D.tr.map((q) => q.thTrue || 0)) * 1.15)];
+    const xr = [0, AX_OFFSET];
+    const yr = [0, AX_ANG];
     ctx2.save(); ctx2.fillStyle = '#FBFAF7';
     ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
     SEIS.axisLeft(ctx2, R2, yr[0], yr[1], 'incidence angle (degrees)',
@@ -1022,7 +1048,7 @@
     ctx.strokeStyle = ORANGE; ctx.lineWidth = 2; ctx.setLineDash([5, 4]);
     ctx.beginPath();
     for (let i = 0; i < NTRACE; i++) {
-      const x = R.x + (R.w / NTRACE) * (i + 0.5);
+      const x = R.x + (R.w * (S.maxoff / AX_OFFSET) / NTRACE) * (i + 0.5);
       const y = R.y + ((D.tr[i].t - w[0]) / (w[1] - w[0])) * R.h;
       i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
     }
@@ -1032,15 +1058,17 @@
     const LEG3b = [[CRIM, 'arrival time'], [SLATE, 'zero-offset time', 'dash']];
     const P3b = panel('c3tx', W, 246, LEG3b);
     const ctx2 = P3b.ctx, R2 = P3b.R;
-    const xr = [0, S.maxoff];
-    const yr = [D.t0 - 0.05, D.tr[NTRACE - 1].t + 0.08];
+    const xr = [0, AX_OFFSET];
+    /* Fixed span, panned to the event. Letting it grow with the moveout meant
+       the curve looked equally steep however large the moveout became. */
+    const yr = [D.t0 - 0.05, D.t0 - 0.05 + AX_TX];
     ctx2.save(); ctx2.fillStyle = '#FBFAF7';
     ctx2.fillRect(R2.x, R2.y, R2.w, R2.h); ctx2.restore();
     /* Time runs DOWN here, as it does on every gather beside it. That means
        this panel cannot use the shared curve() and dot() helpers, which map
        larger values upward for the value axes elsewhere in the module. */
     SEIS.axisLeft(ctx2, R2, yr[0], yr[1], 'arrival time (s)', (v) => v.toFixed(2));
-    SEIS.axisBottom(ctx2, R2, xr[0], xr[1], 'offset (m)', (v) => String(Math.round(v)));
+    SEIS.axisBottom(ctx2, R2, 0, AX_OFFSET, 'offset (m)', (v) => String(Math.round(v)));
     const yT = (t) => R2.y + ((t - yr[0]) / (yr[1] - yr[0])) * R2.h;
     const xO = (x) => R2.x + ((x - xr[0]) / (xr[1] - xr[0])) * R2.w;
     SEIS.dashedLine(ctx2, R2.x, yT(D.t0), R2.x + R2.w, yT(D.t0), SLATE, [5, 4], 1.4);
@@ -1106,11 +1134,8 @@
       [SLATE, 'the stack, one number', 'dash']];
     const P5 = panel('c5avo', W, 246, LEG5);
     const ctx = P5.ctx, R = P5.R;
-    const vals = D.amp.filter((v) => isFinite(v));
-    const lo = Math.min(...vals, D.stackAmp), hi = Math.max(...vals, D.stackAmp);
-    const pad = Math.max(0.01, (hi - lo) * 0.35);
-    const yr = [lo - pad, hi + pad];
-    const xr = [0, Math.max(1, D.angHi * 1.08)];
+    const yr = AX_AMP;
+    const xr = [0, AX_ANG];
     ctx.save(); ctx.fillStyle = '#FBFAF7'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
     SEIS.axisLeft(ctx, R, yr[0], yr[1], 'measured amplitude',
       (v) => v.toFixed(2), { flip: true, grid: true });

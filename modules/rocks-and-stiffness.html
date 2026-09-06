@@ -99,8 +99,8 @@
     <p class="lede">A clastic rock is a pack of mineral grains with space between them. The fraction of
       the total volume that is space is the <b>porosity</b>. The rest is solid, and in a sandstone that
       solid is mostly quartz with some clay.</p>
-    <p class="lede">Volume fractions are the simplest thing about a rock and they do more work than they
-      look like they should. Density is a straight volume-weighted average: each component contributes its
+    <p class="lede">Volume fractions are the simplest description of a rock, and one seismic property
+      follows from them directly. Density is a volume-weighted average: each component contributes its
       own density in proportion to how much of the rock it occupies. With the pore space empty, the bulk
       density of the rock is the mineral density multiplied by the solid fraction.</p>
     <p class="lede">Quartz and clay have different densities — 2.65 and 2.58 g/cm³ — so the clay fraction
@@ -236,7 +236,7 @@
       <h3><span class="stepno">4</span>From two moduli to two velocities</h3>
       <span class="hint">And which modulus goes into which</span>
     </div>
-    <p class="lede">A seismic wave is a deformation travelling through rock, so how fast it travels
+    <p class="lede">A seismic wave is a deformation traveling through rock, so how fast it travels
       depends on how hard the rock resists that deformation and on how much mass has to be moved. Stiffer
       is faster, denser is slower, and each velocity takes a square root of stiffness over density.</p>
     <p class="lede">A P-wave moves the rock along the direction it travels. That compresses the rock, and
@@ -246,14 +246,14 @@
     <p class="lede">An S-wave moves the rock across the direction it travels. It changes shape and not
       volume, so it feels the shear modulus alone, and its velocity is the square root of G over the
       density.</p>
-    <p class="lede">That asymmetry is the single most useful fact in this set. <b>Vp responds to both
+    <p class="lede">That asymmetry is used throughout the rest of this set. <b>Vp responds to both
       moduli; Vs responds to only one.</b> Anything that changes K without changing G will move Vp and
       leave Vs where it was.</p>
 
     <div class="sec-row" id="row4">
       <div class="panel-col">
         <p class="sublabel"><b>1</b> Both velocities against porosity
-          <span class="note">the same rock, opened up</span></p>
+          <span class="note">the same rock across the porosity range</span></p>
         <canvas id="c4vel" aria-label="P-wave and shear velocity plotted against porosity for the dry rock, with the current rock marked"></canvas>
       </div>
       <div class="panel-col">
@@ -291,7 +291,7 @@
       all</b> — its line is exactly flat, because G is unchanged and G is the only stiffness a shear wave
       feels. The right-hand panel scales the shear modulus, and both velocities respond, because G appears
       in the P-wave stiffness as well.</p>
-    <p class="lede">A flat line is easy to skip past, so it is worth stating what it means. Any process
+    <p class="lede">The flat line has a specific meaning. Any process
       that acts on a rock's resistance to compression without touching its resistance to shear will show
       up in Vp and be invisible in Vs. A pore fluid is exactly such a process: a fluid resists being
       compressed and offers nothing at all against shearing.</p>

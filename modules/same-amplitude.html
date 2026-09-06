@@ -27,8 +27,8 @@
     <h1>Several rocks, one amplitude</h1>
     <p class="sub">Modules 01 to 06 ran the calculation forwards, from grains and a pore fluid to an
       amplitude that varies with angle. Every step of that direction is exact. This module runs it the
-      other way: here is an amplitude somebody measured, and the question is what rock produced it. The
-      honest answer is that a great many rocks did, and this page counts them.</p>
+      other way: here is an amplitude somebody measured, and the question is what rock produced it. A
+      great many rocks could have, and this page counts them.</p>
     <p class="sub"><b>It uses one number, on purpose.</b> Module 04 showed that stacking a gather replaces
       the whole angle trend with its average, and a stacked amplitude is what most interpretation is
       actually done on. So this module asks what a stack alone can settle. What the second number — the
@@ -38,14 +38,14 @@
   <div class="labhead">
     <div class="labgrid">
       <div>
-        <p class="cap">The measurement, and your model <span>&mdash; try to match it</span></p>
-        <canvas id="cObs" aria-label="The observed trace beside the trace produced by your current model, with the amplitude difference"></canvas>
+        <p class="cap">The measurement, and the proposed model <span>&mdash; try to match it</span></p>
+        <canvas id="cObs" aria-label="The observed trace beside the trace produced by the current model, with the amplitude difference"></canvas>
       </div>
       <div>
         <p class="cap">Propose a rock <span>&mdash; many different ones will fit</span></p>
         <div class="controls" id="mainControls">
           <div class="ctl-col">
-            <h2>Your proposed reservoir</h2>
+            <h2>The proposed reservoir</h2>
             <div class="ctl">
               <label for="phi">Porosity <span class="val" id="phiV">30%</span></label>
               <input type="range" data-key="phi" id="phi" min="5" max="35" step="1" value="30">
@@ -77,7 +77,7 @@
               <input type="range" data-key="sat" id="sat" min="0" max="100" step="5" value="100">
             </div>
 
-            <h2>How well you must match</h2>
+            <h2>How close the match must be</h2>
             <div class="ctl">
               <label>Noise on the measurement <span class="val" id="nzV">clean</span></label>
               <div class="seg" id="segNoise">
@@ -93,7 +93,7 @@
   </div>
 
   <p class="tabhint">Work through the five steps in order, <b>then try the exercises</b>.
-    Method and references are there when you want them.</p>
+    Method and references are in the last two tabs.</p>
   <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
     <button role="tab" data-tab="p1" aria-selected="false">1 · The data</button>
     <button role="tab" data-tab="p2" aria-selected="false">2 · Porosity, gas</button>
@@ -111,18 +111,18 @@
   <section class="tabpane" id="p1" role="tabpanel" hidden>
     <div class="plot-head">
       <h3><span class="stepno">1</span>An amplitude, and no rock attached to it</h3>
-      <span class="hint">One number is all you have</span>
+      <span class="hint">One number, and nothing else</span>
     </div>
-    <p class="lede">The trace on the left is the measurement. It is the only thing you are given. There is
-      no well, no log, and nobody to tell you what is down there. It shows a strong trough at the top of
-      something, which is what an interpreter would call a bright spot.</p>
+    <p class="lede">The trace on the left is the measurement, and it is the only information available.
+      There is no well, no log, and nothing to say what is down there. It shows a strong trough at the top
+      of something, which is what an interpreter would call a bright spot.</p>
     <p class="lede">The controls above build a candidate rock, and the trace on the right is what that rock
-      would produce. Move the sliders until the two traces agree. The bar underneath shows how close you
-      are, with the tolerance set by the noise on the measurement.</p>
-    <p class="lede"><b>Then keep going.</b> Having found one match, go and find another that is a genuinely
+      would produce. Moving the sliders until the two traces agree gives one match. The bar underneath
+      shows how close the two are, with the tolerance set by the noise on the measurement.</p>
+    <p class="lede"><b>Then keep going.</b> After one match there is another, and it is a genuinely
       different rock — different porosity, different fluid, different saturation. The <b>Show me another
-      match</b> button does it for you, and it will keep doing it, because there are thousands. That is
-      the entire subject of this module.</p>
+      match</b> button finds them, and it keeps finding them, because there are thousands. That is the
+      subject of this module.</p>
 
     <div class="sec-row" id="row1">
       <div class="panel-col">
@@ -139,23 +139,22 @@
 
     <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
       <button type="button" class="btn small" id="btnAnother">Show me another match</button>
-      <button type="button" class="btn ghost small" id="btnTruth">Reset to my first guess</button>
+      <button type="button" class="btn ghost small" id="btnTruth">Reset to the first guess</button>
     </div>
 
     <div class="stats" style="margin-top:14px">
       <div class="stat"><span>Measured amplitude</span><b id="s1a">—</b></div>
       <div class="stat"><span>Tolerance</span><b id="s1b">—</b></div>
-      <div class="stat key"><span>Your model's amplitude</span><b id="s1c">—</b></div>
+      <div class="stat key"><span>Amplitude of this model</span><b id="s1c">—</b></div>
       <div class="stat"><span>Difference</span><b id="s1d">—</b></div>
-      <div class="stat"><span>Your model's Vp/Vs</span><b id="s1e">—</b></div>
-      <div class="stat wide"><span>Does your rock fit the measurement</span><b id="s1f">—</b></div>
+      <div class="stat"><span>Vp/Vs of this model</span><b id="s1e">—</b></div>
+      <div class="stat wide"><span>Does this rock fit the measurement</span><b id="s1f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>Notice what the match does <em>not</em> require. Nothing checks whether your rock is
-        geologically sensible, whether that porosity occurs at this depth, or whether a gas column that
-        thick could be trapped. The seismic amplitude cannot see any of that. It sees one number, and
-        every rock that produces that number is, as far as the seismic is concerned, equally
-        good.</span>
+      <span>The match does <em>not</em> require the rock to be geologically sensible. Nothing checks
+        whether that porosity occurs at this depth, or whether a gas column that thick could be trapped.
+        The seismic amplitude carries none of that. It carries one number, and every rock that produces
+        that number satisfies it equally well.</span>
     </div>
   </section>
 
@@ -165,19 +164,18 @@
       <h3><span class="stepno">2</span>Porosity against gas saturation</h3>
       <span class="hint">The trade-off that fizz gas hides inside</span>
     </div>
-    <p class="lede">Take the first two unknowns together. The picture on the left is worth a moment
-      before you read anything into it, because the same kind of picture is used in the next two steps as
-      well.</p>
-    <p class="lede"><b>How to read it.</b> It is not a map of the ground. Every single point in it is a
-      <em>different rock</em>: its position across tells you how much gas that rock holds, its position up
-      the side tells you its porosity, and its color tells you what seismic amplitude it would produce —
-      blue for a peak, red for a trough, white for nothing at all. Somewhere in that field are the rocks
-      that produce <em>your</em> amplitude, and the <b>black line runs through all of them</b>. The small
-      circle is the rock currently on your sliders.</p>
+    <p class="lede">Take the first two unknowns together. The picture on the left repays a moment before
+      anything is read into it, because the same kind of picture is used in the next two steps as well.</p>
+    <p class="lede"><b>How to read it.</b> It is a parameter space rather than a map of the ground.
+      Every single point in it is a <em>different rock</em>: its position across is how much gas that rock
+      holds, its position up the side is its porosity, and its color is the seismic amplitude it would
+      produce — blue for a peak, red for a trough, white for nothing at all. The rocks that produce the
+      measured amplitude lie in that field, and the <b>black line runs through all of them</b>. The small
+      circle is the rock currently on the sliders.</p>
     <p class="lede">So the black line is the answer to "what could this be", drawn all at once. <b>Every
-      point on it fits the measurement exactly as well as every other point.</b> The panel beside it takes
-      three rocks off that line and writes them out in full, with the trace each one produces, so you can
-      see that they really are indistinguishable.</p>
+      point on it fits the measurement exactly as well as every other point.</b> The panel beside it
+      takes three rocks off that line and writes them out in full, with the trace each one produces, which
+      are indistinguishable.</p>
     <p class="lede">Read the three cards. A rock at 30% porosity full of gas, and a rock at 34%
       porosity with a tenth as much gas in it, sit on the same line and give the same trace. One is a
       discovery. The other is a wet sand with a trace of residual gas, and drilling it would be a dry
@@ -211,27 +209,27 @@
       <span>Look at the last line on each card. Vp/Vs barely moves along the whole line — 1.47 at one end
         and 1.54 at the other. That matters because Vp/Vs is what a second measurement at wider offsets
         would be sensitive to, so if it hardly changes, offset will hardly help. Module 05 confirms it:
-        this pair stays stubbornly together even at thirty degrees. The saturation ambiguity is a genuine
-        limit rather than a gap in the processing.</span>
+        this pair stays together even at thirty degrees. The saturation ambiguity is a genuine limit
+        rather than a gap in the processing.</span>
     </div>
   </section>
 
   <!-- =============================== STEP 3 =============================== -->
   <section class="tabpane" id="p3" role="tabpanel" hidden>
     <div class="plot-head">
-      <h3><span class="stepno">3</span>The rock you did not measure</h3>
+      <h3><span class="stepno">3</span>The rock that was not measured</h3>
       <span class="hint">Half the reflection belongs to the shale</span>
     </div>
     <p class="lede">A reflection coefficient is a contrast between two rocks, so half of every amplitude
-      belongs to the unit above. In module 03 you saw that changing the shale alone moved the reflection
-      through zero and out the other side, with the reservoir untouched. Here it works in reverse: because the shale is not known exactly, a whole
+      belongs to the unit above. In module 03, changing the shale alone moved the reflection through
+      zero and out the other side, with the reservoir untouched. Here it works in reverse: because the shale is not known exactly, a whole
       range of reservoirs becomes admissible.</p>
     <p class="lede">Same picture as before, with the shale velocity along the bottom this time instead
       of saturation. Every point is still one rock, the color is still the amplitude it would produce,
-      and the black line still runs through the ones that match your measurement. Follow that line: a slow
-      shale demands a soft, porous reservoir to produce the contrast, and a fast shale is satisfied by a
-      much tighter one. <b>The porosity you would report depends on a property of a rock you are not even
-      interested in.</b> The two cards beside it are the rocks at each end of that line.</p>
+      and the black line still runs through the ones that match the measurement. Along that line, a slow
+      shale requires a soft, porous reservoir to produce the contrast, and a fast shale reaches the same
+      contrast with a much tighter one. <b>The reported porosity therefore depends on a property of a rock
+      nobody set out to measure.</b> The two cards beside it are the rocks at each end of that line.</p>
     <p class="lede">This is the argument for using an interval that brackets the seal in any inversion,
       and the reason a nearby well that penetrated only the overburden is still worth a great deal. It
       constrains the half of the reflection that has nothing to do with the reservoir.</p>
@@ -250,7 +248,7 @@
     </div>
 
     <div class="stats" style="margin-top:14px">
-      <div class="stat"><span>Shale velocity you assumed</span><b id="s3a">—</b></div>
+      <div class="stat"><span>Shale velocity assumed</span><b id="s3a">—</b></div>
       <div class="stat"><span>Shale impedance</span><b id="s3b">—</b></div>
       <div class="stat key"><span>Porosity if the shale is known exactly</span><b id="s3c">—</b></div>
       <div class="stat"><span>Porosity if the shale is unknown</span><b id="s3d">—</b></div>
@@ -260,8 +258,8 @@
     <div class="legend prose">
       <span>The two cards carry the same amplitude and the same trace, and they disagree about the
         reservoir by several porosity units. The readouts below put a number on the trade: how much
-        porosity range you have to accept when the shale is pinned, and how much when it is not. Narrowing
-        what you know about the seal narrows what you can say about the reservoir, one for one.</span>
+        porosity range has to be accepted when the shale is pinned, and how much when it is not. Narrowing
+        the seal narrows what can be said about the reservoir, one for one.</span>
     </div>
   </section>
 
@@ -287,7 +285,7 @@
       there, so <b>every greater thickness produces an identical amplitude</b>. The measurement puts no
       upper bound on thickness whatsoever. The two traces on the right are the thinnest and the thickest
       reservoirs on this panel that fit, and the second of those is only the end of the slider.</p>
-    <p class="lede">This is the trap behind amplitude-derived volumetrics. A bright amplitude gets read as
+    <p class="lede">This is where amplitude-derived volumetrics go wrong. A bright amplitude gets read as
       a good reservoir, when part of the brightness was thickness all along — and the part that was
       thickness pushes the estimate in the opposite direction from the part that was quality. Below
       tuning, brighter means thinner.</p>
@@ -307,7 +305,7 @@
 
     <div class="stats" style="margin-top:14px">
       <div class="stat"><span>Tuning thickness here</span><b id="s4a">—</b></div>
-      <div class="stat"><span>Your model's tuning factor</span><b id="s4b">—</b></div>
+      <div class="stat"><span>Tuning factor of this model</span><b id="s4b">—</b></div>
       <div class="stat key"><span>Thinnest reservoir that fits</span><b id="s4c">—</b></div>
       <div class="stat"><span>Thickest reservoir that fits</span><b id="s4d">—</b></div>
       <div class="stat"><span>Porosity across that range</span><b id="s4e">—</b></div>
@@ -331,13 +329,13 @@
       them vary at once. The page sweeps every combination of porosity, clay content, fluid, saturation,
       shale velocity and thickness on the grid described in the Method tab, and keeps the ones whose
       amplitude matches the measurement within the tolerance.</p>
-    <p class="lede">Then bring in what you actually know. Each switch below fixes one parameter at the
-      value on your sliders, as though a well or a nearby measurement had told you. Watch the count
-      collapse — and watch which unknown refuses to collapse with it.</p>
+    <p class="lede">Outside information enters next. Each switch below fixes one parameter at the value on
+      the sliders, as though a well or a nearby measurement had established it. The count collapses, and
+      one unknown does not collapse with it.</p>
 
     <div class="controls" style="margin:0 0 16px;max-width:560px">
       <div class="ctl-col">
-        <h2>What you already know</h2>
+        <h2>What is already known</h2>
         <label class="check"><input type="checkbox" id="kShale"> The shale velocity</label>
         <label class="check"><input type="checkbox" id="kTh"> The reservoir thickness</label>
         <label class="check"><input type="checkbox" id="kClay"> The clay content</label>
@@ -366,11 +364,11 @@
       <div class="stat wide"><span>What the measurement actually pinned down</span><b id="s5f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>Watch the saturation row while you switch the others on. Porosity narrows, Vp/Vs narrows, the
+      <span>The saturation row is the one to follow as the others are switched on. Porosity narrows, Vp/Vs narrows, the
         count falls by two orders of magnitude — and saturation stays wide open. That is not a failure of
         this grid or this tolerance. A single amplitude carries one number's worth of information, it
         spends nearly all of it on impedance, and impedance is almost blind to saturation above a few
-        percent. No amount of knowing the other parameters buys it back.</span>
+        percent. No amount of knowing the other parameters recovers it.</span>
     </div>
   </section>
 
@@ -387,27 +385,27 @@
         asked for one. The set of models consistent with the data is what step 5 draws, and a porosity
         quoted without its admissible range has thrown away the part a decision depends on.</li>
       <li><b>Spend money where it narrows the set.</b> Step 5 puts a number on what each piece of outside
-        information is worth. Knowing the shale removes nine tenths of the solutions here.
-        Nothing you can learn about the other parameters narrows the saturation, because the amplitude
-        never carried that information in the first place.</li>
-      <li><b>Test the alternatives, not the favourite.</b> The useful question is not whether your model
-        fits. It is which other models also fit, and whether any of them would change the decision. A
-        model that fits is evidence only in proportion to how many rivals it beat.</li>
-      <li><b>Be specific about which ambiguity you have.</b> "The amplitude is ambiguous" is not
+        information is worth. Knowing the shale removes nine tenths of the solutions here. Nothing
+        learned about the other parameters narrows the saturation, because the amplitude never carried
+        that information in the first place.</li>
+      <li><b>Test the alternatives as well as the preferred model.</b> The useful question is not
+        whether a model fits. It is which other models also fit, and whether any of them would change the
+        decision. A model that fits is evidence in proportion to how many alternatives it excludes.</li>
+      <li><b>Be specific about which ambiguity is present.</b> "The amplitude is ambiguous" is not
         actionable. "This amplitude is consistent with 30% porosity at full gas saturation and with 34%
-        porosity at 10% saturation, and I cannot separate those two from seismic alone" tells a drilling
+        porosity at 10% saturation, and seismic alone cannot separate those two" tells a drilling
         engineer exactly what the risk is.</li>
     </ul>
 
-    <p class="lede">The failure mode this module is built against is the confident single answer. A
-      forward model that reproduces the observed amplitude feels like a result, and it is easy to stop
-      there, because searching for rivals takes longer than finding the first fit and is much less
-      satisfying. The search is the work. The first fit is where it starts.</p>
-    <p class="lede">There is a second, subtler problem, which is that the size of the solution set depends
-      on the parameter ranges you allowed. Widen the shale range and more reservoirs become admissible;
-      forbid low saturations and the fizz-gas ambiguity disappears by decree rather than by evidence.
-      Those ranges encode real geological knowledge and they belong in the analysis — but they have to be
-      stated, because a solution set is only as honest as the box it was searched in.</p>
+    <p class="lede">The error this module is built against is the confident single answer. A forward model
+      that reproduces the observed amplitude looks like a result, and searching for the alternatives takes
+      longer than finding the first fit. The first fit is the start of the analysis rather than the end of
+      it.</p>
+    <p class="lede">A second, subtler problem is that the size of the solution set depends on the
+      parameter ranges allowed. Widen the shale range and more reservoirs become admissible; forbid low
+      saturations and the fizz-gas ambiguity disappears by assumption rather than by evidence. Those
+      ranges encode real geological knowledge and belong in the analysis, but they have to be stated,
+      because a solution set means nothing without the parameter space it was searched in.</p>
 
     <div class="legend prose">
       <span>The counts on this page are a count of grid cells, not a probability. They say how many of the
@@ -427,14 +425,14 @@
       <ol id="exList">
         <li><b>Find three matches that disagree about the fluid.</b> With the noise on clean, press
           <b>Show me another match</b> repeatedly and record the porosity, fluid and saturation each time.
-          Keep going until you have found a gas match, an oil match, and one with no hydrocarbon at all.
+          Continue until a gas match, an oil match, and one with no hydrocarbon at all have all turned up.
           <details class="reveal"><summary>Answer</summary><span class="ans">All three exist. With the noise clean this grid holds 6,795
             matching models: 4,273 with gas, 2,456 with oil, and 66 with no hydrocarbon at all. The wet
             ones are high-porosity brine sands sitting under a fast shale, and the measurement cannot rule
             them out. Note what the counts do and do not say. They say a bright amplitude is much easier to
             produce with hydrocarbons than without, on this grid, which is why bright spots get drilled.
             They do not say the odds are 99 to 1, because the grid is not a prior and every cell in it was
-            given equal weight by nobody in particular.</span></details></li>
+            given equal weight by the grid rather than by any geological argument.</span></details></li>
 
         <li><b>Walk the porosity–saturation contour and note what does not change.</b> In step 2, read the
           pairs off the contour: porosity 30% at full gas, then 31%, 32%, 34% at progressively lower
@@ -447,12 +445,12 @@
             Knowing which ambiguities offset helps and which it does not is most of what AVO judgment
             consists of.</span></details></li>
 
-        <li><b>Price the shale.</b> In step 3, read the porosity range admitted when the shale velocity is
+        <li><b>Put a number on the shale.</b> In step 3, read the porosity range admitted when the shale velocity is
           known exactly, then the range when it is unknown across the full slider.
           <details class="reveal"><summary>Answer</summary><span class="ans">On this panel everything but the shale and the porosity is held
-            at your settings. With the shale pinned at 2700 m/s the amplitude admits a single porosity,
+            at the current settings. With the shale pinned at 2700 m/s the amplitude admits a single porosity,
             30%. Let it range over ±400 m/s and the admissible band opens to 26–35%: nine porosity units
-            of uncertainty, bought entirely by a rock nobody is trying to characterise. The two cards show
+            of uncertainty, contributed entirely by a rock nobody set out to characterize. The two cards show
             the rocks at either end, and their traces are the same picture. Read this against exercise 1
             of module 03, where the shale slider alone took the reflection from +0.025 through zero to
             −0.298: the same fact, seen from the inverse direction.</span></details></li>
@@ -476,8 +474,8 @@
             real return on outside information. Now read the saturation column: 0–100%, then 5–100%, then
             5–100%, then 10–100%. It barely moves. Porosity narrows from 17–35% to 30–34% and Vp/Vs from
             1.45–2.08 to 1.47–1.54, so the other unknowns really do collapse. The one question that decides
-            whether the well pays is left almost exactly where it started. That is the honest summary of
-            what a single amplitude carries, and it is why the next module goes looking for a second
+            whether the well pays is left almost exactly where it started. That is what a single
+            amplitude carries, and it is why the next module goes looking for a second
             measurement.</span></details></li>
       </ol>
     </div>
@@ -489,14 +487,14 @@
       <h3>Key points</h3>
       <ul>
         <li><b>The forward direction is exact and the inverse direction is not.</b> A rock predicts an
-          amplitude to as many decimals as you like. An amplitude admits a set of rocks, and the size of
+          amplitude to any number of decimals. An amplitude admits a set of rocks, and the size of
           that set is the real result of the measurement.</li>
         <li><b>Porosity and saturation trade off along a nearly flat contour.</b> 30% porosity at full gas
           and 34% porosity at 10% gas produce the same amplitude. One is a discovery and the other is a
           dry hole, and no processing of that single amplitude separates them.</li>
         <li><b>Half of the reflection belongs to the seal.</b> Pinning the shale gives a single
           admissible porosity; letting it move ±400 m/s opens that to 26–35%. Uncertainty in a rock nobody
-          is characterising converts into uncertainty in the one that matters, at a nearly linear exchange
+          is characterizing converts into uncertainty in the one that matters, at a nearly linear exchange
           rate.</li>
         <li><b>Tuning bounds thickness from below and not at all from above.</b> A 10 m reservoir at
           28% porosity matches the same amplitude as a 45 m one at 30%, because the thin one is tuned and
@@ -543,7 +541,7 @@
       are equal and opposite, the peak amplitude is the reflection coefficient times a factor that depends
       only on the product of peak frequency and two-way time across the layer — not on the two separately.
       That factor is computed once into a table and interpolated, which is what makes a search of that size
-      fast enough to run while you drag a slider. The table is checked against directly convolved
+      fast enough to run while a slider moves. The table is checked against directly convolved
       traces and against the closed form for its maximum, √6/2π ≈ 0.3898, where the layer thickness
       matches the wavelet's own peak-to-trough separation.</p>
 
@@ -601,8 +599,8 @@
     <p class="eyebrow">Next up</p>
     <h3>08 · Noise, error bars and what you can conclude</h3>
     <p>One number gave a solution set with thousands of members in it. The gradient is a second, independent
-      number, and it cuts through some of them — step 2 has already told you which ambiguity it will fail
-      to touch. Module 08 counts what the second measurement removes once noise is on it, and what is
+      number, and it cuts through some of them, though step 2 has already shown which ambiguity it will
+      not touch. Module 08 counts what the second measurement removes once noise is on it, and what is
       left to say.</p>
     <a class="btn" href="reading-a-gather.html">Go to module 08 →</a>
     <a class="btn ghost" href="../index.html">All modules</a>
@@ -1318,7 +1316,7 @@
       ctx.font = '12px "IBM Plex Sans", sans-serif'; ctx.fillStyle = SLATE;
       ctx.textAlign = 'left'; ctx.textBaseline = 'top';
       wrapText(ctx, 'Only one shale velocity on this panel can produce the measurement ' +
-        'with the fluid and saturation you have set.', R.x + 8, R.y + 8, R.w - 16, 17);
+        'with the fluid and saturation currently set.', R.x + 8, R.y + 8, R.w - 16, 17);
       ctx.restore();
     }
 
@@ -1525,7 +1523,7 @@
       ? 'impedance to within ' +
         (100 * (cur.ip[1] - cur.ip[0]) / ((cur.ip[0] + cur.ip[1]) / 2)).toFixed(0) +
         '%, and saturation not at all'
-      : 'nothing on the grid matches — your fixed values are inconsistent with the measurement');
+      : 'nothing on the grid matches — the fixed values are inconsistent with the measurement');
   }
 
   /* =====================================================================

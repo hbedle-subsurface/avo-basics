@@ -142,7 +142,7 @@
   <section class="tabpane" id="p2" role="tabpanel" hidden>
     <div class="plot-head">
       <h3><span class="stepno">2</span>Offset is not the angle</h3>
-      <span class="hint">And the shortcut is worse than it looks</span>
+      <span class="hint">And the difference between them grows with offset</span>
     </div>
     <p class="lede">Everything from module 05 onward is about how the reflection changes with the
       <em>angle</em> at which the wave meets the boundary. What a survey records is <em>offset</em>. The
@@ -151,7 +151,7 @@
       half-offset and the depth are two sides of a right triangle, so the angle is the arctangent of one
       over the other. That is exact only if the velocity is constant all the way down.</p>
     <p class="lede">It is not. Velocity generally rises with depth as sediments compact, which is the
-      trend module 01 built into the grain frame. A ray travelling through rising velocity bends
+      trend module 01 built into the grain frame. A ray traveling through rising velocity bends
       continuously, refracting away from the vertical as it goes, so it meets the reflector at a
       <em>wider</em> incidence angle — further from the normal, closer to horizontal — than a straight
       line from the same source would.</p>
@@ -251,8 +251,8 @@
     <p class="lede">That matters here more than it does for most purposes. An amplitude read from a
       stretched far trace is not measuring the same thing as one read from an unstretched near trace, and
       the stretch is worst exactly where the angle range is widest and the AVO information is largest.
-      Processing normally mutes the far traces where the stretch exceeds some threshold, which throws away
-      the angles that carried the most.</p>
+      Processing normally mutes the far traces where the stretch exceeds some threshold, which removes the
+      angles carrying the largest amplitude variation.</p>
 
     <div class="sec-row" id="row4">
       <div class="panel-col">
@@ -292,7 +292,7 @@
       by the fold. That is the <b>stack</b>, and it is the section almost every interpreter works from. It
       is a good thing to do: the reflection is the same on every trace and adds coherently, while random
       noise does not, so the signal-to-noise ratio improves roughly with the square root of the fold.</p>
-    <p class="lede">It is also the end of the road for everything this set is about. The amplitude in this
+    <p class="lede">It is also where the angle information stops. The amplitude in this
       gather is not constant across offset — the rocks are the shale and gas sand from modules 02 and 03,
       and their reflection coefficient changes with angle. Adding the traces together replaces that whole
       trend with its average.</p>
@@ -379,8 +379,8 @@
           <details class="reveal"><summary>Answer</summary><span class="ans">About 1780 m at 2000 m
             depth, and about 2820 m at 3500 m. A deeper target needs a longer spread to reach the same
             angle, roughly in proportion to its depth. This is why deep prospects on short-offset surveys
-            are often not candidates for amplitude work at all: the data exists, and the angle range in it
-            does not.</span></details></li>
+            are often not candidates for amplitude work at all: the recording exists, but not the angle range
+            it would need.</span></details></li>
 
         <li><b>Compare the moveout with the wavelet.</b> Read the moveout at the longest offset and
           compare it with the length of a 30 Hz wavelet, roughly 33 ms from peak to peak.
@@ -396,8 +396,8 @@
             by 1.25, so a 30 Hz wavelet arrives looking like 24 Hz. The correction shifts shallow samples
             further than deep ones, which lengthens the waveform rather than moving it. A mute set at a
             stretch of 1.20 cuts in at 2679 m, where the incidence angle is 42.9°, and removes three of
-            the twenty-four traces. Those three carry the widest angles on the gather, which are the ones
-            with the most to say about the fluid.</span></details></li>
+            the twenty-four traces. Those three carry the widest angles on the gather, which are the ones most
+            sensitive to the fluid.</span></details></li>
 
         <li><b>Stack the gather and see what is left.</b> Read the amplitude on the near trace, on the
           far trace, and on the stack.
@@ -457,7 +457,7 @@
       approximation: it is exact for a single homogeneous layer and degrades as offset approaches depth.
       The correction applied to the gather is done by resampling each trace at the moveout time for every
       output sample, which is how the stretch arises — it is a consequence of the arithmetic rather than
-      something added afterwards.</p>
+      something added afterward.</p>
 
     <p class="lede"><b>The reflection amplitudes</b> are exact Zoeppritz P-wave coefficients for the
       module 03 rock pair: a Castagna mudrock shale over a 30% porosity gas sand from the module 01 frame

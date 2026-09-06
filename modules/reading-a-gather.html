@@ -25,9 +25,9 @@
   <div class="mod-head">
     <p class="eyebrow">Module 08 &nbsp;·&nbsp; What survives</p>
     <h1>Noise, error bars and what you can conclude</h1>
-    <p class="sub">Every fit in module 06 was made to exact amplitudes over whatever angle range you asked
-      for. Real gathers do not oblige. The amplitudes carry noise, the angle range is whatever the
-      acquisition and the mute left you, and the two numbers you extract are estimates with error bars
+    <p class="sub">Every fit in module 06 was made to exact amplitudes over a chosen angle range. Real
+      gathers are not like that. The amplitudes carry noise, the angle range is whatever the acquisition
+      and the mute left behind, and the two numbers extracted from them are estimates with error bars
       rather than measurements. This module puts sizes on those error bars, and then asks whether the
       rocks the earlier modules separated can still be told apart.</p>
     <p class="sub" style="font-size:15px;color:#5C6670">This module assumes 01 to 07. It is the heaviest in the set and it uses standard deviations and correlation.</p>
@@ -36,7 +36,7 @@
   <div class="labhead">
     <div class="labgrid">
       <div>
-        <p class="cap">Your gather, and the line fitted to it <span>&mdash; press the button to re-record it</span></p>
+        <p class="cap">The gather, and the line fitted to it <span>&mdash; press the button to re-record it</span></p>
         <canvas id="cHead" aria-label="A noisy gather beside the amplitudes picked from it plotted against sine squared theta, with the fitted line and the true curve"></canvas>
       </div>
       <div>
@@ -65,7 +65,7 @@
               <input type="range" data-key="sat" id="sat" min="0" max="100" step="5" value="100">
             </div>
 
-            <h2>The gather you were given</h2>
+            <h2>The gather as recorded</h2>
             <div class="ctl">
               <label for="amax">Widest angle after the mute <span class="val" id="amaxV">30°</span></label>
               <input type="range" data-key="amax" id="amax" min="12" max="45" step="1" value="30">
@@ -89,7 +89,7 @@
   </div>
 
   <p class="tabhint">Work through the five steps in order, <b>then try the exercises</b>.
-    Method and references are there when you want them.</p>
+    Method and references are in the last two tabs.</p>
   <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
     <button role="tab" data-tab="p1" aria-selected="false">1 · One fit</button>
     <button role="tab" data-tab="p2" aria-selected="false">2 · Which moves</button>
@@ -115,21 +115,21 @@
       survey is built from.</p>
     <p class="lede">Press <b>record it again</b>. The rock has not changed by so much as a percent of
       porosity. The survey has not changed. Only the particular noise on this particular gather has
-      changed, and the answer moves. The grey lines are the previous attempts, kept so you can watch them
+      changed, and the answer moves. The gray lines are the previous attempts, kept so that they
       accumulate into a fan.</p>
-    <p class="lede">Notice which end of the fan is tight and which end is loose. Near zero the lines pass
-      through nearly the same point. Out at the far offsets they spread widely. <b>The fit is anchored at
-      the near end and waves about at the far end</b>, and everything else in this module follows from
-      that one picture.</p>
+    <p class="lede">One end of the fan is tight and the other is loose. Near zero the lines pass through
+      nearly the same point. Out at the far offsets they spread widely. <b>The fit is anchored at the near
+      end and poorly constrained at the far end</b>, and everything else in this module follows from that
+      one picture.</p>
 
     <div class="sec-row" id="row1">
       <div class="panel-col">
         <p class="sublabel"><b>1</b> The picks, and the line through them
-          <span class="note">grey lines are earlier recordings</span></p>
+          <span class="note">gray lines are earlier recordings</span></p>
         <canvas id="c1fit" aria-label="Picked amplitudes plotted against sine squared theta with the fitted line, the true curve, and previous fits shown faintly"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> What each attempt gave you
+        <p class="sublabel"><b>2</b> What each attempt returned
           <span class="note">truth is the top row</span></p>
         <canvas id="c1tab" aria-label="A table of the intercept and gradient recovered by each recording, against the true values"></canvas>
       </div>
@@ -150,7 +150,7 @@
     </div>
     <div class="legend prose">
       <span>The truth is drawn as a curve rather than a line, because it is one. Even with no noise at all
-        the fitted line could not pass through every point, so part of the error you see is the
+        the fitted line could not pass through every point, so part of the error shown is the
         approximation from module 05 rather than the noise. With any realistic noise level that part is
         the smaller of the two.</span>
     </div>
@@ -162,13 +162,13 @@
       <h3><span class="stepno">2</span>The gradient takes almost all the damage</h3>
       <span class="hint">Same noise on every trace, very different consequences</span>
     </div>
-    <p class="lede">Rather than pressing the button a hundred times, the page does it for you. The two
+    <p class="lede">Rather than a hundred presses of the button, the page repeats it directly. The two
       histograms below are a thousand recordings of the same rock, showing where the recovered intercept
       landed and where the recovered gradient landed. Both are centered on the truth. What differs is the
       width.</p>
     <p class="lede">The numbers underneath give the ratio, and it is large. At a 0–30° fit the gradient's scatter is
-      about eight times the intercept's. Narrow the angle range and the ratio grows;
-      widen it and the ratio shrinks. <b>It does not depend on the noise level at all</b> — doubling the
+      about eight times the intercept's. A narrower angle range makes the ratio grow and a wider one
+      makes it shrink. <b>It does not depend on the noise level at all</b> — doubling the
       noise doubles both scatters and leaves the ratio exactly where it was. The ratio is a property of the
       geometry of the fit, not of the data quality.</p>
     <p class="lede">The reason is in step 1's picture. The intercept is read where all the lines converge;
@@ -194,7 +194,7 @@
       <div class="stat key"><span>Ratio</span><b id="s2c">—</b></div>
       <div class="stat"><span>Gradient error as a share of the gradient</span><b id="s2d">—</b></div>
       <div class="stat"><span>Intercept error as a share of the intercept</span><b id="s2e">—</b></div>
-      <div class="stat wide"><span>If you doubled the noise</span><b id="s2f">—</b></div>
+      <div class="stat wide"><span>If the noise doubled</span><b id="s2f">—</b></div>
     </div>
     <div class="legend prose">
       <span>These are computed from the standard formula for a straight-line fit rather than by simulating,
@@ -207,23 +207,23 @@
   <section class="tabpane" id="p3" role="tabpanel" hidden>
     <div class="plot-head">
       <h3><span class="stepno">3</span>The angle range is the lever arm</h3>
-      <span class="hint">Where the mute goes decides what the gradient is worth</span>
+      <span class="hint">Where the mute goes decides how well the gradient is determined</span>
     </div>
-    <p class="lede">The gradient's uncertainty depends on how far apart your angles are spread, and on
+    <p class="lede">The gradient's uncertainty depends on how far apart the angles are spread, and on
       nothing else about them. That makes the mute — a processing decision, often made for reasons that
       have nothing to do with AVO — one of the largest controls on the quality of an AVO product.</p>
-    <p class="lede">Drag the <b>widest angle</b> slider and watch the curve on the left. Cutting from 40°
-      back to 20° roughly triples the uncertainty in the gradient. Cutting to 15° multiplies it by more
+    <p class="lede">The <b>widest angle</b> slider moves the curve on the left. Cutting from 40° back to
+      20° roughly triples the uncertainty in the gradient. Cutting to 15° multiplies it by more
       than six. The rock is identical throughout; so is the noise on each trace.</p>
     <p class="lede">The panel on the right shows the other lever, which is the number of traces. It helps,
-      but only as the square root: to halve the error you need four times as many traces. Adding fold is
-      expensive and adding angle range is often free — it is a mute parameter — which is worth knowing
-      before commissioning a reprocessing.</p>
+      but only as the square root: halving the error takes four times as many traces. Adding fold is
+      expensive and adding angle range is often free, since it is a mute parameter, which bears on what a
+      reprocessing is asked to deliver.</p>
 
     <div class="sec-row" id="row3">
       <div class="panel-col">
         <p class="sublabel"><b>1</b> Gradient uncertainty against angle range
-          <span class="note">your mute is marked</span></p>
+          <span class="note">the current mute is marked</span></p>
         <canvas id="c3ang" aria-label="Uncertainty in the fitted gradient plotted against the widest angle included in the fit"></canvas>
       </div>
       <div class="panel-col">
@@ -234,12 +234,12 @@
     </div>
 
     <div class="stats" style="margin-top:14px">
-      <div class="stat"><span>Your angle range</span><b id="s3a">—</b></div>
+      <div class="stat"><span>The angle range</span><b id="s3a">—</b></div>
       <div class="stat key"><span>Gradient uncertainty now</span><b id="s3b">—</b></div>
-      <div class="stat"><span>If the mute cut you to 20°</span><b id="s3c">—</b></div>
-      <div class="stat"><span>If you reached 40°</span><b id="s3d">—</b></div>
+      <div class="stat"><span>If the mute cut to 20°</span><b id="s3c">—</b></div>
+      <div class="stat"><span>If it reached 40°</span><b id="s3d">—</b></div>
       <div class="stat"><span>Traces needed to match a 40° fit</span><b id="s3e">—</b></div>
-      <div class="stat wide"><span>What the angle range is worth</span><b id="s3f">—</b></div>
+      <div class="stat wide"><span>What the angle range contributes</span><b id="s3f">—</b></div>
     </div>
     <div class="legend prose">
       <span>There is a limit to how far this argument goes. Module 05 showed the two-term approximation
@@ -253,16 +253,16 @@
   <section class="tabpane" id="p4" role="tabpanel" hidden>
     <div class="plot-head">
       <h3><span class="stepno">4</span>The two errors are tied together</h3>
-      <span class="hint">You cannot be wrong about one without being wrong about the other</span>
+      <span class="hint">An error in one is compensated by an error in the other</span>
     </div>
     <p class="lede">Intercept and gradient are usually treated as two independent measurements. They are
       not. They come from one fit to one set of points, so if the noise happens to pull the fitted line up
       at the near end, the line has to tilt down more steeply to still pass through the far points. The two
       errors compensate for each other.</p>
-    <p class="lede">The cloud on the left is a thousand recordings plotted on module 06's crossplot. It is
-      not a circle. It is a <b>tilted ellipse</b>, leaning the same way as the background trend, and the correlation between the two
-      errors is −0.742.</p>
-    <p class="lede">This has a consequence worth knowing. A quantity measured <em>along</em> the long axis
+    <p class="lede">The cloud on the left is a thousand recordings plotted on module 06's crossplot. It
+      forms a <b>tilted ellipse</b> rather than a circle, leaning the same way as the background trend,
+      and the correlation between the two errors is −0.742.</p>
+    <p class="lede">That correlation has a consequence. A quantity measured <em>along</em> the long axis
       of that ellipse is badly determined, and one measured <em>across</em> it is much better determined
       than either the intercept or the gradient alone. Distance from the background trend is close to the
       second kind, which is part of why it is a more stable discriminator than the gradient by itself —
@@ -291,7 +291,8 @@
     </div>
     <div class="legend prose">
       <span>A correlation of −0.742 also means that quoting the two numbers with separate error bars, as is
-        usual, overstates how much you know. The pair is constrained to a band, not to a rectangle, and any
+        usual, overstates what has been established. The pair is constrained to a band rather than to a
+        rectangle, and any
         interpretation that treats them as independent is using information that is not there.</span>
     </div>
   </section>
@@ -299,21 +300,22 @@
   <!-- =============================== STEP 5 =============================== -->
   <section class="tabpane" id="p5" role="tabpanel" hidden>
     <div class="plot-head">
-      <h3><span class="stepno">5</span>Can you still tell the rocks apart?</h3>
+      <h3><span class="stepno">5</span>Whether the rocks can still be told apart</h3>
       <span class="hint">Module 05's answer, retested against the error bars</span>
     </div>
     <p class="lede">Module 05 ended by drawing two pairs of rocks and reporting how far apart their curves
       got: the oil-against-brine pair separated by 0.0256 at thirty degrees and the gas-against-fizz pair
-      by only 0.0123. Those were exact separations between exact curves. Now they can be compared against
-      the error bars you actually get.</p>
+      by only 0.0123. Those were exact separations between exact curves. Here they are compared against
+      the error bars a real recording carries.</p>
     <p class="lede">The useful measure is the separation divided by its own uncertainty — how many standard
       deviations apart the two answers are. Below about two, the two clouds overlap enough that a single
       measurement cannot choose between them.</p>
-    <p class="lede">The result deserves to be stated plainly, because it walks back a claim. <b>At moderate noise the oil and brine sands separate by 1.54 standard deviations in gradient</b>,
-      which is suggestive and not conclusive. At high noise it drops to about half a standard deviation,
-      which is nothing. The fizz pair does not reach one standard deviation even at moderate noise.
-      Module 05 said offset breaks the first tie and not the second. With real error bars the honest
-      version is that offset <em>weakens</em> the first tie and leaves the second where it was.</p>
+    <p class="lede">The result qualifies a claim made earlier in the set. <b>At moderate noise the oil and
+      brine sands separate by 1.54 standard deviations in gradient</b>, which is suggestive and not
+      conclusive. At high noise it drops to about half a standard deviation, which is nothing. The fizz
+      pair does not reach one standard deviation even at moderate noise. Module 05 stated that offset
+      breaks the first tie and not the second; with error bars included, offset <em>weakens</em> the first
+      tie and leaves the second where it was.</p>
 
     <div class="sec-row" id="row5">
       <div class="panel-col">
@@ -334,10 +336,10 @@
       <div class="stat"><span>Gas vs fizz, gradient difference</span><b id="s5c">—</b></div>
       <div class="stat key"><span>…in standard deviations</span><b id="s5d">—</b></div>
       <div class="stat"><span>Angle range needed for the oil pair to reach 2σ</span><b id="s5e">—</b></div>
-      <div class="stat wide"><span>What you could honestly report</span><b id="s5f">—</b></div>
+      <div class="stat wide"><span>What could be reported</span><b id="s5f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>One consolation: a survey has many traces at many locations, and an anomaly that is consistent
+      <span>One point in the other direction: a survey has many traces at many locations, and an anomaly that is consistent
         over an area is far better evidence than any single gather. That is a real and large effect, and it
         is why AVO works at all despite everything on this page. It is also why a single-location AVO
         result, quoted without its spatial context, deserves very little weight.</span>
@@ -367,19 +369,19 @@
         module describes are largely independent from trace to trace and the geology is not.</li>
     </ul>
 
-    <p class="lede">The failure this module is built against is the confident gradient map. It is a
+    <p class="lede">The error this module is built against is the confident gradient map. It is a
       continuous, colorful, plausible-looking volume, and at any single location a substantial part of
       what it shows is noise. Interpreters know this in the abstract and then pick features off it anyway,
       because the display gives no clue which features are supported.</p>
-    <p class="lede">The second failure is quieter and it is this site's own. Module 05 reported that
+    <p class="lede">The second is quieter, and it is this site's own. Module 05 reported that
       adding offset separates the oil sand from the brine sand, and that was true of the exact curves.
       Step 5 shows that at a realistic noise level the separation is 1.54 standard deviations. Anything computed from noise-free models will overstate what a method can do, and this
       set of modules is not exempt from that.</p>
 
     <div class="legend prose">
-      <span>The question to carry away is short: how many standard deviations apart are the answers I am
-        trying to choose between? It needs an estimate of the noise, the angle range and the fold, and it
-        can be answered before any data is loaded.</span>
+      <span>The measure that settles most of this is the number of standard deviations between the answers
+        being chosen between. It needs an estimate of the noise, the angle range and the fold, and it can
+        be worked out before any data is loaded.</span>
     </div>
   </section>
 
@@ -394,7 +396,7 @@
         <li><b>Watch the fan open.</b> With the defaults, press <b>record it again</b> ten times and watch
           where the lines agree and where they disagree.
           <details class="reveal"><summary>Answer</summary><span class="ans">The lines all pass close to the
-            same point at the left-hand edge and spread out towards the right. That is the whole of this
+            same point at the left-hand edge and spread out toward the right. That is the whole of this
             module in one picture. The fit is pinned where the data is dense in sin²θ — near zero — and
             has almost nothing holding its slope at the far end. Every result that follows, the eight-and-
             a-half-times ratio, the lever-arm effect of the mute, the tilted error ellipse, is a
@@ -433,7 +435,7 @@
             fizz pair there. Two standard deviations is a weak threshold and neither
             pair reaches it. Module 05's exact curves said the first tie was broken and the second was not;
             with error bars, the first is weakened and the second is untouched. The conclusion is not
-            wrong, but it was stated more strongly than noise-free modelling can support.</span></details></li>
+            wrong, but it was stated more strongly than noise-free modeling can support.</span></details></li>
       </ol>
     </div>
   </section>
@@ -456,7 +458,7 @@
           supports.</li>
         <li><b>With real error bars, module 05's separations are weaker than they looked.</b> The oil and brine sands are 1.54 standard deviations apart at
           moderate noise and 0.58 at high noise; the gas
-          and fizz sands never reach one. Noise-free modelling overstates what any method can do.</li>
+          and fizz sands never reach one. Noise-free modeling overstates what any method can do.</li>
       </ul>
     </div>
   </section>
@@ -481,7 +483,7 @@
 
     <p class="lede"><b>The noise model is deliberately simple.</b> Independent, identically distributed
       Gaussian noise is added to each trace's picked amplitude, at 0.015 or 0.040 in reflection-coefficient
-      units. Real gather noise is none of those things: it is correlated between neighbouring traces,
+      units. Real gather noise is none of those things: it is correlated between neighboring traces,
       usually worse at far offsets than near, and often not Gaussian at all. Correlated noise is the
       important omission, because noise that varies smoothly with offset looks exactly like a gradient and
       this model cannot produce that failure.</p>
@@ -498,7 +500,7 @@
         traces — the ones the gradient depends on most — are usually the noisiest.</li>
       <li><b>The fit is unweighted and the angles are exact.</b> Production fits are often weighted, and
         are usually done against straight-ray angles, which module 04 showed to be biased.</li>
-      <li><b>Nothing here is spatial.</b> The single largest defence against everything in this module is
+      <li><b>Nothing here is spatial.</b> The single largest defense against everything in this module is
         that anomalies repeat over an area while noise does not, and a single-trace analysis cannot show
         that.</li>
     </ul>
@@ -526,8 +528,8 @@
     <p class="eyebrow">Next up</p>
     <h3>09 · What survives</h3>
     <p>Nine modules of losses, ambiguities and error bars. The last one puts a number on what is left: how
-      much the second measurement actually bought, what it did not touch, and what can honestly be
-      concluded from an amplitude anomaly.</p>
+      much the second measurement actually removed, what it did not touch, and what can be concluded
+      from an amplitude anomaly.</p>
     <a class="btn" href="what-survives.html">Go to module 09 →</a>
     <a class="btn ghost" href="../index.html">All modules</a>
   </section>
@@ -935,7 +937,7 @@
     ctx.textAlign = 'center'; ctx.textBaseline = 'top';
     const cap = (t, short, RR) =>
       ctx.fillText(ctx.measureText(t).width < RR.w ? t : short, RR.x + RR.w / 2, 4);
-    cap('the gather you were handed', 'the gather', R);
+    cap('the gather as recorded', 'the gather', R);
     cap('the amplitudes picked off it', 'the picks', R2);
     ctx.restore();
   }
@@ -1148,7 +1150,7 @@
     for (let n = S.ntr; n <= 4000; n++) {
       if (sGfor(S.amax, n) <= g40) { need = n; break; }
     }
-    set('s3e', S.amax >= 40 ? 'you already reach 40\u00b0'
+    set('s3e', S.amax >= 40 ? '40\u00b0 is already reached'
       : isFinite(need) ? need + ' traces at ' + S.amax + '\u00b0'
       : 'more than 4000 \u2014 no realistic fold gets there');
     set('s3f', (g20 / g40).toFixed(1) + '\u00d7 between a 20\u00b0 and a 40\u00b0 mute, ' +

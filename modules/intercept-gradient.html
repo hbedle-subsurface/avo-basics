@@ -35,11 +35,11 @@
   <div class="labhead">
     <div class="labgrid">
       <div>
-        <p class="cap">Your curve, and the two numbers that stand in for it <span>&mdash; plus where they land</span></p>
+        <p class="cap">The curve, and the two numbers that stand in for it <span>&mdash; plus where they land</span></p>
         <canvas id="cHead" aria-label="The reflection coefficient against sine squared of the angle with the fitted straight line, beside the intercept-gradient crossplot with the current rock marked"></canvas>
       </div>
       <div>
-        <p class="cap">Build the rock and choose your angles <span>&mdash; both move the point</span></p>
+        <p class="cap">Build the rock and set the angle range <span>&mdash; both move the point</span></p>
         <div class="controls" id="mainControls">
           <div class="ctl-col">
             <h2>The rock</h2>
@@ -70,7 +70,7 @@
               <input type="range" data-key="sat" id="sat" min="0" max="100" step="5" value="100">
             </div>
 
-            <h2>How you measure it</h2>
+            <h2>How it is measured</h2>
             <div class="ctl">
               <label for="amax">Angles used for the fit <span class="val" id="amaxV">0–30°</span></label>
               <input type="range" data-key="amax" id="amax" min="15" max="45" step="1" value="30">
@@ -90,7 +90,7 @@
   </div>
 
   <p class="tabhint">Work through the five steps in order, <b>then try the exercises</b>.
-    Method and references are there when you want them.</p>
+    Method and references are in the last two tabs.</p>
   <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
     <button role="tab" data-tab="p1" aria-selected="false">1 · Two numbers</button>
     <button role="tab" data-tab="p2" aria-selected="false">2 · The crossplot</button>
@@ -108,7 +108,7 @@
   <section class="tabpane" id="p1" role="tabpanel" hidden>
     <div class="plot-head">
       <h3><span class="stepno">1</span>A curve becomes two numbers</h3>
-      <span class="hint">And the second one depends on how you measured it</span>
+      <span class="hint">And the second one depends on the angle range it was fitted over</span>
     </div>
     <p class="lede">Module 05's curve bends. That is inconvenient, because storing a bent curve for every
       sample in a survey is not practical, and because a bend is hard to interpret. So AVO analysis does
@@ -118,10 +118,10 @@
       <b>intercept</b>, written R₀ — the amplitude the reflection would have at zero offset, which is
       exactly the number module 03 was about. How steeply it tilts is the <b>gradient</b>, G.
       Together they are the whole of what most AVO work uses.</p>
-    <p class="lede">Now for the part that is usually left out. <b>The gradient is not a property of the
-      rock.</b> It is a property of the rock <em>and of the angle range you fitted over</em>, because the
-      real curve is not quite straight. Drag the <b>angles used for the fit</b> slider and watch G move
-      while the rock does not. Two people can analyze the same gather, do nothing wrong, and report
+    <p class="lede"><b>The gradient is not a property of the rock.</b> It is a property of the rock
+      <em>and of the angle range fitted over</em>, because the real curve is not quite straight. Moving
+      the <b>angles used for the fit</b> slider moves G while the rock stays where it is. Two people can
+      analyze the same gather, do nothing wrong, and report
       different gradients because one of them muted at 30° and the other at 40°.</p>
 
     <div class="sec-row" id="row1">
@@ -140,16 +140,16 @@
     <div class="stats" style="margin-top:14px">
       <div class="stat key"><span>Intercept R₀</span><b id="s1a">—</b></div>
       <div class="stat key"><span>Gradient G</span><b id="s1b">—</b></div>
-      <div class="stat"><span>Angles you fitted over</span><b id="s1c">—</b></div>
-      <div class="stat"><span>G if you had fitted to 20°</span><b id="s1d">—</b></div>
-      <div class="stat"><span>G if you had fitted to 45°</span><b id="s1e">—</b></div>
+      <div class="stat"><span>Angles fitted over</span><b id="s1c">—</b></div>
+      <div class="stat"><span>G fitted to 20°</span><b id="s1d">—</b></div>
+      <div class="stat"><span>G fitted to 45°</span><b id="s1e">—</b></div>
       <div class="stat wide"><span>How much the angle range alone moves the gradient</span><b id="s1f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>The intercept barely moves when you change the fit range, because every fit is anchored near
-        zero offset where the curve is genuinely straight. The gradient moves a great deal. That
-        asymmetry is worth remembering whenever two gradient volumes disagree: the first thing to check is
-        not the rocks, it is what angles went into each one.</span>
+      <span>The intercept barely moves when the fit range changes, because every fit is anchored near
+        zero offset where the curve is genuinely straight. The gradient moves a great deal. Where two
+        gradient volumes disagree, that asymmetry makes the angle range each one used the first thing to
+        check, ahead of the rocks.</span>
     </div>
   </section>
 
@@ -159,40 +159,40 @@
       <h3><span class="stepno">2</span>Every rock becomes a dot</h3>
       <span class="hint">The crossplot, and how to read one</span>
     </div>
-    <p class="lede">Once a rock is two numbers, you can put it on a graph. <b>How to read the picture on
-      the left:</b> it is not a map and it is not a cross-section. Each dot is one rock. Its position left
-      to right is that rock's intercept — what its near trace looks like. Its position up and down is the
-      gradient — how much the reflection changes as you move out to the far traces. The circle is the rock
-      currently on your sliders.</p>
-    <p class="lede">The grey dots are brine-filled rocks, at every porosity, clay content and shale
-      velocity this page can build. The colored ones hold oil or gas. The value of the picture is that it
-      shows a whole population at once, which is what you have when you crossplot a real survey: one dot
-      per sample, hundreds of thousands of them.</p>
-    <p class="lede">The three short arrows on your rock are there to give the picture a sense of
-      direction. Each one shows where the dot would move if you changed a single thing: raised the
-      porosity, swapped the fluid for gas, or put a faster shale on top. They are computed by actually
+    <p class="lede">Once a rock is two numbers it can be plotted as a point. <b>How to read the picture
+      on the left:</b> it is a graph rather than a map or a cross-section. Each dot is one rock. Its
+      position left to right is that rock's intercept, which is what its near trace looks like. Its
+      position up and down is the gradient, which is how much the reflection changes out to the far
+      traces. The circle is the rock currently on the sliders.</p>
+    <p class="lede">The gray dots are brine-filled rocks, at every porosity, clay content and shale
+      velocity this page can build. The colored ones hold oil or gas. The picture shows a whole population
+      at once, which is also what a crossplot of a real survey shows — one dot per sample, hundreds of
+      thousands of them.</p>
+    <p class="lede">The three short arrows on the current rock give the picture a sense of direction.
+      Each one shows where the dot moves under a single change: a higher porosity, a swap of the fluid to
+      gas, or a faster shale on top. They are computed by actually
       making that change and seeing where the point goes, so they point wherever the rock physics says
       they should rather than wherever a textbook figure says.</p>
     <p class="lede">Two rocks can share an intercept and differ in gradient. The panel on the right shows
-      exactly that pair — <b>your rock, and the wet rock whose near trace matches it most closely</b>. Look
-      at the near traces: the same. Look at the far traces: not the same. Everything the gradient
+      exactly that pair — <b>the current rock, and the wet rock whose near trace matches it most
+      closely</b>. The near traces are the same and the far traces are not. Everything the gradient
       contributes is in that difference.</p>
 
     <div class="sec-row" id="row2">
       <div class="panel-col">
         <p class="sublabel"><b>1</b> Intercept against gradient
-          <span class="note">one dot per rock; yours is circled</span></p>
-        <canvas id="c2plot" aria-label="Crossplot of gradient against intercept, with wet rocks in grey and hydrocarbon-bearing rocks colored"></canvas>
+          <span class="note">one dot per rock; the current one is circled</span></p>
+        <canvas id="c2plot" aria-label="Crossplot of gradient against intercept, with wet rocks in gray and hydrocarbon-bearing rocks colored"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> Your rock, and the wet rock with the same intercept
+        <p class="sublabel"><b>2</b> The current rock, and the wet rock with the same intercept
           <span class="note">same near trace, different far trace</span></p>
         <canvas id="c2cards" aria-label="Gathers for the current rock and for the brine-filled rock with the closest matching intercept"></canvas>
       </div>
     </div>
 
     <div class="stats" style="margin-top:14px">
-      <div class="stat"><span>Your rock</span><b id="s2a">—</b></div>
+      <div class="stat"><span>The current rock</span><b id="s2a">—</b></div>
       <div class="stat"><span>Nearest wet rock</span><b id="s2b">—</b></div>
       <div class="stat"><span>Difference in intercept</span><b id="s2c">—</b></div>
       <div class="stat key"><span>Difference in gradient</span><b id="s2d">—</b></div>
@@ -201,8 +201,8 @@
     </div>
     <div class="legend prose">
       <span>This is the argument for crossplotting rather than looking at a gradient map on its own. A
-        gradient value means nothing by itself; it means something relative to the intercept it came with,
-        and only a crossplot shows you both at once.</span>
+        gradient value means nothing by itself; it means something relative to the intercept it came
+        with, and only a crossplot shows both at once.</span>
     </div>
   </section>
 
@@ -212,13 +212,13 @@
       <h3><span class="stepno">3</span>The background trend</h3>
       <span class="hint">An anomaly is a departure from something, and this is the something</span>
     </div>
-    <p class="lede">The grey dots are not scattered at random. Wet rocks fall along a line, because their
+    <p class="lede">The gray dots are not scattered at random. Wet rocks fall along a line, because their
       Vp, Vs and density are related to each other in a fairly consistent way, whatever their porosity or
       clay content. That line is the <b>background trend</b>, and it is drawn on the crossplot below.</p>
     <p class="lede">Once the trend is there, the useful question stops being "where is this dot" and
-      becomes <b>"how far off the trend is it"</b>. A rock sitting on the trend is behaving like the wet
-      rocks around it, whatever its intercept happens to be. A rock a long way off the trend is doing
-      something the wet rocks do not do — and a pore fluid is the usual reason.</p>
+      becomes <b>"how far off the trend is it"</b>. A rock sitting on the trend behaves like the wet
+      rocks around it, whatever its intercept happens to be. A rock a long way off the trend behaves in a
+      way the wet rocks do not, and a pore fluid is the usual reason.</p>
     <p class="lede">This is why an absolute gradient threshold is a poor detector and distance from the
       trend is a good one. It also explains a common frustration: a trend fitted in one interval does not
       transfer to another, because the rocks are different, so an anomaly cut-off carried across a survey
@@ -226,7 +226,7 @@
 
     <div class="sec-row" id="row3">
       <div class="panel-col">
-        <p class="sublabel"><b>1</b> The wet trend, and who departs from it
+        <p class="sublabel"><b>1</b> The wet trend, and what departs from it
           <span class="note">distance off the line is what matters</span></p>
         <canvas id="c3plot" aria-label="The crossplot with the background trend line fitted through the wet rocks and the current rock's departure from it marked"></canvas>
       </div>
@@ -240,15 +240,15 @@
     <div class="stats" style="margin-top:14px">
       <div class="stat"><span>The trend</span><b id="s3a">—</b></div>
       <div class="stat"><span>How tightly the wet rocks follow it</span><b id="s3b">—</b></div>
-      <div class="stat key"><span>Your rock's distance off the trend</span><b id="s3c">—</b></div>
+      <div class="stat key"><span>Distance of this rock off the trend</span><b id="s3c">—</b></div>
       <div class="stat"><span>Same rock, filled with brine</span><b id="s3d">—</b></div>
       <div class="stat"><span>Same rock, filled with gas</span><b id="s3e">—</b></div>
-      <div class="stat wide"><span>Is your rock outside the spread of the wet rocks</span><b id="s3f">—</b></div>
+      <div class="stat wide"><span>Is this rock outside the spread of the wet rocks</span><b id="s3f">—</b></div>
     </div>
     <div class="legend prose">
       <span>The wet rocks scatter about their own trend, so being off the line is only meaningful compared
-        with how much the wet rocks themselves wander. That spread is quoted above, and it is the honest
-        yardstick: a departure smaller than the wet scatter is not evidence of anything.</span>
+        with how much the wet rocks themselves scatter. That spread is quoted above, and it is the
+        reference: a departure smaller than the wet scatter is not evidence of anything.</span>
     </div>
   </section>
 
@@ -266,9 +266,9 @@
       graph</b>. Nothing physical happens as a dot crosses from one into the next. The boundary near zero
       intercept is drawn at ±0.03 here and different books put it in different places, because there is no
       natural place to put it.</p>
-    <p class="lede">The middle panel is a summary you can come back to. Each row gives the signs of the
-      intercept and gradient, what the gather does as you move out to the far offsets, and a small sketch
-      of the curve. Every row is generated by going and finding a real rock in this page's own parameter
+    <p class="lede">The middle panel summarizes the four classes. Each row gives the signs of the
+      intercept and gradient, what the gather does out to the far offsets, and a small sketch of the
+      curve. Every row is generated by going and finding a real rock in this page's own parameter
       space that lands in that class, so the sketches cannot drift away from the physics.</p>
     <p class="lede">The panel on the right makes the point another way. Both cards are <b>gas sands</b> at
       full saturation under the same shale. One is Class I and one is Class III. If the classes described
@@ -293,16 +293,16 @@
     </div>
 
     <div class="stats" style="margin-top:14px">
-      <div class="stat key"><span>Your rock's class</span><b id="s4a">—</b></div>
+      <div class="stat key"><span>Class of this rock</span><b id="s4a">—</b></div>
       <div class="stat"><span>What its gather does with offset</span><b id="s4b">—</b></div>
       <div class="stat"><span>Gas sand at 10% porosity</span><b id="s4c">—</b></div>
       <div class="stat"><span>Gas sand at 30% porosity</span><b id="s4d">—</b></div>
       <div class="stat"><span>Where the II/III boundary sits</span><b id="s4e">—</b></div>
-      <div class="stat wide"><span>Distance from your rock to the nearest class boundary</span><b id="s4f">—</b></div>
+      <div class="stat wide"><span>Distance from this rock to the nearest class boundary</span><b id="s4f">—</b></div>
     </div>
     <div class="legend prose">
       <span>The classes remain useful as shorthand. "A Class II response" tells a colleague quickly that
-        the near traces are weak and the far traces are not, which is genuinely worth saying, and Class II
+        the near traces are weak and the far traces are not, which is useful information, and Class II
         in particular carries a real warning: a reflection that is nearly invisible on the near offsets is
         easy to miss altogether on a full stack. The trouble starts when the shorthand is treated as a
         measurement.</span>
@@ -317,18 +317,18 @@
     </div>
     <p class="lede">Set a gas sand at 20% porosity, then move the <b>shale velocity</b> slider from one end
       to the other. The reservoir does not change. Its porosity, its clay content, its fluid and its
-      saturation all stay exactly where they are. Watch the dot travel across the crossplot, and watch the
-      class label under it change.</p>
+      saturation all stay exactly where they are. The dot travels across the crossplot and the class
+      label under it changes.</p>
     <p class="lede">Under a slow shale the sand is harder than its surroundings, so the near trace is a
       peak and the response is <b>Class I</b>. Under the default shale the two impedances nearly match, the
       near trace almost vanishes and it is <b>Class II</b>. Under a fast shale the sand is the softer rock,
       the near trace is a clear trough, and it is <b>Class III</b> — the textbook bright spot.</p>
     <p class="lede">The three gathers on the right are the same gas sand every time. So a class is not a
       description of a reservoir. <b>It is a description of a contrast</b>, and half of that contrast
-      belongs to a rock nobody is trying to characterise — which is exactly what module 07 finds from the other
+      belongs to a rock nobody is trying to characterize — which is what module 07 finds from the other
       direction, where an unmeasured shale widens the admissible porosity by nine units.</p>
     <p class="lede">The practical consequence is that "we are looking for a Class III response" is not a
-      prospecting criterion on its own. What class your target produces depends on the seal above it, and
+      prospecting criterion on its own. The class a target produces depends on the seal above it, and
       that can change across a field faster than the reservoir does.</p>
 
     <div class="sec-row" id="row5">
@@ -353,10 +353,10 @@
       <div class="stat wide"><span>Distance off the wet trend across that range</span><b id="s5f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>Watch the last readout while you move the shale. The class changes and the intercept changes
-        enormously, but the distance off the wet trend stays comparatively steady — because the fluid
-        effect is what pushes a rock off the trend, and the fluid did not change. That is the argument for
-        working in distance-from-trend rather than in classes, in one line.</span>
+      <span>The last readout is the one to follow while the shale moves. The class changes and the
+        intercept changes enormously, while the distance off the wet trend stays comparatively steady,
+        because the fluid effect is what pushes a rock off the trend and the fluid did not change. That is
+        the case for working in distance-from-trend rather than in classes.</span>
     </div>
   </section>
 
@@ -364,7 +364,7 @@
   <section class="tabpane" id="pw" role="tabpanel" hidden>
     <div class="plot-head">
       <h3><span class="stepno ref">W</span>Why it matters</h3>
-      <span class="hint">Where intercept and gradient earn their keep, and where they mislead</span>
+      <span class="hint">Where intercept and gradient are useful, and where they mislead</span>
     </div>
     <p class="lede">Reducing a curve to two numbers is what makes AVO practical at survey scale. Two
       volumes instead of a hundred angle stacks, one dot per sample on a crossplot, and anomalies that can
@@ -383,20 +383,20 @@
         looks like. It is not a measurement, and it is not a property of the reservoir.</li>
     </ul>
 
-    <p class="lede">The failure this module is built against is the one in step 5. A prospect gets
+    <p class="lede">The error this module is built against is the one in step 5. A prospect gets
       described as "a Class III opportunity", the phrase gets repeated, and it hardens into a property of
       the reservoir. Then the seal changes across the field, the response moves to Class II, and the same
       sand stops looking like the thing everyone agreed to look for. Nothing about the reservoir changed.
       The class was never about the reservoir.</p>
-    <p class="lede">There is a quieter failure in step 1. The intercept and the gradient are usually
+    <p class="lede">Step 1 contains a quieter one. The intercept and the gradient are usually
       treated as two independent measurements, and they are not — they come from one fit to one set of
       points, so an error in one is compensated by an error in the other. That correlation is why
       gradients are so much less stable than intercepts, and it is the subject of the next module.</p>
 
     <div class="legend prose">
-      <span>Two questions worth asking of any crossplot before believing it: what angle range produced
-        these gradients, and where is the wet trend? If nobody can answer the first, the gradients are not
-        comparable. If nobody has drawn the second, the anomalies have not been defined.</span>
+      <span>Two things determine whether a crossplot can be read at all: the angle range that produced
+        the gradients, and the position of the wet trend. Without the first, the gradients are not
+        comparable with any others. Without the second, the anomalies have not been defined.</span>
     </div>
   </section>
 
@@ -417,16 +417,16 @@
             gradient fifteen times as much as it moved the intercept. Every fit is anchored near zero
             offset, which is what protects the intercept; nothing plays that role for the gradient.</span></details></li>
 
-        <li><b>Find the wet rock hiding behind your anomaly.</b> Set a gas sand at 30% porosity and look at
-          the two cards in step 2 — your rock and the wet rock with the closest intercept. Compare their
-          near traces, then their far traces.
+        <li><b>Find the wet rock behind the anomaly.</b> Set a gas sand at 30% porosity and look at
+          the two cards in step 2 — the current rock and the wet rock with the closest intercept. Compare
+          their near traces, then their far traces.
           <details class="reveal"><summary>Answer</summary><span class="ans">The closest wet rock is a brine sand at 33% porosity under a
             fast 3100 m/s shale. Its intercept matches the gas sand's to 0.0002, so the near traces are
             the same picture — they differ by 0.0001. The gradients differ by 0.3745, and by the far
             traces the amplitudes have pulled apart by 0.0935, which is around 780 times the near-trace
-            difference. If you only ever looked at a near stack, or at a full stack dominated by the near
-            offsets, you could not separate these two rocks at all. All of the discriminating power is in
-            how the traces differ across the gather, and that is what the gradient measures.</span></details></li>
+            difference. A near stack, or a full stack dominated by the near offsets, would not separate
+            these two rocks at all. All of the discriminating power is in how the traces differ across the
+            gather, and that is what the gradient measures.</span></details></li>
 
         <li><b>Fill the same rock three ways and watch it leave the trend.</b> In step 3, set 30% porosity
           and read the distance off the wet trend with brine, then oil, then gas.
@@ -434,7 +434,7 @@
             −0.3173. The rock frame is identical in all three; only the pore fluid changed. Note that
             brine is not exactly on the trend either — the wet rocks scatter about their own line by about
             0.039, so a departure that size means nothing at all. Oil is about four times the wet scatter
-            and gas about eight times, which is the honest way to say how detectable each one is: gas
+            and gas about eight times, which is how detectable each one is: gas
             comfortably, oil probably, and anything smaller not at all.</span></details></li>
 
         <li><b>Put two gas sands in two different classes.</b> In step 4, compare a gas sand at 10%
@@ -451,10 +451,9 @@
             Class I. At 2700 m/s it is −0.004 and it is Class II. At 3100 m/s it is −0.090 and it is
             Class III. The reservoir was not touched once. Meanwhile the distance off the wet trend only
             moves between −0.210 and −0.298 across that whole span, because the fluid never changed and
-            the fluid is what pushes a rock off the trend. So the class travelled through
-            three categories while the thing you actually wanted to know stayed put. That is the clearest
-            statement in this site of why the classes are a description of a contrast rather than of a
-            reservoir.</span></details></li>
+            the fluid is what pushes a rock off the trend. The class moved through three categories
+            while the quantity of interest stayed where it was, which is why the classes describe a
+            contrast rather than a reservoir.</span></details></li>
       </ol>
     </div>
   </section>
@@ -467,7 +466,7 @@
         <li><b>Plotting against sin²θ straightens the curve, and a straight line is two numbers.</b> The
           intercept is the zero-offset amplitude that module 03 was about; the gradient is how
           fast it changes with offset. Almost all AVO analysis runs on that pair.</li>
-        <li><b>The gradient depends on the angle range you fitted over.</b> On the default rock it moves by about
+        <li><b>The gradient depends on the angle range it was fitted over.</b> On the default rock it moves by about
           five percent between a 20° and a 45° fit — fifteen times as much as the intercept moves. A gradient reported without its angle range cannot be compared with another one.</li>
         <li><b>A crossplot is a population, not a picture of the ground.</b> Each dot is one rock: intercept
           across, gradient up the side. Its value is that it shows both numbers at once, and a gradient
@@ -534,7 +533,7 @@
       <li><b>No anisotropy.</b> In a shale-dominated overburden this is a significant omission: anisotropy
         contributes a term that looks exactly like a gradient and can be comparable in size to the fluid
         effect being sought.</li>
-      <li><b>The crossplot shows a modelled population, not a survey.</b> A real crossplot has one dot per
+      <li><b>The crossplot shows a modeled population, not a survey.</b> A real crossplot has one dot per
         sample, hundreds of thousands of them, with a density that carries information this page's
         evenly-spaced grid of models does not reproduce.</li>
     </ul>
@@ -1249,7 +1248,7 @@
   function drawStep3() {
     const w = rowWidth('row3', 2);
     const c3plotItems = [[SLATE, 'brine-filled rocks', 'dot'], [INK, 'the wet trend', 'line'],
-                     [CRIM, 'how far off it your rock is', 'dash']];
+                     [CRIM, 'how far off it this rock is', 'dash']];
     const c3plotF = fitLegend('c3plot', w, 360, c3plotItems);
     let ctx = c3plotF.ctx;
     let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: c3plotF.plotH };
@@ -1510,7 +1509,7 @@
     }).filter((q) => isFinite(q.R0));
 
     const c5plotItems = [[SLATE, 'brine-filled rocks', 'dot'],
-                     [INK, 'your reservoir under every shale', 'line']];
+                     [INK, 'the reservoir under every shale', 'line']];
     const c5plotF = fitLegend('c5plot', w, 360, c5plotItems);
     let ctx = c5plotF.ctx;
     let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: c5plotF.plotH };

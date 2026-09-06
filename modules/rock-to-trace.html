@@ -75,7 +75,7 @@
     </div>
   </div>
 
-  <p class="tabhint">Five steps, each one a place where something about the rock stops travelling with
+  <p class="tabhint">Five steps, each one a place where something about the rock stops traveling with
     the signal. Every number quoted in the text is read off the running page.</p>
   <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
     <button role="tab" data-tab="p1" aria-selected="false">1 · Two rocks</button>
@@ -99,14 +99,14 @@
     <p class="lede">Everything in modules 01 and 02 was about a single rock. A reflection is not a
       property of a rock. It happens where one rock meets a different one, and it depends on both of them
       equally.</p>
-    <p class="lede">So a reservoir needs a neighbour before there is anything to measure. Here it is a
+    <p class="lede">So a reservoir needs a neighbor before there is anything to measure. Here it is a
       shale, above and below, and the shale has its own velocity, its own density and its own shear
-      velocity — none of which the reservoir knows anything about. Its P-wave velocity is the fourth
+      velocity — none of which depends on the reservoir. Its P-wave velocity is the fourth
       control on this page, and it will turn out to matter as much as the porosity does.</p>
     <p class="lede">The two rocks are built differently. The reservoir comes from the grain-pack model of
       module 01 with a fluid inserted by module 02. The shale comes from an empirical trend, because a
-      contact model between spherical grains does not describe a shale at all. That difference is worth
-      knowing about: the two rocks on this page are not equally well founded.</p>
+      contact model between spherical grains does not describe a shale at all. The two rocks on this page
+      are therefore not equally well founded.</p>
 
     <div class="sec-row" id="row1">
       <div class="panel-col">
@@ -151,8 +151,8 @@
       distinguishes any of them from any other. A fast light rock and a slow heavy one land on the same
       point as far as the seismic is concerned.</p>
     <p class="lede">This is the first of three places where the chain from a rock to an amplitude throws
-      something away. It is worth counting them as they go past, because the count is what makes working
-      backwards from an amplitude hard.</p>
+      something away. The number of those losses is what makes working backwards from an amplitude
+      hard.</p>
 
     <div class="sec-row" id="row2">
       <div class="panel-col">
@@ -191,15 +191,14 @@
       across the boundary divided by the sum: R = (I₂ − I₁) / (I₂ + I₁). Two impedances go in and one
       number comes out, and again something is gone. Double both impedances and R does not move at all. A
       reflection reports the step and says nothing about the level.</p>
-    <p class="lede">The consequence is easy to miss and it matters more than almost anything else on this
-      page. <b>The amplitude belongs to the pair of rocks, not to the reservoir.</b> Leave the reservoir
+    <p class="lede">The consequence is easy to miss. <b>The amplitude belongs to the pair of rocks, not to the reservoir.</b> Leave the reservoir
       completely alone — same porosity, same fluid, same everything — and change only the shale velocity.
       The reflection changes anyway, and within the range of this one control it passes through zero and
       changes sign.</p>
     <p class="lede">The right-hand panel plots that directly: the reflection coefficient at the top of the
       reservoir as the shale velocity runs across its range, with the reservoir held fixed. The crossing
-      point is where the two rocks happen to have the same impedance and the reflection vanishes entirely
-      — a real reservoir, in a real shale, invisible.</p>
+      point is where the two rocks happen to have the same impedance and the reflection vanishes entirely,
+      leaving a real reservoir in a real shale with nothing to record it.</p>
     <p class="lede">A bright amplitude therefore means the two rocks are different. It does not mean the
       reservoir is unusual, and an interpretation that treats the anomaly as a property of the sand alone
       has already made a mistake that no later processing recovers from.</p>
@@ -243,9 +242,8 @@
       each reflection, added together — which is the convolution the resolution modules build from
       scratch.</p>
     <p class="lede">The step is included here to close the chain rather than to teach it. The frequency
-      control moves the wavelet without touching the rock, and the trace changes anyway. That is the
-      cleanest available statement of what a seismic trace is: an observation of the model rather than the
-      model.</p>
+      control moves the wavelet without touching the rock, and the trace changes anyway. A seismic trace is
+      an observation of the earth rather than the earth itself.</p>
     <p class="lede">The reservoir is held thick enough that its top and base stay separate at every
       frequency the control reaches, so nothing on this page tunes. What happens when a bed is too thin
       for that — and it is a great deal — belongs to
@@ -259,8 +257,8 @@
         <canvas id="c4rc" aria-label="The reflectivity series: two spikes, one at the top of the reservoir and one at its base"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> What you get to look at
-          <span class="note">the same two spikes, wearing a wavelet</span></p>
+        <p class="sublabel"><b>2</b> What is recorded
+          <span class="note">the same two spikes, convolved with a wavelet</span></p>
         <canvas id="c4trace" aria-label="The seismic trace produced by convolving the reflectivity with the wavelet"></canvas>
       </div>
     </div>
@@ -271,7 +269,7 @@
       <div class="stat"><span>Wavelet peak frequency</span><b id="s4c">—</b></div>
       <div class="stat"><span>Two-way time across the reservoir</span><b id="s4d">—</b></div>
       <div class="stat"><span>Thinnest bed this wavelet separates</span><b id="s4e">—</b></div>
-      <div class="stat wide"><span>What changed when you moved the frequency</span><b id="s4f">—</b></div>
+      <div class="stat wide"><span>What changed when the frequency moved</span><b id="s4f">—</b></div>
     </div>
     <div class="legend prose">
       <span>Away from tuning the measured peak and the reflection coefficient agree closely, which is why
@@ -341,7 +339,7 @@
       <span class="hint">Where this chain is used, and where it misleads</span>
     </div>
     <p class="lede"><b>Modelling a prospect before drilling.</b> The forward chain on this page is what a
-      synthetic seismogram is. Build the rock, pair it with its neighbour, take the contrast, apply the
+      synthetic seismogram is. Build the rock, pair it with its neighbor, take the contrast, apply the
       wavelet, and compare the result with the real data. Every amplitude study starts here.</p>
     <p class="lede"><b>Knowing what the shale is doing.</b> Step 3 is the reason a mapped amplitude
       anomaly can follow a change in the overburden rather than a change in the reservoir. Where the
@@ -370,9 +368,8 @@
           <details class="reveal"><summary>Answer</summary><span class="ans">It goes from +0.025 at
             2000 m/s to −0.298 at 3400 — through zero, changing sign, and ending at a strong negative
             reflection — with the reservoir identical throughout. The reflection is a property of the
-            pair. An amplitude map that brightens across a survey is as likely to be telling you about
-            the shale as about the sand, and nothing in the amplitude itself says
-            which.</span></details></li>
+            pair. An amplitude map that brightens across a survey is as likely to be recording a change in
+            the shale as one in the sand, and nothing in the amplitude itself separates the two.</span></details></li>
 
         <li><b>Make the reservoir disappear.</b> With the same reservoir, find the shale velocity at
           which the reflection coefficient reaches zero.
@@ -387,17 +384,17 @@
           <details class="reveal"><summary>Answer</summary><span class="ans">They are identical to every
             digit shown. Doubling both impedances doubles the numerator and the denominator of
             (I₂ − I₁)/(I₂ + I₁), so nothing changes. The reflection carries the step and discards the
-            level entirely, which is why an amplitude alone cannot tell you whether you are looking at two
-            soft rocks or two hard ones.</span></details></li>
+            level entirely, which is why an amplitude alone does not distinguish two soft rocks from two hard
+            ones.</span></details></li>
 
         <li><b>Move the seismic without moving the earth.</b> Fix every rock control and drag the wavelet
           frequency from 15 to 60 Hz, watching the trace and the measured peak.
           <details class="reveal"><summary>Answer</summary><span class="ans">The trace changes shape
             substantially — the events narrow as the frequency rises — while the reflection coefficients
             underneath are untouched. The measured peak stays close to the reflection coefficient because
-            the reservoir is thick enough to stay resolved at every frequency here. What you are looking at
-            is the earth convolved with the experiment, and separating the two is most of what seismic
-            processing is for.</span></details></li>
+            the reservoir is thick enough to stay resolved at every frequency here. The trace is the earth
+            convolved with the experiment, and separating the two is most of what seismic processing is
+            for.</span></details></li>
 
         <li><b>Find the rocks the trace cannot separate.</b> Look at step 5 with the reservoir at 30%
           porosity and 100% gas, and read the saturation range of the equal-impedance family.
@@ -421,7 +418,7 @@
         <li><b>A reflection is a property of two rocks.</b> A reservoir on its own reflects nothing, and
           the rock it sits in matters as much as the rock itself.</li>
         <li><b>Six numbers describe the pair</b> — a Vp, a Vs and a density each — and a normal-incidence
-          amplitude is one number. Most of the description does not survive the trip.</li>
+          amplitude is one number. Most of that description does not reach the trace.</li>
         <li><b>Impedance is a product</b>, so velocity and density collapse into one number and cannot be
           separated again. A fast light rock and a slow heavy one are the same rock to the seismic.</li>
         <li><b>A reflection coefficient is a ratio</b>, so only the contrast survives and the level is
@@ -429,7 +426,7 @@
         <li><b>So changing the shale alone changes the anomaly</b>, and can remove it entirely. There is a
           shale velocity at which a fully gas-charged reservoir gives no reflection at all.</li>
         <li><b>The wavelet is the third loss</b>, and it acts in time rather than on the rock properties.
-          Moving the frequency changes the trace while the earth stands still.</li>
+          Moving the frequency changes the trace while the rock properties stay fixed.</li>
         <li><b>The shear velocity never enters.</b> At normal incidence nothing slides, so Vs cannot
           appear in the answer, and rocks with the same impedance and different Vp/Vs give identical
           traces.</li>
@@ -1184,7 +1181,7 @@
     const W = rowWidth('row5', 2);
 
     const LEG5 = [[ORANGE, 'rocks with the reservoir\u2019s impedance', 'dot'],
-      [CRIM, 'the reservoir you set', 'dot']];
+      [CRIM, 'the reservoir set above', 'dot']];
     const P5 = panel('c5family', W, 246, LEG5);
     const ctx = P5.ctx, R = P5.R;
     const xr = [PHI_LO * 100, PHI_HI * 100], yr = [0, 100];

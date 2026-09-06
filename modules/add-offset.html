@@ -35,7 +35,7 @@
   <div class="labhead">
     <div class="labgrid">
       <div>
-        <p class="cap">Your gather, and the same thing as a curve <span>&mdash; one point per trace</span></p>
+        <p class="cap">The gather, and the same reflection as a curve <span>&mdash; one point per trace</span></p>
         <canvas id="cGather" aria-label="An angle gather for the current model beside the reflection coefficient plotted against incidence angle"></canvas>
       </div>
       <div>
@@ -94,13 +94,13 @@
   </div>
 
   <p class="tabhint">Work through the five steps in order, <b>then try the exercises</b>.
-    Method and references are there when you want them.</p>
+    Method and references are in the last two tabs.</p>
   <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
     <button role="tab" data-tab="p1" aria-selected="false">1 · Angle</button>
     <button role="tab" data-tab="p2" aria-selected="false">2 · Why it changes</button>
     <button role="tab" data-tab="p3" aria-selected="false">3 · The curve</button>
     <button role="tab" data-tab="p4" aria-selected="false">4 · Shortcuts</button>
-    <button role="tab" data-tab="p5" aria-selected="false">5 · What it buys</button>
+    <button role="tab" data-tab="p5" aria-selected="false">5 · What it adds</button>
     <button role="tab" data-tab="pw" aria-selected="false">Why it matters</button>
     <span class="gap"></span>
     <button role="tab" data-tab="pe" aria-selected="false">Exercises</button>
@@ -112,26 +112,26 @@
   <section class="tabpane" id="p1" role="tabpanel" hidden>
     <div class="plot-head">
       <h3><span class="stepno">1</span>Offset is not angle</h3>
-      <span class="hint">The conversion everyone does in their head, and gets wrong</span>
+      <span class="hint">Where the conversion between them goes wrong</span>
     </div>
     <p class="lede">AVO is a statement about <b>angle</b>: how far from the normal the wave meets the interface. A
       recording crew measures <b>offset</b>: how far the receiver is from the source. Those are different
-      quantities and the step between them is where a lot of quiet error gets in.</p>
+      quantities, and the step between them is where a good deal of error enters unnoticed.</p>
     <p class="lede">The obvious conversion draws a straight line from source down to the reflector and back
       up, which gives tan θ = (x/2)/z. That would be right if the earth had one velocity. It does not.
       Velocity rises with depth, so by Snell's law the ray is bent continuously, and the angle it finally
       makes at the reservoir is <b>larger</b> than the straight line suggests. The left panel draws both
-      rays so you can see the gap.</p>
-    <p class="lede">The right panel is the consequence: angle against offset, for three depths. Two things
-      to take from it. The curve flattens, so doubling the offset does not double the angle. And the same
-      offset is a completely different angle at a different depth — <b>drag the depth slider and watch your
-      widest angle collapse</b>. A 3000 m offset reaches 64° on a 1200 m target and 35° on a 3200 m one, which
-      is why deep AVO is hard for reasons that have nothing to do with the rocks.</p>
+      rays.</p>
+    <p class="lede">The right panel plots angle against offset for three depths, and shows two things. The
+      curve flattens, so doubling the offset does not double the angle. And the same offset is a
+      completely different angle at a different depth — <b>the widest angle available falls as the target
+      deepens</b>. A 3000 m offset reaches 64° on a 1200 m target and 35° on a 3200 m one, which is why
+      deep AVO is hard for reasons that have nothing to do with the rocks.</p>
 
     <div class="sec-row" id="row1">
       <div class="panel-col">
         <p class="sublabel"><b>1</b> The ray, bent and straight
-          <span class="note">at your longest offset</span></p>
+          <span class="note">at the longest offset</span></p>
         <canvas id="c1ray" aria-label="Ray paths from source to reflector, showing the curved ray and the straight-line approximation"></canvas>
       </div>
       <div class="panel-col">
@@ -144,7 +144,7 @@
     <div class="stats" style="margin-top:14px">
       <div class="stat"><span>Vertical two-way time</span><b id="s1a">—</b></div>
       <div class="stat"><span>RMS velocity to the target</span><b id="s1b">—</b></div>
-      <div class="stat key"><span>Angle at your longest offset</span><b id="s1c">—</b></div>
+      <div class="stat key"><span>Angle at the longest offset</span><b id="s1c">—</b></div>
       <div class="stat"><span>Straight-ray estimate</span><b id="s1d">—</b></div>
       <div class="stat"><span>Error in the shortcut</span><b id="s1e">—</b></div>
       <div class="stat wide"><span>Offset needed for a 30° angle</span><b id="s1f">—</b></div>
@@ -159,7 +159,7 @@
   <!-- =============================== STEP 2 =============================== -->
   <section class="tabpane" id="p2" role="tabpanel" hidden>
     <div class="plot-head">
-      <h3><span class="stepno">2</span>What offset lets you see</h3>
+      <h3><span class="stepno">2</span>What offset adds</h3>
       <span class="hint">One property, invisible at zero offset, dominant at thirty degrees</span>
     </div>
     <p class="lede">A wave arriving straight down is pure compression. It squeezes the rock and the rock
@@ -170,21 +170,21 @@
       moment the shear velocities of <b>both</b> rocks appear in the answer.</p>
     <p class="lede"><b>How to read the curve.</b> Every one of these plots is a gather, redrawn. A
       gather is a set of traces recorded at increasing distance from the source, and each trace has its own
-      reflection strength. Line those strengths up left to right and you get the curve. So the left edge
+      reflection strength. Lining those strengths up left to right gives the curve. So the left edge
       of any curve on this page is the trace recorded almost straight above the reservoir, the right edge
       is the one recorded from furthest away, and the height of the line is simply how strong the
       reflection is on that trace. The header at the top of the page shows both pictures side by side, and
       so does every step from here on.</p>
-    <p class="lede">The panels below are the cleanest demonstration of what offset adds in this whole
-      site. They take one rock and change <b>only its shear velocity</b>, by fifteen percent either way,
+    <p class="lede">The panels below isolate what offset adds. They take one rock and change <b>only its
+      shear velocity</b>, by fifteen percent either way,
       leaving Vp and density exactly alone. Look at the left edge of the curves: all three start from the
       identical point, because at zero offset Vs has no effect whatsoever. Then follow them right. By
       thirty degrees they are far apart.</p>
-    <p class="lede">The gathers beside them say the same thing in the form you would meet it on a
-      workstation. The near traces of all three rocks are indistinguishable. The far traces are obviously
+    <p class="lede">The gathers beside them show the same result in the form it appears on a workstation.
+      The near traces of all three rocks are indistinguishable. The far traces are obviously
       different. That difference is the only place the shear information lives.</p>
-    <p class="lede">That is the whole reason AVO exists. Vs is the property that responds differently to a
-      gas fill than Vp does, and normal incidence cannot see it at all.</p>
+    <p class="lede">AVO rests on that difference. Vs responds to a gas fill differently from the way Vp
+      does, and normal incidence does not record Vs at all.</p>
 
         <div class="sec-row" id="row2">
       <div class="panel-col">
@@ -205,15 +205,15 @@
     </div>
 
     <div class="stats" style="margin-top:14px">
-      <div class="stat"><span>Your rock's Vs</span><b id="s2a">—</b></div>
-      <div class="stat"><span>Your rock's Vp/Vs</span><b id="s2b">—</b></div>
+      <div class="stat"><span>Vs of this rock</span><b id="s2a">—</b></div>
+      <div class="stat"><span>Vp/Vs of this rock</span><b id="s2b">—</b></div>
       <div class="stat key"><span>Spread at 0°, across ±15% in Vs</span><b id="s2c">—</b></div>
       <div class="stat"><span>Spread at 30°</span><b id="s2d">—</b></div>
-      <div class="stat"><span>Spread at your widest angle</span><b id="s2e">—</b></div>
-      <div class="stat wide"><span>What the far offsets are telling you</span><b id="s2f">—</b></div>
+      <div class="stat"><span>Spread at the widest angle</span><b id="s2e">—</b></div>
+      <div class="stat wide"><span>What the far offsets add</span><b id="s2f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>Density deserves a word too. It appears at every angle, including zero, so it stays tangled
+      <span>Density behaves differently again. It appears at every angle, including zero, so it stays tangled
         up with Vp in the near-offset amplitude and cannot be separated from it there either. What offset
         adds is specifically the shear information, and only that.</span>
     </div>
@@ -222,10 +222,10 @@
   <!-- =============================== STEP 3 =============================== -->
   <section class="tabpane" id="p3" role="tabpanel" hidden>
     <div class="plot-head">
-      <h3><span class="stepno">3</span>The curve your rock actually makes</h3>
+      <h3><span class="stepno">3</span>The curve this rock makes</h3>
       <span class="hint">Exact Zoeppritz, and the gather it produces</span>
     </div>
-    <p class="lede">Now the full calculation for the rock you have built. The curve on the left is the
+    <p class="lede">Now the full calculation for the rock on the sliders. The curve on the left is the
       exact solution — Zoeppritz's equations, solved rather than approximated — and the panel beside it is
       the gather that curve produces once each trace is convolved with a wavelet.</p>
     <p class="lede">Take a brine sand at 20% porosity first. It starts positive and falls, crossing zero
@@ -233,15 +233,15 @@
       negative with angle, which is the response people picture when they say "a bright spot". Then set the
       porosity to 10% and keep the gas: it starts positive and falls steeply. Same fluid, opposite-looking
       gather.</p>
-    <p class="lede">Two habits are worth forming here. Read the <b>starting value and the slope</b> as
-      separate facts, because they carry different information and module 06 is entirely about that split.
-      And notice that a curve which changes sign partway out looks like a reflection that fades and
-      reappears on a gather — an event vanishing at mid offset is a signal, not a processing problem.</p>
+    <p class="lede">The <b>starting value and the slope</b> are separate facts. They carry different
+      information, and module 06 is entirely about that split. A curve that changes sign partway out
+      appears on a gather as a reflection that fades and comes back, so an event vanishing at mid offset
+      is a signal rather than a processing problem.</p>
 
     <div class="sec-row" id="row3">
       <div class="panel-col">
         <p class="sublabel"><b>1</b> Reflection coefficient against angle
-          <span class="note">your rock, and a brine sand for reference</span></p>
+          <span class="note">this rock, and a brine sand for reference</span></p>
         <canvas id="c3curve" aria-label="Reflection coefficient against incidence angle for the current model and for a brine-filled reference sand"></canvas>
       </div>
       <div class="panel-col">
@@ -254,7 +254,7 @@
     <div class="stats" style="margin-top:14px">
       <div class="stat key"><span>R at zero offset</span><b id="s3a">—</b></div>
       <div class="stat"><span>R at 30°</span><b id="s3b">—</b></div>
-      <div class="stat"><span>R at your widest angle</span><b id="s3c">—</b></div>
+      <div class="stat"><span>R at the widest angle</span><b id="s3c">—</b></div>
       <div class="stat"><span>Change across the gather</span><b id="s3d">—</b></div>
       <div class="stat"><span>Sign change</span><b id="s3e">—</b></div>
       <div class="stat wide"><span>What this gather looks like</span><b id="s3f">—</b></div>
@@ -278,20 +278,18 @@
       two-term Shuey approximation, R(θ) ≈ R₀ + G sin²θ, is the one almost all AVO analysis is built on,
       and the three-term version adds a curvature term that matters only at wide angles.</p>
     <p class="lede">Both are drawn below against the exact answer, with the error underneath. Out to about
-      twenty degrees they are all fine. Past thirty they separate, and here is the part that catches
-      people: <b>for this rock pair the three-term approximation is further from the truth than the
-      two-term one</b>. Its extra term carries tan²θ, which grows without limit, so at wide angles it does
-      not gently lose accuracy — it diverges. Whether it does so for any particular pair of rocks is
+      twenty degrees they are all fine. Past thirty they separate, and <b>for this rock pair the three-term approximation is further from the truth than the
+      two-term one</b>. Its extra term carries tan²θ, which grows without limit, so at wide angles it
+      diverges rather than losing accuracy gradually. Whether it does so for any particular pair of rocks is
       something the panel below computes rather than something to assume.</p>
-    <p class="lede">The practical rule that follows is not "use more terms". It is that the two-term form
-      is trustworthy over the angle range where most surveys have usable data anyway, and that fitting a
-      third term to a noisy gather with a limited angle range usually buys less than it costs. Module 08
-      shows how much less.</p>
+    <p class="lede">The practical consequence is that the two-term form is reliable over the angle range
+      where most surveys have usable data, and that fitting a third term to a noisy gather with a limited
+      angle range usually costs more than it returns. Module 08 puts a number on that.</p>
 
     <div class="sec-row" id="row4">
       <div class="panel-col">
         <p class="sublabel"><b>1</b> Exact against the approximations
-          <span class="note">your shaded angle range is what you record</span></p>
+          <span class="note">the shaded band is the angle range recorded</span></p>
         <canvas id="c4approx" aria-label="Exact Zoeppritz compared with the two-term and three-term Shuey approximations"></canvas>
       </div>
       <div class="panel-col">
@@ -307,30 +305,28 @@
       <div class="stat"><span>Three-term error at 40°</span><b id="s4c">—</b></div>
       <div class="stat key"><span>Which is closer at 40°</span><b id="s4d">—</b></div>
       <div class="stat"><span>Angle where two-term error exceeds the noise</span><b id="s4e">—</b></div>
-      <div class="stat wide"><span>Over the angles you actually record</span><b id="s4f">—</b></div>
+      <div class="stat wide"><span>Over the angles actually recorded</span><b id="s4f">—</b></div>
     </div>
     <div class="legend prose">
       <span>The three-term form is not wrong. It is the correct linearization to third order, and over a
         wide, clean, well-conditioned angle range it does better. The failure is one of conditioning
         rather than of algebra: the term it adds is small where the data is good and enormous where the
-        data is poor, so it draws its estimate from exactly the samples you trust least.</span>
+        data is poor, so it draws its estimate from the least reliable samples.</span>
     </div>
   </section>
 
   <!-- =============================== STEP 5 =============================== -->
   <section class="tabpane" id="p5" role="tabpanel" hidden>
     <div class="plot-head">
-      <h3><span class="stepno">5</span>What the second measurement buys</h3>
+      <h3><span class="stepno">5</span>What the second measurement adds</h3>
       <span class="hint">Two ties from the earlier modules, one broken and one not</span>
     </div>
     <p class="lede">Modules 01 and 02 each ended with two rocks that produced identical zero-offset
       amplitudes. Now they can be tested properly, because there is a second measurement to test them
       with.</p>
-    <p class="lede">The first panel asks the only question that matters: <b>how far apart do the two rocks
-      get, and is that further apart than the noise?</b> It plots the gap between each pair against angle.
-      Above the shaded band the difference is measurable; inside it, it is not. One line climbs out. The
-      other does not. The two panels beside it are the four rocks themselves, drawn as gathers, so you can
-      look at what the two answers mean.</p>
+    <p class="lede">The first panel plots <b>the gap between each pair against angle, beside the size of
+      the noise</b>. Above the shaded band the difference is measurable; inside it, it is not. One line
+      climbs out and the other does not. The two panels beside it draw the four rocks as gathers.</p>
     <p class="lede"><b>The middle panel is module 03's pair</b>: an oil sand at 30% porosity against a
       plain brine sand at 35%. Their zero-offset amplitudes differ by 0.0001. Their Vp/Vs values differ by 0.21, which
       is a lot, so the curves pull apart steadily and by thirty degrees the gap is 0.0256 — comfortably
@@ -340,15 +336,14 @@
       the curves stay close. At thirty degrees the gap is 0.0123, which is smaller than the moderate noise
       level. <b>Offset does not break this tie</b>, and no amount of processing will, because the
       information is not in the data.</p>
-    <p class="lede">This is the honest summary of what adding offset achieves. It converts one measurement
-      into two, and the second one sees shear. Ambiguities that involve a change in Vp/Vs get resolved.
-      Ambiguities that do not, are not touched. Knowing which kind you are looking at, before you commit
-      to an AVO study, is worth more than any amount of care in the processing.</p>
+    <p class="lede">Adding offset converts one measurement into two, and the second one responds to shear.
+      Ambiguities that involve a change in Vp/Vs are resolved by it. Ambiguities that do not are left
+      where they were. Which kind an ambiguity is can be established before an AVO study starts.</p>
 
     <div class="sec-row" id="row5">
       <div class="panel-col">
         <p class="sublabel"><b>1</b> How far apart the two rocks get
-          <span class="note">above the line you can measure it</span></p>
+          <span class="note">above the band the difference is measurable</span></p>
         <canvas id="c5a" aria-label="The amplitude difference between each pair of rocks plotted against incidence angle, with the noise level marked"></canvas>
       </div>
       <div class="panel-col">
@@ -368,15 +363,15 @@
       <div class="stat key"><span>Oil/brine separation at 30°</span><b id="s5b">—</b></div>
       <div class="stat"><span>Gas/fizz separation at 0°</span><b id="s5c">—</b></div>
       <div class="stat key"><span>Gas/fizz separation at 30°</span><b id="s5d">—</b></div>
-      <div class="stat"><span>Your noise level</span><b id="s5e">—</b></div>
-      <div class="stat wide"><span>Which of these you could tell apart</span><b id="s5f">—</b></div>
+      <div class="stat"><span>Noise level</span><b id="s5e">—</b></div>
+      <div class="stat wide"><span>Which of these can be told apart</span><b id="s5f">—</b></div>
     </div>
     <div class="legend prose">
       <span>Both gaps grow with angle, so a wider angle range helps both, and that is the real argument
-        for long offsets in AVO work. Read it against step 1 though: on a deep target the offsets that
-        would give you those angles may not exist in the survey at all. The grey region on the first panel
-        is the angles beyond what you are recording, and moving the depth slider will push it left across
-        the part of the curve you needed.</span>
+        for long offsets in AVO work. Step 1 qualifies that: on a deep target the offsets that would reach
+        those angles may not exist in the survey at all. The gray region on the first panel is the angles
+        beyond what is recorded, and moving the depth slider pushes it left across the part of the curve
+        the separation depends on.</span>
     </div>
   </section>
 
@@ -392,33 +387,33 @@
       <li><b>Survey design.</b> Whether a proposed cable length gives useful AVO on the target is a step-1
         calculation, and it has to be done at the target's depth rather than in general. The same
         acquisition that was excellent on a shallow prospect can be useless two seconds deeper.</li>
-      <li><b>Deciding whether AVO is worth doing.</b> Step 5 is the test. If the ambiguity you are trying
-        to resolve involves a change in Vp/Vs, offset will help. If it does not — and fizz gas does not —
-        then an AVO study will produce a number, it will look like an answer, and it will not be one.</li>
+      <li><b>Deciding whether AVO is worth doing.</b> Step 5 is the test. If the ambiguity to be resolved
+        involves a change in Vp/Vs, offset will help. If it does not — and fizz gas does not — an AVO
+        study will produce a number that looks like an answer and is not one.</li>
       <li><b>Reading angle stacks.</b> A near stack and a far stack are two samples of the curve in step 3.
         Knowing what angles actually went into each one, after ray bending and after whatever mute was
         applied, is the difference between comparing two measurements and comparing two arbitrary
         averages.</li>
-      <li><b>Choosing a formulation.</b> The choice between two and three terms is not about rigour, as
+      <li><b>Choosing a formulation.</b> The choice between two and three terms is not about rigor, as
         step 4 shows. It is about whether the angle range and the noise can support a third parameter.</li>
     </ul>
 
-    <p class="lede">The failure this module is built against is treating angle as a detail of the
-      processing rather than as the physical variable the whole method depends on. Amplitudes get
+    <p class="lede">One common error is treating angle as a detail of the processing rather than as the
+      physical variable the whole method depends on. Amplitudes get
       extracted against offset, plotted against sin²θ using a straight-ray conversion, fitted, and
       interpreted — and the systematic angle error from step 1 propagates straight into the gradient, in a
       known direction, without ever announcing itself.</p>
-    <p class="lede">There is a second habit worth breaking, which is treating the exact solution as the
-      rigorous one and the approximation as the compromise. Step 4 shows a case where the more complete
+    <p class="lede">A second error is treating the exact solution as the rigorous one and the
+      approximation as the compromise. Step 4 shows a case where the more complete
       approximation is further from the truth over the range that matters. Exactness in one part of a
       calculation earns nothing if the inputs to it are uncertain, and on a real gather the angles, the
       wavelet and the amplitudes all are.</p>
 
     <div class="legend prose">
-      <span>The useful summary of this module is a question to ask before starting: what is the Vp/Vs
-        difference between the two explanations I am trying to separate, and does my angle range turn that
-        difference into a measurable amplitude difference? Both halves are computable in advance, from a
-        well or from a rock physics model, and neither needs the seismic.</span>
+      <span>Two quantities settle whether offset will help: the Vp/Vs difference between the two
+        explanations being separated, and whether the recorded angle range turns that difference into a
+        measurable amplitude difference. Both are computable in advance, from a well or from a rock
+        physics model, and neither needs the seismic.</span>
     </div>
   </section>
 
@@ -430,14 +425,14 @@
         described. <button type="button" class="btn ghost small" id="popEx">Open these in a separate
         window</button></p>
       <ol id="exList">
-        <li><b>Lose your far angles by burying the target.</b> Set the longest offset to 3000 m and the
-          depth to 1200 m, and read the angle at your longest offset. Then walk the depth down to 3200 m,
+        <li><b>Lose the far angles by burying the target.</b> Set the longest offset to 3000 m and the
+          depth to 1200 m, and read the angle at the longest offset. Then take the depth down to 3200 m,
           reading it again at each stop.
           <details class="reveal"><summary>Answer</summary><span class="ans">At 1200 m the 3000 m offset
             reaches 64.3°; at 2000 m it reaches 48.4°; at 3200 m it reaches 35.1°. The survey did not
             change. Nothing about the acquisition changed. The angle range available for AVO fell by nearly thirty
             degrees purely because the target got deeper, and step 5 shows that separating two
-            rocks depends almost entirely on how wide an angle you can reach. This is why the same
+            rocks depends almost entirely on how wide an angle is available. This is why the same
             processing sequence produces convincing AVO on one horizon and noise on another.</span></details></li>
 
         <li><b>Measure the cost of the straight-ray shortcut.</b> At 2000 m depth, compare the true angle
@@ -477,8 +472,8 @@
             The reason is visible in the rocks rather than in the seismic. Oil and brine differ in Vp/Vs
             by 0.21; full gas and fizz gas differ by 0.07. Offset measures shear, so it resolves
             ambiguities in proportion to how much shear behavior differs between them, and the fizz
-            problem barely involves any. You could have predicted both outcomes from the rock physics
-            before recording a single trace.</span></details></li>
+            problem barely involves any. Both outcomes follow from the rock physics before a single
+            trace is recorded.</span></details></li>
       </ol>
     </div>
   </section>
@@ -503,8 +498,8 @@
         <li><b>Offset resolves ambiguities that involve Vp/Vs, and only those.</b> Oil against brine, which
           differ by 0.21 in Vp/Vs, separate by 0.0256 at 30° and can be told apart. Gas against fizz gas,
           differing by 0.07, separate by 0.0123 and cannot.</li>
-        <li><b>You can work out in advance whether AVO will help.</b> Both halves of the question — the
-          Vp/Vs contrast between your competing explanations, and the angle range your survey reaches on
+        <li><b>Whether AVO will help can be worked out in advance.</b> Both halves of the question — the
+          Vp/Vs contrast between the competing explanations, and the angle range the survey reaches on
           this target — are computable before any seismic is examined.</li>
       </ul>
     </div>
@@ -875,7 +870,7 @@
 
   // one trace of a gather, drawn as a wiggle in its own column
     /* `bounds` is the whole gather. A big excursion is allowed to spill into the
-     neighbouring trace, which is how wiggle displays work, but never outside
+     neighboring trace, which is how wiggle displays work, but never outside
      the gather box — that would draw over the axis and off the canvas. */
   function wiggleCol(ctx, R, tr, bounds, opts) {
     const o = opts || {};
@@ -973,7 +968,7 @@
     ctx.save();
     ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
     ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-        ctx.fillText('what you would see', R.x + R.w / 2, 4);
+        ctx.fillText('what the data would show', R.x + R.w / 2, 4);
     ctx.restore();
 
     const cx = 34 + gw + 34;
@@ -991,8 +986,8 @@
     ctx.save();
     ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
     ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-        const capLong = 'shaded = the angles you record';
-    ctx.fillText(ctx.measureText(capLong).width < R.w ? capLong : 'your angle range',
+        const capLong = 'shaded = the angles recorded';
+    ctx.fillText(ctx.measureText(capLong).width < R.w ? capLong : 'the angle range',
                  R.x + R.w / 2, 4);
     ctx.restore();
   }
@@ -1096,7 +1091,7 @@
     set('s1d', D.angStraight.toFixed(1) + '°');
     set('s1e', (D.angMax - D.angStraight).toFixed(1) + '° too small');
     set('s1f', isFinite(need30)
-      ? need30 + ' m' + (need30 > S.xmax ? '  — more than you are recording' : '  — within your survey')
+      ? need30 + ' m' + (need30 > S.xmax ? '  — more than is recorded' : '  — within the survey')
       : 'not reachable');
   }
 
@@ -1352,7 +1347,7 @@
     legendRow(ctx, R, apItems);
 
         const erItems = [[CRIM, 'two terms', false], [TEAL, 'three terms', false],
-                     [SLATE, 'shaded: your noise level', false]];
+                     [SLATE, 'shaded: the noise level', false]];
     const erF = fitLegend('c4err', w, 330, erItems);
     ctx = erF.ctx;
     R = { x: M.l, y: M.t, w: w - M.l - M.r, h: erF.plotH };
@@ -1396,11 +1391,11 @@
           : 'three terms, by ' + (Math.abs(e2(40)) / Math.abs(e3(40))).toFixed(1) + '×');
     set('s4e', NOISE[S.nz] === 0 ? 'no noise set'
       : isFinite(cross) ? cross.toFixed(0) + '°'
-      : 'never, out to your widest angle of ' + D.angMax.toFixed(0) + '°');
+      : 'never, out to the widest angle of ' + D.angMax.toFixed(0) + '°');
     const eMax = Math.abs(e2(D.angMax));
     set('s4f', isFinite(eMax)
       ? 'the two-term error reaches ' + eMax.toFixed(4) + ' by ' + D.angMax.toFixed(0) + '°'
-      : 'your angle range runs past the critical angle');
+      : 'the angle range runs past the critical angle');
   }
 
   /* =====================================================================
@@ -1418,7 +1413,7 @@
        "can I measure the difference", and that is a single readable picture:
        does the line climb out of the shaded band or not. */
         const sepItems = [[CRIM, 'oil vs brine', false], [TEAL, 'gas vs fizz gas', true],
-      ...(NOISE[S.nz] > 0 ? [[SLATE, 'below the line you cannot measure it', false]] : [])];
+      ...(NOISE[S.nz] > 0 ? [[SLATE, 'below the line it cannot be measured', false]] : [])];
     const sepF = fitLegend('c5a', w, 340, sepItems);
     let ctx = sepF.ctx;
     let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: sepF.plotH };

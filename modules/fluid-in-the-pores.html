@@ -102,7 +102,7 @@
     <p class="lede">The three pore fluids that matter are brine, oil and gas, and their bulk moduli are
       not close to one another. At the pressure and temperature set here, brine is roughly 2.7 GPa, oil is
       about half that, and gas is around 0.05 — <b>some fifty times softer than brine</b>. On a linear
-      axis the gas bar is invisible, which is the honest picture and the reason the left-hand panel is
+      axis the gas bar is invisible, which is why the left-hand panel is
       drawn that way rather than on a compressed scale.</p>
     <p class="lede">Density separates them too, though far less dramatically: brine near 1.0 g/cm³, oil
       near 0.8, gas near 0.18. Both properties will matter, because a fluid changes the rock's density as
@@ -200,8 +200,8 @@
       using amplitudes to say something about fluids.</p>
     <p class="lede"><b>Vs responds only through the density.</b> G is identical in all four cases, so
       any change in Vs is the square root of a density ratio and nothing else. Gas is the lightest fluid,
-      so a gas-filled rock has the <em>highest</em> Vs of the three saturated cases — the shear wave is
-      not detecting the gas, it is detecting that there is less mass to move.</p>
+      so a gas-filled rock has the <em>highest</em> Vs of the three saturated cases. The shear wave
+      responds to the reduced mass rather than to the gas itself.</p>
     <p class="lede">That difference in behavior is what makes the pair useful. Vp falling while Vs holds
       steady or rises slightly is a signature a fluid change produces and a porosity change does not,
       because a porosity change moves K and G together.</p>
@@ -237,7 +237,7 @@
   <section class="tabpane" id="p4" role="tabpanel" hidden>
     <div class="plot-head">
       <h3><span class="stepno">4</span>A little gas does almost everything</h3>
-      <span class="hint">The most consequential curve in the set</span>
+      <span class="hint">Where most of the velocity change happens</span>
     </div>
     <p class="lede">A pore space is rarely all gas or all brine. The gas saturation is the fraction of
       the pore volume the gas occupies, and the question is how the rock behaves in between.</p>
@@ -246,7 +246,7 @@
       gas first, because the gas is fifty times easier to compress. The mixture is therefore about as soft
       as the gas almost as soon as any gas is present, and the fluid modulus collapses within the first
       few percent of saturation.</p>
-    <p class="lede">The consequence is on the right. Vp falls off a cliff at low gas saturation and then
+    <p class="lede">The consequence is on the right. Vp falls steeply at low gas saturation and then
       almost flattens. At the settings this module opens with, taking the gas saturation from zero to five
       percent delivers about <b>87% of the entire velocity drop</b> that going all the way to 100% gas
       would produce.</p>
@@ -296,7 +296,7 @@
     <p class="lede">The size of the fluid effect is not a constant. Two things reduce it, and both are
       ordinary conditions rather than edge cases.</p>
     <p class="lede">Both panels plot the brine-minus-gas separation as a percentage of the brine
-      velocity rather than in meters per second, and the reason is worth stating. In absolute terms the
+      velocity rather than in meters per second. In absolute terms the
       separation hardly changes with porosity at all — around 410 m/s in a 15% sand and 460 in a 35% one.
       What changes is how large that is <em>compared with how fast the rock already is</em>, and a
       reflection responds to a relative contrast rather than to an absolute velocity shift. A 400 m/s
@@ -350,9 +350,9 @@
       encounter. Gassmann's relation run in reverse strips that fluid out to recover the dry frame, and
       run forwards puts a different one in. That is how a brine well is used to predict what the same
       sand would look like with gas, and it is the standard first step of any amplitude study.</p>
-    <p class="lede"><b>Deciding whether a prospect is worth shooting for.</b> The panels in step 5 are, in
+    <p class="lede"><b>Deciding whether a prospect can be tested with amplitudes.</b> The panels in step 5 are, in
       effect, a feasibility test. If the brine and gas cases differ by only a few tens of meters per
-      second, no amount of processing or analysis will separate them, and that is worth knowing before
+      second, no amount of processing or analysis will separate them, and that can be established before
       the money is spent rather than after.</p>
     <p class="lede"><b>Interpreting a bright spot.</b> Step 4 is the reason a bright amplitude is not a
       volume. The saturation curve is nearly flat above a few percent gas, so amplitude alone constrains
@@ -360,7 +360,7 @@
     <p class="lede"><b>Knowing which rocks to be careful with.</b> The assumption that a fluid leaves the
       shear modulus alone is what the whole calculation rests on. In shales, in carbonates with complex
       pore shapes, and where a fluid reacts chemically with the grains, it holds less well, and results
-      built on it deserve more doubt.</p>
+      built on it are correspondingly less certain.</p>
   </section>
 
   <!-- ============================== EXERCISES ============================= -->
@@ -378,8 +378,8 @@
             case — dry, brine, oil and gas — because Gassmann's relation leaves it untouched by
             construction. Vs is nevertheless different in each: 1571 m/s dry, 1456 with brine, 1477 with
             oil, 1549 with gas. Every one of those differences is density. A shear wave in a gas sand is
-            faster than in a brine sand not because it noticed the gas but because there is less mass in
-            the pores to carry along.</span></details></li>
+            faster than in a brine sand because there is less mass in the pores to carry along, not
+            because the gas has stiffened the rock.</span></details></li>
 
         <li><b>Check that the shear change is density and nothing else.</b> Compare the ratio of the brine
           and gas shear velocities with the square root of the inverse ratio of their densities.
@@ -403,8 +403,8 @@
           <details class="reveal"><summary>Answer</summary><span class="ans">Vp bottoms out near 32%
             gas saturation at about 2214 m/s, then rises slightly to 2280 m/s at full gas. Two effects are
             competing: the fluid modulus has essentially stopped falling by then, while the density keeps
-            falling as more brine is replaced. Below the minimum the modulus wins and Vp falls; above it
-            the density wins and Vp rises. A single Vp value in that range therefore corresponds to two
+            falling as more brine is replaced. Below the minimum the modulus change dominates and Vp falls;
+            above it the density change dominates and Vp rises. A single Vp value in that range therefore corresponds to two
             different saturations.</span></details></li>
 
         <li><b>Find the conditions that weaken the fluid effect.</b> Read the separation at 15%
@@ -415,8 +415,8 @@
             porosity trend barely exists, running 408 to 462 m/s, because a tight rock is also a fast
             rock. The relative separation is the one that matters, because a reflection is set by a
             contrast in impedance rather than by a difference in velocity. A tight, deep sand can hold a
-            full gas column and still produce a weak enough contrast to be missed, which is worth knowing
-            before a survey is designed rather than after a well is drilled.</span></details></li>
+            full gas column and still produce a weak enough contrast to be missed. That is a question for survey
+            design rather than for processing.</span></details></li>
       </ol>
     </div>
   </section>
@@ -467,7 +467,7 @@
 
     <p class="lede"><b>Gassmann's relation</b> is used exactly as published, with the shear modulus of the
       saturated rock set equal to that of the dry frame. Everything in this module rests on that
-      equality, so it is worth knowing what it assumes: the pore space is fully connected, the rock is
+      equality, and its assumptions are these: the pore space is fully connected, the rock is
       isotropic and homogeneous at the scale of the measurement, the fluid does not react with the grains,
       and — most importantly — the wave is slow enough that pore pressure equalizes throughout the rock
       during each cycle. Seismic frequencies generally satisfy that last condition; laboratory ultrasonic

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>What survives | How AVO Actually Works</title>
-<meta name="description" content="The closing module: where the information went, how many rocks one number leaves you, how many the second number removes, four traps where the intuitive reading is wrong, and what can honestly be said from an amplitude anomaly.">
+<meta name="description" content="The closing module: where the information went, how many rocks one number leaves, how many the second number removes, four traps where the intuitive reading is wrong, and what can honestly be said from an amplitude anomaly.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -27,19 +27,19 @@
     <h1>What survives</h1>
     <p class="sub">Nine modules of losses, ambiguities and error bars. This one adds them up. It counts how
       many rocks are consistent with one measurement, how many the second measurement removes, which
-      question neither of them can answer, and it ends with a form of words you could actually defend in a
-      meeting.</p>
+      question neither of them can answer, and it ends with a form of words that the numbers will
+      support.</p>
     <p class="sub" style="font-size:15px;color:#5C6670">This is the closing module and it assumes all eight before it.</p>
   </div>
 
   <div class="labhead">
     <div class="labgrid">
       <div>
-        <p class="cap">The rocks still standing <span>&mdash; before and after the gradient</span></p>
+        <p class="cap">The rocks that still fit <span>&mdash; before and after the gradient</span></p>
         <canvas id="cHead" aria-label="The set of rocks consistent with the intercept alone beside the set consistent with both the intercept and the gradient"></canvas>
       </div>
       <div>
-        <p class="cap">The measurement you were given <span>&mdash; and how well you measured it</span></p>
+        <p class="cap">The measurement <span>&mdash; and how well it was made</span></p>
         <div class="controls" id="mainControls">
           <div class="ctl-col">
             <h2>What was recorded</h2>
@@ -70,7 +70,8 @@
               </div>
             </div>
             <p class="note" style="margin:2px 0 0;font-size:11.5px;line-height:1.45">
-              Only you can see this. The analysis below is given the amplitudes and nothing else.</p>
+              This setting is not visible to the analysis below, which is given the amplitudes and
+              nothing else.</p>
           </div>
         </div>
       </div>
@@ -78,7 +79,7 @@
   </div>
 
   <p class="tabhint">Work through the five steps in order, <b>then try the exercises</b>.
-    Method and references are there when you want them.</p>
+    Method and references are in the last two tabs.</p>
   <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
     <button role="tab" data-tab="p1" aria-selected="false">1 · The losses</button>
     <button role="tab" data-tab="p2" aria-selected="false">2 · One number</button>
@@ -98,14 +99,16 @@
       <h3><span class="stepno">1</span>Where the information went</h3>
       <span class="hint">Every step, and what each one cost</span>
     </div>
-    <p class="lede">A rock has many independent properties. A seismic amplitude has one number, or two if
-      you have offset. The difference has to go somewhere, and the earlier modules found out where. The
-      card on the left collects it, with the size of each loss measured rather than described.</p>
-    <p class="lede">Read down it and notice that the losses are of different kinds. Some are
+    <p class="lede">A rock has many independent properties. A seismic amplitude has one number, or two
+      where offset is available. The difference has to go somewhere, and the earlier modules located it.
+      The card on the left collects those losses, with the size of each one measured rather than
+      described.</p>
+    <p class="lede">The losses are of different kinds. Some are
       <b>collapses</b>: several numbers becoming one, as when velocity and density become an impedance.
       Some are <b>saturations</b>: a property that stops responding once it has changed a little, as gas
       saturation does. Some are <b>blurs</b>: the wavelet in time, the noise in amplitude. And one is a
-      <b>confusion</b>: half the reflection belongs to a rock you were not asking about.</p>
+      <b>confusion</b>: half the reflection belongs to a rock that was never the subject of the
+      question.</p>
     <p class="lede">Only the blurs get better with better data. The collapses and the saturation are
       properties of the physics and no amount of acquisition or processing touches them.</p>
 
@@ -131,16 +134,16 @@
       <div class="stat wide"><span>The one question none of them answers</span><b id="s1f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>None of this is an argument against using amplitudes. It is an argument for knowing which of
-        your questions the data can answer before you ask it. The next three steps put that on a
-        countable footing.</span>
+      <span>None of this is an argument against using amplitudes. It is an argument for establishing which
+        questions the data can answer before they are asked. The next three steps put that on a countable
+        footing.</span>
     </div>
   </section>
 
   <!-- =============================== STEP 2 =============================== -->
   <section class="tabpane" id="p2" role="tabpanel" hidden>
     <div class="plot-head">
-      <h3><span class="stepno">2</span>What one number leaves you</h3>
+      <h3><span class="stepno">2</span>What one number leaves</h3>
       <span class="hint">Module 07's count, now with a real error bar on it</span>
     </div>
     <p class="lede">Module 07 counted the rocks consistent with a measured amplitude, using a tolerance
@@ -150,8 +153,8 @@
     <p class="lede">The panel shows the survivors as a population — what porosities, what fluids, what
       saturations. The count is large, and the important thing about it is not the number itself but which
       of its dimensions are wide and which are narrow.</p>
-    <p class="lede">Change the noise and the whole set breathes. Change the mute and it breathes again.
-      Neither of them changes the geology by so much as a percent of porosity.</p>
+    <p class="lede">Changing the noise widens or narrows the whole set, and changing the mute does it
+      again. Neither of them changes the geology by so much as a percent of porosity.</p>
 
     <div class="sec-row" id="row2">
       <div class="panel-col">
@@ -184,20 +187,20 @@
   <!-- =============================== STEP 3 =============================== -->
   <section class="tabpane" id="p3" role="tabpanel" hidden>
     <div class="plot-head">
-      <h3><span class="stepno">3</span>What the second number buys</h3>
+      <h3><span class="stepno">3</span>What the second number removes</h3>
       <span class="hint">The whole case for AVO, as a number</span>
     </div>
     <p class="lede">Now require the gradient to match as well, within its own two standard deviations. The
-      surviving set shrinks. <b>How much it shrinks is the entire practical case for doing AVO</b>, and it
-      is worth having as a figure rather than a conviction.</p>
+      surviving set shrinks. <b>How much it shrinks is the practical case for doing AVO</b>, stated as a
+      figure rather than as a conviction.</p>
     <p class="lede">At moderate noise the gradient removes 55% of what the intercept left. That is a real and
       useful return. At high noise it removes 25%, because the gradient's error bar
-      has grown so wide that it barely constrains anything — which is module 08's result arriving in a form
-      you can put in a budget.</p>
+      has grown so wide that it barely constrains anything, which is module 08's result in a form that
+      can be costed.</p>
     <p class="lede">Then look at <em>which</em> dimensions shrank. Vp/Vs narrows sharply, which is exactly
       what module 05 predicted: offset measures shear. Porosity narrows a little. And saturation does not
-      move at all. <b>The second measurement buys you lithology and fluid type; it does not buy you how
-      much.</b></p>
+      move at all. <b>The second measurement constrains lithology and fluid type, and not how much is
+      there.</b></p>
 
     <div class="sec-row" id="row3">
       <div class="panel-col">
@@ -218,12 +221,12 @@
       <div class="stat key"><span>The second measurement removed</span><b id="s3c">—</b></div>
       <div class="stat"><span>Vp/Vs range, before and after</span><b id="s3d">—</b></div>
       <div class="stat"><span>Saturation range, before and after</span><b id="s3e">—</b></div>
-      <div class="stat wide"><span>What adding offset actually bought here</span><b id="s3f">—</b></div>
+      <div class="stat wide"><span>What adding offset removed here</span><b id="s3f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>Switch the noise to noisy and watch the second column collapse towards the first. AVO is not a
-        method that either works or does not; it is a method whose value is proportional to how well you
-        can measure a gradient, and module 08 showed exactly what that depends on.</span>
+      <span>At the noisy setting the second column collapses toward the first. AVO is not a method that
+        either works or does not; its value is proportional to how well the gradient can be measured, and
+        module 08 set out what that depends on.</span>
     </div>
   </section>
 
@@ -233,9 +236,9 @@
       <h3><span class="stepno">4</span>Four ways to be confidently wrong</h3>
       <span class="hint">Each one is a rule of thumb that is usually true</span>
     </div>
-    <p class="lede">Every trap below comes from a rule that works most of the time. That is what makes
-      them dangerous: a rule that failed often would have been discarded. Press each button to load the
-      situation and see what the analysis says about it.</p>
+    <p class="lede">Every trap below comes from a rule that works most of the time, which is why each has
+      survived in use: a rule that failed often would have been discarded. Each button loads the situation
+      and the analysis that goes with it.</p>
 
     <div style="margin:0 0 14px;display:flex;gap:8px;flex-wrap:wrap">
       <button type="button" class="btn small" data-trap="0">Bright means gas</button>
@@ -252,7 +255,7 @@
       </div>
       <div class="panel-col">
         <p class="sublabel"><b>2</b> The two rocks, as gathers
-          <span class="note">what you would have seen</span></p>
+          <span class="note">what the data would have shown</span></p>
         <canvas id="c4gath" aria-label="Gathers for the rock the rule expects and the rock that actually produces the response"></canvas>
       </div>
     </div>
@@ -262,7 +265,7 @@
       <div class="stat key"><span>Where it fails</span><b id="s4b">—</b></div>
       <div class="stat"><span>What the rule expects</span><b id="s4c">—</b></div>
       <div class="stat"><span>What is actually there</span><b id="s4d">—</b></div>
-      <div class="stat"><span>Difference you could measure</span><b id="s4e">—</b></div>
+      <div class="stat"><span>Measurable difference</span><b id="s4e">—</b></div>
       <div class="stat wide"><span>Where this was established</span><b id="s4f">—</b></div>
     </div>
     <div class="legend prose">
@@ -275,19 +278,18 @@
   <!-- =============================== STEP 5 =============================== -->
   <section class="tabpane" id="p5" role="tabpanel" hidden>
     <div class="plot-head">
-      <h3><span class="stepno">5</span>What you can honestly say</h3>
+      <h3><span class="stepno">5</span>What the numbers support</h3>
       <span class="hint">Generated from the surviving set, not from a template</span>
     </div>
-    <p class="lede">The statement below is assembled from the analysis you have just run. Each clause is
-      backed by a count or a range from the surviving models: nothing in it is asserted that the numbers do
-      not support, and nothing that they do support is left out.</p>
-    <p class="lede">Change the noise, the mute or the fold and watch the wording change with them. That
-      responsiveness is the point. <b>What you can defend depends on how well you measured, and it should
-      be re-derived rather than remembered.</b></p>
-    <p class="lede">Notice the shape of it. There is usually something firm to say about impedance and
-      about the presence of a hydrocarbon. There is usually nothing to say about saturation. And there is
-      almost always a caveat about the seal, because half of every amplitude belongs to a rock nobody
-      characterised.</p>
+    <p class="lede">The statement below is assembled from the analysis on the previous steps. Each clause
+      is backed by a count or a range from the surviving models: nothing in it is asserted that the
+      numbers do not support, and nothing that they do support is left out.</p>
+    <p class="lede">Changing the noise, the mute or the fold changes the wording with them. <b>What a
+      statement can claim depends on how well the measurement was made, so it is re-derived for each set
+      of conditions rather than carried over.</b></p>
+    <p class="lede">The shape of it is consistent. There is usually something firm to say about impedance
+      and about the presence of a hydrocarbon, usually nothing to say about saturation, and almost always
+      a caveat about the seal, because half of every amplitude belongs to a rock nobody characterized.</p>
 
     <div class="sec-row" id="row5">
       <div class="panel-col">
@@ -303,19 +305,18 @@
     </div>
 
     <div class="stats" style="margin-top:14px">
-      <div class="stat key"><span>Can you say there is a hydrocarbon</span><b id="s5a">—</b></div>
-      <div class="stat key"><span>Can you say how much</span><b id="s5b">—</b></div>
-      <div class="stat"><span>Can you say the porosity</span><b id="s5c">—</b></div>
-      <div class="stat"><span>Can you say the thickness</span><b id="s5d">—</b></div>
+      <div class="stat key"><span>Is a hydrocarbon established</span><b id="s5a">—</b></div>
+      <div class="stat key"><span>Is the amount established</span><b id="s5b">—</b></div>
+      <div class="stat"><span>Is the porosity established</span><b id="s5c">—</b></div>
+      <div class="stat"><span>Is the thickness established</span><b id="s5d">—</b></div>
       <div class="stat"><span>Most valuable next measurement</span><b id="s5e">—</b></div>
-      <div class="stat wide"><span>The honest one-line version</span><b id="s5f">—</b></div>
+      <div class="stat wide"><span>The one-line version</span><b id="s5f">—</b></div>
     </div>
     <div class="legend prose">
-      <span>One thing this page cannot do for you: an anomaly that holds together across a mapped area is
-        far better evidence than any single location, because the noise is independent from trace to trace
-        and the geology is not. Everything here is the worst case of a single gather, and real
-        interpretation is better than that. It is not better in the dimensions the physics closed
-        off.</span>
+      <span>One thing this page leaves out: an anomaly that holds together across a mapped area is far
+        better evidence than any single location, because the noise is independent from trace to trace and
+        the geology is not. Everything here is the worst case of a single gather. Real interpretation is
+        better than that, though not in the dimensions the physics has closed off.</span>
     </div>
   </section>
 
@@ -323,7 +324,7 @@
   <section class="tabpane" id="pw" role="tabpanel" hidden>
     <div class="plot-head">
       <h3><span class="stepno ref">W</span>Why it matters</h3>
-      <span class="hint">Using a method whose limits you know</span>
+      <span class="hint">Using a method whose limits are known</span>
     </div>
     <p class="lede">The point of the whole set is not that AVO is unreliable. It is that AVO answers
       some questions well, some badly and some not at all, and that which is which can be worked out in
@@ -342,19 +343,18 @@
         most common way these methods mislead.</li>
     </ul>
 
-    <p class="lede">The habit that survives all of this is simple and slightly uncomfortable: having found
-      a model that explains your data, go and look for the others. The first fit feels like an answer, and
-      it is only a member of a set whose size you have not yet checked. Everything in these ten modules is
-      an elaboration of that.</p>
-    <p class="lede">It is worth saying plainly that this site is a model, and inherits the weakness it
-      keeps pointing at. The rock physics is one choice among several, the noise is simpler than real
-      noise, nothing here is spatial, and a real interpreter has structural conformance, well control and
-      a hundred other things this page does not. The numbers are honest about the parameter space they
-      searched. That space is not the earth.</p>
+    <p class="lede">The practice that follows from all of this is to look for the other models once one
+      has been found that explains the data. The first fit reads as an answer, and it is one member of a
+      set whose size has not yet been checked. Everything in these ten modules is an elaboration of
+      that.</p>
+    <p class="lede">This site is itself a model, and inherits the limitation it describes. The rock
+      physics is one choice among several, the noise is simpler than real noise, nothing here is spatial,
+      and a real interpreter has structural conformance, well control and a hundred other things this page
+      does not. The numbers describe the parameter space that was searched, which is not the earth.</p>
 
     <div class="legend prose">
-      <span>If one sentence is worth carrying away from the whole set: an amplitude constrains a contrast,
-        not a reservoir, and the size of the set it leaves you is computable before you drill.</span>
+      <span>The result the whole set converges on: an amplitude constrains a contrast rather than a
+        reservoir, and the size of the set it leaves is computable before anything is drilled.</span>
     </div>
   </section>
 
@@ -385,14 +385,13 @@
             02 and 03 arriving at its final form: no measurement on this page, at any noise level, can tell
             a commercial column from a residual one.</span></details></li>
 
-        <li><b>Watch the mute change what you can conclude.</b> In step 5, set the widest angle to 15°,
+        <li><b>Watch the mute change the conclusion.</b> In step 5, set the widest angle to 15°,
           read the statement, then take it to 45° and read it again.
           <details class="reveal"><summary>Answer</summary><span class="ans">At a 15° mute the gradient removes 4% of the models the
             intercept left — its error bar is so wide that it constrains almost nothing, and the statement
             drops back to what an intercept alone can support. At 30° it removes 55%. At 45° it removes
-            75%. Nothing about the earth changed between the two readings. This is the most
-            direct demonstration in the whole site that a processing parameter decides what you are allowed
-            to conclude.</span></details></li>
+            75%. Nothing about the earth changed between the two readings. It is the most direct
+            demonstration in the site that a processing parameter decides what can be concluded.</span></details></li>
 
         <li><b>Take each trap in turn.</b> In step 4, work through all four and note which module first
           established each one.
@@ -404,8 +403,8 @@
             depending only on the shale above it — module 06, exercise 5. Four rules, four
             counterexamples, all built from the same physics rather than from anecdotes.</span></details></li>
 
-        <li><b>Write the statement yourself, then compare.</b> Set the noise to moderate and the mute to
-          30°, decide what you would tell a colleague, then open step 5.
+        <li><b>Draft the statement first, then compare.</b> Set the noise to moderate and the mute to
+          30°, write down what the data supports, then open step 5.
           <details class="reveal"><summary>Answer</summary><span class="ans">The defensible version is
             close to: the impedance is constrained to a band; the response is very hard to produce without
             a hydrocarbon on this parameter grid; the fluid is more likely gas than oil on the gradient;
@@ -428,11 +427,11 @@
         <li><b>One number leaves a large set.</b> With a properly computed tolerance, 441 rocks out of the
           13,020 searched match the measured intercept at moderate noise, spanning porosities from 19% to
           35% and every saturation from zero to full.</li>
-        <li><b>The second number removes about half of them, and only when you can measure it.</b> The gradient cuts 441 to 198 at moderate noise and 1,156 to
+        <li><b>The second number removes about half of them, and only when it can be measured well.</b> The gradient cuts 441 to 198 at moderate noise and 1,156 to
           870 when noisy — 55% against 25%. Widen the mute instead and it cuts 75%; narrow it to 15° and it
           cuts 4%.
           The value of AVO is proportional to how well the gradient is determined.</li>
-        <li><b>What offset buys is Vp/Vs, and therefore fluid type.</b> The admitted Vp/Vs range narrows from 1.46–2.08 to 1.46–1.60,
+        <li><b>What offset constrains is Vp/Vs, and therefore fluid type.</b> The admitted Vp/Vs range narrows from 1.46–2.08 to 1.46–1.60,
           and the hydrocarbon-bearing fraction goes from 98% to 100%.</li>
         <li><b>Saturation is untouched by all of it.</b> Among the models that contain a hydrocarbon, before and after
           the gradient and at every noise level, the admitted saturation runs from 10% to 100%. Nothing in normal-incidence or
@@ -515,9 +514,9 @@
   <section class="nextup" id="nextup" hidden>
     <p class="eyebrow">That is the set</p>
     <h3>Ten modules, one idea</h3>
-    <p>An amplitude constrains a contrast, not a reservoir, and the size of the set it leaves you is
-      computable before you drill. If you want to go back to where it started, module 01 builds a rock and
-      follows it to a trace.</p>
+    <p>An amplitude constrains a contrast rather than a reservoir, and the size of the set it leaves is
+      computable before anything is drilled. Module 01, where the set starts, builds a rock and follows it
+      to a trace.</p>
     <a class="btn" href="rocks-and-stiffness.html">Back to module 01</a>
     <a class="btn ghost" href="../index.html">All modules</a>
   </section>
@@ -1141,8 +1140,8 @@
       text: fmtRange(D.sw.byRG, k, '', k === 'vpvs' ? 2 : undefined),
     }));
     barRows(ctx, R, rows,
-      'Grey is what the intercept alone allowed; colored is what survives the gradient too. ' +
-      'A colored bar as long as its grey one means the second measurement bought nothing there.');
+      'Gray is what the intercept alone allowed; colored is what survives the gradient too. ' +
+      'A colored bar as long as its gray one means the second measurement removed nothing there.');
 
     // the survivors on the crossplot
     const items = [[SLATE, 'intercept only', 'dot'], [CRIM, 'and the gradient', 'dot'],
@@ -1205,7 +1204,7 @@
       actual: { phi: 35, fl: 'brine', sat: 0, shv: 3100, name: 'brine, 35%, fast shale' },
       note: 'Neither of these has a drop of hydrocarbon in it. The second is a strong negative ' +
             'reflection purely because the shale above it is fast. Half of every amplitude belongs ' +
-            'to a rock nobody is trying to characterise.',
+            'to a rock nobody set out to characterize.',
       where: 'module 07, exercise 3' },
     { rule: 'A strong anomaly means a lot of gas',
       fails: 'a trace of gas does most of the work',
@@ -1308,7 +1307,7 @@
             : 'A hydrocarbon is not required at all: only ' + (100 * hc).toFixed(0) +
               '% of the models that fit contain one.', gap: 6 },
       { label: usedG && gasFrac > 0.6
-          ? 'The gradient favours gas over oil in ' + (100 * gasFrac).toFixed(0) +
+          ? 'The gradient favors gas over oil in ' + (100 * gasFrac).toFixed(0) +
             '% of the surviving models.'
           : 'The fluid type is not resolved between oil and gas.', gap: 8 },
       { rule: true },

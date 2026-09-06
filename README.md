@@ -18,9 +18,9 @@ rules are useful — they are how the subject is usable at all — and every one
 them has a set of counterexamples that a student will not meet until a well comes
 in dry.
 
-The gap is not knowledge. It is *calibration*: knowing which questions an
+What is missing is calibration rather than facts: knowing which questions an
 amplitude can settle, which it cannot, and how to tell the two apart before
-committing to a decision. That kind of judgement is normally acquired slowly, by
+committing to a decision. That kind of judgment is normally acquired slowly, by
 watching experienced people, and it is exactly what a newcomer to an
 interpretation role does not have.
 
@@ -31,8 +31,8 @@ build the counterexamples themselves.
 
 **Everything is computed, live, from the parameters on screen.** There are no
 stored images and no curves drawn to look plausible. Move a slider and the rock
-physics runs again. This matters more than it sounds: a drawing cannot disagree
-with theory, but a calculation can — and during construction it repeatedly did.
+physics runs again. A drawing cannot disagree with theory; a calculation can, and
+during construction it did.
 Several claims in the text were corrected because a measurement contradicted
 them, including a resolution rule of thumb that turned out to be 28% off for the
 geometry it was being applied to.
@@ -47,7 +47,7 @@ reasonable choices give different answers, both are shown with the difference
 quantified, because the choice between them is usually a larger effect than the
 one being studied.
 
-**The limits are the subject, not a caveat at the end.** The modules count how
+**The limits are part of the subject rather than a closing caveat.** The modules count how
 many different rocks are consistent with a measurement, and how many of those a
 second measurement removes. The answer is a number, and it changes with the
 noise, the mute and the fold.
@@ -84,8 +84,8 @@ from scratch. Module 00 restates those results and picks up where they stop.
 minutes to see which simplifications the rest of the set comes back for.
 
 **A working interpreter** will find the new material in 07, 08 and 09: how many
-rocks share an amplitude, the size of the error bars, and a count of what the
-gradient actually buys. Those three are the heaviest in the set, and 08 uses
+rocks share an amplitude, the size of the error bars, and a count of how much the
+gradient adds. Those three are the heaviest in the set, and 08 uses
 standard deviations and correlation.
 
 ## Using them in teaching
@@ -146,8 +146,8 @@ license. The full legal text is in `LICENSE` at the repository root.
 > SSRN: *(article link to follow)*
 
 Corrections are welcome and wanted. If a number here disagrees with something you
-trust, that is worth knowing about — the whole point of computing everything live
-is that the site can be wrong in a way a set of drawings cannot.
+trust, that is useful to know. Computing everything live means the site can be
+wrong in a way a set of drawings cannot.
 
 ---
 

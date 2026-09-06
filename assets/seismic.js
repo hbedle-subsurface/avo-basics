@@ -409,7 +409,7 @@ const SEIS = (function () {
   /**
    * Sequential maps, for quantities that run from low to high rather than
    * negative to positive: thickness, amplitude magnitude, depth. Viridis and
-   * cividis are both perceptually uniform and safe for colour-vision
+   * cividis are both perceptually uniform and safe for color-vision
    * deficiency; cividis is optimised for it specifically. Rainbow maps are
    * avoided because they invent boundaries where the data has none.
    */
@@ -423,7 +423,7 @@ const SEIS = (function () {
       [128,146,89],[165,166,76],[203,187,60],[243,209,39],[255,233,69],
     ]),
     // Shallow red through cream to deep blue-purple: the usual structure-map
-    // convention, and safe for colour-vision deficiency because the difficult
+    // convention, and safe for color-vision deficiency because the difficult
     // pair is red against green, not red against blue.
     structure: rampMapSeq([
       [124,24,10],[168,60,18],[205,112,35],[232,175,95],[243,222,175],

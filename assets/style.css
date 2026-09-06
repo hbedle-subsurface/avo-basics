@@ -576,7 +576,7 @@ footer .foot-grid p { max-width: none; }
 }
 /* Panels in a row must start at the same height, or their plot boxes will not
    line up. A caption that wraps to two lines in a narrow column would otherwise
-   push its canvas down relative to its neighbours. */
+   push its canvas down relative to its neighbors. */
 .sec-row .sublabel { min-height: 30px; align-content: flex-start; }
 
 .legend {

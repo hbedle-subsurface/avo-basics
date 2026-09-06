@@ -89,7 +89,7 @@
   </div>
 
   <p class="tabhint">Three short steps. Nothing here needs a rock property that the resolution modules
-    did not already use, until the last panel, which is the point of the module.</p>
+    did not already use, until the last panel.</p>
   <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
     <button role="tab" data-tab="p1" aria-selected="false">1 · The chain</button>
     <button role="tab" data-tab="p2" aria-selected="false">2 · Straight down</button>
@@ -129,7 +129,7 @@
         <canvas id="c1imp" aria-label="Bar chart of velocity, density and impedance for the rock above and the rock below"></canvas>
       </div>
       <div class="panel-col">
-        <p class="sublabel"><b>2</b> The reflection, wearing the wavelet
+        <p class="sublabel"><b>2</b> The reflection, with the wavelet applied
           <span class="note">at normal incidence</span></p>
         <canvas id="c1trace" aria-label="The normal-incidence trace produced by this interface"></canvas>
       </div>
@@ -182,14 +182,14 @@
       shot into that line yields a set of recordings covering a range of angles, and every one of them is
       a measurement of the same boundary.</p>
     <p class="lede">How those recordings are organized, and what happens once velocity increases with
-      depth and the rays stop travelling in straight lines, is the subject of module 04. What matters here
+      depth and the rays stop traveling in straight lines, is the subject of module 04. What matters here
       is that the range of angles exists and that the resolution modules covered one end of it.</p>
 
     <div class="sec-row" id="row2">
       <div class="panel-col">
         <p class="sublabel"><b>1</b> The case that has been covered
           <span class="note">zero offset, straight down and back</span></p>
-        <canvas id="c2normal" aria-label="A to-scale section showing a source and receiver at the same point and a ray travelling straight down to the boundary and back"></canvas>
+        <canvas id="c2normal" aria-label="A to-scale section showing a source and receiver at the same point and a ray traveling straight down to the boundary and back"></canvas>
       </div>
       <div class="panel-col">
         <p class="sublabel"><b>2</b> The offset you set
@@ -231,7 +231,7 @@
       left-hand panel shows that for two rocks: a shale over a sand filled with brine, and the same shale
       over the same sand filled with gas. Both curves are computed from the full reflection equations
       rather than from the impedance fraction.</p>
-    <p class="lede">Two features of the picture are worth separating. The curves start at different
+    <p class="lede">The picture has two separate features. The curves start at different
       heights, which is the impedance contrast from step 1 and is already familiar. They also have
       different <em>shapes</em>, and that is new: the gas curve falls away from its starting value much
       faster than the brine curve does.</p>
@@ -247,7 +247,7 @@
       property with its own velocity — the <b>shear velocity</b>, Vs, alongside the Vp the earlier modules
       used. The wider the angle, the more of the motion is parallel and the more Vs matters, which is why
       one number becomes a curve.</p>
-    <p class="lede">The third panel is the one to carry forward. It shows what swapping the pore fluid
+    <p class="lede">The third panel shows what swapping the pore fluid
       does to each property of the sand, and the pattern in it is the reason the two curves have different
       shapes: <b>Vp drops a long way, Vs barely moves, and Vp/Vs falls further than either.</b> Where Vp
       and Vs come from, and why a fluid acts on one and not the other, is module 01.</p>
@@ -321,7 +321,7 @@
         <li><b>Separate offset from angle.</b> Set the offset to 2400 m and the depth to 2000 m and read
           the incidence angle. Then leave the offset alone and take the depth to 3000 m.
           <details class="reveal"><summary>Answer</summary><span class="ans">The angle falls from about
-            31° to about 21.8°, on an unchanged offset. Watch the third panel while you do it: every ray
+            31° to about 21.8°, on an unchanged offset. In the third panel every ray
             in the spread flattens together, and the whole range the shot records narrows from 4.3°–36.9°
             to 2.9°–26.6°. The angle is set by the half-offset divided by the depth, so one receiver line
             reaches wide angles on a shallow target and narrow ones on a deep target. A statement about
@@ -975,7 +975,7 @@
        to end at a receiver. */
     const LEG3s = [[SLATE, 'wavefronts, spreading from the shot', 'dash'],
       [TEAL, 'a narrow-angle path'], [CRIM, 'a wide-angle path'],
-      [ORANGE, 'the offset you set']];
+      [ORANGE, 'the offset set above']];
     const Ws = rowWidth('row2b', 1);
     const Ps = panel('c2spread', Ws, 260, LEG3s);
     const c = Ps.ctx, Rs = Ps.R;

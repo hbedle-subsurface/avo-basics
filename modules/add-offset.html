@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amplitude against angle | How AVO Actually Works</title>
+<meta name="description" content="Why a reflection changes with offset, how offset converts to angle, what the shear velocity has to do with it, where the Shuey approximations break, and which of the earlier ambiguities a second measurement actually resolves.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <a class="brand" href="../index.html"><span class="dot"></span>How AVO <b>actually</b> works</a>
+    <nav>
+      <a href="../index.html">All modules</a>
+      <a href="#pe">Exercises</a>
+      <a href="#pm">Method &amp; references</a>
+    </nav>
+  </header>
+
+  <div class="mod-head">
+    <p class="eyebrow">Module 05 &nbsp;·&nbsp; The measurement</p>
+    <h1>Amplitude against angle</h1>
+    <p class="sub">Everything so far used one number: the amplitude of a reflection recorded straight down.
+      Modules 01 and 02 showed how little that one number pins down. A seismic survey does not record one
+      trace per point, though — it records dozens, at increasing distance from the source, and the
+      reflection is not the same on all of them. That variation is a second measurement, and it is
+      sensitive to something the first one was completely blind to.</p>
+  </div>
+
+  <div class="labhead">
+    <div class="labgrid">
+      <div>
+        <p class="cap">Your gather, and the same thing as a curve <span>&mdash; one point per trace</span></p>
+        <canvas id="cGather" aria-label="An angle gather for the current model beside the reflection coefficient plotted against incidence angle"></canvas>
+      </div>
+      <div>
+        <p class="cap">Build the reservoir and the survey <span>&mdash; both change the curve</span></p>
+        <div class="controls" id="mainControls">
+          <div class="ctl-col">
+            <h2>The rock</h2>
+            <div class="ctl">
+              <label for="phi">Porosity <span class="val" id="phiV">30%</span></label>
+              <input type="range" data-key="phi" id="phi" min="5" max="35" step="1" value="30">
+            </div>
+            <div class="ctl">
+              <label for="vcl">Clay content <span class="val" id="vclV">0%</span></label>
+              <input type="range" data-key="vcl" id="vcl" min="0" max="30" step="5" value="0">
+            </div>
+            <div class="ctl">
+              <label for="shvp">Shale velocity <span class="val" id="shvpV">2700 m/s</span></label>
+              <input type="range" data-key="shvp" id="shvp" min="2300" max="3100" step="25" value="2700">
+            </div>
+
+            <h2>What is in the pores</h2>
+            <div class="ctl">
+              <label>Fluid <span class="val" id="flV">gas</span></label>
+              <div class="seg" id="segFluid">
+                <button type="button" data-fl="brine" aria-pressed="false">Brine</button>
+                <button type="button" data-fl="oil" aria-pressed="false">Oil</button>
+                <button type="button" data-fl="gas" aria-pressed="true">Gas</button>
+              </div>
+            </div>
+            <div class="ctl">
+              <label for="sat">Hydrocarbon saturation <span class="val" id="satV">100%</span></label>
+              <input type="range" data-key="sat" id="sat" min="0" max="100" step="5" value="100">
+            </div>
+
+            <h2>The survey</h2>
+            <div class="ctl">
+              <label for="dep">Depth to the reservoir <span class="val" id="depV">2000 m</span></label>
+              <input type="range" data-key="dep" id="dep" min="1200" max="3200" step="100" value="2000">
+            </div>
+            <div class="ctl">
+              <label for="xmax">Longest offset recorded <span class="val" id="xmaxV">3000 m</span></label>
+              <input type="range" data-key="xmax" id="xmax" min="800" max="5000" step="100" value="3000">
+            </div>
+            <div class="ctl">
+              <label>Noise <span class="val" id="nzV">clean</span></label>
+              <div class="seg" id="segNoise">
+                <button type="button" data-nz="0" aria-pressed="true">Clean</button>
+                <button type="button" data-nz="1" aria-pressed="false">Moderate</button>
+                <button type="button" data-nz="2" aria-pressed="false">Noisy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="tabhint">Work through the five steps in order, <b>then try the exercises</b>.
+    Method and references are there when you want them.</p>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Module steps">
+    <button role="tab" data-tab="p1" aria-selected="false">1 · Angle</button>
+    <button role="tab" data-tab="p2" aria-selected="false">2 · Why it changes</button>
+    <button role="tab" data-tab="p3" aria-selected="false">3 · The curve</button>
+    <button role="tab" data-tab="p4" aria-selected="false">4 · Shortcuts</button>
+    <button role="tab" data-tab="p5" aria-selected="false">5 · What it buys</button>
+    <button role="tab" data-tab="pw" aria-selected="false">Why it matters</button>
+    <span class="gap"></span>
+    <button role="tab" data-tab="pe" aria-selected="false">Exercises</button>
+    <button role="tab" data-tab="pk" aria-selected="false">Key points</button>
+    <button role="tab" data-tab="pm" aria-selected="false">Method</button>
+  </nav>
+
+  <!-- =============================== STEP 1 =============================== -->
+  <section class="tabpane" id="p1" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">1</span>Offset is not angle</h3>
+      <span class="hint">The conversion everyone does in their head, and gets wrong</span>
+    </div>
+    <p class="lede">AVO is a statement about <b>angle</b>: how far from the normal the wave meets the interface. A
+      recording crew measures <b>offset</b>: how far the receiver is from the source. Those are different
+      quantities and the step between them is where a lot of quiet error gets in.</p>
+    <p class="lede">The obvious conversion draws a straight line from source down to the reflector and back
+      up, which gives tan θ = (x/2)/z. That would be right if the earth had one velocity. It does not.
+      Velocity rises with depth, so by Snell's law the ray is bent continuously, and the angle it finally
+      makes at the reservoir is <b>larger</b> than the straight line suggests. The left panel draws both
+      rays so you can see the gap.</p>
+    <p class="lede">The right panel is the consequence: angle against offset, for three depths. Two things
+      to take from it. The curve flattens, so doubling the offset does not double the angle. And the same
+      offset is a completely different angle at a different depth — <b>drag the depth slider and watch your
+      widest angle collapse</b>. A 3000 m offset reaches 64° on a 1200 m target and 35° on a 3200 m one, which
+      is why deep AVO is hard for reasons that have nothing to do with the rocks.</p>
+
+    <div class="sec-row" id="row1">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> The ray, bent and straight
+          <span class="note">at your longest offset</span></p>
+        <canvas id="c1ray" aria-label="Ray paths from source to reflector, showing the curved ray and the straight-line approximation"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Angle against offset
+          <span class="note">for three depths</span></p>
+        <canvas id="c1ang" aria-label="Incidence angle plotted against source-receiver offset for three reservoir depths"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Vertical two-way time</span><b id="s1a">—</b></div>
+      <div class="stat"><span>RMS velocity to the target</span><b id="s1b">—</b></div>
+      <div class="stat key"><span>Angle at your longest offset</span><b id="s1c">—</b></div>
+      <div class="stat"><span>Straight-ray estimate</span><b id="s1d">—</b></div>
+      <div class="stat"><span>Error in the shortcut</span><b id="s1e">—</b></div>
+      <div class="stat wide"><span>Offset needed for a 30° angle</span><b id="s1f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The straight-ray error always runs the same way — it under-reads the angle — so a gradient
+        estimated against straight-ray angles is systematically too large. That is a bias rather than a
+        random error, and it does not average out over a survey.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 2 =============================== -->
+  <section class="tabpane" id="p2" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">2</span>What offset lets you see</h3>
+      <span class="hint">One property, invisible at zero offset, dominant at thirty degrees</span>
+    </div>
+    <p class="lede">A wave arriving straight down is pure compression. It squeezes the rock and the rock
+      pushes back, and how hard it pushes back is the impedance. Nothing about the rock's resistance to
+      <em>shearing</em> comes into it, because nothing is being sheared.</p>
+    <p class="lede">Tilt the ray and that stops being true. An obliquely incident P wave sets the interface
+      moving partly sideways, which shears it, and part of the energy converts into a shear wave. From that
+      moment the shear velocities of <b>both</b> rocks appear in the answer.</p>
+    <p class="lede"><b>How to read the curve.</b> Every one of these plots is a gather, redrawn. A
+      gather is a set of traces recorded at increasing distance from the source, and each trace has its own
+      reflection strength. Line those strengths up left to right and you get the curve. So the left edge
+      of any curve on this page is the trace recorded almost straight above the reservoir, the right edge
+      is the one recorded from furthest away, and the height of the line is simply how strong the
+      reflection is on that trace. The header at the top of the page shows both pictures side by side, and
+      so does every step from here on.</p>
+    <p class="lede">The panels below are the cleanest demonstration of what offset adds in this whole
+      site. They take one rock and change <b>only its shear velocity</b>, by fifteen percent either way,
+      leaving Vp and density exactly alone. Look at the left edge of the curves: all three start from the
+      identical point, because at zero offset Vs has no effect whatsoever. Then follow them right. By
+      thirty degrees they are far apart.</p>
+    <p class="lede">The gathers beside them say the same thing in the form you would meet it on a
+      workstation. The near traces of all three rocks are indistinguishable. The far traces are obviously
+      different. That difference is the only place the shear information lives.</p>
+    <p class="lede">That is the whole reason AVO exists. Vs is the property that responds differently to a
+      gas fill than Vp does, and normal incidence cannot see it at all.</p>
+
+        <div class="sec-row" id="row2">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> What happens at the interface
+          <span class="note">straight down, then tilted</span></p>
+        <canvas id="c2why" aria-label="Cartoon comparing a wave arriving straight down, which produces no shear, with one arriving at an angle, which converts part of its energy to shear"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Change only Vs
+          <span class="note">Vp and density held fixed</span></p>
+        <canvas id="c2vs" aria-label="Reflection coefficient against angle for three shear velocities, with compressional velocity and density held constant"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>3</b> The same three rocks, as gathers
+          <span class="note">identical on the left, different on the right</span></p>
+        <canvas id="c2bar" aria-label="Gathers for the three shear velocities, identical at near offset and separating at far offset"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Your rock's Vs</span><b id="s2a">—</b></div>
+      <div class="stat"><span>Your rock's Vp/Vs</span><b id="s2b">—</b></div>
+      <div class="stat key"><span>Spread at 0°, across ±15% in Vs</span><b id="s2c">—</b></div>
+      <div class="stat"><span>Spread at 30°</span><b id="s2d">—</b></div>
+      <div class="stat"><span>Spread at your widest angle</span><b id="s2e">—</b></div>
+      <div class="stat wide"><span>What the far offsets are telling you</span><b id="s2f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>Density deserves a word too. It appears at every angle, including zero, so it stays tangled
+        up with Vp in the near-offset amplitude and cannot be separated from it there either. What offset
+        adds is specifically the shear information, and only that.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 3 =============================== -->
+  <section class="tabpane" id="p3" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">3</span>The curve your rock actually makes</h3>
+      <span class="hint">Exact Zoeppritz, and the gather it produces</span>
+    </div>
+    <p class="lede">Now the full calculation for the rock you have built. The curve on the left is the
+      exact solution — Zoeppritz's equations, solved rather than approximated — and the panel beside it is
+      the gather that curve produces once each trace is convolved with a wavelet.</p>
+    <p class="lede">Take a brine sand at 20% porosity first. It starts positive and falls, crossing zero
+      somewhere out on the far offsets. Now switch to gas. It starts negative and gets <em>more</em>
+      negative with angle, which is the response people picture when they say "a bright spot". Then set the
+      porosity to 10% and keep the gas: it starts positive and falls steeply. Same fluid, opposite-looking
+      gather.</p>
+    <p class="lede">Two habits are worth forming here. Read the <b>starting value and the slope</b> as
+      separate facts, because they carry different information and module 06 is entirely about that split.
+      And notice that a curve which changes sign partway out looks like a reflection that fades and
+      reappears on a gather — an event vanishing at mid offset is a signal, not a processing problem.</p>
+
+    <div class="sec-row" id="row3">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Reflection coefficient against angle
+          <span class="note">your rock, and a brine sand for reference</span></p>
+        <canvas id="c3curve" aria-label="Reflection coefficient against incidence angle for the current model and for a brine-filled reference sand"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> The gather
+          <span class="note">near offsets on the left</span></p>
+        <canvas id="c3gath" aria-label="Synthetic angle gather for the current model"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat key"><span>R at zero offset</span><b id="s3a">—</b></div>
+      <div class="stat"><span>R at 30°</span><b id="s3b">—</b></div>
+      <div class="stat"><span>R at your widest angle</span><b id="s3c">—</b></div>
+      <div class="stat"><span>Change across the gather</span><b id="s3d">—</b></div>
+      <div class="stat"><span>Sign change</span><b id="s3e">—</b></div>
+      <div class="stat wide"><span>What this gather looks like</span><b id="s3f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The base reflection is computed separately rather than assumed to be the mirror of the top.
+        At normal incidence an interface and its reverse do give exactly opposite coefficients, but that
+        symmetry breaks as soon as the ray tilts, so the base of the reservoir has an AVO response of its
+        own. On a real gather the two interfere.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 4 =============================== -->
+  <section class="tabpane" id="p4" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">4</span>The shortcuts, and where they fail</h3>
+      <span class="hint">The more complete approximation is not the more accurate one</span>
+    </div>
+    <p class="lede">Nobody inverts Zoeppritz's equations in practice. They are exact but opaque — four
+      coupled equations with no useful intuition in them — so the working forms are linearizations. The
+      two-term Shuey approximation, R(θ) ≈ R₀ + G sin²θ, is the one almost all AVO analysis is built on,
+      and the three-term version adds a curvature term that matters only at wide angles.</p>
+    <p class="lede">Both are drawn below against the exact answer, with the error underneath. Out to about
+      twenty degrees they are all fine. Past thirty they separate, and here is the part that catches
+      people: <b>for this rock pair the three-term approximation is further from the truth than the
+      two-term one</b>. Its extra term carries tan²θ, which grows without limit, so at wide angles it does
+      not gently lose accuracy — it diverges. Whether it does so for any particular pair of rocks is
+      something the panel below computes rather than something to assume.</p>
+    <p class="lede">The practical rule that follows is not "use more terms". It is that the two-term form
+      is trustworthy over the angle range where most surveys have usable data anyway, and that fitting a
+      third term to a noisy gather with a limited angle range usually buys less than it costs. Module 08
+      shows how much less.</p>
+
+    <div class="sec-row" id="row4">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> Exact against the approximations
+          <span class="note">your shaded angle range is what you record</span></p>
+        <canvas id="c4approx" aria-label="Exact Zoeppritz compared with the two-term and three-term Shuey approximations"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> The error
+          <span class="note">approximation minus exact</span></p>
+        <canvas id="c4err" aria-label="Error of each approximation against incidence angle"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Two-term error at 20°</span><b id="s4a">—</b></div>
+      <div class="stat"><span>Two-term error at 40°</span><b id="s4b">—</b></div>
+      <div class="stat"><span>Three-term error at 40°</span><b id="s4c">—</b></div>
+      <div class="stat key"><span>Which is closer at 40°</span><b id="s4d">—</b></div>
+      <div class="stat"><span>Angle where two-term error exceeds the noise</span><b id="s4e">—</b></div>
+      <div class="stat wide"><span>Over the angles you actually record</span><b id="s4f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>The three-term form is not wrong. It is the correct linearization to third order, and over a
+        wide, clean, well-conditioned angle range it does better. The failure is one of conditioning
+        rather than of algebra: the term it adds is small where the data is good and enormous where the
+        data is poor, so it draws its estimate from exactly the samples you trust least.</span>
+    </div>
+  </section>
+
+  <!-- =============================== STEP 5 =============================== -->
+  <section class="tabpane" id="p5" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno">5</span>What the second measurement buys</h3>
+      <span class="hint">Two ties from the earlier modules, one broken and one not</span>
+    </div>
+    <p class="lede">Modules 01 and 02 each ended with two rocks that produced identical zero-offset
+      amplitudes. Now they can be tested properly, because there is a second measurement to test them
+      with.</p>
+    <p class="lede">The first panel asks the only question that matters: <b>how far apart do the two rocks
+      get, and is that further apart than the noise?</b> It plots the gap between each pair against angle.
+      Above the shaded band the difference is measurable; inside it, it is not. One line climbs out. The
+      other does not. The two panels beside it are the four rocks themselves, drawn as gathers, so you can
+      look at what the two answers mean.</p>
+    <p class="lede"><b>The middle panel is module 03's pair</b>: an oil sand at 30% porosity against a
+      plain brine sand at 35%. Their zero-offset amplitudes differ by 0.0001. Their Vp/Vs values differ by 0.21, which
+      is a lot, so the curves pull apart steadily and by thirty degrees the gap is 0.0256 — comfortably
+      outside a clean or moderate noise level. <b>Offset breaks this tie.</b></p>
+    <p class="lede"><b>The right panel is module 07's pair</b>: a 30% porosity sand full of gas against
+      a 34% porosity sand with only a tenth as much gas in it. Here Vp/Vs differs by 0.07 rather than 0.21, and
+      the curves stay close. At thirty degrees the gap is 0.0123, which is smaller than the moderate noise
+      level. <b>Offset does not break this tie</b>, and no amount of processing will, because the
+      information is not in the data.</p>
+    <p class="lede">This is the honest summary of what adding offset achieves. It converts one measurement
+      into two, and the second one sees shear. Ambiguities that involve a change in Vp/Vs get resolved.
+      Ambiguities that do not, are not touched. Knowing which kind you are looking at, before you commit
+      to an AVO study, is worth more than any amount of care in the processing.</p>
+
+    <div class="sec-row" id="row5">
+      <div class="panel-col">
+        <p class="sublabel"><b>1</b> How far apart the two rocks get
+          <span class="note">above the line you can measure it</span></p>
+        <canvas id="c5a" aria-label="The amplitude difference between each pair of rocks plotted against incidence angle, with the noise level marked"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>2</b> Oil against brine
+          <span class="note">module 03's pair — the far traces differ</span></p>
+        <canvas id="c5b" aria-label="Gathers for the oil sand and the brine sand, which have identical near traces"></canvas>
+      </div>
+      <div class="panel-col">
+        <p class="sublabel"><b>3</b> Gas against fizz gas
+          <span class="note">module 07's pair — they stay alike</span></p>
+        <canvas id="c5c" aria-label="Gathers for the fully gas-saturated sand and the low-saturation sand, which stay alike at every offset"></canvas>
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:14px">
+      <div class="stat"><span>Oil/brine separation at 0°</span><b id="s5a">—</b></div>
+      <div class="stat key"><span>Oil/brine separation at 30°</span><b id="s5b">—</b></div>
+      <div class="stat"><span>Gas/fizz separation at 0°</span><b id="s5c">—</b></div>
+      <div class="stat key"><span>Gas/fizz separation at 30°</span><b id="s5d">—</b></div>
+      <div class="stat"><span>Your noise level</span><b id="s5e">—</b></div>
+      <div class="stat wide"><span>Which of these you could tell apart</span><b id="s5f">—</b></div>
+    </div>
+    <div class="legend prose">
+      <span>Both gaps grow with angle, so a wider angle range helps both, and that is the real argument
+        for long offsets in AVO work. Read it against step 1 though: on a deep target the offsets that
+        would give you those angles may not exist in the survey at all. The grey region on the first panel
+        is the angles beyond what you are recording, and moving the depth slider will push it left across
+        the part of the curve you needed.</span>
+    </div>
+  </section>
+
+  <!-- ============================ WHY IT MATTERS =========================== -->
+  <section class="tabpane" id="pw" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">W</span>Why it matters</h3>
+      <span class="hint">Where the angle question decides the outcome</span>
+    </div>
+    <p class="lede">Almost every practical AVO decision reduces to a question about angle range, and most
+      of them get answered by habit instead.</p>
+    <ul class="lede" style="padding-left:20px">
+      <li><b>Survey design.</b> Whether a proposed cable length gives useful AVO on the target is a step-1
+        calculation, and it has to be done at the target's depth rather than in general. The same
+        acquisition that was excellent on a shallow prospect can be useless two seconds deeper.</li>
+      <li><b>Deciding whether AVO is worth doing.</b> Step 5 is the test. If the ambiguity you are trying
+        to resolve involves a change in Vp/Vs, offset will help. If it does not — and fizz gas does not —
+        then an AVO study will produce a number, it will look like an answer, and it will not be one.</li>
+      <li><b>Reading angle stacks.</b> A near stack and a far stack are two samples of the curve in step 3.
+        Knowing what angles actually went into each one, after ray bending and after whatever mute was
+        applied, is the difference between comparing two measurements and comparing two arbitrary
+        averages.</li>
+      <li><b>Choosing a formulation.</b> The choice between two and three terms is not about rigour, as
+        step 4 shows. It is about whether the angle range and the noise can support a third parameter.</li>
+    </ul>
+
+    <p class="lede">The failure this module is built against is treating angle as a detail of the
+      processing rather than as the physical variable the whole method depends on. Amplitudes get
+      extracted against offset, plotted against sin²θ using a straight-ray conversion, fitted, and
+      interpreted — and the systematic angle error from step 1 propagates straight into the gradient, in a
+      known direction, without ever announcing itself.</p>
+    <p class="lede">There is a second habit worth breaking, which is treating the exact solution as the
+      rigorous one and the approximation as the compromise. Step 4 shows a case where the more complete
+      approximation is further from the truth over the range that matters. Exactness in one part of a
+      calculation earns nothing if the inputs to it are uncertain, and on a real gather the angles, the
+      wavelet and the amplitudes all are.</p>
+
+    <div class="legend prose">
+      <span>The useful summary of this module is a question to ask before starting: what is the Vp/Vs
+        difference between the two explanations I am trying to separate, and does my angle range turn that
+        difference into a measurable amplitude difference? Both halves are computable in advance, from a
+        well or from a rock physics model, and neither needs the seismic.</span>
+    </div>
+  </section>
+
+  <!-- ============================== EXERCISES ============================= -->
+  <section class="tabpane" id="pe" role="tabpanel" hidden>
+    <div class="tryit" style="max-width:none">
+      <h3>Exercises</h3>
+      <p class="lede" style="margin-top:-4px">Each answer is a number read off this page at the settings
+        described. <button type="button" class="btn ghost small" id="popEx">Open these in a separate
+        window</button></p>
+      <ol id="exList">
+        <li><b>Lose your far angles by burying the target.</b> Set the longest offset to 3000 m and the
+          depth to 1200 m, and read the angle at your longest offset. Then walk the depth down to 3200 m,
+          reading it again at each stop.
+          <details class="reveal"><summary>Answer</summary><span class="ans">At 1200 m the 3000 m offset
+            reaches 64.3°; at 2000 m it reaches 48.4°; at 3200 m it reaches 35.1°. The survey did not
+            change. Nothing about the acquisition changed. The angle range available for AVO fell by nearly thirty
+            degrees purely because the target got deeper, and step 5 shows that separating two
+            rocks depends almost entirely on how wide an angle you can reach. This is why the same
+            processing sequence produces convincing AVO on one horizon and noise on another.</span></details></li>
+
+        <li><b>Measure the cost of the straight-ray shortcut.</b> At 2000 m depth, compare the true angle
+          at the longest offset with the straight-ray estimate, at 1500 m, 3000 m and 4500 m offset.
+          <details class="reveal"><summary>Answer</summary><span class="ans">At 1500 m the true angle is
+            26.4° against a straight-ray estimate of 20.6°. At 3000 m it is 48.4° against 36.9°. At 4500 m
+            it is 65.4° against 48.4°. The error grows with offset and always in the same direction — the
+            shortcut under-reads. Because the gradient is a slope against sin²θ, using angles that are
+            systematically too small makes the fitted gradient systematically too steep. It is a bias, not
+            scatter, so acquiring more data does not reduce it.</span></details></li>
+
+        <li><b>Confirm that Vs is invisible at zero offset.</b> With the page at its defaults — a gas sand at 30%
+          porosity — read the spread across the three curves in step 2 at 0° and then at 30°.
+          <details class="reveal"><summary>Answer</summary><span class="ans">At 0° the spread is exactly
+            zero — not small, zero — because the three rocks share a Vp and a density, and normal-incidence
+            reflectivity depends on nothing else. At 30° the same three rocks span 0.0671, and a brine sand
+            at the same porosity spans 0.0710. Changing one property by fifteen percent moved the
+            near-offset amplitude by nothing at all, and moved the far-offset amplitude by about a third
+            of the entire gas anomaly of module 03. That is the second
+            measurement, and it is measuring something genuinely new rather than a better version of the
+            first.</span></details></li>
+
+        <li><b>Find where the shortcut with more terms does worse.</b> With a gas sand at 30% porosity, read
+          the two-term and three-term errors at 20°, 30° and 40°.
+          <details class="reveal"><summary>Answer</summary><span class="ans">At 20° the two-term error is
+            −0.0098 and the three-term is −0.0111, so they are comparable and both small. At 30° they are
+            −0.0167 and −0.0237. At 40° they are −0.0189 and −0.0434 — the three-term error is more than
+            twice the two-term one. The extra term carries tan²θ, which runs away, so the more complete
+            approximation diverges faster than the simpler one it was supposed to improve. Adding
+            parameters to a fit is not the same as adding accuracy.</span></details></li>
+
+        <li><b>Decide which tie offset can break.</b> In step 5, read both separations at 30° and compare
+          each against the moderate noise level.
+          <details class="reveal"><summary>Answer</summary><span class="ans">The oil-against-brine pair
+            separates by 0.0256 at 30°, against a moderate noise level of 0.015: measurable. The
+            gas-against-fizz pair separates by 0.0123, which is below that noise level: not measurable.
+            The reason is visible in the rocks rather than in the seismic. Oil and brine differ in Vp/Vs
+            by 0.21; full gas and fizz gas differ by 0.07. Offset measures shear, so it resolves
+            ambiguities in proportion to how much shear behavior differs between them, and the fizz
+            problem barely involves any. You could have predicted both outcomes from the rock physics
+            before recording a single trace.</span></details></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================== KEY POINTS ============================ -->
+  <section class="tabpane" id="pk" role="tabpanel" hidden>
+    <div class="takeaway" style="max-width:none">
+      <h3>Key points</h3>
+      <ul>
+        <li><b>Offset is not angle, and the usual conversion under-reads.</b> The straight-ray shortcut
+          gives 36.9° where the true angle at a 2000 m target with 3000 m offset is 48.4°. The error runs
+          one way, so it biases every gradient computed from it in the same direction.</li>
+        <li><b>The same offset is a different angle at a different depth.</b> A 3000 m offset reaches 64.3°
+          on a 1200 m target and 35.1° on a 3200 m one. Angle range is a property of the target as much as
+          of the survey.</li>
+        <li><b>What offset adds is shear.</b> Change a rock's Vs by fifteen percent either way and the
+          zero-offset amplitude does not move at all, while the amplitude at 30° spans 0.0671. Normal
+          incidence is blind to Vs; oblique incidence is not.</li>
+        <li><b>The three-term approximation is not the safer one.</b> At 40° its error is more than twice
+          the two-term error, because the term it adds carries tan²θ and diverges. More parameters is not
+          more accuracy.</li>
+        <li><b>Offset resolves ambiguities that involve Vp/Vs, and only those.</b> Oil against brine, which
+          differ by 0.21 in Vp/Vs, separate by 0.0256 at 30° and can be told apart. Gas against fizz gas,
+          differing by 0.07, separate by 0.0123 and cannot.</li>
+        <li><b>You can work out in advance whether AVO will help.</b> Both halves of the question — the
+          Vp/Vs contrast between your competing explanations, and the angle range your survey reaches on
+          this target — are computable before any seismic is examined.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================ METHOD ============================== -->
+  <section class="tabpane" id="pm" role="tabpanel" hidden>
+    <div class="plot-head">
+      <h3><span class="stepno ref">M</span>Method, simplifications and references</h3>
+      <span class="hint">What is computed, and where it departs from production software</span>
+    </div>
+
+    <p class="lede"><b>The rock physics is modules 01 and 02's, unchanged.</b> Voigt-Reuss-Hill mineral mixing, a
+      Dvorkin-Nur soft-sand dry frame at 40% critical porosity and 23 MPa, Batzle-Wang fluids mixed by the
+      Reuss average, Gassmann for the saturated modulus, and Castagna-Gardner for the bounding shale.
+      Module 01's Method tab lists the assumptions and they all apply here.</p>
+
+    <p class="lede"><b>Reflection coefficients are exact.</b> The curves are the Zoeppritz solution for
+      the plane-wave PP reflection, obtained by solving the four-by-four system rather than by any
+      approximation. The Shuey curves in step 4 are drawn only to be compared against it. The base of the
+      reservoir is computed as its own interface rather than assumed to be the negative of the top,
+      because that symmetry holds only at normal incidence.</p>
+
+    <p class="lede"><b>Ray geometry is exact too, for the velocity model assumed.</b> The overburden is
+      taken as V(z) = 1600 + 0.6z m/s, a compacting clastic section. For a linear gradient the rays are
+      circular arcs with a closed-form offset and traveltime, so the incidence angle at the target is
+      found by solving for the ray parameter that arrives at the requested offset, not by an
+      approximation. The straight-ray comparison curve is tan θ = (x/2)/z. The gradient is fixed at
+      0.6/s here rather than exposed as a control, which is steeper than the 0.5/s module 04 opens with,
+      so the true angle quoted for a given offset and depth is a little wider on this page than on that
+      one.</p>
+
+    <p class="lede"><b>Depth changes only the geometry here.</b> Moving the depth slider changes the
+      traveltime, the RMS velocity and therefore the angle at a given offset. It deliberately does
+      <em>not</em> change the effective pressure acting on the rock, which stays at 23 MPa. In reality a
+      deeper reservoir is also a stiffer one, and its anomaly would weaken for that reason as well. Both
+      effects are real; separating them is what makes the angle lesson legible.</p>
+
+    <p class="lede"><b>Where this departs from production practice.</b></p>
+    <ul class="lede" style="padding-left:20px">
+      <li><b>The gathers are already flattened.</b> Normal moveout has been removed and no stretch has
+        been applied. Real NMO stretches the far-offset wavelet to lower frequency, which changes the
+        amplitude of a tuned event with offset for reasons that have nothing to do with the rocks. Module 04
+        works the stretch out; it is one of the largest sources of false AVO.</li>
+      <li><b>Amplitudes are plane-wave coefficients only.</b> No geometric spreading, no transmission loss
+        through the overburden, no attenuation, and no source or receiver directivity — every one of which
+        varies with offset and has to be corrected before the remaining variation means anything.</li>
+      <li><b>The overburden is isotropic.</b> Real shales are not. Anisotropy changes the moveout and the
+        angle-dependent reflectivity, and ignoring it produces a gradient error that can be as large as
+        the fluid effect being looked for.</li>
+      <li><b>One interface pair, one wavelet, no interference from above or below</b>, and the reservoir
+        thickness is fixed at 45 m so that tuning does not vary across the exercises. The
+        <a href="https://hbedle-subsurface.github.io/seismic_resolution/modules/wedge.html">wedge
+        module</a> in the resolution set covers what tuning does to an amplitude.</li>
+      <li><b>Converted waves are computed but not shown.</b> The Zoeppritz solve returns the PS
+        coefficients as well; only PP is used here.</li>
+      <li><b>Angles beyond critical are left blank rather than guessed.</b> Where the transmitted wave
+        turns, the reflection coefficient becomes complex and the real-arithmetic solution stops being
+        meaningful. The curve simply ends.</li>
+    </ul>
+
+    <details class="reveal" style="margin-top:8px">
+      <summary>References</summary>
+      <ul style="padding-left:18px;margin-top:8px">
+        <li>Zoeppritz, K., 1919, Erdbebenwellen VIIIB: <em>Göttinger Nachrichten</em>, I, 66–84.</li>
+        <li>Aki, K., and Richards, P. G., 2002, <em>Quantitative Seismology</em>, 2nd ed.: University
+          Science Books. — equation 5.39, the linearization used here.</li>
+        <li>Shuey, R. T., 1985, A simplification of the Zoeppritz equations: <em>Geophysics</em>, 50,
+          609–614.</li>
+        <li>Castagna, J. P., and Backus, M. M., eds., 1993, <em>Offset-Dependent Reflectivity — Theory and
+          Practice of AVO Analysis</em>: SEG Investigations in Geophysics 8.</li>
+        <li>Rutherford, S. R., and Williams, R. H., 1989, Amplitude-versus-offset variations in gas sands:
+          <em>Geophysics</em>, 54, 680–688.</li>
+        <li>Slotnick, M. M., 1959, <em>Lessons in Seismic Computing</em>: SEG. — the circular-arc ray
+          solution for a linear velocity gradient.</li>
+        <li>Mavko, G., Mukerji, T., and Dvorkin, J., 2020, <em>The Rock Physics Handbook</em>, 3rd ed.:
+          Cambridge University Press.</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="nextup" id="nextup" hidden>
+    <p class="eyebrow">Next up</p>
+    <h3>06 · Intercept, gradient and the classes</h3>
+    <p>The curve in step 3 is described in practice by two numbers: where it starts and how fast it falls.
+      What that pair does and does not capture, and why Classes I to IV are regions of a crossplot rather
+      than kinds of rock.</p>
+    <a class="btn" href="intercept-gradient.html">Go to module 06 →</a>
+    <a class="btn ghost" href="../index.html">All modules</a>
+  </section>
+
+  <div class="pager" id="pager" hidden>
+    <a class="btn ghost" href="offset-and-the-gather.html">← 04 · Offset, angle and the gather</a>
+    <a class="btn ghost" href="intercept-gradient.html">06 · Intercept and gradient →</a>
+  </div>
+
+  <footer>
+    <div class="foot-grid">
+      <p>Built for teaching by Dr. Heather Bedle and Dr. April Moreno-Ward, School of Geosciences,
+        University of Oklahoma, with the <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a>
+        consortium.</p>
+      <p class="lic">Licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+        Free to use, adapt and redistribute, including in teaching, provided the source is credited and
+        anything derived from it carries the same license.</p>
+      <p class="lic">Nothing you do in this module leaves your browser. The only thing recorded is that
+        the page was opened — no cookie, no account, nothing about you.</p>
+      <p class="lic">To cite: H. Bedle and A. Moreno-Ward, <i>How AVO Actually Works</i>, University of
+        Oklahoma. <span class="k">SSRN: [article link to follow]</span></p>
+    </div>
+  </footer>
+</div>
+
+<script src="../assets/count.js"></script>
+<script src="../assets/seismic.js"></script>
+<script src="../assets/rockphysics.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const missing = [];
+  if (typeof SEIS === 'undefined') missing.push('assets/seismic.js');
+  if (typeof ROCK === 'undefined') missing.push('assets/rockphysics.js');
+  if (!missing.length && typeof ROCK.angleFromOffset !== 'function') {
+    missing.push('assets/rockphysics.js (present, but too old: no angleFromOffset)');
+  }
+  if (missing.length) {
+    const el = document.createElement('div');
+    el.setAttribute('style', 'background:#841617;color:#fff;padding:14px 18px;margin:16px 0;' +
+      'font:13px/1.6 ui-monospace,Menlo,monospace');
+    el.textContent = 'This module could not load ' + missing.join(' and ') +
+      '. It expects them one directory up, at ../assets/, and file names are ' +
+      'case-sensitive on GitHub Pages.';
+    const w = document.querySelector('.wrap');
+    (w || document.body).insertBefore(el, w ? w.firstChild : null);
+    return;
+  }
+
+  const $ = (id) => document.getElementById(id);
+  const visible = (id) => { const el = $(id); return el && !el.hidden; };
+  const CRIM = '#841617', TEAL = '#0B7285', SLATE = '#5C6670', INK = '#16191C';
+  const OLIVE = '#6B7A2E', ORANGE = '#B5451B';
+  const DEG = 180 / Math.PI;
+
+  const DEF = { phi: 30, vcl: 0, shvp: 2700, fl: 'gas', sat: 100,
+                dep: 2000, xmax: 3000, nz: 0, tab: 'p1' };
+  const S = SEIS.readState(DEF);
+  (function sanitize() {
+    const num = (k, lo, hi, step) => {
+      let v = Number(S[k]);
+      if (!isFinite(v)) v = DEF[k];
+      v = Math.min(hi, Math.max(lo, v));
+      S[k] = step ? Math.round(v / step) * step : v;
+    };
+    num('phi', 5, 35, 1); num('vcl', 0, 30, 5); num('shvp', 2300, 3100, 25);
+    num('sat', 0, 100, 5); num('dep', 1200, 3200, 100); num('xmax', 800, 5000, 100);
+    num('nz', 0, 2, 1);
+    if (['brine', 'oil', 'gas'].indexOf(S.fl) < 0) S.fl = DEF.fl;
+  })();
+  const saveState = () => SEIS.writeState(S, DEF);
+
+  /* Burial conditions are held at modules 01 and 02's values on purpose: depth moves
+     the ray geometry here and nothing else, so the angle lesson is not mixed
+     up with the rock also getting stiffer. The Method tab says so. */
+  const PRES = 23, TEMP = 64, FREQ = 30, THICK = 45;
+  const V0 = 1600, KGRAD = 0.6;          // overburden V(z) = V0 + k z
+  const NOISE = [0, 0.015, 0.040];
+  const NOISE_NAME = ['clean', 'moderate', 'noisy'];
+
+  // gather window, relative to the top reflection so the axis never slides
+  const TR0 = -0.090, DT = 0.001, NT = 231;
+  const WAV = SEIS.makeWavelet({ type: 'ricker', f: FREQ });
+  const NTRACE = 16;
+
+  /* =====================================================================
+     MODEL
+     ===================================================================== */
+
+  const rockAt = (over) => ROCK.rockModel(Object.assign({
+    vClay: S.vcl / 100, phi: S.phi / 100, fluid: S.fl,
+    sHc: S.fl === 'brine' ? 0 : S.sat / 100,
+    api: 32, gor: 0, P: PRES, T: TEMP,
+  }, over || {}));
+
+  let D = {};
+  function recompute() {
+    D.shale = ROCK.mudrock(S.shvp);
+    D.res = rockAt();
+    D.ovb = ROCK.overburden(S.dep, V0, KGRAD);
+    D.angMax = ROCK.angleFromOffset(S.xmax, S.dep, V0, KGRAD) * DEG;
+    D.angStraight = ROCK.angleStraightRay(S.xmax, S.dep) * DEG;
+    D.offsets = [];
+    D.angles = [];
+    for (let i = 0; i < NTRACE; i++) {
+      const x = (i / (NTRACE - 1)) * S.xmax;
+      D.offsets.push(x);
+      D.angles.push(ROCK.angleFromOffset(x, S.dep, V0, KGRAD) * DEG);
+    }
+    setAngleAxis();
+    D.dtRes = 2 * THICK / D.res.vp;
+    D.rc = (th) => ROCK.zoeppritz(D.shale, D.res, th);
+    D.rcBase = (th) => ROCK.zoeppritz(D.res, D.shale, th);
+    D.r0 = D.rc(0);
+  }
+
+    function traceFor(rock, angle, seed) {
+    const rt = ROCK.zoeppritz(D.shale, rock, angle);
+    const rb = ROCK.zoeppritz(rock, D.shale, angle);
+    if (!isFinite(rt) || !isFinite(rb)) return null;
+    const dt = 2 * THICK / rock.vp;
+    const tr = SEIS.traceFromSpikes(
+      [{ t: 0, r: rt }, { t: dt, r: rb }], TR0, DT, NT, WAV);
+    if (!NOISE[S.nz]) return tr;
+    const n = SEIS.bandLimitedNoise(1, NT, DT, WAV, seed, 0);
+    const out = new Float32Array(NT);
+    for (let i = 0; i < NT; i++) out[i] = tr[i] + n[i] * NOISE[S.nz];
+    return out;
+  }
+  const traceAt = (angle, seed) => traceFor(D.res, angle, seed);
+
+  /* The two pairs from the earlier modules, recomputed live so they follow
+     the shale slider rather than being frozen numbers in the prose. */
+  function pairs() {
+    const P0 = { api: 32, gor: 0, P: PRES, T: TEMP, vClay: 0 };
+    return {
+      oil: ROCK.rockModel(Object.assign({ phi: 0.30, fluid: 'oil', sHc: 1 }, P0)),
+      brn: ROCK.rockModel(Object.assign({ phi: 0.35, fluid: 'brine', sHc: 0 }, P0)),
+      gas: ROCK.rockModel(Object.assign({ phi: 0.30, fluid: 'gas', sHc: 1 }, P0)),
+      fizz: ROCK.rockModel(Object.assign({ phi: 0.34, fluid: 'gas', sHc: 0.10 }, P0)),
+    };
+  }
+
+  /* =====================================================================
+     DRAWING
+     ===================================================================== */
+
+  const M = { l: 58, r: 16, t: 14, b: 36 };
+  const AMP = 0.34;
+  // The angle axis must be able to show the angle you are actually recording.
+  // A 5000 m offset on a 1200 m target reaches 85 degrees, so a fixed 50 degree
+  // axis silently cropped the very thing step 1 sends you to look at. It steps
+  // in 15 degree jumps so the axis stays still while you drag a slider and only
+  // moves when it has to.
+  /* Fixed, at the widest the geometry controls can produce. It used to step in
+     15-degree jumps to "stay still while you drag", which still rescaled the
+     picture — just less often, and without warning. The curve is now always
+     drawn across the same axis and the range actually recorded is shaded on
+     top of it, so a short spread reads as a short spread. */
+  const ANGMAX = 75;
+  const AX_HALFX = 2500;      // m, half the longest spread
+  function setAngleAxis() { /* the axis is fixed; kept so callers need no change */ }
+
+  function pw(el) {
+    const par = el && el.parentElement;
+    if (!par) return 900;
+    const cs = (typeof window.getComputedStyle === 'function')
+      ? window.getComputedStyle(par) : { paddingLeft: '0', paddingRight: '0' };
+    const inner = par.clientWidth
+      - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    return Math.max(200, Math.floor(inner || 900));
+  }
+  function rowWidth(rowId, n) {
+    const row = $(rowId);
+    const total = row ? pw(row.firstElementChild || row) : 800;
+    const narrow = (window.innerWidth || 1200) <= 700;
+    const w = narrow ? Math.max(240, total)
+                     : Math.max(150, Math.floor((total - 10 * (n - 1)) / n));
+    if (row) {
+      row.querySelectorAll(':scope > .panel-col').forEach((el) => {
+        el.style.width = w + 'px'; el.style.maxWidth = w + 'px';
+      });
+    }
+    return w;
+  }
+  const yOf = (t, R) => R.y + ((t - TR0) / ((NT - 1) * DT)) * R.h;
+
+  function wrapText(ctx, text, x, y, maxW, lh) {
+    const words = String(text).split(' ');
+    let line = '', yy = y;
+    for (const wd of words) {
+      const test = line ? line + ' ' + wd : wd;
+      if (ctx.measureText(test).width > maxW && line) {
+        ctx.fillText(line, x, yy); line = wd; yy += lh;
+      } else line = test;
+    }
+    if (line) ctx.fillText(line, x, yy);
+    return yy + lh;
+  }
+
+  function curve(ctx, R, xs, ys, xr, yr, color, width, dash) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    if (dash) ctx.setLineDash(dash);
+    ctx.strokeStyle = color; ctx.lineWidth = width || 2;
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < xs.length; i++) {
+      if (!isFinite(ys[i]) || !isFinite(xs[i])) { started = false; continue; }
+      const x = R.x + ((xs[i] - xr[0]) / (xr[1] - xr[0])) * R.w;
+      const y = R.y + R.h - ((ys[i] - yr[0]) / (yr[1] - yr[0])) * R.h;
+      started ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      started = true;
+    }
+    ctx.stroke(); ctx.restore();
+  }
+
+  function shadeBand(ctx, R, x0, x1, xr, color) {
+    const a = R.x + ((x0 - xr[0]) / (xr[1] - xr[0])) * R.w;
+    const b = R.x + ((x1 - xr[0]) / (xr[1] - xr[0])) * R.w;
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.fillRect(Math.max(R.x, a), R.y, Math.min(R.x + R.w, b) - Math.max(R.x, a), R.h);
+    ctx.restore();
+  }
+
+  function zeroLine(ctx, R, yr) {
+    if (yr[0] > 0 || yr[1] < 0) return;
+    const y = R.y + R.h - ((0 - yr[0]) / (yr[1] - yr[0])) * R.h;
+    SEIS.dashedLine(ctx, R.x, y, R.x + R.w, y, 'rgba(92,102,112,0.5)', [4, 3], 1);
+  }
+
+  const LEG_FONT = '11px "IBM Plex Sans", sans-serif';
+  /* How many lines a legend will need, measured before the plot box is sized.
+     A two-line legend on a canvas that reserved one line's worth of space
+     draws its second line off the bottom edge. */
+  function legendLines(ctx, items, maxW) {
+    ctx.save(); ctx.font = LEG_FONT;
+    let lines = 1, x = 0;
+    for (const [, t] of items) {
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > 0 && x + iw > maxW) { lines++; x = 0; }
+      x += iw;
+    }
+    ctx.restore();
+    return lines;
+  }
+
+
+  /* Size a canvas for the legend it is about to carry. A legend that wraps to a
+     second line needs 16 px more than one that does not, and without this the
+     second line lands outside the canvas. */
+  function fitLegend(id, w, baseH, items) {
+    let ctx = SEIS.fitCanvas($(id), w, baseH);
+    const H = baseH + (legendLines(ctx, items, w - M.l - M.r) - 1) * 16;
+    ctx = SEIS.fitCanvas($(id), w, H);
+    ctx.clearRect(0, 0, w, H);
+    return { ctx, H, plotH: H - M.t - M.b - 40 - (H - baseH) };
+  }
+
+  function legendRow(ctx, R, items) {
+    ctx.save();
+        ctx.font = LEG_FONT;
+    ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    // +46 clears the axis label, which SEIS.axisBottom draws at +22 and which
+    // is about 11 px tall. At +26 the two sat exactly on top of each other.
+    let x = R.x, y = R.y + R.h + 46;
+    for (const [c, t, dash] of items) {
+      const iw = 23 + ctx.measureText(t).width + 18;
+      if (x > R.x && x + iw > R.x + R.w) { x = R.x; y += 16; }
+      ctx.strokeStyle = c; ctx.lineWidth = 2;
+      ctx.setLineDash(dash ? [5, 4] : []);
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 18, y); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = SLATE; ctx.fillText(t, x + 23, y);
+      x += iw;
+    }
+    ctx.restore();
+  }
+
+  // one trace of a gather, drawn as a wiggle in its own column
+    /* `bounds` is the whole gather. A big excursion is allowed to spill into the
+     neighbouring trace, which is how wiggle displays work, but never outside
+     the gather box — that would draw over the axis and off the canvas. */
+  function wiggleCol(ctx, R, tr, bounds, opts) {
+    const o = opts || {};
+    const x0 = R.x + R.w / 2;
+    const X = (a) => x0 + (a / AMP) * (R.w / 2) * 0.95;
+    const B = bounds || R;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(Math.max(B.x, R.x - R.w * 0.6), R.y,
+             Math.min(B.x + B.w, R.x + R.w * 1.6) - Math.max(B.x, R.x - R.w * 0.6), R.h);
+    ctx.clip();
+    ctx.fillStyle = o.fillColor || 'rgba(22,25,28,0.75)';
+    ctx.beginPath(); ctx.moveTo(x0, R.y);
+    for (let i = 0; i < NT; i++) ctx.lineTo(Math.max(x0, X(tr[i])), yOf(TR0 + i * DT, R));
+    ctx.lineTo(x0, R.y + R.h); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = o.stroke || INK; ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let i = 0; i < NT; i++) {
+      const x = X(tr[i]), y = yOf(TR0 + i * DT, R);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke(); ctx.restore();
+  }
+
+    /* A gather is what an interpreter actually looks at, so every abstract curve
+     in this module has one of these beside it. Each column is one trace, from
+     straight above the reservoir on the left to the widest angle on the right. */
+  function drawGather(ctx, R, opts) {
+    const o = opts || {};
+    const rock = o.rock || D.res;
+    const n = o.n || NTRACE;
+    const seed = o.seed || 4001;
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const cw = (R.w * (D.angMax / ANGMAX)) / n;
+    for (let i = 0; i < n; i++) {
+      const ang = (i / (n - 1)) * D.angMax;
+      const tr = traceFor(rock, ang, seed + i * 13);
+      if (!tr) continue;
+      wiggleCol(ctx, { x: R.x + i * cw, y: R.y, w: cw, h: R.h }, tr, R);
+    }
+    const dt = 2 * THICK / rock.vp;
+    SEIS.dashedLine(ctx, R.x, yOf(0, R), R.x + R.w, yOf(0, R), CRIM, [4, 3], 1.2);
+    SEIS.dashedLine(ctx, R.x, yOf(dt, R), R.x + R.w, yOf(dt, R), TEAL, [4, 3], 1.2);
+    SEIS.frame(ctx, R);
+  }
+
+  /* A labelled mini-gather: caption on top, traces below. Used wherever the
+     lesson is "these two look the same" or "these two do not". */
+  function gatherCard(ctx, R, rock, lines, color) {
+    ctx.save();
+    ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h);
+    ctx.fillStyle = color || CRIM; ctx.fillRect(R.x, R.y, R.w, 3);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    let yy = R.y + 9;
+    lines.forEach((ln, k) => {
+      ctx.fillStyle = k === 0 ? INK : SLATE;
+      ctx.font = (k === 0 ? '600 12px' : '11.5px') + ' "IBM Plex Sans", sans-serif';
+      ctx.fillText(ln, R.x + R.w / 2, yy);
+      yy += k === 0 ? 17 : 15;
+    });
+    ctx.restore();
+    const g = { x: R.x + 4, y: yy + 6, w: R.w - 8, h: R.y + R.h - yy - 24 };
+    if (g.h > 30) {
+      drawGather(ctx, g, { rock, n: 8, seed: 5000 + Math.round(rock.vp) });
+      ctx.save();
+      ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
+      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      ctx.fillText('near', g.x, g.y + g.h + 4);
+      ctx.textAlign = 'right';
+      ctx.fillText('far', g.x + g.w, g.y + g.h + 4);
+      ctx.restore();
+    }
+    ctx.save();
+    ctx.strokeStyle = 'rgba(22,25,28,.28)'; ctx.lineWidth = 1;
+    ctx.strokeRect(R.x + 0.5, R.y + 0.5, R.w - 1, R.h - 1);
+    ctx.restore();
+  }
+
+  const relAxis = (ctx, R) => SEIS.axisLeft(ctx, R, TR0 * 1000, (TR0 + (NT - 1) * DT) * 1000,
+    'ms from the top', (v) => v.toFixed(0), { ticks: 5, grid: true });
+
+  /* =====================================================================
+     HEADER
+     ===================================================================== */
+
+  function drawHeader() {
+    const el = $('cGather');
+    const w = pw(el), h = 208;
+    const ctx = SEIS.fitCanvas(el, w, h);
+    ctx.clearRect(0, 0, w, h);
+    const gw = Math.floor((w - 40) * 0.46);
+    let R = { x: 34, y: 22, w: gw, h: h - 22 - 30 };
+    drawGather(ctx, R);
+    SEIS.axisBottom(ctx, R, 0, ANGMAX, 'angle (deg)', (v) => v.toFixed(0), { ticks: 4 });
+    ctx.save();
+    ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.fillText('what you would see', R.x + R.w / 2, 4);
+    ctx.restore();
+
+    const cx = 34 + gw + 34;
+    R = { x: cx, y: 22, w: w - cx - 16, h: h - 22 - 30 };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const yr = [-AMP, AMP];
+    const ts = [], vs = [];
+    for (let t = 0; t <= ANGMAX; t += 0.5) { ts.push(t); vs.push(D.rc(t)); }
+    zeroLine(ctx, R, yr);
+    shadeBand(ctx, R, 0, D.angMax, [0, ANGMAX], 'rgba(11,114,133,0.10)');
+    curve(ctx, R, ts, vs, [0, ANGMAX], yr, CRIM, 2.4);
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, 0, ANGMAX, 'incidence angle (deg)', (v) => v.toFixed(0), { ticks: 5 });
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'R', (v) => v.toFixed(2), { ticks: 4, flip: true });
+    ctx.save();
+    ctx.font = '9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = SLATE;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        const capLong = 'shaded = the angles you record';
+    ctx.fillText(ctx.measureText(capLong).width < R.w ? capLong : 'your angle range',
+                 R.x + R.w / 2, 4);
+    ctx.restore();
+  }
+
+  /* =====================================================================
+     STEP 1
+     ===================================================================== */
+
+  function drawStep1() {
+    const w = rowWidth('row1', 2);
+
+    // --- ray diagram
+    let ctx = SEIS.fitCanvas($('c1ray'), w, 320);
+    const rayItems = [[TEAL, 'the real ray', false], [SLATE, 'straight-ray shortcut', true]];
+    const rayH = 320 + (legendLines(ctx, rayItems, w - M.l - M.r) - 1) * 16;
+    ctx = SEIS.fitCanvas($('c1ray'), w, rayH);
+    ctx.clearRect(0, 0, w, rayH);
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: rayH - M.t - M.b - 22 - (rayH - 320) };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const halfX = AX_HALFX;
+    const X = (x) => R.x + R.w / 2 + (x / halfX) * (R.w / 2) * 0.88;
+    const Y = (z) => R.y + (z / 3400) * R.h;
+
+    // the curved ray, integrated from the solved ray parameter
+    const th = ROCK.angleFromOffset(S.xmax, S.dep, V0, KGRAD);
+    const p = Math.sin(th) / (V0 + KGRAD * S.dep);
+    const px = [], pz = [];
+    let xx = 0;
+    for (let z = 0; z <= S.dep; z += S.dep / 200) {
+      px.push(xx); pz.push(z);
+      const v = V0 + KGRAD * z, sn = Math.min(0.999999, p * v);
+      xx += (sn / Math.sqrt(1 - sn * sn)) * (S.dep / 200);
+    }
+    ctx.save();
+    ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
+    // reservoir
+    ctx.fillStyle = 'rgba(132,22,23,0.10)';
+    ctx.fillRect(R.x, Y(S.dep), R.w, Math.max(3, Y(S.dep + 45) - Y(S.dep)));
+    ctx.strokeStyle = CRIM; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(R.x, Y(S.dep)); ctx.lineTo(R.x + R.w, Y(S.dep)); ctx.stroke();
+    // straight ray
+    ctx.strokeStyle = SLATE; ctx.lineWidth = 1.6; ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    ctx.moveTo(X(-halfX), Y(0)); ctx.lineTo(X(0), Y(S.dep)); ctx.lineTo(X(halfX), Y(0));
+    ctx.stroke(); ctx.setLineDash([]);
+    // bent ray
+    ctx.strokeStyle = TEAL; ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    for (let i = px.length - 1; i >= 0; i--) {
+      const x = X(-px[i]), y = Y(pz[i]);
+      i === px.length - 1 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    for (let i = 0; i < px.length; i++) ctx.lineTo(X(px[i]), Y(pz[i]));
+    ctx.stroke();
+    ctx.restore();
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, -halfX, halfX, 'distance from the midpoint (m)',
+      (v) => v.toFixed(0), { ticks: 4 });
+    SEIS.axisLeft(ctx, R, 0, 3400, 'depth (m)', (v) => v.toFixed(0), { ticks: 4 });
+    SEIS.tag(ctx, X(0) + 6, Y(S.dep) - 12, 'reservoir', CRIM, 'left');
+        legendRow(ctx, R, rayItems);
+
+    // --- angle against offset for three depths
+        const angItems = [[ORANGE, '1200 m', false], [CRIM, '2000 m', false],
+                      [TEAL, '3200 m', false], [SLATE, 'straight ray', true]];
+    ctx = SEIS.fitCanvas($('c1ang'), w, 320);
+    const angH = 320 + (legendLines(ctx, angItems, w - M.l - M.r) - 1) * 16;
+    ctx = SEIS.fitCanvas($('c1ang'), w, angH);
+    ctx.clearRect(0, 0, w, angH);
+    R = { x: M.l, y: M.t, w: w - M.l - M.r, h: angH - M.t - M.b - 22 - (angH - 320) };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const xr = [0, 5000], yr = [0, 70];
+    const xsA = []; for (let x = 0; x <= 5000; x += 50) xsA.push(x);
+    const cols = [ORANGE, CRIM, TEAL];
+    [1200, 2000, 3200].forEach((z, i) => {
+      curve(ctx, R, xsA, xsA.map((x) => ROCK.angleFromOffset(x, z, V0, KGRAD) * DEG),
+        xr, yr, cols[i], z === S.dep ? 3 : 1.8);
+    });
+    curve(ctx, R, xsA, xsA.map((x) => ROCK.angleStraightRay(x, S.dep) * DEG),
+      xr, yr, SLATE, 1.6, [5, 4]);
+    ctx.save();
+    ctx.fillStyle = 'rgba(11,114,133,0.10)';
+    ctx.fillRect(R.x, R.y, ((S.xmax - xr[0]) / (xr[1] - xr[0])) * R.w, R.h);
+    ctx.restore();
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, xr[0], xr[1], 'source to receiver offset (m)',
+      (v) => v.toFixed(0), { ticks: 5 });
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'incidence angle (deg)', (v) => v.toFixed(0),
+      { ticks: 5, grid: true, flip: true });
+        legendRow(ctx, R, angItems);
+
+    const need30 = (() => {
+      for (let x = 0; x <= 12000; x += 25) {
+        if (ROCK.angleFromOffset(x, S.dep, V0, KGRAD) * DEG >= 30) return x;
+      }
+      return NaN;
+    })();
+    set('s1a', D.ovb.t0.toFixed(3) + ' s');
+    set('s1b', Math.round(D.ovb.vrms) + ' m/s');
+    set('s1c', D.angMax.toFixed(1) + '°');
+    set('s1d', D.angStraight.toFixed(1) + '°');
+    set('s1e', (D.angMax - D.angStraight).toFixed(1) + '° too small');
+    set('s1f', isFinite(need30)
+      ? need30 + ' m' + (need30 > S.xmax ? '  — more than you are recording' : '  — within your survey')
+      : 'not reachable');
+  }
+
+  /* =====================================================================
+     STEP 2  —  Vs alone
+     ===================================================================== */
+
+  const VS_FACTORS = [0.85, 1.0, 1.15];
+
+  function vsVariants() {
+    return VS_FACTORS.map((f) => ({ vp: D.res.vp, vs: D.res.vs * f, rho: D.res.rho, f }));
+  }
+
+    /* Why shear only appears at an angle, drawn rather than asserted. Left: the
+     wave arrives straight down, the interface moves straight up and down, and
+     nothing is sheared. Right: it arrives tilted, the motion has a sideways
+     component along the interface, and part of the energy leaves as a shear
+     wave. That is the whole physical reason the far offsets carry information
+     the near ones cannot. */
+  function drawWhyPanel(ctx, R) {
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const halfW = R.w / 2;
+    const panel = (x0, tiltDeg, title) => {
+      const cxm = x0 + halfW / 2;
+      const yInt = R.y + R.h * 0.62;
+      ctx.save();
+      ctx.beginPath(); ctx.rect(x0, R.y, halfW, R.h); ctx.clip();
+      // the two rocks
+      ctx.fillStyle = '#EFEDE6'; ctx.fillRect(x0, R.y + 26, halfW, yInt - R.y - 26);
+      ctx.fillStyle = 'rgba(132,22,23,0.10)'; ctx.fillRect(x0, yInt, halfW, R.y + R.h - yInt);
+      ctx.strokeStyle = INK; ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.moveTo(x0 + 4, yInt); ctx.lineTo(x0 + halfW - 4, yInt); ctx.stroke();
+
+      const th = tiltDeg * Math.PI / 180;
+      const L = Math.min(halfW * 0.40, (yInt - R.y - 32));
+      const arrow = (ang, len, color, dash, wide) => {
+        const dx = Math.sin(ang) * len, dy = Math.cos(ang) * len;
+        ctx.save();
+        ctx.strokeStyle = color; ctx.lineWidth = wide || 2.2;
+        if (dash) ctx.setLineDash(dash);
+        ctx.beginPath(); ctx.moveTo(cxm - dx, yInt - dy); ctx.lineTo(cxm, yInt); ctx.stroke();
+        ctx.restore();
+      };
+      // incident P, down-going
+      arrow(th, L, CRIM, null, 2.6);
+      // reflected P, up-going on the other side
+      ctx.save();
+      ctx.strokeStyle = CRIM; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(cxm, yInt);
+      ctx.lineTo(cxm + Math.sin(th) * L * 0.8, yInt - Math.cos(th) * L * 0.8);
+      ctx.stroke();
+      ctx.restore();
+      // reflected S, only when tilted — Snell puts it at a shallower angle
+      if (tiltDeg > 1) {
+        const ths = Math.asin(Math.max(0, Math.min(0.98, Math.sin(th) * 0.55)));
+        ctx.save();
+        ctx.strokeStyle = TEAL; ctx.lineWidth = 2.4; ctx.setLineDash([4, 3]);
+        ctx.beginPath(); ctx.moveTo(cxm, yInt);
+        ctx.lineTo(cxm + Math.sin(ths) * L * 0.72, yInt - Math.cos(ths) * L * 0.72);
+        ctx.stroke();
+        ctx.restore();
+      }
+      // what the interface is being asked to do
+      ctx.save();
+      ctx.strokeStyle = OLIVE; ctx.lineWidth = 2.6; ctx.lineCap = 'round';
+      const mx = cxm - halfW * 0.30;
+      if (tiltDeg > 1) {
+        ctx.beginPath(); ctx.moveTo(mx - 11, yInt); ctx.lineTo(mx + 11, yInt); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(mx + 11, yInt); ctx.lineTo(mx + 6, yInt - 4); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(mx + 11, yInt); ctx.lineTo(mx + 6, yInt + 4); ctx.stroke();
+      } else {
+        ctx.beginPath(); ctx.moveTo(mx, yInt - 11); ctx.lineTo(mx, yInt + 11); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(mx, yInt - 11); ctx.lineTo(mx - 4, yInt - 6); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(mx, yInt - 11); ctx.lineTo(mx + 4, yInt - 6); ctx.stroke();
+      }
+      ctx.restore();
+      ctx.restore();
+
+      ctx.save();
+      ctx.font = '600 12px "IBM Plex Sans", sans-serif';
+      ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      ctx.fillText(title, cxm, R.y + 6);
+      ctx.font = '11px "IBM Plex Sans", sans-serif';
+      ctx.fillStyle = SLATE; ctx.textBaseline = 'bottom';
+      wrapCentre(ctx, tiltDeg > 1
+        ? 'the interface is pushed sideways too, so part of the energy leaves as a shear wave'
+        : 'the interface is only pushed up and down, so nothing is sheared',
+        cxm, R.y + R.h - 6, halfW - 16, 14);
+      ctx.restore();
+    };
+    panel(R.x, 0, 'straight down');
+    panel(R.x + halfW, 34, 'at an angle');
+    SEIS.dashedLine(ctx, R.x + halfW, R.y + 4, R.x + halfW, R.y + R.h - 4,
+      'rgba(22,25,28,.25)', [4, 4], 1);
+    SEIS.frame(ctx, R);
+  }
+
+  function wrapCentre(ctx, text, cxm, yBottom, maxW, lh) {
+    const words = String(text).split(' ');
+    const lines = [];
+    let line = '';
+    for (const wd of words) {
+      const test = line ? line + ' ' + wd : wd;
+      if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = wd; }
+      else line = test;
+    }
+    if (line) lines.push(line);
+    lines.forEach((ln, i) => ctx.fillText(ln, cxm, yBottom - (lines.length - 1 - i) * lh));
+  }
+
+  function drawStep2() {
+    const w = rowWidth('row2', 3);
+    let cw2 = SEIS.fitCanvas($('c2why'), w, 330);
+    cw2.clearRect(0, 0, w, 330);
+    drawWhyPanel(cw2, { x: 4, y: M.t, w: w - 8, h: 330 - M.t - 20 });
+    const vars = vsVariants();
+    const cols = [TEAL, CRIM, ORANGE];
+
+    const vsItems = [[TEAL, 'Vs \u2212 15%', false], [CRIM, 'your rock', false],
+                     [ORANGE, 'Vs + 15%', false]];
+    const vsF = fitLegend('c2vs', w, 320, vsItems);
+    let ctx = vsF.ctx;
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: vsF.plotH };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const yr = [-AMP, AMP];
+    const ts = []; for (let t = 0; t <= ANGMAX; t += 0.5) ts.push(t);
+    zeroLine(ctx, R, yr);
+    shadeBand(ctx, R, 0, D.angMax, [0, ANGMAX], 'rgba(11,114,133,0.10)');
+    vars.forEach((v, i) => {
+      curve(ctx, R, ts, ts.map((t) => ROCK.zoeppritz(D.shale, v, t)), [0, ANGMAX], yr,
+        cols[i], i === 1 ? 2.6 : 2);
+    });
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, 0, ANGMAX, 'incidence angle (deg)', (v) => v.toFixed(0), { ticks: 5 });
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'reflection coefficient', (v) => v.toFixed(2),
+      { ticks: 4, flip: true });
+    legendRow(ctx, R, vsItems);
+
+    // the same three rocks, as gathers — what you would actually be looking at
+    ctx = SEIS.fitCanvas($('c2bar'), w, 330);
+    ctx.clearRect(0, 0, w, 330);
+    R = { x: 4, y: M.t, w: w - 8, h: 330 - M.t - 20 };
+    const names = ['Vs \u2212 15%', 'your rock', 'Vs + 15%'];
+    const cw3 = R.w / 3;
+    vars.forEach((v, i) => {
+      const r0 = ROCK.zoeppritz(D.shale, v, 0);
+      const rf = ROCK.zoeppritz(D.shale, v, D.angMax);
+      gatherCard(ctx, { x: R.x + i * cw3 + 2, y: R.y, w: cw3 - 4, h: R.h }, v,
+        [names[i],
+         'near ' + (isFinite(r0) ? r0.toFixed(3) : '\u2014'),
+         'far  ' + (isFinite(rf) ? rf.toFixed(3) : '\u2014')],
+        cols[i]);
+    });
+
+    const spreadAt = (ang) => {
+      const v = vars.map((q) => ROCK.zoeppritz(D.shale, q, ang)).filter(isFinite);
+      return v.length ? Math.max.apply(null, v) - Math.min.apply(null, v) : NaN;
+    };
+    const s0 = spreadAt(0), s30 = spreadAt(30), sMax = spreadAt(D.angMax);
+    set('s2a', Math.round(D.res.vs) + ' m/s');
+    set('s2b', D.res.vpvs.toFixed(2));
+    set('s2c', s0 < 1e-9 ? 'exactly zero' : s0.toFixed(4));
+    set('s2d', isFinite(s30) ? s30.toFixed(4) : '—');
+    set('s2e', isFinite(sMax) ? sMax.toFixed(4) + '  (at ' + D.angMax.toFixed(0) + '°)' : '—');
+    set('s2f', isFinite(s30) && NOISE[S.nz] > 0
+      ? (s30 > NOISE[S.nz]
+          ? 'a 15% change in Vs is visible above ' + NOISE_NAME[S.nz] + ' noise by 30°'
+          : 'a 15% change in Vs stays inside ' + NOISE_NAME[S.nz] + ' noise even at 30°')
+      : 'the shear velocity, which the near offsets cannot see at all');
+  }
+
+  /* =====================================================================
+     STEP 3
+     ===================================================================== */
+
+  function drawStep3() {
+    const w = rowWidth('row3', 2);
+        const c3Items = [[CRIM, 'your rock', false],
+                     [SLATE, 'the same rock filled with brine', true]];
+    const c3F = fitLegend('c3curve', w, 330, c3Items);
+    let ctx = c3F.ctx;
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: c3F.plotH };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const yr = [-AMP, AMP];
+    const ts = []; for (let t = 0; t <= ANGMAX; t += 0.5) ts.push(t);
+    zeroLine(ctx, R, yr);
+    shadeBand(ctx, R, 0, D.angMax, [0, ANGMAX], 'rgba(11,114,133,0.10)');
+    const ref = rockAt({ fluid: 'brine', sHc: 0 });
+    curve(ctx, R, ts, ts.map((t) => ROCK.zoeppritz(D.shale, ref, t)), [0, ANGMAX], yr,
+      SLATE, 1.8, [5, 4]);
+    curve(ctx, R, ts, ts.map((t) => D.rc(t)), [0, ANGMAX], yr, CRIM, 2.6);
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, 0, ANGMAX, 'incidence angle (deg)', (v) => v.toFixed(0), { ticks: 5 });
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'reflection coefficient', (v) => v.toFixed(2),
+      { ticks: 4, flip: true });
+    legendRow(ctx, R, c3Items);
+
+    ctx = SEIS.fitCanvas($('c3gath'), w, 330);
+    ctx.clearRect(0, 0, w, 330);
+    R = { x: M.l, y: M.t, w: w - M.l - M.r, h: 330 - M.t - M.b - 22 };
+    drawGather(ctx, R);
+    SEIS.axisBottom(ctx, R, 0, ANGMAX, 'incidence angle (deg)', (v) => v.toFixed(0), { ticks: 4 });
+    relAxis(ctx, R);
+    SEIS.tag(ctx, R.x + 4, yOf(0, R) - 10, 'top', CRIM, 'left');
+    SEIS.tag(ctx, R.x + 4, yOf(D.dtRes, R) + 12, 'base', TEAL, 'left');
+
+    const rMax = D.rc(D.angMax);
+    const r30 = D.rc(30);
+    let flip = NaN;
+    for (let t = 0.5; t <= ANGMAX; t += 0.5) {
+      const a = D.rc(t - 0.5), b = D.rc(t);
+      if (isFinite(a) && isFinite(b) && (a < 0) !== (b < 0)) { flip = t; break; }
+    }
+    set('s3a', (D.r0 >= 0 ? '+' : '') + D.r0.toFixed(4));
+    set('s3b', isFinite(r30) ? (r30 >= 0 ? '+' : '') + r30.toFixed(4) : 'beyond critical');
+    set('s3c', isFinite(rMax) ? (rMax >= 0 ? '+' : '') + rMax.toFixed(4) +
+      '  (' + D.angMax.toFixed(0) + '°)' : 'beyond critical');
+    set('s3d', isFinite(rMax) ? (rMax - D.r0 >= 0 ? '+' : '') + (rMax - D.r0).toFixed(4) : '—');
+    set('s3e', isFinite(flip) ? 'crosses zero at ' + flip.toFixed(0) + '°' : 'none in this range');
+    const rising = isFinite(rMax) && Math.abs(rMax) > Math.abs(D.r0);
+    set('s3f', (D.r0 >= 0 ? 'starts as a peak' : 'starts as a trough') + ', ' +
+      (rising ? 'and strengthens with offset' : 'and weakens with offset') +
+      (isFinite(flip) ? ', changing polarity partway out' : ''));
+  }
+
+  /* =====================================================================
+     STEP 4  —  approximations
+     ===================================================================== */
+
+  function drawStep4() {
+    const w = rowWidth('row4', 2);
+    const ts = []; for (let t = 0; t <= ANGMAX; t += 0.5) ts.push(t);
+    const ex = ts.map((t) => D.rc(t));
+    const s2 = ts.map((t) => ROCK.shuey(D.shale, D.res, t, 2));
+    const s3 = ts.map((t) => ROCK.shuey(D.shale, D.res, t, 3));
+
+        const apItems = [[INK, 'exact Zoeppritz', false], [CRIM, 'Shuey, two terms', true],
+                     [TEAL, 'Shuey, three terms', true]];
+    const apF = fitLegend('c4approx', w, 330, apItems);
+    let ctx = apF.ctx;
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: apF.plotH };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const yr = [-0.5, 0.5];
+    zeroLine(ctx, R, yr);
+    shadeBand(ctx, R, 0, D.angMax, [0, ANGMAX], 'rgba(11,114,133,0.10)');
+    curve(ctx, R, ts, ex, [0, ANGMAX], yr, INK, 2.8);
+    curve(ctx, R, ts, s2, [0, ANGMAX], yr, CRIM, 2, [6, 4]);
+    curve(ctx, R, ts, s3, [0, ANGMAX], yr, TEAL, 2, [2, 3]);
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, 0, ANGMAX, 'incidence angle (deg)', (v) => v.toFixed(0), { ticks: 5 });
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'reflection coefficient', (v) => v.toFixed(2),
+      { ticks: 5, flip: true });
+    legendRow(ctx, R, apItems);
+
+        const erItems = [[CRIM, 'two terms', false], [TEAL, 'three terms', false],
+                     [SLATE, 'shaded: your noise level', false]];
+    const erF = fitLegend('c4err', w, 330, erItems);
+    ctx = erF.ctx;
+    R = { x: M.l, y: M.t, w: w - M.l - M.r, h: erF.plotH };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const er = [-0.09, 0.09];
+    zeroLine(ctx, R, er);
+    shadeBand(ctx, R, 0, D.angMax, [0, ANGMAX], 'rgba(11,114,133,0.10)');
+    if (NOISE[S.nz] > 0) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(132,22,23,0.09)';
+      const y1 = R.y + R.h - ((NOISE[S.nz] - er[0]) / (er[1] - er[0])) * R.h;
+      const y2 = R.y + R.h - ((-NOISE[S.nz] - er[0]) / (er[1] - er[0])) * R.h;
+      ctx.fillRect(R.x, y1, R.w, y2 - y1);
+      ctx.restore();
+    }
+    curve(ctx, R, ts, ts.map((t, i) => s2[i] - ex[i]), [0, ANGMAX], er, CRIM, 2.4);
+    curve(ctx, R, ts, ts.map((t, i) => s3[i] - ex[i]), [0, ANGMAX], er, TEAL, 2.4);
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, 0, ANGMAX, 'incidence angle (deg)', (v) => v.toFixed(0), { ticks: 5 });
+    SEIS.axisLeft(ctx, R, er[0], er[1], 'approximation \u2212 exact', (v) => v.toFixed(2),
+      { ticks: 5, grid: true, flip: true });
+    legendRow(ctx, R, erItems);
+
+    const e2 = (t) => ROCK.shuey(D.shale, D.res, t, 2) - D.rc(t);
+    const e3 = (t) => ROCK.shuey(D.shale, D.res, t, 3) - D.rc(t);
+    let cross = NaN;
+    if (NOISE[S.nz] > 0) {
+      for (let t = 0; t <= D.angMax; t += 0.5) {
+        if (Math.abs(e2(t)) > NOISE[S.nz]) { cross = t; break; }
+      }
+    }
+    set('s4a', e2(20).toFixed(4));
+    set('s4b', isFinite(e2(40)) ? e2(40).toFixed(4) : '—');
+    set('s4c', isFinite(e3(40)) ? e3(40).toFixed(4) : '—');
+    set('s4d', !isFinite(e2(40)) || !isFinite(e3(40)) ? '—'
+      : Math.min(Math.abs(e2(40)), Math.abs(e3(40))) < 0.003
+        ? (Math.abs(e2(40)) < Math.abs(e3(40)) ? 'two terms' : 'three terms') +
+          ' — the other happens to cross zero near 40°'
+        : Math.abs(e2(40)) < Math.abs(e3(40))
+          ? 'two terms, by ' + (Math.abs(e3(40)) / Math.abs(e2(40))).toFixed(1) + '×'
+          : 'three terms, by ' + (Math.abs(e2(40)) / Math.abs(e3(40))).toFixed(1) + '×');
+    set('s4e', NOISE[S.nz] === 0 ? 'no noise set'
+      : isFinite(cross) ? cross.toFixed(0) + '°'
+      : 'never, out to your widest angle of ' + D.angMax.toFixed(0) + '°');
+    const eMax = Math.abs(e2(D.angMax));
+    set('s4f', isFinite(eMax)
+      ? 'the two-term error reaches ' + eMax.toFixed(4) + ' by ' + D.angMax.toFixed(0) + '°'
+      : 'your angle range runs past the critical angle');
+  }
+
+  /* =====================================================================
+     STEP 5  —  the two pairs
+     ===================================================================== */
+
+  function drawStep5() {
+    const w = rowWidth('row5', 3);
+    const P = pairs();
+    const ts = []; for (let t = 0; t <= ANGMAX; t += 0.5) ts.push(t);
+    const sep = (a2, b2, t) =>
+      Math.abs(ROCK.zoeppritz(D.shale, a2, t) - ROCK.zoeppritz(D.shale, b2, t));
+
+    /* Both pairs on ONE axis, against the noise. The question this step asks is
+       "can I measure the difference", and that is a single readable picture:
+       does the line climb out of the shaded band or not. */
+        const sepItems = [[CRIM, 'oil vs brine', false], [TEAL, 'gas vs fizz gas', true],
+      ...(NOISE[S.nz] > 0 ? [[SLATE, 'below the line you cannot measure it', false]] : [])];
+    const sepF = fitLegend('c5a', w, 340, sepItems);
+    let ctx = sepF.ctx;
+    let R = { x: M.l, y: M.t, w: w - M.l - M.r, h: sepF.plotH };
+    ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.restore();
+    const yr = [0, 0.06];
+    if (NOISE[S.nz] > 0) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(132,22,23,0.13)';
+      const yTop = R.y + R.h - ((Math.min(NOISE[S.nz], yr[1]) - yr[0]) / (yr[1] - yr[0])) * R.h;
+      ctx.fillRect(R.x, yTop, R.w, R.y + R.h - yTop);
+      ctx.restore();
+      SEIS.dashedLine(ctx, R.x, R.y + R.h - ((NOISE[S.nz]) / yr[1]) * R.h,
+        R.x + R.w, R.y + R.h - ((NOISE[S.nz]) / yr[1]) * R.h, CRIM, [4, 3], 1.4);
+    }
+    shadeBand(ctx, R, D.angMax, ANGMAX, [0, ANGMAX], 'rgba(22,25,28,0.07)');
+    curve(ctx, R, ts, ts.map((t) => sep(P.oil, P.brn, t)), [0, ANGMAX], yr, CRIM, 2.8);
+    curve(ctx, R, ts, ts.map((t) => sep(P.gas, P.fizz, t)), [0, ANGMAX], yr, TEAL, 2.8, [5, 4]);
+    SEIS.frame(ctx, R);
+    SEIS.axisBottom(ctx, R, 0, ANGMAX, 'incidence angle (deg)', (v) => v.toFixed(0), { ticks: 5 });
+    SEIS.axisLeft(ctx, R, yr[0], yr[1], 'gap between the two rocks',
+      (v) => v.toFixed(3), { ticks: 4, grid: true, flip: true });
+    legendRow(ctx, R, sepItems);
+
+    // the four rocks themselves, as gathers, two panels
+    const cardPanel = (id, a2, b2, la, lb) => {
+      const c = SEIS.fitCanvas($(id), w, 340);
+      c.clearRect(0, 0, w, 340);
+      const RR = { x: 2, y: M.t, w: w - 4, h: 340 - M.t - 20 };
+      const half = RR.w / 2;
+      const mk = (rock, label, color) => [
+        label,
+        'near ' + ROCK.zoeppritz(D.shale, rock, 0).toFixed(3),
+        'far  ' + (isFinite(ROCK.zoeppritz(D.shale, rock, D.angMax))
+          ? ROCK.zoeppritz(D.shale, rock, D.angMax).toFixed(3) : '\u2014'),
+      ];
+      gatherCard(c, { x: RR.x + 2, y: RR.y, w: half - 4, h: RR.h }, a2, mk(a2, la), CRIM);
+      gatherCard(c, { x: RR.x + half + 2, y: RR.y, w: half - 4, h: RR.h }, b2, mk(b2, lb), TEAL);
+    };
+    cardPanel('c5b', P.oil, P.brn, 'oil, 30%', 'brine, 35%');
+    cardPanel('c5c', P.gas, P.fizz, 'gas, 30%', 'fizz, 34%');
+
+    const o0 = sep(P.oil, P.brn, 0), o30 = sep(P.oil, P.brn, 30);
+    const g0 = sep(P.gas, P.fizz, 0), g30 = sep(P.gas, P.fizz, 30);
+    const nz = NOISE[S.nz];
+    set('s5a', o0.toFixed(4));
+    set('s5b', o30.toFixed(4));
+    set('s5c', g0.toFixed(4));
+    set('s5d', g30.toFixed(4));
+    set('s5e', nz === 0 ? 'clean \u2014 no noise' : '\u00b1' + nz.toFixed(3) + ' (' + NOISE_NAME[S.nz] + ')');
+    set('s5f', nz === 0
+      ? 'with no noise, both \u2014 but at 30\u00b0 the oil pair separates ' +
+        (o30 / g30).toFixed(1) + '\u00d7 as far as the gas pair'
+      : (o30 > nz ? 'the oil and brine sands, yes' : 'the oil and brine sands, no') + '; ' +
+        (g30 > nz ? 'the gas and fizz sands, yes' : 'the gas and fizz sands, no'));
+  }
+
+  /* =====================================================================
+     LABELS, TABS, EVENTS
+     ===================================================================== */
+
+  function set(id, v) { const el = $(id); if (el) el.textContent = v; }
+
+  function syncLabels() {
+    set('phiV', S.phi + '%');
+    set('vclV', S.vcl + '%');
+    set('shvpV', S.shvp + ' m/s');
+    set('flV', S.fl);
+    set('satV', S.fl === 'brine' ? '\u2014' : S.sat + '%');
+    set('depV', S.dep + ' m');
+    set('xmaxV', S.xmax + ' m');
+    set('nzV', NOISE_NAME[S.nz]);
+    const sat = $('sat');
+    if (sat) { sat.disabled = S.fl === 'brine'; sat.value = S.sat; }
+    document.querySelectorAll('#segFluid button').forEach((b) => {
+      b.setAttribute('aria-pressed', b.dataset.fl === S.fl);
+    });
+    document.querySelectorAll('#segNoise button').forEach((b) => {
+      b.setAttribute('aria-pressed', String(+b.dataset.nz) === String(S.nz));
+    });
+    ['phi', 'vcl', 'shvp', 'dep', 'xmax'].forEach((k) => {
+      const el = $(k); if (el && String(el.value) !== String(S[k])) el.value = S[k];
+    });
+  }
+
+  function drawAll() {
+    syncLabels();
+    if (visible('p1') || visible('p2') || visible('p3') || visible('p4') || visible('p5')) {
+      drawHeader();
+    }
+    if (visible('p1')) drawStep1();
+    if (visible('p2')) drawStep2();
+    if (visible('p3')) drawStep3();
+    if (visible('p4')) drawStep4();
+    if (visible('p5')) drawStep5();
+  }
+
+  const PANES = ['p1', 'p2', 'p3', 'p4', 'p5', 'pw', 'pe', 'pk', 'pm'];
+  const STEPNAMES = {
+    p1: 'Angle', p2: 'Why it changes', p3: 'The curve', p4: 'Shortcuts',
+    p5: 'What it buys', pw: 'Why it matters', pe: 'Exercises', pk: 'Key points', pm: 'Method',
+  };
+
+  function buildStepNav() {
+    PANES.forEach((id, i) => {
+      const pane = $(id);
+      if (!pane || pane.querySelector('.stepnav')) return;
+      const prev = PANES[i - 1], next = PANES[i + 1];
+      const nav = document.createElement('div');
+      nav.className = 'stepnav';
+      const mk = (target, text, ghost) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn' + (ghost ? ' ghost' : '') + ' small';
+        b.textContent = text;
+        b.addEventListener('click', () => {
+          showTab(target);
+          const t = document.querySelector('.tabhint');
+          if (t && t.scrollIntoView) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        return b;
+      };
+      nav.appendChild(prev ? mk(prev, '\u2190 ' + STEPNAMES[prev], true)
+                           : document.createElement('span'));
+      const where = document.createElement('span');
+      where.className = 'where';
+      where.textContent = i < 5 ? 'step ' + (i + 1) + ' of 5' : STEPNAMES[id];
+      nav.appendChild(where);
+      nav.appendChild(next ? mk(next, STEPNAMES[next] + ' \u2192')
+                           : document.createElement('span'));
+      pane.appendChild(nav);
+    });
+  }
+
+  function showTab(id) {
+    PANES.forEach((q) => { const el = $(q); if (el) el.hidden = q !== id; });
+    document.querySelectorAll('#tabs button').forEach((b) => {
+      b.setAttribute('aria-selected', b.dataset.tab === id);
+    });
+    const lab = document.querySelector('.labhead');
+    if (lab) lab.hidden = (id === 'pw' || id === 'pe' || id === 'pk' || id === 'pm');
+    const last = (id === 'pk' || id === 'pm');
+    if ($('nextup')) $('nextup').hidden = !last;
+    if ($('pager')) $('pager').hidden = !last;
+    S.tab = id;
+    drawAll();
+    saveState();
+  }
+  document.querySelectorAll('#tabs button').forEach((b) => {
+    b.addEventListener('click', () => showTab(b.dataset.tab));
+  });
+
+  document.addEventListener('input', (ev) => {
+    const key = ev.target && ev.target.dataset && ev.target.dataset.key;
+    if (!key) return;
+    S[key] = parseFloat(ev.target.value);
+    recompute(); drawAll(); saveState();
+  });
+  document.querySelectorAll('#segFluid button').forEach((b) => {
+    b.addEventListener('click', () => { S.fl = b.dataset.fl; recompute(); drawAll(); saveState(); });
+  });
+  document.querySelectorAll('#segNoise button').forEach((b) => {
+    b.addEventListener('click', () => { S.nz = +b.dataset.nz; recompute(); drawAll(); saveState(); });
+  });
+
+  const popBtn = $('popEx');
+  if (popBtn) {
+    popBtn.addEventListener('click', () => {
+      const list = $('exList');
+      if (!list) return;
+      const w = window.open('', 'avo-m05-exercises',
+        'width=560,height=760,scrollbars=yes,resizable=yes');
+      if (!w) { popBtn.textContent = 'the browser blocked the pop-up'; return; }
+      w.document.open();
+      w.document.write('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">' +
+        '<title>Exercises \u2014 module 05</title><style>' +
+        'body{font:15px/1.62 "IBM Plex Sans",system-ui,sans-serif;color:#16191C;' +
+        'margin:0;padding:24px 26px;background:#FBFAF7}' +
+        'h1{font:700 17px/1.3 Archivo,sans-serif;margin:0 0 4px}' +
+        'p.src{font-size:12px;color:#5C6670;margin:0 0 18px}' +
+        'ol{padding-left:20px;margin:0} li{margin-bottom:18px}' +
+        'summary{cursor:pointer;color:#841617;font-size:13px;font-weight:600;' +
+        'margin-top:6px} .ans{display:block;margin-top:6px;padding:10px 12px;' +
+        'background:#F4F6F7;border-left:3px solid #841617;font-size:14px}' +
+        '</style></head><body><h1>Module 05 \u2014 Amplitude against angle</h1>' +
+        '<p class="src">Exercises. Keep the module window open beside this one; every ' +
+        'answer is a number read off the running page.</p><ol>' +
+        list.innerHTML + '</ol></body></html>');
+      w.document.close();
+      w.focus();
+    });
+  }
+
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 140); });
+
+  recompute();
+  buildStepNav();
+  showTab(PANES.indexOf(S.tab) >= 0 ? S.tab : 'p1');
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+
+  window.__MOD = { S, get D() { return D; }, recompute, drawAll, showTab, pairs, rockAt };
+})();
+</script>
+</body>
+</html>

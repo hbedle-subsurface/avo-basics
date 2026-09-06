@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How AVO Actually Works</title>
+<meta name="description" content="Interactive modules on rock physics, fluid substitution and AVO: build a rock, follow it to a seismic trace, and find out how many different rocks could have produced the same amplitude. Built for teaching by AASPI at the University of Oklahoma.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* the difficulty note on each card. Kept here rather than in the shared
+     stylesheet, which is copied from the companion sites and stays untouched. */
+  .card-no .lvl { display:block; margin-top:3px; font:400 10.5px/1.35 "IBM Plex Sans",sans-serif;
+                  letter-spacing:0; text-transform:none; color:#5C6670; }
+  .card.planned .card-no .lvl { color:#8A9299; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <a class="brand" href="index.html"><span class="dot"></span>How AVO <b>actually</b> works</a>
+    <nav>
+      <a href="#modules">Modules</a>
+      <a href="#about">About</a>
+      <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a>
+    </nav>
+  </header>
+
+  <!-- ================================ HERO ================================ -->
+  <section class="hero">
+   <div class="hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">AASPI &nbsp;·&nbsp; University of Oklahoma</p>
+      <h1 class="title">How a rock becomes a <em>seismic amplitude</em>.</h1>
+      <p class="lede">Grains and pore space set how stiff a rock is. The fluid in the pores changes that
+        stiffness, but not in every direction equally. Stiffness and density together set the velocities.
+        Two rocks meeting at a boundary set a reflection. And once the sound arrives at an angle rather
+        than straight down, that reflection stops being a single number and becomes a curve.</p>
+      <p class="lede">These modules build that chain one step at a time, with every panel computed from
+        the controls on screen. The later ones work the chain backwards, which is harder and does not
+        have one answer. Nothing to install, and nothing leaves your machine.</p>
+      <p class="lede prereq"><b>Start with the resolution modules.</b> This set assumes
+        <a href="https://hbedle-subsurface.github.io/seismic_resolution/">What Can You REALLY See in Seismic?</a>, where impedance, the reflection
+        coefficient, the wavelet and tuning are built from scratch. Module 00 here restates those results
+        and picks up where they stop.</p>
+      <div class="hero-cta">
+        <a class="btn" href="modules/beyond-normal-incidence.html">Start at module 00 →</a>
+        <a class="btn ghost" href="#modules">See all modules</a>
+      </div>
+    </div>
+    <div class="hero-panel"><div class="thumb" style="border:0"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><line x1="16" y1="52" x2="184" y2="52" stroke="#C7C9C0" stroke-width="1.4"/><path d="M16 82.6 L20.2 82.6 L24.4 82.6 L28.6 82.7 L32.8 82.8 L37 82.9 L41.2 83 L45.4 83.1 L49.6 83.3 L53.8 83.5 L58 83.7 L62.2 83.9 L66.4 84.2 L70.6 84.4 L74.8 84.7 L79 85.1 L83.2 85.4 L87.4 85.8 L91.6 86.1 L95.8 86.5 L100 87 L104.2 87.4 L108.4 87.9 L112.6 88.4 L116.8 88.9 L121 89.4 L125.2 90 L129.4 90.6 L133.6 91.2 L137.8 91.8 L142 92.4 L146.2 93.1 L150.4 93.8 L154.6 94.5 L158.8 95.3 L163 96 L167.2 96.8 L171.4 97.6 L175.6 98.5 L179.8 99.3 L184 100.2" fill="none" stroke="#841617" stroke-width="2.1" stroke-linecap="round"/><path d="M16 52.6 L20.2 52.7 L24.4 52.7 L28.6 52.8 L32.8 53 L37 53.1 L41.2 53.4 L45.4 53.6 L49.6 53.9 L53.8 54.2 L58 54.6 L62.2 55 L66.4 55.5 L70.6 56 L74.8 56.5 L79 57 L83.2 57.6 L87.4 58.3 L91.6 58.9 L95.8 59.6 L100 60.3 L104.2 61.1 L108.4 61.9 L112.6 62.7 L116.8 63.6 L121 64.5 L125.2 65.4 L129.4 66.4 L133.6 67.3 L137.8 68.4 L142 69.4 L146.2 70.5 L150.4 71.5 L154.6 72.6 L158.8 73.8 L163 74.9 L167.2 76.1 L171.4 77.3 L175.6 78.5 L179.8 79.8 L184 81" fill="none" stroke="#B5451B" stroke-width="2.1" stroke-linecap="round"/><path d="M16 53.7 L20.2 53.7 L24.4 53.7 L28.6 53.8 L32.8 53.8 L37 53.9 L41.2 54 L45.4 54.1 L49.6 54.2 L53.8 54.4 L58 54.5 L62.2 54.7 L66.4 54.9 L70.6 55.1 L74.8 55.3 L79 55.6 L83.2 55.8 L87.4 56.1 L91.6 56.4 L95.8 56.7 L100 57 L104.2 57.3 L108.4 57.6 L112.6 58 L116.8 58.3 L121 58.7 L125.2 59.1 L129.4 59.5 L133.6 59.9 L137.8 60.3 L142 60.7 L146.2 61.1 L150.4 61.6 L154.6 62 L158.8 62.5 L163 62.9 L167.2 63.4 L171.4 63.9 L175.6 64.4 L179.8 64.9 L184 65.3" fill="none" stroke="#0B7285" stroke-width="2.1" stroke-linecap="round"/><path d="M16 62.2 L20.2 62.2 L24.4 62.2 L28.6 62.2 L32.8 62.3 L37 62.3 L41.2 62.4 L45.4 62.4 L49.6 62.5 L53.8 62.6 L58 62.7 L62.2 62.8 L66.4 63 L70.6 63.1 L74.8 63.2 L79 63.4 L83.2 63.6 L87.4 63.7 L91.6 63.9 L95.8 64.1 L100 64.3 L104.2 64.6 L108.4 64.8 L112.6 65 L116.8 65.3 L121 65.6 L125.2 65.8 L129.4 66.1 L133.6 66.4 L137.8 66.7 L142 67 L146.2 67.4 L150.4 67.7 L154.6 68 L158.8 68.4 L163 68.8 L167.2 69.2 L171.4 69.6 L175.6 70 L179.8 70.4 L184 70.8" fill="none" stroke="#2A7B9B" stroke-width="2.1" stroke-linecap="round"/><path d="M16 62.2 L20.2 62.2 L24.4 62.2 L28.6 62.3 L32.8 62.4 L37 62.5 L41.2 62.6 L45.4 62.7 L49.6 62.9 L53.8 63 L58 63.2 L62.2 63.4 L66.4 63.7 L70.6 63.9 L74.8 64.2 L79 64.5 L83.2 64.8 L87.4 65.1 L91.6 65.5 L95.8 65.9 L100 66.2 L104.2 66.6 L108.4 67.1 L112.6 67.5 L116.8 68 L121 68.5 L125.2 69 L129.4 69.5 L133.6 70 L137.8 70.6 L142 71.1 L146.2 71.7 L150.4 72.3 L154.6 72.9 L158.8 73.6 L163 74.2 L167.2 74.9 L171.4 75.6 L175.6 76.3 L179.8 77 L184 77.8" fill="none" stroke="#6B7A2E" stroke-width="2.1" stroke-linecap="round"/><text x="100" y="103" font-family="monospace" font-size="8" fill="#16191C" text-anchor="middle">five reservoirs, one gather</text></svg></div>
+      <div class="hero-cap"><span>five different reservoirs</span><b>computed, not drawn</b></div></div>
+   </div>
+  </section>
+
+  <!-- ============================== THE PREMISE ============================ -->
+  <section class="primer">
+   <div class="primer-grid">
+    <div>
+      <h3>Stiffness comes in two parts</h3>
+      <p>A rock resists being squeezed and resists being sheared, and those are separate properties. A
+        pore fluid changes the first and leaves the second almost alone, which is what makes a fluid
+        visible to seismic data at all.</p>
+    </div>
+    <div>
+      <h3>Angle turns one number into a curve</h3>
+      <p>A wave arriving straight down only compresses the rock. One arriving at an angle also shears it,
+        so the reflection changes across a recording — and changes differently depending on what is in
+        the pores.</p>
+    </div>
+    <div>
+      <h3>Then the chain runs backwards</h3>
+      <p>Going from a rock to an amplitude is exact. Going the other way is not, because several rocks
+        arrive at the same number. The last modules measure how many, and how much the second
+        measurement removes.</p>
+    </div>
+   </div>
+  </section>
+
+  <!-- =============================== MODULES ============================== -->
+  <section id="modules" class="modules">
+    <div class="sec-head">
+      <h2>The modules</h2>
+      <p>Ten modules, in the order they build on each other, from the grains outward. Each card says what
+        it assumes.</p>
+    </div>
+
+    <div class="primer" style="margin:0 0 26px">
+     <div class="primer-grid">
+      <div>
+        <h3>New to this</h3>
+        <p>Work through the <a href="https://hbedle-subsurface.github.io/seismic_resolution/">resolution modules</a> first. Then <b>00</b>,
+          <b>01</b>, <b>02</b> and <b>03</b>, and stop there. That is a complete and useful course on
+          its own.</p>
+      </div>
+      <div>
+        <h3>You have used AVO before</h3>
+        <p>Start at <b>04</b> and go straight through. Module 00 is still worth ten minutes if only to
+          see which simplifications the rest of the set comes back for, and 01 to 03 are quick if the
+          rock physics is already familiar.</p>
+      </div>
+      <div>
+        <h3>You do this for a living</h3>
+        <p><b>07</b>, <b>08</b> and <b>09</b> are the ones with something new in them: how many rocks
+          share an amplitude, the size of the error bars, and a count of what the gradient actually buys
+          you.</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="card-grid">
+
+      <a class="card" href="modules/beyond-normal-incidence.html">
+        <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><rect x="0" y="74" width="200" height="30" fill="#E4DFD2"/><line x1="0" y1="74" x2="200" y2="74" stroke="#16191C" stroke-width="1.8"/><line x1="26" y1="18" x2="26" y2="74" stroke="#0B7285" stroke-width="2.6"/><circle cx="26" cy="18" r="3.2" fill="#0B7285"/><text x="26" y="12" font-family="monospace" font-size="9" fill="#0B7285" text-anchor="middle">0°</text><line x1="64.9" y1="18" x2="104" y2="74" stroke="#841617" stroke-width="2.6"/><line x1="104" y1="74" x2="143.1" y2="18" stroke="#841617" stroke-width="2.6"/><line x1="104" y1="22" x2="104" y2="74" stroke="#C7C9C0" stroke-width="1.2" stroke-dasharray="3 3"/><path d="M 104 48 A 26 26 0 0 1 118.5 52.4" fill="none" stroke="#841617" stroke-width="1.6"/><circle cx="64.9" cy="18" r="3.2" fill="#841617"/><circle cx="143.1" cy="18" r="3.2" fill="#841617"/><text x="135" y="47" font-family="monospace" font-size="9" fill="#841617">34°</text></svg></div>
+        <div class="card-body">
+          <div class="card-no">00<span class="lvl">assumes the seismic resolution modules</span></div>
+          <h3>Beyond normal incidence</h3>
+          <p>A recap of what the resolution modules established, the assumption every one of them shared, and the observation this set begins from: a reflection coefficient is not one number.</p>
+          <div class="q">What does this set assume I already know?</div>
+        </div>
+        <span class="flag next">Start here</span>
+      </a>
+
+      <a class="card" href="modules/rocks-and-stiffness.html">
+        <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><circle cx="12.3" cy="13.4" r="7.2" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="28" cy="14.5" r="7.1" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="42.1" cy="15.2" r="6.5" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="57" cy="13.1" r="6.7" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="71.5" cy="12.7" r="6.9" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="83.1" cy="12.7" r="7.3" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="100.3" cy="14.9" r="7.4" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="19" cy="31.1" r="7.6" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="32.2" cy="32.9" r="6.6" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="46.6" cy="32.6" r="7.4" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="63.6" cy="33" r="7.6" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="77.7" cy="30.6" r="6.9" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="90.5" cy="32.5" r="6.9" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="12.2" cy="49.1" r="7" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="26.7" cy="49.7" r="6.8" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="42" cy="50.3" r="6.9" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="56.2" cy="50.3" r="7" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="70.2" cy="49.2" r="6.5" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="84.8" cy="50.1" r="7" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="98.4" cy="49.9" r="6.5" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="17.9" cy="69.1" r="7.2" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="33.9" cy="69.3" r="6.7" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="47.9" cy="67.7" r="7.3" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="63" cy="67.2" r="6.7" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="77.4" cy="66.5" r="6.8" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="92.3" cy="68.8" r="7" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="13" cy="85.3" r="7.2" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="25.2" cy="87.1" r="7.4" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="40.8" cy="85" r="7.6" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="54.9" cy="85.2" r="7" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="70.8" cy="85.6" r="6.4" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="84.3" cy="84.8" r="7.8" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><circle cx="98.3" cy="86.2" r="7.2" fill="#D8C9A4" stroke="#A08C5E" stroke-width="1"/><line x1="115" y1="10" x2="115" y2="96" stroke="#C7C9C0" stroke-width="1"/><rect x="126" y="40.1" width="13" height="49.9" fill="#0B7285" opacity="0.30"/><rect x="141" y="84.5" width="13" height="5.5" fill="#0B7285" opacity="1"/><rect x="162" y="30.7" width="13" height="59.3" fill="#841617" opacity="0.30"/><rect x="177" y="83.2" width="13" height="6.8" fill="#841617" opacity="1"/><text x="140" y="100" font-family="monospace" font-size="8.5" fill="#0B7285" text-anchor="middle">K</text><text x="176" y="100" font-family="monospace" font-size="8.5" fill="#841617" text-anchor="middle">G</text></svg></div>
+        <div class="card-body">
+          <div class="card-no">01<span class="lvl">assumes module 00</span></div>
+          <h3>Rocks, pores and stiffness</h3>
+          <p>Grains and pore space, where bulk density comes from, the two separate ways a rock resists deformation, and why a change in one of them moves Vp and leaves Vs exactly where it was.</p>
+          <div class="q">What makes one rock faster than another?</div>
+        </div>
+        
+      </a>
+
+      <a class="card" href="modules/fluid-in-the-pores.html">
+        <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><rect x="16" y="23.6" width="8.4" height="43.7" fill="#841617" opacity="0.16"/><path d="M 16 23.6 L 17.7 42.5 L 19.4 52.9 L 21 59.5 L 22.7 64 L 24.4 67.3 L 26.1 69.8 L 27.8 71.7 L 29.4 73.2 L 31.1 74.5 L 32.8 75.5 L 34.5 76.3 L 36.2 77.1 L 37.8 77.7 L 39.5 78.2 L 41.2 78.6 L 42.9 79 L 44.6 79.3 L 46.2 79.6 L 47.9 79.8 L 49.6 80 L 51.3 80.2 L 53 80.3 L 54.6 80.5 L 56.3 80.6 L 58 80.7 L 59.7 80.7 L 61.4 80.8 L 63 80.8 L 64.7 80.9 L 66.4 80.9 L 68.1 80.9 L 69.8 80.9 L 71.4 80.9 L 73.1 80.9 L 74.8 80.8 L 76.5 80.8 L 78.2 80.8 L 79.8 80.7 L 81.5 80.7 L 83.2 80.6 L 84.9 80.6 L 86.6 80.5 L 88.2 80.4 L 89.9 80.4 L 91.6 80.3 L 93.3 80.2 L 95 80.2 L 96.6 80.1 L 98.3 80 L 100 79.9 L 101.7 79.8 L 103.4 79.7 L 105 79.6 L 106.7 79.5 L 108.4 79.4 L 110.1 79.3 L 111.8 79.2 L 113.4 79.1 L 115.1 79 L 116.8 78.9 L 118.5 78.8 L 120.2 78.7 L 121.8 78.6 L 123.5 78.4 L 125.2 78.3 L 126.9 78.2 L 128.6 78.1 L 130.2 78 L 131.9 77.8 L 133.6 77.7 L 135.3 77.6 L 137 77.5 L 138.6 77.3 L 140.3 77.2 L 142 77.1 L 143.7 76.9 L 145.4 76.8 L 147 76.7 L 148.7 76.5 L 150.4 76.4 L 152.1 76.3 L 153.8 76.1 L 155.4 76 L 157.1 75.9 L 158.8 75.7 L 160.5 75.6 L 162.2 75.5 L 163.8 75.3 L 165.5 75.2 L 167.2 75 L 168.9 74.9 L 170.6 74.7 L 172.2 74.6 L 173.9 74.4 L 175.6 74.3 L 177.3 74.2 L 179 74 L 180.6 73.9 L 182.3 73.7 L 184 73.6" fill="none" stroke="#841617" stroke-width="2.6" stroke-linejoin="round"/><circle cx="16" cy="23.6" r="3.6" fill="#0B7285"/><circle cx="24.4" cy="67.3" r="3.6" fill="#841617"/><text x="100" y="100" font-family="monospace" font-size="8.5" fill="#16191C" text-anchor="middle">Vp against gas saturation</text></svg></div>
+        <div class="card-body">
+          <div class="card-no">02<span class="lvl">assumes module 00</span></div>
+          <h3>Fluid in the pores</h3>
+          <p>Brine, oil and gas as elastic materials, Gassmann's relation putting one into the frame, and why the first few percent of gas does almost all of the work.</p>
+          <div class="q">What does replacing brine with gas actually change?</div>
+        </div>
+        
+      </a>
+
+      <a class="card" href="modules/rock-to-trace.html">
+        <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><rect x="10" y="6" width="96" height="32.9" fill="#E4E0D6"/><rect x="10" y="38.9" width="96" height="23.1" fill="rgba(181,69,27,0.25)"/><rect x="10" y="61.9" width="96" height="36.1" fill="#E4E0D6"/><line x1="10" y1="38.9" x2="106" y2="38.9" stroke="#16191C" stroke-width="1.6"/><line x1="10" y1="61.9" x2="106" y2="61.9" stroke="#16191C" stroke-width="1.6"/><line x1="140" y1="6" x2="140" y2="98" stroke="#C7C9C0" stroke-width="1"/><polyline points="140,6 140,7 140,7.9 140,8.9 140,9.8 140,10.8 140,11.8 140,12.7 140,13.7 140,14.6 140,15.6 140,16.5 140,17.5 140.1,18.5 140.1,19.4 140.3,20.4 140.5,21.3 140.9,22.3 141.5,23.3 142.3,24.2 143.4,25.2 144.9,26.1 146.6,27.1 148.3,28 149.8,29 150.7,30 150.6,30.9 148.9,31.9 145.7,32.8 140.8,33.8 134.8,34.8 128.3,35.7 122.4,36.7 118,37.6 115.9,38.6 116.5,39.5 119.6,40.5 124.7,41.5 130.9,42.4 137.2,43.4 142.6,44.3 146.4,45.3 148.4,46.3 148.5,47.2 147.1,48.2 144.4,49.1 141.1,50.1 137.6,51 134.5,52 132.2,53 131.3,53.9 132.1,54.9 134.8,55.8 139.3,56.8 145.1,57.8 151.4,58.7 157.4,59.7 161.8,60.6 164.1,61.6 163.6,62.5 160.6,63.5 155.5,64.5 149.3,65.4 142.9,66.4 137.2,67.3 132.9,68.3 130.3,69.3 129.2,70.2 129.5,71.2 130.7,72.1 132.3,73.1 134.1,74 135.7,75 137,76 138.1,76.9 138.8,77.9 139.3,78.8 139.6,79.8 139.8,80.8 139.9,81.7 139.9,82.7 140,83.6 140,84.6 140,85.5 140,86.5 140,87.5 140,88.4 140,89.4 140,90.3 140,91.3 140,92.3 140,93.2 140,94.2 140,95.1 140,96.1 140,97 140,98" fill="none" stroke="#841617" stroke-width="2.4" stroke-linejoin="round"/><text x="58" y="103" font-family="monospace" font-size="8" fill="#16191C" text-anchor="middle">two rocks</text><text x="150" y="103" font-family="monospace" font-size="8" fill="#841617">the echo</text></svg></div>
+        <div class="card-body">
+          <div class="card-no">03<span class="lvl">assumes module 00</span></div>
+          <h3>From a rock to a trace</h3>
+          <p>A reflection needs two rocks. Velocity and density collapse into impedance, impedance into a contrast, and the shear velocity never arrives at all.</p>
+          <div class="q">How does a change in the rock reach the seismic trace?</div>
+        </div>
+        
+      </a>
+
+      <a class="card" href="modules/offset-and-the-gather.html">
+        <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><polyline points="12,8 12,10 12,12 12,14 12,16 10.1,18 13.6,20 13.5,22 10.1,24 12,26 12,28 12,30 12,32 12,34 12,36 12,38 12,40 12,42 12,44 12,46 12,48 12,50 12,52 12,54 12,56 12,58 12,60 12,62 12,64 12,66 12,68 12,70 12,72 12,74 12,76 12,78 12,80 12,82 12,84 12,86 12,88 12,90 12,92 12,94 12,96 " fill="none" stroke="#16191C" stroke-width="1.3"/><polyline points="26.7,8 26.7,10 26.7,12 26.7,14 26.7,16 25.9,18 23.3,20 34.4,22 23.1,24 26.6,26 26.7,28 26.7,30 26.7,32 26.7,34 26.7,36 26.7,38 26.7,40 26.7,42 26.7,44 26.7,46 26.7,48 26.7,50 26.7,52 26.7,54 26.7,56 26.7,58 26.7,60 26.7,62 26.7,64 26.7,66 26.7,68 26.7,70 26.7,72 26.7,74 26.7,76 26.7,78 26.7,80 26.7,82 26.7,84 26.7,86 26.7,88 26.7,90 26.7,92 26.7,94 26.7,96 " fill="none" stroke="#16191C" stroke-width="1.3"/><polyline points="41.3,8 41.3,10 41.3,12 41.3,14 41.3,16 41.3,18 39.2,20 43.9,22 41.9,24 39.6,26 41.3,28 41.3,30 41.3,32 41.3,34 41.3,36 41.3,38 41.3,40 41.3,42 41.3,44 41.3,46 41.3,48 41.3,50 41.3,52 41.3,54 41.3,56 41.3,58 41.3,60 41.3,62 41.3,64 41.3,66 41.3,68 41.3,70 41.3,72 41.3,74 41.3,76 41.3,78 41.3,80 41.3,82 41.3,84 41.3,86 41.3,88 41.3,90 41.3,92 41.3,94 41.3,96 " fill="none" stroke="#16191C" stroke-width="1.3"/><polyline points="56,8 56,10 56,12 56,14 56,16 56,18 56,20 54.9,22 54,24 61.7,26 53,28 56,30 56,32 56,34 56,36 56,38 56,40 56,42 56,44 56,46 56,48 56,50 56,52 56,54 56,56 56,58 56,60 56,62 56,64 56,66 56,68 56,70 56,72 56,74 56,76 56,78 56,80 56,82 56,84 56,86 56,88 56,90 56,92 56,94 56,96 " fill="none" stroke="#16191C" stroke-width="1.3"/><polyline points="70.7,8 70.7,10 70.7,12 70.7,14 70.7,16 70.7,18 70.7,20 70.7,22 70.6,24 67.4,26 77.3,28 68,30 69.7,32 70.7,34 70.7,36 70.7,38 70.7,40 70.7,42 70.7,44 70.7,46 70.7,48 70.7,50 70.7,52 70.7,54 70.7,56 70.7,58 70.7,60 70.7,62 70.7,64 70.7,66 70.7,68 70.7,70 70.7,72 70.7,74 70.7,76 70.7,78 70.7,80 70.7,82 70.7,84 70.7,86 70.7,88 70.7,90 70.7,92 70.7,94 70.7,96 " fill="none" stroke="#16191C" stroke-width="1.3"/><polyline points="85.3,8 85.3,10 85.3,12 85.3,14 85.3,16 85.3,18 85.3,20 85.3,22 85.3,24 85.3,26 85.3,28 82.8,30 89.5,32 84.6,34 83.9,36 85.3,38 85.3,40 85.3,42 85.3,44 85.3,46 85.3,48 85.3,50 85.3,52 85.3,54 85.3,56 85.3,58 85.3,60 85.3,62 85.3,64 85.3,66 85.3,68 85.3,70 85.3,72 85.3,74 85.3,76 85.3,78 85.3,80 85.3,82 85.3,84 85.3,86 85.3,88 85.3,90 85.3,92 85.3,94 85.3,96 " fill="none" stroke="#16191C" stroke-width="1.3"/><polyline points="100,8 100,10 100,12 100,14 100,16 100,18 100,20 100,22 100,24 100,26 100,28 100,30 100,32 99.7,34 95.2,36 110.7,38 95.3,40 99.9,42 100,44 100,46 100,48 100,50 100,52 100,54 100,56 100,58 100,60 100,62 100,64 100,66 100,68 100,70 100,72 100,74 100,76 100,78 100,80 100,82 100,84 100,86 100,88 100,90 100,92 100,94 100,96 " fill="none" stroke="#16191C" stroke-width="1.3"/><polyline points="114.7,8 114.7,10 114.7,12 114.7,14 114.7,16 114.7,18 114.7,20 114.7,22 114.7,24 114.7,26 114.7,28 114.7,30 114.7,32 114.7,34 114.7,36 114.7,38 114.1,40 110.3,42 124.3,44 110.4,46 114.6,48 114.7,50 114.7,52 114.7,54 114.7,56 114.7,58 114.7,60 114.7,62 114.7,64 114.7,66 114.7,68 114.7,70 114.7,72 114.7,74 114.7,76 114.7,78 114.7,80 114.7,82 114.7,84 114.7,86 114.7,88 114.7,90 114.7,92 114.7,94 114.7,96 " fill="none" stroke="#16191C" stroke-width="1.3"/><polyline points="129.3,8 129.3,10 129.3,12 129.3,14 129.3,16 129.3,18 129.3,20 129.3,22 129.3,24 129.3,26 129.3,28 129.3,30 129.3,32 129.3,34 129.3,36 129.3,38 129.3,40 129.3,42 129.3,44 129.2,46 124.9,48 139.6,50 124.7,52 128.9,54 129.3,56 129.3,58 129.3,60 129.3,62 129.3,64 129.3,66 129.3,68 129.3,70 129.3,72 129.3,74 129.3,76 129.3,78 129.3,80 129.3,82 129.3,84 129.3,86 129.3,88 129.3,90 129.3,92 129.3,94 129.3,96 " fill="none" stroke="#16191C" stroke-width="1.3"/><polyline points="144,8 144,10 144,12 144,14 144,16 144,18 144,20 144,22 144,24 144,26 144,28 144,30 144,32 144,34 144,36 144,38 144,40 144,42 144,44 144,46 144,48 144,50 144,52 143.3,54 140.4,56 152.2,58 140.3,60 143.9,62 144,64 144,66 144,68 144,70 144,72 144,74 144,76 144,78 144,80 144,82 144,84 144,86 144,88 144,90 144,92 144,94 144,96 " fill="none" stroke="#16191C" stroke-width="1.3"/><polyline points="158.7,8 158.7,10 158.7,12 158.7,14 158.7,16 158.7,18 158.7,20 158.7,22 158.7,24 158.7,26 158.7,28 158.7,30 158.7,32 158.7,34 158.7,36 158.7,38 158.7,40 158.7,42 158.7,44 158.7,46 158.7,48 158.7,50 158.7,52 158.7,54 158.7,56 158.7,58 158.7,60 157.8,62 155.6,64 165.9,66 155.2,68 158.6,70 158.7,72 158.7,74 158.7,76 158.7,78 158.7,80 158.7,82 158.7,84 158.7,86 158.7,88 158.7,90 158.7,92 158.7,94 158.7,96 " fill="none" stroke="#16191C" stroke-width="1.3"/><polyline points="173.3,8 173.3,10 173.3,12 173.3,14 173.3,16 173.3,18 173.3,20 173.3,22 173.3,24 173.3,26 173.3,28 173.3,30 173.3,32 173.3,34 173.3,36 173.3,38 173.3,40 173.3,42 173.3,44 173.3,46 173.3,48 173.3,50 173.3,52 173.3,54 173.3,56 173.3,58 173.3,60 173.3,62 173.3,64 173.3,66 173.3,68 173.1,70 168.4,72 184.3,74 168.5,76 173.1,78 173.3,80 173.3,82 173.3,84 173.3,86 173.3,88 173.3,90 173.3,92 173.3,94 173.3,96 " fill="none" stroke="#16191C" stroke-width="1.3"/><polyline points="188,8 188,10 188,12 188,14 188,16 188,18 188,20 188,22 188,24 188,26 188,28 188,30 188,32 188,34 188,36 188,38 188,40 188,42 188,44 188,46 188,48 188,50 188,52 188,54 188,56 188,58 188,60 188,62 188,64 188,66 188,68 188,70 188,72 188,74 188,76 188,78 186.1,80 189.5,82 189.6,84 186.1,86 188,88 188,90 188,92 188,94 188,96 " fill="none" stroke="#16191C" stroke-width="1.3"/><path d="M 12 21 L 26.7 21.5 L 41.3 22.9 L 56 25.3 L 70.7 28.6 L 85.3 32.8 L 100 37.8 L 114.7 43.7 L 129.3 50.2 L 144 57.5 L 158.7 65.4 L 173.3 73.9 L 188 83" fill="none" stroke="#841617" stroke-width="2" stroke-dasharray="5 4"/></svg></div>
+        <div class="card-body">
+          <div class="card-no">04<span class="lvl">assumes modules 00–03</span></div>
+          <h3>Offset, angle and the gather</h3>
+          <p>Where offset comes from, why it is not the same thing as the incidence angle, what moveout costs to remove, and what stacking throws away.</p>
+          <div class="q">What is a gather?</div>
+        </div>
+        
+      </a>
+
+      <a class="card" href="modules/add-offset.html">
+        <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><line x1="16" y1="52" x2="184" y2="52" stroke="#C7C9C0" stroke-width="1.4"/><path d="M16 77.8 L20.2 77.8 L24.4 77.9 L28.6 77.9 L32.8 78 L37 78.1 L41.2 78.3 L45.4 78.4 L49.6 78.6 L53.8 78.8 L58 79.1 L62.2 79.3 L66.4 79.6 L70.6 79.9 L74.8 80.2 L79 80.6 L83.2 81 L87.4 81.4 L91.6 81.8 L95.8 82.3 L100 82.7 L104.2 83.2 L108.4 83.7 L112.6 84.3 L116.8 84.9 L121 85.4 L125.2 86.1 L129.4 86.7 L133.6 87.4 L137.8 88 L142 88.8 L146.2 89.5 L150.4 90.2 L154.6 91 L158.8 91.8 L163 92.7 L167.2 93.5 L171.4 94.4 L175.6 95.3 L179.8 96.2 L184 97.2" fill="none" stroke="#841617" stroke-width="2.4" stroke-linecap="round"/><path d="M16 53.7 L20.2 53.7 L24.4 53.7 L28.6 53.8 L32.8 53.8 L37 53.9 L41.2 54 L45.4 54.1 L49.6 54.2 L53.8 54.4 L58 54.5 L62.2 54.7 L66.4 54.9 L70.6 55.1 L74.8 55.3 L79 55.6 L83.2 55.8 L87.4 56.1 L91.6 56.4 L95.8 56.7 L100 57 L104.2 57.3 L108.4 57.6 L112.6 58 L116.8 58.3 L121 58.7 L125.2 59.1 L129.4 59.5 L133.6 59.9 L137.8 60.3 L142 60.7 L146.2 61.1 L150.4 61.6 L154.6 62 L158.8 62.5 L163 62.9 L167.2 63.4 L171.4 63.9 L175.6 64.4 L179.8 64.9 L184 65.3" fill="none" stroke="#0B7285" stroke-width="2.4" stroke-linecap="round"/><text x="100" y="103" font-family="monospace" font-size="8" fill="#16191C" text-anchor="middle">0°　→　40°</text></svg></div>
+        <div class="card-body">
+          <div class="card-no">05<span class="lvl">assumes modules 00–03</span></div>
+          <h3>Amplitude against angle</h3>
+          <p>The ray stops arriving straight down, the shear velocities become visible, and one measurement becomes a curve.</p>
+          <div class="q">Why does the amplitude change with angle at all?</div>
+        </div>
+        
+      </a>
+
+      <a class="card" href="modules/intercept-gradient.html">
+        <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><line x1="10" y1="54" x2="190" y2="54" stroke="#C7C9C0" stroke-width="1.4"/><line x1="100" y1="6" x2="100" y2="98" stroke="#C7C9C0" stroke-width="1.4"/><line x1="26" y1="98" x2="174" y2="6" stroke="#C7C9C0" stroke-width="1.6" stroke-dasharray="5 4"/><circle cx="36.2" cy="84.9" r="4" fill="#841617"/><circle cx="9.9" cy="21.5" r="4" fill="#0B7285"/><circle cx="48.8" cy="45.4" r="4" fill="#0B7285"/><circle cx="76.5" cy="66.1" r="4" fill="#0B7285"/><text x="186" y="50" font-family="monospace" font-size="8" fill="#16191C" text-anchor="end">G</text><text x="104" y="14" font-family="monospace" font-size="8" fill="#16191C">R0</text></svg></div>
+        <div class="card-body">
+          <div class="card-no">06<span class="lvl">assumes modules 00–03</span></div>
+          <h3>Intercept, gradient and the classes</h3>
+          <p>Two numbers instead of a curve, the crossplot they live in, the wet trend that makes an anomaly anomalous, and why Classes I to IV are regions somebody drew.</p>
+          <div class="q">What is a Class III response actually telling me?</div>
+        </div>
+        
+      </a>
+
+      <a class="card" href="modules/same-amplitude.html">
+        <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><path d="M14 20.5 L15.9 23.3 L17.8 25.9 L19.7 28.5 L21.6 31.1 L23.6 33.6 L25.5 36 L27.4 38.4 L29.3 40.8 L31.2 43 L33.1 45.3 L35 47.5 L36.9 49.7 L38.8 51.8 L40.8 53.9 L42.7 55.9 L44.6 57.9 L46.5 59.9 L48.4 61.8 L50.3 63.7 L52.2 65.6 L54.1 67.4 L56 69.2 L58 71 L59.9 72.7 L61.8 74.4 L63.7 76.1 L65.6 77.7 L67.5 79.3 L69.4 80.9 L71.3 82.5 L73.2 84 L75.2 85.5 L77.1 87 L79 88.5 L80.9 89.9 L82.8 91.3 L84.7 92.7" fill="none" stroke="#841617" stroke-width="2.4"/><circle cx="59.9" cy="72.7" r="4" fill="#841617"/><circle cx="65.6" cy="77.7" r="4" fill="#841617"/><line x1="14" y1="94" x2="186" y2="94" stroke="#C7C9C0" stroke-width="1.4"/><line x1="14" y1="12" x2="14" y2="94" stroke="#C7C9C0" stroke-width="1.4"/><text x="100" y="103" font-family="monospace" font-size="8" fill="#16191C" text-anchor="middle">one impedance, many rocks</text></svg></div>
+        <div class="card-body">
+          <div class="card-no">07<span class="lvl">assumes modules 00–03</span></div>
+          <h3>Several rocks, one amplitude</h3>
+          <p>Run the chain backwards. Fix a stacked amplitude and search for every rock that could have produced it: porosity against saturation, the shale nobody measured, and tuning.</p>
+          <div class="q">How many rocks fit the amplitude I measured?</div>
+        </div>
+        
+      </a>
+
+      <a class="card" href="modules/reading-a-gather.html">
+        <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><line x1="14" y1="50" x2="186" y2="50" stroke="#C7C9C0" stroke-width="1.2"/><line x1="100" y1="6" x2="100" y2="94" stroke="#C7C9C0" stroke-width="1.2"/><circle cx="73.4" cy="58.4" r="1.9" fill="#841617" opacity="0.5"/><circle cx="69.5" cy="55.7" r="1.9" fill="#841617" opacity="0.5"/><circle cx="69.5" cy="54" r="1.9" fill="#841617" opacity="0.5"/><circle cx="70.6" cy="54" r="1.9" fill="#841617" opacity="0.5"/><circle cx="71.5" cy="55.1" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.4" cy="52.9" r="1.9" fill="#841617" opacity="0.5"/><circle cx="66.7" cy="51.4" r="1.9" fill="#841617" opacity="0.5"/><circle cx="69.8" cy="55.8" r="1.9" fill="#841617" opacity="0.5"/><circle cx="64.6" cy="51.4" r="1.9" fill="#841617" opacity="0.5"/><circle cx="73.7" cy="55.2" r="1.9" fill="#841617" opacity="0.5"/><circle cx="67.6" cy="54.2" r="1.9" fill="#841617" opacity="0.5"/><circle cx="70.5" cy="56.6" r="1.9" fill="#841617" opacity="0.5"/><circle cx="69.9" cy="55.7" r="1.9" fill="#841617" opacity="0.5"/><circle cx="69.2" cy="54.3" r="1.9" fill="#841617" opacity="0.5"/><circle cx="69.1" cy="54.4" r="1.9" fill="#841617" opacity="0.5"/><circle cx="63.1" cy="51.7" r="1.9" fill="#841617" opacity="0.5"/><circle cx="71.6" cy="53.6" r="1.9" fill="#841617" opacity="0.5"/><circle cx="63.1" cy="49.9" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.2" cy="51.4" r="1.9" fill="#841617" opacity="0.5"/><circle cx="69.2" cy="54.9" r="1.9" fill="#841617" opacity="0.5"/><circle cx="69.2" cy="54.4" r="1.9" fill="#841617" opacity="0.5"/><circle cx="69.5" cy="53.8" r="1.9" fill="#841617" opacity="0.5"/><circle cx="71.3" cy="55.7" r="1.9" fill="#841617" opacity="0.5"/><circle cx="66.9" cy="52.8" r="1.9" fill="#841617" opacity="0.5"/><circle cx="65.5" cy="54.7" r="1.9" fill="#841617" opacity="0.5"/><circle cx="70" cy="54" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.2" cy="52.9" r="1.9" fill="#841617" opacity="0.5"/><circle cx="63.1" cy="49.8" r="1.9" fill="#841617" opacity="0.5"/><circle cx="69" cy="54.5" r="1.9" fill="#841617" opacity="0.5"/><circle cx="63.6" cy="51" r="1.9" fill="#841617" opacity="0.5"/><circle cx="65.3" cy="52.4" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.3" cy="53" r="1.9" fill="#841617" opacity="0.5"/><circle cx="70.5" cy="55.1" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.9" cy="54.3" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.7" cy="54.4" r="1.9" fill="#841617" opacity="0.5"/><circle cx="73.3" cy="56.1" r="1.9" fill="#841617" opacity="0.5"/><circle cx="66.9" cy="53" r="1.9" fill="#841617" opacity="0.5"/><circle cx="67.6" cy="53.8" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.9" cy="54.1" r="1.9" fill="#841617" opacity="0.5"/><circle cx="71" cy="56" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.6" cy="53.6" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.9" cy="55.6" r="1.9" fill="#841617" opacity="0.5"/><circle cx="63.8" cy="50.6" r="1.9" fill="#841617" opacity="0.5"/><circle cx="66.9" cy="53.2" r="1.9" fill="#841617" opacity="0.5"/><circle cx="72.3" cy="55.3" r="1.9" fill="#841617" opacity="0.5"/><circle cx="72" cy="55.1" r="1.9" fill="#841617" opacity="0.5"/><circle cx="67.2" cy="54.5" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.6" cy="54.9" r="1.9" fill="#841617" opacity="0.5"/><circle cx="70" cy="53.8" r="1.9" fill="#841617" opacity="0.5"/><circle cx="71.3" cy="57.2" r="1.9" fill="#841617" opacity="0.5"/><circle cx="66.9" cy="51.6" r="1.9" fill="#841617" opacity="0.5"/><circle cx="69.8" cy="53.9" r="1.9" fill="#841617" opacity="0.5"/><circle cx="67.5" cy="57" r="1.9" fill="#841617" opacity="0.5"/><circle cx="66.2" cy="53.6" r="1.9" fill="#841617" opacity="0.5"/><circle cx="72.2" cy="57.6" r="1.9" fill="#841617" opacity="0.5"/><circle cx="66.3" cy="54.1" r="1.9" fill="#841617" opacity="0.5"/><circle cx="65.4" cy="51.2" r="1.9" fill="#841617" opacity="0.5"/><circle cx="67.1" cy="52.9" r="1.9" fill="#841617" opacity="0.5"/><circle cx="70.3" cy="56.2" r="1.9" fill="#841617" opacity="0.5"/><circle cx="66.6" cy="53.1" r="1.9" fill="#841617" opacity="0.5"/><circle cx="70.8" cy="54.6" r="1.9" fill="#841617" opacity="0.5"/><circle cx="67.7" cy="51.6" r="1.9" fill="#841617" opacity="0.5"/><circle cx="71.9" cy="55.7" r="1.9" fill="#841617" opacity="0.5"/><circle cx="70.8" cy="54.4" r="1.9" fill="#841617" opacity="0.5"/><circle cx="69.2" cy="52.2" r="1.9" fill="#841617" opacity="0.5"/><circle cx="70.1" cy="55.8" r="1.9" fill="#841617" opacity="0.5"/><circle cx="66.2" cy="53.2" r="1.9" fill="#841617" opacity="0.5"/><circle cx="69" cy="52.6" r="1.9" fill="#841617" opacity="0.5"/><circle cx="69.4" cy="53.5" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.1" cy="53.7" r="1.9" fill="#841617" opacity="0.5"/><circle cx="72.2" cy="56" r="1.9" fill="#841617" opacity="0.5"/><circle cx="66" cy="53.2" r="1.9" fill="#841617" opacity="0.5"/><circle cx="67.1" cy="53.9" r="1.9" fill="#841617" opacity="0.5"/><circle cx="65.6" cy="52.2" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.4" cy="52.9" r="1.9" fill="#841617" opacity="0.5"/><circle cx="65" cy="51" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.4" cy="54.6" r="1.9" fill="#841617" opacity="0.5"/><circle cx="71.7" cy="55.2" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.3" cy="53.3" r="1.9" fill="#841617" opacity="0.5"/><circle cx="67.6" cy="53.8" r="1.9" fill="#841617" opacity="0.5"/><circle cx="63.1" cy="49.4" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.8" cy="52.6" r="1.9" fill="#841617" opacity="0.5"/><circle cx="67" cy="53" r="1.9" fill="#841617" opacity="0.5"/><circle cx="67.3" cy="52.1" r="1.9" fill="#841617" opacity="0.5"/><circle cx="66" cy="53.5" r="1.9" fill="#841617" opacity="0.5"/><circle cx="70.8" cy="55.4" r="1.9" fill="#841617" opacity="0.5"/><circle cx="70.3" cy="53.6" r="1.9" fill="#841617" opacity="0.5"/><circle cx="67.8" cy="53.9" r="1.9" fill="#841617" opacity="0.5"/><circle cx="66.8" cy="54.8" r="1.9" fill="#841617" opacity="0.5"/><circle cx="65.9" cy="51.7" r="1.9" fill="#841617" opacity="0.5"/><circle cx="65.7" cy="52.5" r="1.9" fill="#841617" opacity="0.5"/><circle cx="66.9" cy="51.5" r="1.9" fill="#841617" opacity="0.5"/><circle cx="70.5" cy="55.9" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.7" cy="52.9" r="1.9" fill="#841617" opacity="0.5"/><circle cx="71.8" cy="56.4" r="1.9" fill="#841617" opacity="0.5"/><circle cx="63.3" cy="51.3" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.8" cy="54" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68.1" cy="53" r="1.9" fill="#841617" opacity="0.5"/><circle cx="70" cy="55.4" r="1.9" fill="#841617" opacity="0.5"/><circle cx="71.4" cy="56.2" r="1.9" fill="#841617" opacity="0.5"/><circle cx="69.3" cy="55.3" r="1.9" fill="#841617" opacity="0.5"/><circle cx="67.5" cy="53.5" r="1.9" fill="#841617" opacity="0.5"/><circle cx="67.9" cy="54.5" r="1.9" fill="#841617" opacity="0.5"/><circle cx="68" cy="53.4" r="1.9" fill="#841617" opacity="0.5"/><circle cx="65.2" cy="51.4" r="1.9" fill="#841617" opacity="0.5"/><circle cx="70.6" cy="55.5" r="1.9" fill="#841617" opacity="0.5"/><circle cx="65.5" cy="50.7" r="1.9" fill="#841617" opacity="0.5"/><circle cx="69" cy="53.4" r="1.9" fill="#841617" opacity="0.5"/><circle cx="65" cy="52.6" r="1.9" fill="#841617" opacity="0.5"/><circle cx="70" cy="53.9" r="1.9" fill="#841617" opacity="0.5"/><circle cx="132" cy="48.6" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131.5" cy="45.6" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.8" cy="45.6" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="132.3" cy="46.4" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="128.7" cy="44.9" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="135.1" cy="48.1" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131" cy="45" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="133.6" cy="47.4" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="128.9" cy="43.7" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.1" cy="43.8" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="129" cy="44.1" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131" cy="45.7" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="129.4" cy="45.4" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="133.9" cy="48.2" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="132" cy="46.8" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="133.9" cy="47" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.4" cy="46.8" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.7" cy="46.1" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="127.8" cy="44" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131.5" cy="44.7" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="134.7" cy="48" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.3" cy="46.1" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.1" cy="46.1" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="127.6" cy="45.7" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="134.5" cy="47.3" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="132.2" cy="47.8" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.2" cy="45.2" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="127.6" cy="44.4" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="133.7" cy="46.7" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="128" cy="43.4" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="133.1" cy="48.2" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="134.7" cy="49.4" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="128.3" cy="43.8" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131.4" cy="46.1" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.7" cy="47.5" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="134.1" cy="46.5" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.2" cy="44.9" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="134.1" cy="50.1" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="132.4" cy="47" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="129.2" cy="45" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.4" cy="46.3" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="133.5" cy="49.3" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="128.1" cy="43.6" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131.1" cy="46.5" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="129.3" cy="44.3" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="132.9" cy="48.6" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="132.1" cy="48" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="133.1" cy="46.1" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="134.3" cy="49.9" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131" cy="45.4" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="134.2" cy="47.2" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.7" cy="49.6" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="129.1" cy="46.4" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="135.8" cy="50.4" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="129.1" cy="46.3" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="127.8" cy="43.2" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131" cy="46.6" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="135.3" cy="50.5" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.6" cy="46.3" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="134.3" cy="47.5" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131.1" cy="44.7" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="135.9" cy="49" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="134" cy="47" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131.6" cy="43.9" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="132.3" cy="47.6" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="128.9" cy="45.6" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="132.1" cy="45.5" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="133.7" cy="47" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="132.2" cy="47.1" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="135.7" cy="49" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="129.3" cy="45.7" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.1" cy="46.4" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="129.4" cy="46" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="133.7" cy="47.4" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.1" cy="45" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="132.4" cy="47.8" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="135" cy="47.9" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131.5" cy="46" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.9" cy="46.6" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="127" cy="42.9" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="132.3" cy="45.2" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131.2" cy="47.1" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131.7" cy="45.4" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130" cy="47.1" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="135" cy="48.8" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="134.2" cy="46.8" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131.6" cy="47.1" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.5" cy="48" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="129.6" cy="45" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.1" cy="46.3" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="130.7" cy="44.8" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="134.3" cy="48.6" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131.5" cy="45.8" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="135.3" cy="48.9" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="127.1" cy="45" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="133.3" cy="47.7" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="132.4" cy="46.7" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="133.4" cy="47.8" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="133.2" cy="47.8" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131.9" cy="47.5" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="129.8" cy="45.5" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131.5" cy="47.8" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="132.1" cy="46.8" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="129.1" cy="44.9" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="134.3" cy="48.4" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="128.6" cy="43.5" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="133.1" cy="47.1" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="128.7" cy="45.3" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="132.6" cy="46.1" r="1.9" fill="#0B7285" opacity="0.5"/><circle cx="131.3" cy="48" r="1.9" fill="#0B7285" opacity="0.5"/><text x="100" y="101" font-family="monospace" font-size="8.5" fill="#16191C" text-anchor="middle">one rock, a thousand recordings</text></svg></div>
+        <div class="card-body">
+          <div class="card-no">08<span class="lvl">assumes everything before it · the heaviest in the set</span></div>
+          <h3>Noise, error bars and what you can conclude</h3>
+          <p>Real gathers carry noise and a mute. How large the error bars are, why the gradient takes almost all the damage, and whether the rocks can still be told apart.</p>
+          <div class="q">How much do I trust this gradient?</div>
+        </div>
+        
+      </a>
+
+      <a class="card" href="modules/what-survives.html">
+        <div class="thumb"><svg viewBox="0 0 200 104" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><rect width="200" height="104" fill="#F6F4EE"/><rect x="14" y="10" width="96" height="15" fill="#841617" opacity="0.3"/><text x="116" y="22" font-family="monospace" font-size="8.5" fill="#16191C">6 rock properties</text><rect x="14" y="33" width="32" height="15" fill="#841617" opacity="0.48"/><text x="52" y="45" font-family="monospace" font-size="8.5" fill="#16191C">2 impedances</text><rect x="14" y="56" width="16" height="15" fill="#841617" opacity="0.6599999999999999"/><text x="36" y="68" font-family="monospace" font-size="8.5" fill="#16191C">1 contrast</text><rect x="14" y="79" width="32" height="15" fill="#0B7285" opacity="0.8400000000000001"/><text x="52" y="91" font-family="monospace" font-size="8.5" fill="#16191C">2 AVO terms</text></svg></div>
+        <div class="card-body">
+          <div class="card-no">09<span class="lvl">assumes everything before it · the heaviest in the set</span></div>
+          <h3>What survives</h3>
+          <p>Every loss added up and measured, a count of what the second measurement removes, four rules of thumb with computed counterexamples, and a statement you could defend.</p>
+          <div class="q">What can I actually say from this?</div>
+        </div>
+        
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ================================ ABOUT =============================== -->
+  <section id="about" class="about">
+    <h2>About these modules</h2>
+    <p>They are built for students meeting seismic interpretation for the first time, and for anyone who
+      arrived in an interpretation role from an adjacent discipline and is expected to be productive in
+      weeks. Beyond the resolution modules named above, they assume first-year geology and nothing
+      else.</p>
+    <p>The title is a promise about the later modules rather than the early ones. "Actually" means that
+      each rule of thumb gets tested until it breaks, and that where it breaks is measured rather than
+      asserted. The early modules build the forward calculation without qualifying it, because running
+      that calculation confidently is what the later ones take apart.</p>
+    <p>Every panel is <b>computed</b> from the parameters on screen. There are no stored images and no
+      curves drawn to look plausible, which means the tool can be wrong — and during construction it
+      repeatedly was. A drawing cannot disagree with theory; a calculation can, and the disagreements are
+      where the corrections came from. Every module carries a Method tab listing what has been left out
+      and where the implementation departs from production software, and every number quoted in the
+      exercises is read off the running page rather than estimated.</p>
+    <p>No slider, no click and no trace you generate is transmitted anywhere, and the modules make no
+      network requests at all. The state of every control is written into the address bar, so a
+      configuration can be handed out as a link. The one thing recorded is that a page was opened, with
+      no cookie and nothing about you.</p>
+    <p>A further companion set on
+      <a href="https://hbedle-subsurface.github.io/geometric-attributes/">geometric attributes</a> covers
+      dip, coherence and curvature, and is independent of this one and of the resolution modules.</p>
+  </section>
+
+  <footer>
+    <div class="foot-grid">
+      <p>Built for teaching by Dr. Heather Bedle and Dr. April Moreno-Ward, School of Geosciences,
+        University of Oklahoma, with the <a href="https://www.ou.edu/mcee/labs/aaspi">AASPI</a>
+        consortium.</p>
+      <p class="lic">To cite: H. Bedle and A. Moreno-Ward, <i>How AVO Actually Works</i>, University of
+        Oklahoma. <span class="k">SSRN: [article link to follow]</span></p>
+      <p class="lic">Licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>
+        — free to use, adapt and share, including commercially, provided the source is credited and
+        adaptations carry the same license. Full text in <code>LICENSE</code>.</p>
+    </div>
+  </footer>
+</div>
+
+<script src="assets/count.js"></script>
+</body>
+</html>

@@ -312,17 +312,153 @@ function thumbFunnel() {
   return svg(out);
 }
 
-/* ---- the hero panel: five reservoirs on one gather ---------------------- */
+/* ---- the hero panel: the chain the headline names ----------------------
+   The previous hero was five Zoeppritz curves, which is the same KIND of
+   picture as the module 05 card thumbnail one screen further down, so the
+   lead graphic was restating a card instead of introducing the set. The
+   headline promises a chain from a rock to an amplitude, and no single card
+   draws that chain, so the hero draws it: grains, then the two stiffnesses,
+   then what a fluid does to the two velocities, then the reflection against
+   angle. Every stage is computed from rockphysics.js at the same 30% porosity
+   sand under the same shale, so the four panels are one rock followed through
+   rather than four illustrations.
+
+   Vp and Vs share one vertical axis in stage 3, and the axis is fixed rather
+   than fitted to the bars, so the eye compares the two velocities directly and
+   the drop in Vp is read against the flatness of Vs. */
+const HW = 500, HH = 156;
+
+function heroSvg(inner) {
+  return '<svg viewBox="0 0 ' + HW + ' ' + HH + '" xmlns="http://www.w3.org/2000/svg" ' +
+    'role="img" aria-label="The chain from a grain pack to a reflection that varies with angle: ' +
+    'porosity, the two stiffnesses of the grain and of the pack, the two velocities before and ' +
+    'after gas replaces brine, and the reflection coefficient against incidence angle for both ' +
+    'fluids." preserveAspectRatio="xMidYMid meet">' +
+    '<rect width="' + HW + '" height="' + HH + '" fill="' + BG + '"/>' + inner + '</svg>';
+}
+
+const hHead = (x, s) =>
+  '<text x="' + f2(x) + '" y="18" font-family="monospace" font-size="8.5" fill="' + INK + '">' +
+  s + '</text>';
+const hFoot = (x, y, s, anchor) =>
+  '<text x="' + f2(x) + '" y="' + f2(y) + '" font-family="monospace" font-size="7.5" ' +
+  'fill="#6E7A83"' + (anchor ? ' text-anchor="' + anchor + '"' : '') + '>' + s + '</text>';
+const hArrow = (x, y) =>
+  '<path d="M' + f2(x) + ' ' + f2(y - 4.5) + ' L' + f2(x + 5.5) + ' ' + f2(y) +
+  ' L' + f2(x) + ' ' + f2(y + 4.5) + '" fill="none" stroke="#B9BDB4" ' +
+  'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>';
+
 function thumbHero() {
-  const cases = [];
-  const cols = [CRIM, '#B5451B', TEAL, '#2A7B9B', '#6B7A2E'];
-  [[0.32, 'gas', 1], [0.20, 'gas', 1], [0.30, 'brine', 0],
-   [0.35, 'brine', 0], [0.30, 'oil', 1]].forEach(([ph, fl, sa], i) => {
-    cases.push({ b: rock(ph, fl, sa), color: cols[i], w: 2.1 });
+  const PHI = 0.30;
+  const brine = rock(PHI, 'brine', 0);
+  const gas = rock(PHI, 'gas', 1);
+  const min = R.mineralMix(0);
+  const dry = R.softSand(min, PHI, { P });
+
+  const TOP = 28, AXIS = 110, CAP = 138;   // one band shared by all four stages
+  const SW = 96;                           // stage width
+  const XS = [14, 136, 258, 380];          // stage left edges
+  const mid = (TOP + AXIS) / 2;
+  let o = '';
+
+  /* ---------- 1. grains and the space between them ---------- */
+  const x0 = XS[0];
+  o += hHead(x0, 'the rock');
+  /* Grains drawn with real gaps between them, because a pack with no visible
+     pore space is a picture of a solid and the porosity caption would be doing
+     all the work. */
+  const gr = 5.2, pitch = 13.4, rows = 5;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < 8; c++) {
+      const cx = x0 + 8 + c * pitch + (r % 2 ? pitch / 2 : 0);
+      const cy = TOP + 9 + r * (pitch * 0.86);
+      if (cx > x0 + SW - 6 || cy > AXIS - 6) continue;
+      o += '<circle cx="' + f2(cx) + '" cy="' + f2(cy) + '" r="' + f2(gr) +
+        '" fill="#D9CDB0" stroke="#B8A87F" stroke-width="0.8"/>';
+    }
+  }
+  o += hFoot(x0, CAP, Math.round(PHI * 100) + '% porosity');
+  o += hArrow(x0 + SW + 10, mid);
+
+  /* ---------- 2. the two stiffnesses ---------- */
+  const x1 = XS[1];
+  o += hHead(x1, 'two stiffnesses');
+  /* K and G on ONE fixed axis, 0-50 GPa, which covers quartz. The pack bars
+     come out tiny beside the grain bars, and that IS the lesson of module 01:
+     the rock is far softer than the mineral it is made of. */
+  const KMAX = 50, kh = AXIS - TOP - 2;
+  const kY = (v) => AXIS - (v / KMAX) * kh;
+  o += '<line x1="' + f2(x1) + '" y1="' + f2(AXIS) + '" x2="' + f2(x1 + SW) +
+    '" y2="' + f2(AXIS) + '" stroke="' + GRAY + '" stroke-width="1.2"/>';
+  [['K', min.K, dry.K, x1 + 14], ['G', min.G, dry.G, x1 + 56]].forEach(([nm, mv, fv, bx]) => {
+    o += '<rect x="' + f2(bx) + '" y="' + f2(kY(mv)) + '" width="12" height="' +
+      f2(AXIS - kY(mv)) + '" fill="#CBC9BE"/>';
+    o += '<rect x="' + f2(bx + 14) + '" y="' + f2(kY(fv)) + '" width="12" height="' +
+      f2(AXIS - kY(fv)) + '" fill="' + CRIM + '"/>';
+    o += hFoot(bx + 13, AXIS + 9, nm, 'middle');
   });
-  return svg(avoCurves(cases) +
-    '<text x="100" y="103" font-family="monospace" font-size="8" fill="' + INK +
-    '" text-anchor="middle">five reservoirs, one gather</text>');
+  o += hFoot(x1, CAP, 'grain \u2192 pack');
+  o += hArrow(x1 + SW + 10, mid);
+
+  /* ---------- 3. what a fluid does to the velocities ---------- */
+  const x2 = XS[2];
+  o += hHead(x2, 'put gas in');
+  /* Vp and Vs share one fixed axis so the fall in Vp is read against the
+     flatness of Vs rather than against a neighbour that rescaled itself. */
+  const VMAX = 3200, vh = AXIS - TOP - 2;
+  const vY = (v) => AXIS - (v / VMAX) * vh;
+  o += '<line x1="' + f2(x2) + '" y1="' + f2(AXIS) + '" x2="' + f2(x2 + SW) +
+    '" y2="' + f2(AXIS) + '" stroke="' + GRAY + '" stroke-width="1.2"/>';
+  [['Vp', brine.vp, gas.vp, x2 + 14], ['Vs', brine.vs, gas.vs, x2 + 56]].forEach(
+    ([nm, bv, gv, bx]) => {
+      o += '<rect x="' + f2(bx) + '" y="' + f2(vY(bv)) + '" width="12" height="' +
+        f2(AXIS - vY(bv)) + '" fill="' + TEAL + '"/>';
+      o += '<rect x="' + f2(bx + 14) + '" y="' + f2(vY(gv)) + '" width="12" height="' +
+        f2(AXIS - vY(gv)) + '" fill="' + CRIM + '"/>';
+      o += hFoot(bx + 13, AXIS + 9, nm, 'middle');
+    });
+  o += hFoot(x2, CAP, 'brine \u2192 gas');
+  o += hArrow(x2 + SW + 10, mid);
+
+  /* ---------- 4. the reflection, against angle ---------- */
+  const x3 = XS[3];
+  o += hHead(x3, 'the reflection');
+  /* Fixed range, chosen to hold the whole of both curves out to 40 degrees with
+     headroom: the gas sand reaches -0.282 there. Checked against the computed
+     extremes below rather than fitted to them, so the picture cannot silently
+     rescale if the default rock changes. */
+  const RY = [-0.34, 0.08];
+  const rX = (t) => x3 + (t / 40) * SW;
+  const rY = (v) => AXIS - ((v - RY[0]) / (RY[1] - RY[0])) * (AXIS - TOP - 2);
+  o += '<line x1="' + f2(x3) + '" y1="' + f2(rY(0)) + '" x2="' + f2(x3 + SW) +
+    '" y2="' + f2(rY(0)) + '" stroke="' + GRAY + '" stroke-width="1.2"/>';
+  [[brine, TEAL], [gas, CRIM]].forEach(([b, col]) => {
+    let d = '';
+    for (let t = 0; t <= 40; t += 1) {
+      const v = R.zoeppritz(shale, b, t);
+      if (!isFinite(v)) break;
+      d += (d ? ' L' : 'M') + f2(rX(t)) + ' ' + f2(rY(v));
+    }
+    o += '<path d="' + d + '" fill="none" stroke="' + col +
+      '" stroke-width="2.4" stroke-linecap="round"/>';
+  });
+  o += hFoot(x3, AXIS + 9, '0\u00b0');
+  o += hFoot(x3 + SW, AXIS + 9, '40\u00b0', 'end');
+  o += hFoot(x3, CAP, 'one number \u2192 a curve');
+
+  /* A curve drawn outside its own box is the failure the module harness checks
+     for and the index had no equivalent of, so the check lives here instead. */
+  for (const b of [brine, gas]) {
+    for (let t = 0; t <= 40; t += 1) {
+      const v = R.zoeppritz(shale, b, t);
+      if (isFinite(v) && (v < RY[0] || v > RY[1])) {
+        throw new Error('hero: reflection coefficient ' + v.toFixed(4) + ' at ' + t +
+          ' degrees falls outside the fixed axis [' + RY[0] + ', ' + RY[1] + ']');
+      }
+    }
+  }
+
+  return heroSvg(o);
 }
 
 /* ------------------------------------------------------------------------ */
@@ -387,17 +523,19 @@ const CARDS = [
 
 ];
 
+/* Only the bridge module carries a note, and the note names a prerequisite
+   OUTSIDE this set. Inside the set the order is the assumption: the cards run
+   00 to 09 down the page and each builds on the ones above it, so printing
+   "assumes module 00" nine times restated the layout rather than adding to it.
+   The `level` field is kept because the reading paths above the grid are
+   written from it. */
 const LEVEL_NOTE = {
   bridge: 'assumes the seismic resolution modules',
-  rock: 'assumes module 00',
-  avo: 'assumes modules 00\u201303',
-  closing: 'assumes everything before it \u00b7 the heaviest in the set',
-  legacy: 'written before the re-leveling \u00b7 pitched higher',
 };
 const cardHtml = (c) => `      <${c.ready ? 'a' : 'div'} class="card${c.ready ? '' : ' planned'}"${c.ready ? ` href="${c.href}"` : ''}>
         <div class="thumb">${c.thumb}</div>
         <div class="card-body">
-          <div class="card-no">${c.no}<span class="lvl">${LEVEL_NOTE[c.level] || ''}</span></div>
+          <div class="card-no">${c.no}${LEVEL_NOTE[c.level] ? `<span class="lvl">${LEVEL_NOTE[c.level]}</span>` : ''}</div>
           <h3>${c.title}</h3>
           <p>${c.body}</p>
           <div class="q">${c.q}</div>
@@ -459,7 +597,7 @@ const html = `<!DOCTYPE html>
       </div>
     </div>
     <div class="hero-panel"><div class="thumb" style="border:0">${thumbHero()}</div>
-      <div class="hero-cap"><span>five different reservoirs</span><b>computed, not drawn</b></div></div>
+      <div class="hero-cap"><span>one sand, followed all the way through</span><b>computed, not drawn</b></div></div>
    </div>
   </section>
 

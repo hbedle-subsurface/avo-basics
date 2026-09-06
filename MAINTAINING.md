@@ -12,15 +12,25 @@ and [seismic_resolution](https://hbedle-subsurface.github.io/seismic_resolution/
     index.html                   landing page (generated — see below)
     assets/style.css             shared stylesheet, copied from the geometric-attributes repo
     assets/seismic.js            shared wavelets, traces, noise, plotting, URL state (copied, unchanged)
-    assets/rockphysics.js        NEW: minerals, dry frames, Batzle-Wang fluids, Gassmann, Zoeppritz
-    modules/start-here.html      Module 00 — what all of this is for (no equations)
-    modules/rock-to-trace.html   Module 01 — build a rock, make a trace
-    modules/same-amplitude.html  Module 02 — same bright spot, different rock
-    modules/add-offset.html      Module 03 — add offset
-    modules/intercept-gradient.html  Module 04 — intercept, gradient and the classes
-    modules/reading-a-gather.html    Module 05 — reading a gather you did not make
-    modules/what-survives.html       Module 06 — what survives
-    tools/                       verification; not deployed
+    assets/rockphysics.js        minerals, dry frames, Batzle-Wang fluids, Gassmann, Zoeppritz
+    assets/count.js              usage counter, shared verbatim with the other teaching repos
+    modules/beyond-normal-incidence.html  Module 00 — recap of the resolution set, and the bridge
+    modules/rocks-and-stiffness.html      Module 01 — grains, pore space, K and G
+    modules/fluid-in-the-pores.html       Module 02 — fluids, Gassmann, the saturation curve
+    modules/rock-to-trace.html            Module 03 — two rocks, one number, a trace
+    modules/offset-and-the-gather.html    Module 04 — CMP gathers, offset vs angle, moveout, stack
+    modules/add-offset.html               Module 05 — amplitude against angle
+    modules/intercept-gradient.html       Module 06 — intercept, gradient and the classes
+    modules/same-amplitude.html           Module 07 — several rocks, one amplitude
+    modules/reading-a-gather.html         Module 08 — noise and error bars
+    modules/what-survives.html            Module 09 — what survives
+    tools/                                verification; not deployed
+
+The filenames predate the re-levelling and no longer match the numbering. Do
+not rename them: every module carries its own URL state and old links are worth
+keeping. `tools/build-index.js` is the single place that maps a file to its
+number and title, and `verify-deploy.js` treats the generated index as the
+reference for both.
 
 `assets/style.css` and `assets/seismic.js` are **copies**, not links to the other
 repo. Each site has to work from a local folder with the network off, so
@@ -69,32 +79,73 @@ They extract the numbers from the prose and from the running page and compare
 them, so the text cannot quietly drift away from the code. Both are wired into
 `npm test`.
 
-Module 02 sweeps 457,560 forward models on every update. That is only fast
-enough because the dry frame, the pore fluid, the shale and the tuning factor
-are each tabulated once rather than recomputed per cell, and because the
-step 5 panel is memoized on the parameters that can actually change its answer.
-If you add a parameter to the search, check `tools/harness.js m2` still returns
-promptly before assuming it scales.
+Module 07 (`same-amplitude.html`) sweeps 457,560 forward models on every update.
+That is only fast enough because the dry frame, the pore fluid, the shale and
+the tuning factor are each tabulated once rather than recomputed per cell, and
+because the step 5 panel is memoized on the parameters that can actually change
+its answer. If you add a parameter to the search, check `tools/harness.js m2`
+still returns promptly before assuming it scales. (That mode is named `m2` from
+the old numbering and drives module 07.)
 
 ## Who each module is for
 
-The set is a ladder and the index says so on every card.
+The set is a ladder and the index says so on every card. The note on each card
+comes from its `level` in `tools/build-index.js`, and the four levels are:
 
-- **00** assumes nothing — not rock physics, not mathematics, not the word
-  impedance. No equations anywhere in it. It teaches the AVO claim straight,
-  in the confident form, so that the later modules have something to test.
-- **01–04** are the main sequence and assume 00.
-- **05–06** assume 01–04 and are comfortable with standard deviations and
-  correlation. They are written for people who already use these methods.
+- **`bridge`** — module 00. Assumes the seismic resolution modules and nothing
+  else from this set. It restates their four results, names the normal-incidence
+  assumption all of them shared, and shows the reflection coefficient varying
+  with angle. It introduces nothing new about rocks.
+- **`rock`** — modules 01–03. Assume module 00. Grains and moduli, then fluids
+  and Gassmann, then two rocks and a trace. A student who does the resolution
+  set and stops after 03 has had a complete short course.
+- **`avo`** — modules 04–07. Assume 00–03. Recording geometry, the angle-
+  dependent amplitude, its reduction to two numbers, and the first count of the
+  solution set.
+- **`closing`** — modules 08 and 09. Assume everything before them and are the
+  heaviest in the set. 08 uses standard deviations, covariance and correlation.
+  Both are written for people who already use these methods.
 
-If you add a module, give it a `level` in `tools/build-index.js` so the card
-carries the right note.
+The resolution set is a **prerequisite**, not a preamble. Nothing here re-derives
+impedance, the reflection coefficient, the wavelet or tuning. If you find
+yourself explaining one of those, it belongs in that repo instead.
+
+Only the `bridge` card prints its note on screen. The other three levels are
+kept as data because the three reading paths above the card grid are written
+from them, but the cards themselves no longer say "assumes module 00" nine
+times: the grid runs 00 to 09 down the page, so the order already carries that,
+and the only assumption worth printing is the one pointing OUTSIDE this set.
+If you add a module, give it a `level` so it lands in the right reading path.
+
+## The lead graphic
+
+`thumbHero()` in `build-index.js` draws the chain the headline names: a grain
+pack, the two stiffnesses of the grain against the pack, what a fluid does to
+the two velocities, and the reflection against angle. All four stages are one
+30% porosity sand under one shale, computed from `rockphysics.js`, so it is the
+same rock followed through rather than four illustrations.
+
+It replaced five Zoeppritz curves, which were the same *kind* of picture as the
+module 05 card thumbnail one screen further down — the lead graphic was
+restating a card instead of introducing the set.
+
+Two rules it follows, both worth keeping:
+
+- **K and G share one axis, and so do Vp and Vs.** The point of stage 3 is that
+  Vp falls a long way and Vs does not, and that is only readable if the two are
+  measured against the same scale.
+- **Every axis is fixed, not fitted.** The reflection panel asserts its range
+  and then throws if either curve leaves it, because a curve drawn outside its
+  box is what the module harness checks for and the index had no equivalent of.
+  The first draft had a floor of −0.26 and the gas sand reaches −0.282 at 40°,
+  so it drew below the plot. If you change the default rock, the build will
+  fail rather than crop the picture.
 
 ## A convention the modules follow
 
 Every step pairs an abstract picture with a concrete one, always the same way
 round: the **left** panel shows all the possibilities at once (a parameter-space
-map in module 02, an amplitude-against-angle curve in module 03), and the
+map in module 07, an amplitude-against-angle curve in module 05), and the
 **right** panel shows a few actual rocks written out — their parameters, their
 numbers, and the trace or gather each one produces. Beginners get very little
 from a contour on its own; they get the point immediately from two cards whose
@@ -121,7 +172,7 @@ Two things follow from that if you edit these pages:
 
 ## Usage counting
 
-`assets/count.js`, loaded by all eight pages, **switched on**, account code
+`assets/count.js`, loaded by all eleven pages, **switched on**, account code
 `hbedle`, counts at <https://hbedle.goatcounter.com>.
 
 This file is shared verbatim with the other teaching repositories
@@ -157,7 +208,7 @@ set of slider positions reports as a bare module path.
   perfectly if it never loads.
 - **If you change what is recorded, change the site copy** — the About section
   on the landing page and the notice in every footer. `verify-count.js` checks
-  the notice is present on all eight pages.
+  the notice is present on all eleven pages.
 
 ### Checking it after a push
 
@@ -182,24 +233,29 @@ reliable, which is what matters for deciding what to build next.
   upper bound and runs ~1500 m/s fast at 20% porosity.
 - **Shale:** empirical — Castagna mudrock for Vs, Gardner for density. A contact
   model does not apply to shale.
-- **Conditions:** 23 MPa effective, 64 °C, fixed in every module. In module 03
+- **Conditions:** 23 MPa effective, 64 °C, fixed in every module. In module 05
   the depth slider changes the ray geometry only, deliberately not the effective
   pressure, so the angle lesson is not confounded by the rock also stiffening.
-- **Fit uncertainty (modules 05 and 06):** closed form, not simulated. For a
+- **Fit uncertainty (modules 08 and 09):** closed form, not simulated. For a
   least-squares line, sigma(G) = sigma/sqrt(Sxx) and sigma(R0) =
   sigma*sqrt(1/n + xbar^2/Sxx). The test suite checks these against 30,000
   simulated fits (they agree to 0.5%) — the simulation is there to validate the
   formula, not the other way round.
-- **Intercept and gradient (module 04):** fitted by least squares to the exact
+- **Intercept and gradient (module 06):** fitted by least squares to the exact
   Zoeppritz coefficients against sin²θ over the chosen angle range, which is what
   a processor does. This is NOT Shuey's analytic G — that is the tangent at zero
-  offset, and on the default rock the two differ by more than a fifth. The
-  background trend and the class boundaries are both fitted or drawn live; the
-  boundaries are a convention (±0.03 in intercept) and the module says so.
-- **Ray geometry (module 03):** exact for a V(z) = 1600 + 0.6z overburden.
-  Rays are circular arcs, so the incidence angle is found by solving for the
-  ray parameter that lands on the requested offset, not by the straight-ray
-  shortcut — which under-reads the angle by 11.6° at 3 km offset on a 2 km
-  target.
+  offset, and on the default rock the two differ by more than a fifth
+  (−0.4169 fitted against −0.5270 analytic). The background trend and the class
+  boundaries are both fitted or drawn live; the boundaries are a convention
+  (±0.03 in intercept) and the module says so.
+- **Ray geometry:** rays are circular arcs in a linear gradient, so the
+  incidence angle is found by solving for the ray parameter that lands on the
+  requested offset, not by the straight-ray shortcut. **The two modules use
+  different gradients on purpose.** Module 04 exposes it as a control and opens
+  at 0.5/s, where the shortcut under-reads by 10.1° at 3 km offset on a 2 km
+  target. Module 05 fixes it at 0.6/s, where the same geometry gives 48.4°
+  against a straight-ray 36.9°, an 11.5° miss. Module 05's Method tab states the
+  discrepancy and the reason; if you change either value, change that sentence
+  too.
 
 Each module's Method tab carries the full list of simplifications.

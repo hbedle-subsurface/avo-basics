@@ -487,8 +487,16 @@ const ROCK = (function () {
         T(p) = (1/k) ln[ (Vz/V0) (1 + cos(theta0)) / (1 + cos(thetaZ)) ]
 
      with sin(theta) = p V at each depth. Given an offset, p is found by
-     bisection. Returns null when no ray reaches the reflector at that offset,
-     which is a real limit rather than an error.
+     bisection.
+
+     rayLinearGradient returns null for a ray parameter whose ray turns before
+     it reaches the target, which is a real limit rather than an error, and the
+     bisection in angleFromOffset treats that the same way it treats a ray that
+     lands too far out. Note what angleFromOffset therefore does at an offset no
+     ray can reach: it does NOT return null, it converges on the near-critical
+     angle and returns that. Callers wanting to distinguish "the widest angle
+     available" from "the angle at your offset" have to compare the requested
+     offset against rayLinearGradient at the returned p.
      --------------------------------------------------------------------- */
 
   function rayLinearGradient(p, z, V0, k) {

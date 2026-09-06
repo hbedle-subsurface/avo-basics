@@ -225,6 +225,43 @@ say(CARDS.length === PAGES.length - 1,
     problems.join('\n         '));
 })();
 
+/* 2b. the same resolver, run over the repository's own documentation. The
+      re-levelling renumbered every module, and the markdown escaped the sweep
+      entirely: MAINTAINING.md went on describing the seven-module layout, named
+      a module file that no longer exists, and attributed a velocity gradient to
+      the wrong module. None of that reaches a student, and all of it reaches the
+      next person to edit this repo, which is who the file is for. A module
+      number here has to name a module that exists, and a modules/ path has to
+      be a file that exists. */
+(function checkDocs() {
+  const problems = [];
+  /* ADD-COUNTING.md is shared verbatim with the other teaching repos. It cites
+     their paths on purpose and uses modules/anything.html as a placeholder, so
+     it is repo-agnostic by design and is not checked against this repo's files. */
+  const SHARED = new Set(['ADD-COUNTING.md']);
+  const docs = fs.readdirSync(ROOT).filter((f) => f.endsWith('.md') && !SHARED.has(f));
+  for (const f of docs) {
+    const src = fs.readFileSync(path.join(ROOT, f), 'utf8');
+    let m;
+    const reNo = /\b[Mm]odules? (\d\d)\b/g;
+    const seen = new Set();
+    while ((m = reNo.exec(src))) seen.add(m[1]);
+    for (const no of seen) {
+      if (!BY_NO.has(no)) problems.push(f + ' names module ' + no + ', which does not exist');
+    }
+    const reFile = /modules\/[A-Za-z0-9._-]+\.html/g;
+    const files = new Set();
+    while ((m = reFile.exec(src))) files.add(m[0]);
+    for (const rel of files) {
+      if (!fs.existsSync(path.join(ROOT, rel))) problems.push(f + ' names ' + rel + ', which is not in the repository');
+    }
+  }
+  say(problems.length === 0,
+    problems.length ? 'the documentation names a module or a file that does not exist'
+                    : 'every module number and module path in the docs resolves (' + docs.length + ' files)',
+    problems.join('\n         '));
+})();
+
 /* 3. a nav item labelled "Module NN" is always stale: the bar is Exercises and
       Method, and a numbered label there once pointed two modules further on. */
 (function checkNav() {

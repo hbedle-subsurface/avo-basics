@@ -14,6 +14,7 @@ and [seismic_resolution](https://hbedle-subsurface.github.io/seismic_resolution/
     assets/seismic.js            shared wavelets, traces, noise, plotting, URL state (copied, unchanged)
     assets/rockphysics.js        minerals, dry frames, Batzle-Wang fluids, Gassmann, Zoeppritz
     assets/count.js              usage counter, shared verbatim with the other teaching repos
+    assets/panelout.js           control-panel pop-out, shared verbatim with the other teaching repos
     modules/beyond-normal-incidence.html  Module 00 — recap of the resolution set, and the bridge
     modules/rocks-and-stiffness.html      Module 01 — grains, pore space, K and G
     modules/fluid-in-the-pores.html       Module 02 — fluids, Gassmann, the saturation curve
@@ -73,6 +74,7 @@ which runs, in order:
 | `verify-deploy.js` (numbering) | the index is the reference for what each module is called and what number it carries. Every page's `<title>` and `<h1>` must match its own card; every "module NN" in body prose must resolve to a module that exists and must not be the page making the mention; a nav bar must be the standard three items with no numbered module link in it. This is the check the re-levelling from seven modules to ten needed and did not have — the prose verifiers check numbers, not module numbers, so five wrong cross-references, two wrong page titles and two nav links pointing two modules further on all passed everything. |
 | `verify-deploy.js` (house style) | every module can pop its exercises into a separate window (`popEx` + `exList`), and has five exercises each labelled Answer rather than Hint |
 | `verify-count.js` | the usage counter sends the module name and never the query string, honours Do Not Track, and skips local copies |
+| `harness-panelout.js` | the control panel, driven from its second window: every slider reaches its counterpart, a button click and a press on a canvas are forwarded, the readouts come back, and the panel returns to the page at full width when the window closes |
 
 The `verify-prose` scripts are the ones to re-run after any physics change.
 They extract the numbers from the prose and from the running page and compare

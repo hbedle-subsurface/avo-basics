@@ -103,7 +103,7 @@ say(unlinked.length === 0, 'every module is linked from index.html',
 
 /* ---- 5. the files GitHub Pages needs, and the ones it must not get ---- */
 const needed = ['index.html', '.nojekyll', 'assets/style.css', 'assets/seismic.js',
-                'assets/rockphysics.js', 'assets/count.js'];
+                'assets/rockphysics.js', 'assets/count.js', 'assets/panelout.js'];
 const absent = needed.filter((f) => !FILESET.has(f));
 say(absent.length === 0, 'the required top-level files are present', absent.join(', '));
 

@@ -16,6 +16,11 @@ for m in $MODULES; do
   MOD=$m.html node tools/harness.js axes     | tail -2 | head -1
   MOD=$m.html node tools/harness.js scales   | tail -2 | head -1
 done
+echo "== the control panel in its second window =="
+for m in $MODULES; do
+  printf "  %-30s " "$m"
+  node tools/harness-panelout.js modules/$m.html | tail -1
+done
 echo "== every number quoted in the prose =="
 for f in verify-prose-m00 verify-prose-m01-rock verify-prose-m02 verify-prose-m03 verify-prose-m04 verify-prose-m05 verify-prose-m06 verify-prose-m07 verify-prose-m08 verify-prose-m09; do
   node tools/$f.js | tail -2 | head -1
